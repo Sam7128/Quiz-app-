@@ -1,6 +1,6 @@
 import React from 'react';
 import { Question, MistakeLog, BankMetadata } from '../types';
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { BookOpen, AlertTriangle, Zap, CheckSquare, Square, Layers } from 'lucide-react';
 
 interface DashboardProps {
@@ -38,14 +38,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
     { name: '需複習', value: relevantMistakes },
   ];
   const COLORS = ['#10b981', '#ef4444'];
-
-  const activityData = [
-    { name: '週一', score: 40 },
-    { name: '週二', score: 30 },
-    { name: '週三', score: 20 },
-    { name: '週四', score: 65 },
-    { name: '週五', score: 50 },
-  ];
 
   const handleStartQuiz = () => {
     const count = quizSize === 'all' ? totalQuestions : Math.min(quizSize, totalQuestions);
@@ -145,7 +137,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <h3 className="text-slate-500 font-medium mb-4 flex items-center gap-2">
             <BookOpen size={18} /> 當前掌握度
           </h3>
-          <div className="h-40 relative">
+          <div className="h-40 relative" style={{ minHeight: '160px' }}>
              <ResponsiveContainer width="100%" height="100%">
                <PieChart>
                  <Pie
