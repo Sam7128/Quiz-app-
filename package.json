@@ -1,1 +1,23 @@
-{\n  "name": "mindspark---ai-学习助手",\n  "private": true,\n  "version": "0.0.0",\n  "type": "module",\n  "scripts": {\n    "dev": "vite",\n    "build": "vite build",\n    "preview": "vite preview",\n    "start": "vite preview"\n  },\n  "dependencies": {\n    "react": "^19.2.4",\n    "react-dom": "^19.2.4",\n    "recharts": "^3.7.0",\n    "lucide-react": "^0.563.0"\n  },\n  "devDependencies": {\n    "@types/node": "^22.1.0",\n    "@vitejs/plugin-react": "^5.0.0",\n    "typescript": "^5.8.2",\n    "vite": "^6.2.0"\n  }\n}
+{
+  "name": "mindspark-ai-study-assistant",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "recharts": "^3.7.0",
+    "lucide-react": "^0.563.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.1.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0"
+  }
+}
