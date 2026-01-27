@@ -1,0 +1,1 @@
+{\n  \"build\": {\n    \"env\": {\n      \"NODE_ENV\": \"production\"\n    }\n  },\n  \"routes\": [\n    {\n      \"src\": \"/\",\n      \"dest\": \"/index.html\"\n    }\n  ]\n}
