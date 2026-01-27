@@ -22,6 +22,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onStartQuiz, 
   onStartMistakes 
 }) => {
+  const [quizSize, setQuizSize] = React.useState<number | 'all'>(20);
   const totalQuestions = questions.length;
   const mistakeCount = Object.keys(mistakeLog).length;
   
@@ -46,6 +47,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
     { name: '週五', score: 50 },
   ];
 
+  const handleStartQuiz = () => {
+    const count = quizSize === 'all' ? totalQuestions : Math.min(quizSize, totalQuestions);
+    onStartQuiz(count);
+  };
+
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
       {/* Welcome Hero */}
@@ -56,14 +62,28 @@ export const Dashboard: React.FC<DashboardProps> = ({
             已選擇 {selectedBankIds.length} 個題庫，共 <strong>{totalQuestions}</strong> 題。
           </p>
         </div>
-        <div className="mt-6 md:mt-0 flex gap-4">
+        <div className="mt-6 md:mt-0 flex flex-wrap gap-4 items-center">
+           <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
+             <span className="text-xs font-bold text-slate-400 ml-2 uppercase tracking-wider">題數</span>
+             <select 
+               value={quizSize} 
+               onChange={(e) => setQuizSize(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+               className="bg-white border-none text-slate-700 text-sm font-semibold rounded-lg focus:ring-0 cursor-pointer pr-8"
+             >
+               <option value={10}>10 題</option>
+               <option value={20}>20 題</option>
+               <option value={30}>30 題</option>
+               <option value={50}>50 題</option>
+               <option value="all">全部</option>
+             </select>
+           </div>
            <button 
-             onClick={() => onStartQuiz(Math.min(20, totalQuestions))}
+             onClick={handleStartQuiz}
              disabled={totalQuestions === 0}
              className="flex items-center gap-2 bg-brand-600 hover:bg-brand-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-brand-200 transition-all hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
            >
              <Zap size={20} />
-             快速測驗 (20題)
+             開始測驗
            </button>
            <button 
              onClick={onStartMistakes}

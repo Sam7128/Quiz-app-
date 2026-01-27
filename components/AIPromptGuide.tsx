@@ -1,15 +1,32 @@
-import React from 'react';
-import { Copy, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { Copy, Check, Settings2, Globe, FileText, CheckCircle2 } from 'lucide-react';
 
 export const AIPromptGuide: React.FC = () => {
-  const [copied, setCopied] = React.useState(false);
+  const [copied, setCopied] = useState(false);
+  
+  // Prompt Configuration State
+  const [config, setConfig] = useState({
+    type: 'mixed', // mixed, single, multiple
+    langExplanation: 'zh-TW', // zh-TW, en
+    langOutput: 'zh-TW' // zh-TW, en
+  });
 
-  const PROMPT_TEXT = `請扮演專業的教學專家。根據我提供的內容，生成 [數量] 題選擇題。
+  const getPromptText = () => {
+    const typeInstruction = config.type === 'single' 
+      ? '請只生成「單選題」。' 
+      : config.type === 'multiple' 
+        ? '請只生成「多選題」。' 
+        : '請包含「單選題」與「多選題」。如果是多選題，請在題目或 type 欄位中標註。';
+
+    const explainerLang = config.langExplanation === 'zh-TW' ? '繁體中文' : 'English';
+    const outputLang = config.langOutput === 'zh-TW' ? '繁體中文' : 'English';
+
+    return `請扮演專業的教學專家。根據我提供的內容，生成 [數量] 題選擇題。
 ⚠️ 內容規範：
  * 題目 (question): 應著重於理解與應用。
- * 類型: 請包含「單選題」與「多選題」。如果是多選題，請在題目或 type 欄位中標註。
+ * 類型: ${typeInstruction}
  * 提示 (hint): 禁止直接說出答案。提示應提供相關的定義、概念關鍵詞或邏輯線索，引導我思考。
- * 詳解 (explanation): 解釋正確選項的原理，並簡述為什麼其他干擾項是錯的。
+ * 詳解 (explanation): 請使用 ${explainerLang} 解釋正確選項的原理，並簡述為什麼其他干擾項是錯的。
 ⚠️ 格式要求：
 請輸出純 JSON Array，結構如下：
 [
@@ -34,7 +51,10 @@ export const AIPromptGuide: React.FC = () => {
 ]
 
 * 注意：多選題的 answer 欄位必須是字串陣列 (Array of Strings)。
-輸出語言：繁體中文 (搭配專業心理學術語)。`;
+輸出語言：${outputLang}${outputLang === '繁體中文' ? ' (搭配專業學術語)' : ''}。`;
+  };
+
+  const PROMPT_TEXT = getPromptText();
 
   const handleCopy = () => {
     navigator.clipboard.writeText(PROMPT_TEXT);
@@ -54,13 +74,105 @@ export const AIPromptGuide: React.FC = () => {
         </p>
       </div>
 
+      {/* Configurator Card */}
+      <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 mb-8">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+            <Settings2 size={24} />
+          </div>
+          <h3 className="text-xl font-bold text-slate-800">提示詞自定義設定</h3>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {/* Question Type */}
+          <div className="space-y-4">
+            <label className="flex items-center gap-2 text-sm font-bold text-slate-500 uppercase tracking-wider">
+              <FileText size={16} /> 題目類型
+            </label>
+            <div className="flex flex-col gap-2">
+              {['mixed', 'single', 'multiple'].map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setConfig({ ...config, type: t })}
+                  className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
+                    config.type === t 
+                      ? 'border-indigo-600 bg-indigo-50 text-indigo-700 shadow-sm' 
+                      : 'border-slate-100 hover:border-slate-200 text-slate-600'
+                  }`}
+                >
+                  <span className="font-medium">
+                    {t === 'mixed' ? '混合題型' : t === 'single' ? '僅單選題' : '僅多選題'}
+                  </span>
+                  {config.type === t && <CheckCircle2 size={18} />}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Explanation Language */}
+          <div className="space-y-4">
+            <label className="flex items-center gap-2 text-sm font-bold text-slate-500 uppercase tracking-wider">
+              <Globe size={16} /> 詳解語言
+            </label>
+            <div className="flex flex-col gap-2">
+              {[
+                { id: 'zh-TW', label: '繁體中文' },
+                { id: 'en', label: 'English' }
+              ].map((l) => (
+                <button
+                  key={l.id}
+                  onClick={() => setConfig({ ...config, langExplanation: l.id })}
+                  className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
+                    config.langExplanation === l.id 
+                      ? 'border-indigo-600 bg-indigo-50 text-indigo-700 shadow-sm' 
+                      : 'border-slate-100 hover:border-slate-200 text-slate-600'
+                  }`}
+                >
+                  <span className="font-medium">{l.label}</span>
+                  {config.langExplanation === l.id && <CheckCircle2 size={18} />}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Output Language */}
+          <div className="space-y-4">
+            <label className="flex items-center gap-2 text-sm font-bold text-slate-500 uppercase tracking-wider">
+              <Globe size={16} /> 輸出語言
+            </label>
+            <div className="flex flex-col gap-2">
+              {[
+                { id: 'zh-TW', label: '繁體中文' },
+                { id: 'en', label: 'English' }
+              ].map((l) => (
+                <button
+                  key={l.id}
+                  onClick={() => setConfig({ ...config, langOutput: l.id })}
+                  className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
+                    config.langOutput === l.id 
+                      ? 'border-indigo-600 bg-indigo-50 text-indigo-700 shadow-sm' 
+                      : 'border-slate-100 hover:border-slate-200 text-slate-600'
+                  }`}
+                >
+                  <span className="font-medium">{l.label}</span>
+                  {config.langOutput === l.id && <CheckCircle2 size={18} />}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-6">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-            <h3 className="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
-              <span className="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
-              複製提示詞 (Prompt)
-            </h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
+                <span className="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
+                複製提示詞 (Prompt)
+              </h3>
+              {copied && <span className="text-green-600 text-sm font-bold flex items-center gap-1"><Check size={16}/> 已複製到剪貼簿</span>}
+            </div>
             <div className="relative bg-slate-900 rounded-xl p-4 md:p-6 group">
               <button 
                 onClick={handleCopy}
@@ -68,7 +180,7 @@ export const AIPromptGuide: React.FC = () => {
               >
                 {copied ? <Check size={18} className="text-green-400" /> : <Copy size={18} />}
               </button>
-              <pre className="text-indigo-100 font-mono text-sm whitespace-pre-wrap overflow-x-auto">
+              <pre className="text-indigo-100 font-mono text-sm whitespace-pre-wrap overflow-x-auto max-h-[500px]">
                 {PROMPT_TEXT}
               </pre>
             </div>
