@@ -1,1 +1,14 @@
-{\n  \"build\": {\n    \"env\": {\n      \"NODE_ENV\": \"production\"\n    }\n  },\n  \"routes\": [\n    {\n      \"src\": \"/\",\n      \"dest\": \"/index.html\"\n    }\n  ]\n}
+{
+  "version": 2,
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
