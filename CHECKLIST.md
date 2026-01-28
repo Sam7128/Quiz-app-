@@ -16,6 +16,7 @@
 - [x] 實作 Supabase 認證系統 (Email/Password)
 - [x] 實作雲端同步邏輯 (Local -> Cloud Migration)
 - [x] 優化 QuizCard 動態反饋與解析 UI
+- [x] **[UI/UX]** 修復手機端登入頁面捲動鎖死與底部導航遮擋問題 (Mobile Layout Fixes)
 
 
 ## 📝 備註 (Notes)

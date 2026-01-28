@@ -48,8 +48,8 @@ export const Login: React.FC<LoginProps> = ({ onGuestMode }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen flex flex-col justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
         {/* Logo Area */}
         <div className="text-center mb-8">
           <div className="inline-flex p-3 bg-brand-600 text-white rounded-2xl shadow-xl mb-4">

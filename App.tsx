@@ -317,7 +317,7 @@ const App: React.FC = () => {
           </nav>
         </div>
       </header>
-      <main className="flex-1 max-w-6xl w-full mx-auto p-4 md:p-8">{renderContent()}</main>
+      <main className="flex-1 max-w-6xl w-full mx-auto p-4 md:p-8 pb-24 md:pb-8">{renderContent()}</main>
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 flex justify-around z-50 safe-area-bottom">
         <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'dashboard' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><LayoutDashboard size={20} /><span className="text-[10px] font-medium">首頁</span></button>
         <button onClick={() => setView('manager')} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'manager' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><Settings size={20} /><span className="text-[10px] font-medium">管理</span></button>
