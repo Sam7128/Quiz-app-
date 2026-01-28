@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Question, BankMetadata } from '../types';
-import { Upload, Download, Trash2, AlertCircle, Plus, FileJson, FileText, Check, FolderOpen } from 'lucide-react';
+import { Upload, Download, Trash2, AlertCircle, Plus, FileJson, FileText, Check, FolderOpen, Loader2 } from 'lucide-react';
 import { saveQuestions, clearMistakes, getBanksMeta, createBank, deleteBank } from '../services/storage';
+import { useAuth } from '../contexts/AuthContext';
+import { 
+    getCloudBanks, 
+    createCloudBank, 
+    deleteCloudBank, 
+    saveCloudQuestions 
+} from '../services/cloudStorage';
 
 interface BankManagerProps {
   currentQuestions: Question[];
@@ -9,6 +16,7 @@ interface BankManagerProps {
   onBankChange: (bankId: string) => void;
   onUpdateQuestions: (questions: Question[]) => void;
   onRefreshBanks: () => void;
+  onMistakesUpdate: () => void;
 }
 
 export const BankManager: React.FC<BankManagerProps> = ({ 
@@ -16,53 +24,82 @@ export const BankManager: React.FC<BankManagerProps> = ({
   currentBankId, 
   onBankChange, 
   onUpdateQuestions,
-  onRefreshBanks 
+  onRefreshBanks,
+  onMistakesUpdate
 }) => {
+  const { user } = useAuth();
   const [banks, setBanks] = useState<BankMetadata[]>([]);
   const [activeTab, setActiveTab] = useState<'upload' | 'paste'>('upload');
   const [jsonText, setJsonText] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [newBankName, setNewBankName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     refreshBanks();
-  }, []);
+  }, [user]);
 
-  const refreshBanks = () => {
-    setBanks(getBanksMeta());
+  const refreshBanks = async () => {
+    setLoading(true);
+    const latestBanks = user ? await getCloudBanks() : getBanksMeta();
+    setBanks(latestBanks);
+    setLoading(false);
   };
 
-  const handleCreateBank = () => {
+  const handleCreateBank = async () => {
     if (!newBankName.trim()) return;
-    const newBank = createBank(newBankName);
-    refreshBanks();
+    setLoading(true);
+    
+    let newId: string;
+    if (user) {
+        const cloudId = await createCloudBank(newBankName);
+        if (!cloudId) {
+            setError("建立雲端題庫失敗");
+            setLoading(false);
+            return;
+        }
+        newId = cloudId;
+    } else {
+        const newBank = createBank(newBankName);
+        newId = newBank.id;
+    }
+
+    await refreshBanks();
     onRefreshBanks();
-    onBankChange(newBank.id);
+    onBankChange(newId);
     setNewBankName('');
     setIsCreating(false);
+    setLoading(false);
   };
 
-  const handleDeleteBank = (e: React.MouseEvent, id: string) => {
+  const handleDeleteBank = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (confirm("確定要刪除這個題庫嗎？此操作無法復原。")) {
-      deleteBank(id);
-      refreshBanks();
+      setLoading(true);
+      if (user) {
+          await deleteCloudBank(id);
+      } else {
+          deleteBank(id);
+      }
+      
+      await refreshBanks();
       onRefreshBanks();
       
-      const updatedBanks = getBanksMeta();
       // If deleted active bank, switch to another or null
       if (id === currentBankId) {
-        if (updatedBanks.length > 0) {
-          onBankChange(updatedBanks[0].id);
+        const latestBanks = user ? await getCloudBanks() : getBanksMeta();
+        if (latestBanks.length > 0) {
+          onBankChange(latestBanks[0].id);
         } else {
           onBankChange(''); // Clear selection
         }
       }
+      setLoading(false);
     }
   };
 
-  const processJson = (jsonString: string) => {
+  const processJson = async (jsonString: string) => {
     try {
       const data = JSON.parse(jsonString);
 
@@ -71,18 +108,26 @@ export const BankManager: React.FC<BankManagerProps> = ({
       if (data.length > 0 && !data[0].question) throw new Error("格式無效：缺少 'question' 欄位");
 
       if (currentBankId) {
+        setLoading(true);
+        if (user) {
+            await saveCloudQuestions(currentBankId, data);
+        } else {
+            saveQuestions(currentBankId, data);
+        }
+        
         onUpdateQuestions(data);
-        saveQuestions(currentBankId, data);
-        refreshBanks(); // Update counts
+        await refreshBanks(); // Update counts
         onRefreshBanks(); // Sync parent
         setError(null);
         setJsonText('');
+        setLoading(false);
         alert(`成功匯入 ${data.length} 題！`);
       } else {
         setError("請先選擇或建立一個題庫");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "無效的 JSON 格式");
+      setLoading(false);
     }
   };
 
@@ -109,7 +154,15 @@ export const BankManager: React.FC<BankManagerProps> = ({
   };
 
   return (
-    <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 h-[calc(100vh-8rem)]">
+    <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 h-[calc(100vh-8rem)] relative">
+      {loading && (
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-50 flex items-center justify-center rounded-3xl">
+              <div className="flex flex-col items-center gap-3">
+                  <Loader2 className="text-brand-600 animate-spin" size={40} />
+                  <p className="text-sm font-bold text-slate-500">正在處理雲端資料...</p>
+              </div>
+          </div>
+      )}
       
       {/* Left Sidebar: Bank List */}
       <div className="md:col-span-4 flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden h-full">
@@ -261,7 +314,13 @@ export const BankManager: React.FC<BankManagerProps> = ({
                 <h4 className="font-bold text-slate-700 mb-2">清除錯題記錄</h4>
                 <p className="text-xs text-slate-400 mb-4">只清除錯題狀態，保留題目</p>
                 <button 
-                  onClick={() => { if(confirm("確定清除錯題記錄？")) clearMistakes(); }} 
+                  onClick={() => { 
+                    if(confirm("確定清除錯題記錄？")) {
+                      clearMistakes();
+                      onMistakesUpdate();
+                      alert("錯題記錄已清除！");
+                    }
+                  }} 
                   className="flex items-center gap-2 text-red-600 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
                   <Trash2 size={16} /> 清除記錄

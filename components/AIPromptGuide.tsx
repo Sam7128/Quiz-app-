@@ -8,7 +8,8 @@ export const AIPromptGuide: React.FC = () => {
   const [config, setConfig] = useState({
     type: 'mixed', // mixed, single, multiple
     langExplanation: 'zh-TW', // zh-TW, en
-    langOutput: 'zh-TW' // zh-TW, en
+    langOutput: 'zh-TW', // zh-TW, en
+    count: 10 // default count
   });
 
   const getPromptText = () => {
@@ -21,7 +22,7 @@ export const AIPromptGuide: React.FC = () => {
     const explainerLang = config.langExplanation === 'zh-TW' ? '繁體中文' : 'English';
     const outputLang = config.langOutput === 'zh-TW' ? '繁體中文' : 'English';
 
-    return `請扮演專業的教學專家。根據我提供的內容，生成 [數量] 題選擇題。
+    return `請扮演專業的教學專家。根據我提供的內容，生成 ${config.count} 題選擇題。
 ⚠️ 內容規範：
  * 題目 (question): 應著重於理解與應用。
  * 類型: ${typeInstruction}
@@ -85,6 +86,20 @@ export const AIPromptGuide: React.FC = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {/* Question Type */}
+          <div className="space-y-4">
+            <label className="flex items-center gap-2 text-sm font-bold text-slate-500 uppercase tracking-wider">
+              <Settings2 size={16} /> 題目數量
+            </label>
+            <input 
+              type="number" 
+              min="1" 
+              max="100"
+              value={config.count}
+              onChange={(e) => setConfig({ ...config, count: Math.max(1, parseInt(e.target.value) || 1) })}
+              className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-bold text-lg text-slate-700"
+            />
+          </div>
+
           <div className="space-y-4">
             <label className="flex items-center gap-2 text-sm font-bold text-slate-500 uppercase tracking-wider">
               <FileText size={16} /> 題目類型

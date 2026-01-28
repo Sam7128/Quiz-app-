@@ -24,6 +24,7 @@ export interface BankMetadata {
   name: string;
   createdAt: number;
   questionCount: number;
+  description?: string;
 }
 
 export type AppView = 'dashboard' | 'quiz' | 'mistakes' | 'manager' | 'guide';
@@ -34,5 +35,6 @@ export interface QuizState {
   totalQuestions: number;
   isFinished: boolean;
   activeQuestions: Question[];
-  mode: 'random' | 'mistake';
+  mode: 'random' | 'mistake' | 'retry_session'; // Added retry_session
+  wrongQuestionIds: string[]; // Track session mistakes
 }

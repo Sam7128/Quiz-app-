@@ -22,14 +22,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onStartQuiz, 
   onStartMistakes 
 }) => {
-  const [quizSize, setQuizSize] = React.useState<number | 'all'>(20);
+  const [quizSize, setQuizSize] = React.useState<number | 'all' | 'custom'>(20);
+  const [customSize, setCustomSize] = React.useState<string>('10');
   const totalQuestions = questions.length;
-  const mistakeCount = Object.keys(mistakeLog).length;
   
-  // Calculate mastery based on the CURRENT active pool
-  // Filter mistake log to only include mistakes relevant to current pool?
-  // Or just global mistakes? 
-  // Let's stick to global mistakes count intersecting with current pool IDs for accuracy.
   const currentPoolIds = new Set(questions.map(q => String(q.id)));
   const relevantMistakes = Object.keys(mistakeLog).filter(id => currentPoolIds.has(id)).length;
 
@@ -40,7 +36,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const COLORS = ['#10b981', '#ef4444'];
 
   const handleStartQuiz = () => {
-    const count = quizSize === 'all' ? totalQuestions : Math.min(quizSize, totalQuestions);
+    let count = totalQuestions;
+    if (quizSize === 'all') {
+      count = totalQuestions;
+    } else if (quizSize === 'custom') {
+      const parsed = parseInt(customSize);
+      count = Math.min(Math.max(1, isNaN(parsed) ? 10 : parsed), totalQuestions);
+    } else {
+      count = Math.min(quizSize, totalQuestions);
+    }
     onStartQuiz(count);
   };
 
@@ -59,15 +63,26 @@ export const Dashboard: React.FC<DashboardProps> = ({
              <span className="text-xs font-bold text-slate-400 ml-2 uppercase tracking-wider">題數</span>
              <select 
                value={quizSize} 
-               onChange={(e) => setQuizSize(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-               className="bg-white border-none text-slate-700 text-sm font-semibold rounded-lg focus:ring-0 cursor-pointer pr-8"
+               onChange={(e) => setQuizSize(e.target.value === 'all' || e.target.value === 'custom' ? e.target.value : Number(e.target.value))}
+               className="bg-white border-none text-slate-700 text-sm font-semibold rounded-lg focus:ring-0 cursor-pointer pr-2 py-1.5"
              >
                <option value={10}>10 題</option>
                <option value={20}>20 題</option>
                <option value={30}>30 題</option>
                <option value={50}>50 題</option>
                <option value="all">全部</option>
+               <option value="custom">自訂...</option>
              </select>
+             {quizSize === 'custom' && (
+               <input 
+                 type="number"
+                 min="1"
+                 placeholder="輸入數量"
+                 value={customSize}
+                 onChange={(e) => setCustomSize(e.target.value)}
+                 className="w-24 bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
+               />
+             )}
            </div>
            <button 
              onClick={handleStartQuiz}

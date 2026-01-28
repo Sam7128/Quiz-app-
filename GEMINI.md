@@ -56,7 +56,7 @@ The application uses a **Serverless/Local-First** architecture.
     *   `Dashboard.tsx`: Home screen, bank selection.
     *   `QuizCard.tsx`: The actual quiz interface.
     *   `BankManager.tsx`: CRUD for banks and JSON import/export logic.
-    *   `AIPromptGuide.tsx`: Static view with AI prompts.
+    *   `AIPromptGuide.tsx`: Dynamic AI Prompt Builder with configurable options (type, language).
 *   `services/`: Business logic.
     *   `storage.ts`: The "backend" (CRUD operations for localStorage).
 *   `types.ts`: TypeScript definitions (Schema).
@@ -66,3 +66,7 @@ The application uses a **Serverless/Local-First** architecture.
 *   **No Backend API:** Do not assume existence of a `/api` endpoint. All data is local.
 *   **JSON Strictness:** The `BankManager` implies strict JSON structure for imports. When debugging import issues, check `BankManager.tsx`'s validation logic.
 *   **Tailwind:** Use Tailwind classes for styling changes.
+
+## 7. Recent Changes (v0.1.1)
+*   **Dashboard:** Removed the 20-question limit for quizzes.
+*   **AIPromptGuide:** Upgraded to a dynamic form allowing users to customize question types (single/mixed/multiple) and output languages.
