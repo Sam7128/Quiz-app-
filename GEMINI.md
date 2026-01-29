@@ -67,6 +67,8 @@ The application uses a **Serverless/Local-First** architecture.
 *   **JSON Strictness:** The `BankManager` implies strict JSON structure for imports. When debugging import issues, check `BankManager.tsx`'s validation logic.
 *   **Tailwind:** Use Tailwind classes for styling changes.
 
-## 7. Recent Changes (v0.1.1)
-*   **Dashboard:** Removed the 20-question limit for quizzes.
-*   **AIPromptGuide:** Upgraded to a dynamic form allowing users to customize question types (single/mixed/multiple) and output languages.
+## 7. Recent Changes (v0.2.0)
+*   **AI Tutor Expansion**: Integrated Google GenAI SDK with support for Gemma 3/Gemini models. Added `AIHelper` component to provide contextual help during quizzes.
+*   **Social Sharing**: Implemented a friendship system and direct bank sharing feature via Supabase. Users can now send their question banks directly to friends.
+*   **Settings System**: Added a centralized Settings modal for API Key and model configuration.
+*   **Dashboard**: Added "Share" action to bank cards.

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Question, MistakeLog, BankMetadata } from '../types';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { BookOpen, AlertTriangle, Zap, CheckSquare, Square, Layers } from 'lucide-react';
+import { BookOpen, AlertTriangle, Zap, CheckSquare, Square, Layers, Share2 } from 'lucide-react';
 
 interface DashboardProps {
   questions: Question[]; // Combined questions
@@ -11,6 +11,7 @@ interface DashboardProps {
   onToggleBank: (id: string) => void;
   onStartQuiz: (count: number) => void;
   onStartMistakes: () => void;
+  onShareBank: (bank: BankMetadata) => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ 
@@ -20,7 +21,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
   selectedBankIds,
   onToggleBank,
   onStartQuiz, 
-  onStartMistakes 
+  onStartMistakes,
+  onShareBank
 }) => {
   const [quizSize, setQuizSize] = React.useState<number | 'all' | 'custom'>(20);
   const [customSize, setCustomSize] = React.useState<string>('10');
@@ -136,6 +138,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       <div className="text-xs text-slate-400">{bank.questionCount} 題</div>
                     </div>
                   </div>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onShareBank(bank);
+                    }}
+                    className="p-2 text-slate-300 hover:text-brand-500 hover:bg-white rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                  >
+                    <Share2 size={16} />
+                  </button>
                 </div>
               );
             })}

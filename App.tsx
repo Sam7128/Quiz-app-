@@ -22,8 +22,11 @@ import { QuizCard } from './components/QuizCard';
 import { BankManager } from './components/BankManager';
 import { AIPromptGuide } from './components/AIPromptGuide';
 import { Login } from './components/Login';
+import { Settings as SettingsModal } from './components/Settings';
+import { Social } from './components/Social';
+import { ShareModal } from './components/ShareModal';
 import { useAuth } from './contexts/AuthContext';
-import { BrainCircuit, LayoutDashboard, FileText, Settings, X, RotateCcw, User as UserIcon } from 'lucide-react';
+import { BrainCircuit, LayoutDashboard, FileText, Settings, X, RotateCcw, User as UserIcon, Users } from 'lucide-react';
 
 // Fisher-Yates Shuffle
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -39,6 +42,8 @@ const App: React.FC = () => {
   const { user, loading, signOut } = useAuth();
   const [view, setView] = useState<AppView>('dashboard');
   const [guestMode, setGuestMode] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [sharingBank, setSharingBank] = useState<BankMetadata | null>(null);
   
   // Bank Management State
   const [banks, setBanks] = useState<BankMetadata[]>([]);
@@ -270,6 +275,7 @@ const App: React.FC = () => {
           onToggleBank={handleToggleQuizBank}
           onStartQuiz={(n) => startQuiz(Math.min(n, quizPoolQuestions.length), 'random')}
           onStartMistakes={() => startQuiz(20, 'mistake')} 
+          onShareBank={(bank) => setSharingBank(bank)}
         />;
       case 'manager':
         return <BankManager 
@@ -281,12 +287,19 @@ const App: React.FC = () => {
           onMistakesUpdate={() => setMistakeLog(getMistakeLog())}
         />;
       case 'guide': return <AIPromptGuide />;
+      case 'social': return <Social />;
       default: return <div>Not Found</div>;
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
+      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+      <ShareModal 
+        isOpen={sharingBank !== null} 
+        onClose={() => setSharingBank(null)} 
+        bank={sharingBank} 
+      />
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => setView('dashboard')}>
@@ -302,6 +315,8 @@ const App: React.FC = () => {
             <button onClick={() => setView('dashboard')} className={`font-medium text-sm ${view === 'dashboard' ? 'text-brand-600' : 'text-slate-500 hover:text-slate-800'}`}>首頁</button>
             <button onClick={() => setView('manager')} className={`font-medium text-sm ${view === 'manager' ? 'text-brand-600' : 'text-slate-500 hover:text-slate-800'}`}>題庫管理</button>
             <button onClick={() => setView('guide')} className={`font-medium text-sm ${view === 'guide' ? 'text-brand-600' : 'text-slate-500 hover:text-slate-800'}`}>AI 指引</button>
+            <button onClick={() => setView('social')} className={`font-medium text-sm ${view === 'social' ? 'text-brand-600' : 'text-slate-500 hover:text-slate-800'}`}>社交</button>
+            <button onClick={() => setIsSettingsOpen(true)} className="p-2 text-slate-400 hover:text-brand-600 transition-colors"><Settings size={20} /></button>
             <div className="h-4 w-px bg-slate-200 mx-2"></div>
             {user ? (
               <div className="flex items-center gap-3">
@@ -321,6 +336,7 @@ const App: React.FC = () => {
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 flex justify-around z-50 safe-area-bottom">
         <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'dashboard' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><LayoutDashboard size={20} /><span className="text-[10px] font-medium">首頁</span></button>
         <button onClick={() => setView('manager')} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'manager' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><Settings size={20} /><span className="text-[10px] font-medium">管理</span></button>
+        <button onClick={() => setView('social')} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'social' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><Users size={20} /><span className="text-[10px] font-medium">社交</span></button>
         <button onClick={() => setView('guide')} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'guide' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><FileText size={20} /><span className="text-[10px] font-medium">指引</span></button>
       </div>
     </div>

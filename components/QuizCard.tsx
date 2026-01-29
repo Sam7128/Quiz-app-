@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import useSound from 'use-sound';
 import { Question } from '../types';
 import { Lightbulb, CheckCircle, XCircle, ArrowRight, CheckSquare, Square, Volume2, VolumeX } from 'lucide-react';
+import { AIHelper } from './AIHelper';
 
 interface QuizCardProps {
   question: Question;
@@ -190,6 +191,8 @@ export const QuizCard: React.FC<QuizCardProps> = ({
                   >
                     {soundEnabled ? <Volume2 size={16}/> : <VolumeX size={16}/>}
                   </button>
+                  <div className="h-4 w-px bg-slate-200 mx-1"></div>
+                  <AIHelper question={question} userAnswer={selectedOptions} />
               </div>
               
               {question.hint && (

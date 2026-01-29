@@ -3,6 +3,15 @@
 此文件用於追蹤專案開發進度、待辦事項與已完成項目。
 
 ## 🟢 已完成 (Done)
+- [x] **[AI]** 實作 Gemma 3 27B 解題小助手
+    - [x] API Key 配置介面 (Settings.tsx)
+    - [x] QuizCard 整合 AI 詢問按鈕 (AIHelper.tsx)
+    - [x] 串接 LLM API (@google/genai)
+    - [x] 撰寫 `配置示範.md`
+- [x] **[Social]** 實作好友與題庫分享功能
+    - [x] 好友系統 (新增/列表/邀請) (Social.tsx)
+    - [x] 題庫傳送與接收 (Inbox / ShareModal.tsx)
+    - [x] Supabase Schema 更新 (supabase_social_migration.sql)
 - [x] **[UX]** 實作 Quiz UX 優化 (動畫/音效/錯誤解析) `quiz-ux-enhancement`
 - [x] **[Backend]** 實作 Supabase 雲端遷移 `supabase-cloud-sync`
 - [x] 建立檢查清單文件 (CHECKLIST.md)
@@ -17,6 +26,7 @@
 - [x] 實作雲端同步邏輯 (Local -> Cloud Migration)
 - [x] 優化 QuizCard 動態反饋與解析 UI
 - [x] **[UI/UX]** 修復手機端登入頁面捲動鎖死與底部導航遮擋問題 (Mobile Layout Fixes)
+
 
 
 ## 📝 備註 (Notes)
