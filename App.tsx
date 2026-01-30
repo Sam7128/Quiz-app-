@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AppView, Question, QuizState, BankMetadata } from './types';
+import { AppView, Question, QuizState, BankMetadata, Folder } from './types';
 import { 
   getQuestions, 
   saveQuestions, 
@@ -9,7 +9,13 @@ import {
   getBanksMeta,
   getCurrentBankId,
   setCurrentBankId,
-  createBank
+  createBank,
+  getFolders,
+  createFolder,
+  deleteFolder,
+  moveBankToFolder,
+  getBankFolderMap,
+  updateBankFolder
 } from './services/storage';
 import { 
     getCloudBanks, 
@@ -45,8 +51,9 @@ const App: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [sharingBank, setSharingBank] = useState<BankMetadata | null>(null);
   
-  // Bank Management State
+  // Bank & Folder Management State
   const [banks, setBanks] = useState<BankMetadata[]>([]);
+  const [folders, setFolders] = useState<Folder[]>([]);
   const [editingBankId, setEditingBankId] = useState<string | null>(null);
   
   // Data State
@@ -65,30 +72,58 @@ const App: React.FC = () => {
     mode: 'random'
   });
 
+  // Refresh helper (Consolidated Logic)
+  const refreshBanksData = async () => {
+    let latest: BankMetadata[] = [];
+    
+    if (user) {
+        latest = await getCloudBanks();
+        // Check for first-time sync opportunity
+        const localMeta = getBanksMeta();
+        if (localMeta.length > 0 && latest.length === 0) {
+             // Avoid infinite loop by checking a flag or just asking once per session
+             // For simplicity, we just ask. In a real app, use a session flag.
+             if (window.confirm('偵測到您在本地端有題庫，但雲端是空的。是否要將本地題庫上傳至雲端同步？')) {
+                await syncLocalToCloud(localMeta);
+                latest = await getCloudBanks();
+                localStorage.removeItem('mindspark_banks_meta'); // Clear local meta after sync to avoid confusion? Or keep as backup. 
+                // Let's keep backup but maybe clear the prompt condition.
+                // Actually, the prompt condition (local > 0 && cloud == 0) will naturally become false after sync.
+                alert('同步完成！');
+            }
+        }
+    } else {
+        latest = getBanksMeta();
+    }
+    
+    // Apply local folder map overlay (CRITICAL for persistence across reloads)
+    const folderMap = getBankFolderMap();
+    latest = latest.map(b => ({
+      ...b,
+      folderId: folderMap[b.id] || b.folderId
+    }));
+
+    setBanks(latest);
+    setFolders(getFolders());
+    
+    // Update selection if needed (preserve selection if possible)
+    setSelectedQuizBankIds(prev => {
+        const validIds = latest.map(b => b.id);
+        const newSelection = prev.filter(id => validIds.includes(id));
+        return newSelection.length > 0 ? newSelection : (latest.length > 0 ? [latest[0].id] : []);
+    });
+    
+    return latest;
+  };
+
   // Initialization: Auth & Initial Banks
   useEffect(() => {
     if (loading) return;
 
-    const initData = async () => {
-      let loadedBanks: BankMetadata[] = [];
+    const init = async () => {
+      const loadedBanks = await refreshBanksData();
       
-      if (user) {
-        loadedBanks = await getCloudBanks();
-        const localMeta = getBanksMeta();
-        if (localMeta.length > 0 && loadedBanks.length === 0) {
-            if (window.confirm('偵測到您在本地端有題庫，但雲端是空的。是否要將本地題庫上傳至雲端同步？')) {
-                await syncLocalToCloud(localMeta);
-                loadedBanks = await getCloudBanks();
-                localStorage.clear(); 
-                alert('同步完成！');
-            }
-        }
-      } else {
-        loadedBanks = getBanksMeta();
-      }
-
-      setBanks(loadedBanks);
-
+      // Set initial selection if empty
       let defaultId = getCurrentBankId();
       if (!defaultId || !loadedBanks.find(b => b.id === defaultId)) {
         defaultId = loadedBanks.length > 0 ? loadedBanks[0].id : null;
@@ -97,40 +132,26 @@ const App: React.FC = () => {
       if (defaultId) {
         setEditingBankId(defaultId);
         setCurrentBankId(defaultId);
-        setSelectedQuizBankIds([defaultId]);
+        // setSelectedQuizBankIds is handled in refreshBanksData
       }
     };
 
-    initData();
+    init();
   }, [loading, user]);
 
-  // Load Questions for Dashboard & Manager
-  useEffect(() => {
-    const loadQuestions = async () => {
-        if (loading) return;
+  const handleCreateFolder = (name: string) => {
+    createFolder(name);
+    refreshBanksData();
+  };
 
-        // Load Quiz Pool
-        const pool: Question[] = [];
-        for (const id of selectedQuizBankIds) {
-            const qs = user ? await getCloudQuestions(id) : getQuestions(id);
-            pool.push(...qs);
-        }
-        setQuizPoolQuestions(pool);
+  const handleDeleteFolder = (id: string) => {
+    deleteFolder(id);
+    refreshBanksData();
+  };
 
-        // Load Editing Bank
-        if (editingBankId) {
-            const qs = user ? await getCloudQuestions(editingBankId) : getQuestions(editingBankId);
-            setEditingQuestions(qs);
-        }
-    };
-    loadQuestions();
-  }, [selectedQuizBankIds, editingBankId, user, loading, banks]);
-
-  // Refresh helper
-  const refreshBanksData = async () => {
-    const latest = user ? await getCloudBanks() : getBanksMeta();
-    setBanks(latest);
-    setSelectedQuizBankIds(prev => prev.filter(id => latest.find(b => b.id === id)));
+  const handleMoveBank = async (bankId: string, folderId: string | undefined) => {
+    updateBankFolder(bankId, folderId);
+    await refreshBanksData();
   };
 
   const handleEditingBankChange = (id: string) => {
@@ -271,11 +292,15 @@ const App: React.FC = () => {
           questions={quizPoolQuestions} 
           mistakeLog={mistakeLog} 
           banks={banks}
+          folders={folders}
           selectedBankIds={selectedQuizBankIds}
           onToggleBank={handleToggleQuizBank}
           onStartQuiz={(n) => startQuiz(Math.min(n, quizPoolQuestions.length), 'random')}
           onStartMistakes={() => startQuiz(20, 'mistake')} 
           onShareBank={(bank) => setSharingBank(bank)}
+          onCreateFolder={handleCreateFolder}
+          onDeleteFolder={handleDeleteFolder}
+          onMoveBank={handleMoveBank}
         />;
       case 'manager':
         return <BankManager 

@@ -3,6 +3,13 @@
 此文件用於追蹤專案開發進度、待辦事項與已完成項目。
 
 ## 🟢 已完成 (Done)
+- [x] **[Feature]** 整合 NVIDIA API 與題庫資料夾系統 `integrate-nvidia-and-folders`
+    - [x] [AI] 安裝並配置 OpenAI Client
+    - [x] [AI] 重構 `ai.ts` 支援多重 Provider (Google/NVIDIA)
+    - [x] [AI] 更新 `Settings.tsx` 支援 BaseURL 與 Provider 切換
+    - [x] [Core] 更新 `types.ts` 定義 Folder 結構
+    - [x] [Storage] 實作 Folder CRUD 與關聯邏輯
+    - [x] [UI] 更新 Dashboard 支援資料夾瀏覽與操作 (麵包屑/移動)
 - [x] **[AI]** 實作 Gemma 3 27B 解題小助手
     - [x] API Key 配置介面 (Settings.tsx)
     - [x] QuizCard 整合 AI 詢問按鈕 (AIHelper.tsx)

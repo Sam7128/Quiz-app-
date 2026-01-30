@@ -19,12 +19,19 @@ export interface MistakeLog {
   [questionId: string]: MistakeLogEntry;
 }
 
+export interface Folder {
+  id: string;
+  name: string;
+  createdAt: number;
+}
+
 export interface BankMetadata {
   id: string;
   name: string;
   createdAt: number;
   questionCount: number;
   description?: string;
+  folderId?: string; // Optional reference to a parent folder
 }
 
 export type AppView = 'dashboard' | 'quiz' | 'mistakes' | 'manager' | 'guide' | 'social';
@@ -40,8 +47,10 @@ export interface QuizState {
 }
 
 export interface AIConfig {
+  provider: 'google' | 'nvidia';
   apiKey: string;
   model: string;
+  baseUrl?: string;
 }
 
 export interface UserProfile {
