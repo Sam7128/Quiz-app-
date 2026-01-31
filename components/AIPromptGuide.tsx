@@ -76,18 +76,18 @@ export const AIPromptGuide: React.FC = () => {
       </div>
 
       {/* Configurator Card */}
-      <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 mb-8">
+      <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 p-8 mb-8">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+          <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg">
             <Settings2 size={24} />
           </div>
-          <h3 className="text-xl font-bold text-slate-800">提示詞自定義設定</h3>
+          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">提示詞自定義設定</h3>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {/* Question Type */}
           <div className="space-y-4">
-            <label className="flex items-center gap-2 text-sm font-bold text-slate-500 uppercase tracking-wider">
+            <label className="flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               <Settings2 size={16} /> 題目數量
             </label>
             <input 
@@ -96,12 +96,12 @@ export const AIPromptGuide: React.FC = () => {
               max="100"
               value={config.count}
               onChange={(e) => setConfig({ ...config, count: Math.max(1, parseInt(e.target.value) || 1) })}
-              className="w-full p-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-bold text-lg text-slate-700"
+              className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-bold text-lg text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700"
             />
           </div>
 
           <div className="space-y-4">
-            <label className="flex items-center gap-2 text-sm font-bold text-slate-500 uppercase tracking-wider">
+            <label className="flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               <FileText size={16} /> 題目類型
             </label>
             <div className="flex flex-col gap-2">
@@ -126,7 +126,7 @@ export const AIPromptGuide: React.FC = () => {
 
           {/* Explanation Language */}
           <div className="space-y-4">
-            <label className="flex items-center gap-2 text-sm font-bold text-slate-500 uppercase tracking-wider">
+            <label className="flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               <Globe size={16} /> 詳解語言
             </label>
             <div className="flex flex-col gap-2">
@@ -152,7 +152,7 @@ export const AIPromptGuide: React.FC = () => {
 
           {/* Output Language */}
           <div className="space-y-4">
-            <label className="flex items-center gap-2 text-sm font-bold text-slate-500 uppercase tracking-wider">
+            <label className="flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               <Globe size={16} /> 輸出語言
             </label>
             <div className="flex flex-col gap-2">
@@ -180,9 +180,9 @@ export const AIPromptGuide: React.FC = () => {
 
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-6">
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg flex items-center gap-2">
                 <span className="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
                 複製提示詞 (Prompt)
               </h3>
@@ -201,12 +201,12 @@ export const AIPromptGuide: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-            <h3 className="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
-              <span className="bg-indigo-100 text-indigo-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg mb-4 flex items-center gap-2">
+              <span className="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
               生成與存檔
             </h3>
-            <div className="prose text-slate-600 text-sm">
+            <div className="prose dark:prose-invert text-slate-600 dark:text-slate-400 text-sm">
               <p>將提示詞貼到你的 AI 聊天室中，然後在下方貼上你的學習筆記。</p>
               <p className="mt-2">AI 會回傳一段 JSON 代碼。複製該代碼，存為 <code>.json</code> 檔案（例如 <code>history.json</code>），然後在「題庫管理」中上傳。</p>
             </div>
@@ -221,9 +221,9 @@ export const AIPromptGuide: React.FC = () => {
              </p>
           </div>
           
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-             <h4 className="font-bold text-slate-800 mb-4">支援的模型</h4>
-             <ul className="space-y-3 text-sm text-slate-600">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm">
+             <h4 className="font-bold text-slate-800 dark:text-slate-100 mb-4">支援的模型</h4>
+             <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-400">
                <li className="flex items-center gap-2">
                  <div className="w-2 h-2 rounded-full bg-green-500"></div> ChatGPT (GPT-4o)
                </li>
@@ -240,3 +240,5 @@ export const AIPromptGuide: React.FC = () => {
     </div>
   );
 };
+
+export default React.memo(AIPromptGuide);

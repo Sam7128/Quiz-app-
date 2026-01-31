@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Question, BankMetadata } from '../types';
+import { Question, BankMetadata, SpacedRepetitionItem } from '../types';
 
 /**
  * Cloud Storage Service (Supabase)
@@ -21,7 +21,8 @@ export const getCloudBanks = async (): Promise<BankMetadata[]> => {
     name: bank.title,
     createdAt: new Date(bank.created_at).getTime(),
     questionCount: bank.questions?.[0]?.count || 0,
-    description: bank.description
+    description: bank.description,
+    folderId: bank.folder_id ?? undefined
   }));
 };
 
@@ -53,6 +54,15 @@ export const deleteCloudBank = async (bankId: string) => {
     .eq('id', bankId);
   
   if (error) console.error('Error deleting cloud bank:', error);
+};
+
+export const updateCloudBankFolder = async (bankId: string, folderId: string | undefined) => {
+  const { error } = await supabase
+    .from('banks')
+    .update({ folder_id: folderId || null })
+    .eq('id', bankId);
+
+  if (error) console.error('Error updating cloud bank folder:', error);
 };
 
 export const getCloudQuestions = async (bankId: string): Promise<Question[]> => {
@@ -103,7 +113,7 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[]) 
  * Migration: Local -> Cloud
  */
 export const syncLocalToCloud = async (localBanks: BankMetadata[]) => {
-    for (const bank of localBanks) {
+    const uploadPromises = localBanks.map(async (bank) => {
         // 1. Create bank in cloud
         const cloudBankId = await createCloudBank(bank.name, bank.description || 'From local storage');
         if (cloudBankId) {
@@ -112,5 +122,103 @@ export const syncLocalToCloud = async (localBanks: BankMetadata[]) => {
             // 3. Save to cloud
             await saveCloudQuestions(cloudBankId, localQuestions);
         }
-    }
+    });
+    await Promise.all(uploadPromises);
+};
+
+/**
+ * Spaced Repetition Cloud Storage
+ */
+
+export const getCloudSpacedRepetition = async (): Promise<SpacedRepetitionItem[]> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from('question_progress')
+    .select('*')
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('Error fetching spaced repetition data:', error);
+    return [];
+  }
+
+  return data.map(item => ({
+    questionId: item.question_id,
+    easinessFactor: Number(item.easiness_factor),
+    interval: item.interval,
+    repetitions: item.repetitions,
+    nextReviewDate: item.next_review_date,
+    lastReviewDate: item.last_review_date || undefined
+  }));
+};
+
+export const saveCloudSpacedRepetition = async (item: SpacedRepetitionItem): Promise<boolean> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+
+  const { error } = await supabase
+    .from('question_progress')
+    .upsert({
+      user_id: user.id,
+      question_id: item.questionId,
+      easiness_factor: item.easinessFactor,
+      interval: item.interval,
+      repetitions: item.repetitions,
+      next_review_date: item.nextReviewDate,
+      last_review_date: item.lastReviewDate || null
+    }, {
+      onConflict: 'user_id,question_id'
+    });
+
+  if (error) {
+    console.error('Error saving spaced repetition data:', error);
+    return false;
+  }
+  return true;
+};
+
+export const batchSaveCloudSpacedRepetition = async (items: SpacedRepetitionItem[]): Promise<boolean> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+
+  const toUpsert = items.map(item => ({
+    user_id: user.id,
+    question_id: item.questionId,
+    easiness_factor: item.easinessFactor,
+    interval: item.interval,
+    repetitions: item.repetitions,
+    next_review_date: item.nextReviewDate,
+    last_review_date: item.lastReviewDate || null
+  }));
+
+  const { error } = await supabase
+    .from('question_progress')
+    .upsert(toUpsert, {
+      onConflict: 'user_id,question_id'
+    });
+
+  if (error) {
+    console.error('Error batch saving spaced repetition data:', error);
+    return false;
+  }
+  return true;
+};
+
+export const deleteCloudSpacedRepetition = async (questionId: string): Promise<boolean> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+
+  const { error } = await supabase
+    .from('question_progress')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('question_id', questionId);
+
+  if (error) {
+    console.error('Error deleting spaced repetition data:', error);
+    return false;
+  }
+  return true;
 };

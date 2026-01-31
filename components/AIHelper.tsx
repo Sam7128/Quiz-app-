@@ -60,7 +60,7 @@ export const AIHelper: React.FC<AIHelperProps> = ({ question, userAnswer }) => {
 
       {/* Chat Panel */}
       {isOpen && createPortal(
-        <div className="fixed inset-x-4 bottom-24 md:inset-auto md:bottom-8 md:right-8 md:w-96 md:h-[600px] max-h-[60vh] md:max-h-[80vh] bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden z-[100] animate-in slide-in-from-bottom-4 duration-300 font-sans">
+        <div className="fixed inset-x-4 bottom-24 md:inset-auto md:bottom-8 md:right-8 md:w-96 md:h-[600px] max-h-[60vh] md:max-h-[80vh] bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden z-[100] animate-in slide-in-from-bottom-4 duration-300 font-sans">
           <div className="p-4 bg-gradient-to-r from-brand-600 to-indigo-600 text-white flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-2 font-bold">
               <Bot size={20} />
@@ -100,29 +100,29 @@ export const AIHelper: React.FC<AIHelperProps> = ({ question, userAnswer }) => {
 
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-white p-3 rounded-2xl rounded-tl-none border border-slate-200 flex items-center gap-2 shadow-sm">
+                <div className="bg-white dark:bg-slate-700 p-3 rounded-2xl rounded-tl-none border border-slate-200 dark:border-slate-600 flex items-center gap-2 shadow-sm">
                   <Loader2 size={16} className="animate-spin text-brand-600" />
-                  <span className="text-xs text-slate-400 font-medium italic">正在思考中...</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500 font-medium italic">正在思考中...</span>
                 </div>
               </div>
             )}
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-100 rounded-xl flex gap-2 text-red-600 items-start">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-xl flex gap-2 text-red-600 dark:text-red-300 items-start">
                 <AlertCircle size={16} className="shrink-0 mt-0.5" />
                 <span className="text-xs font-medium">{error}</span>
               </div>
             )}
           </div>
 
-          <div className="p-4 bg-white border-t border-slate-100">
+          <div className="p-4 bg-white dark:bg-slate-700 border-t border-slate-100 dark:border-slate-700">
             <div className="flex gap-2">
               <input 
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="輸入您的問題..."
-                className="flex-1 bg-slate-100 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-brand-500/20 outline-none"
+                className="flex-1 bg-slate-100 dark:bg-slate-600 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-brand-500/20 outline-none text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400"
               />
               <button 
                 onClick={handleSend}

@@ -1,4 +1,4 @@
-import { Question, MistakeLog, BankMetadata, Folder } from '../types';
+import { Question, MistakeLog, BankMetadata, Folder, SpacedRepetitionItem } from '../types';
 
 const STORAGE_KEYS = {
   LEGACY_BANK: 'mindspark_question_bank', // For migration
@@ -8,11 +8,12 @@ const STORAGE_KEYS = {
   CURRENT_BANK_ID: 'mindspark_current_bank_id',
   FOLDERS: 'mindspark_folders', // New key
   FOLDER_MAP: 'mindspark_bank_folder_map', // Independent map for cloud/local
+  SPACED_REPETITION: 'mindspark_spaced_repetition',
 };
 
 // --- Folder Management ---
 
-export const getBankFolderMap = (): Record<string, string> => {
+export const getBankFolderMap = (): Record<string, string | null> => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.FOLDER_MAP);
     return data ? JSON.parse(data) : {};
@@ -21,16 +22,17 @@ export const getBankFolderMap = (): Record<string, string> => {
   }
 };
 
-export const saveBankFolderMap = (map: Record<string, string>) => {
+export const saveBankFolderMap = (map: Record<string, string | null>) => {
   localStorage.setItem(STORAGE_KEYS.FOLDER_MAP, JSON.stringify(map));
 };
 
 export const updateBankFolder = (bankId: string, folderId: string | undefined) => {
   const map = getBankFolderMap();
-  if (folderId) {
-    map[bankId] = folderId;
-  } else {
+  if (folderId === undefined || folderId === null) {
+    // Remove from map completely when moving to root
     delete map[bankId];
+  } else {
+    map[bankId] = folderId;
   }
   saveBankFolderMap(map);
   
@@ -66,6 +68,15 @@ export const deleteFolder = (folderId: string) => {
   // 1. Delete the folder
   const folders = getFolders().filter(f => f.id !== folderId);
   saveFolders(folders);
+
+  // 1.5 Update folder map to move banks to root
+  const folderMap = getBankFolderMap();
+  Object.keys(folderMap).forEach(bankId => {
+    if (folderMap[bankId] === folderId) {
+      folderMap[bankId] = null;
+    }
+  });
+  saveBankFolderMap(folderMap);
 
   // 2. Move banks in this folder back to root (remove folderId)
   const banks = getBanksMeta();
@@ -221,4 +232,47 @@ export const removeMistake = (questionId: string | number) => {
 
 export const clearMistakes = () => {
   localStorage.removeItem(STORAGE_KEYS.MISTAKES);
+};
+
+// --- Spaced Repetition (Local Storage) ---
+
+export const getSpacedRepetition = (): Record<string, SpacedRepetitionItem> => {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.SPACED_REPETITION);
+    return data ? JSON.parse(data) : {};
+  } catch (e) {
+    console.error('Failed to get spaced repetition data', e);
+    return {};
+  }
+};
+
+export const saveSpacedRepetitionItem = (item: SpacedRepetitionItem): void => {
+  try {
+    const data = getSpacedRepetition();
+    data[item.questionId] = item;
+    localStorage.setItem(STORAGE_KEYS.SPACED_REPETITION, JSON.stringify(data));
+  } catch (e) {
+    console.error('Failed to save spaced repetition item', e);
+  }
+};
+
+export const getSpacedRepetitionItem = (questionId: string): SpacedRepetitionItem | null => {
+  const data = getSpacedRepetition();
+  return data[questionId] || null;
+};
+
+export const deleteSpacedRepetitionItem = (questionId: string): void => {
+  try {
+    const data = getSpacedRepetition();
+    if (data[questionId]) {
+      delete data[questionId];
+      localStorage.setItem(STORAGE_KEYS.SPACED_REPETITION, JSON.stringify(data));
+    }
+  } catch (e) {
+    console.error('Failed to delete spaced repetition item', e);
+  }
+};
+
+export const clearSpacedRepetition = (): void => {
+  localStorage.removeItem(STORAGE_KEYS.SPACED_REPETITION);
 };

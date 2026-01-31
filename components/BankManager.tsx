@@ -3,6 +3,7 @@ import { Question, BankMetadata } from '../types';
 import { Upload, Download, Trash2, AlertCircle, Plus, FileJson, FileText, Check, FolderOpen, Loader2 } from 'lucide-react';
 import { saveQuestions, clearMistakes, getBanksMeta, createBank, deleteBank } from '../services/storage';
 import { useAuth } from '../contexts/AuthContext';
+import { SkeletonLoader } from './SkeletonLoader';
 import { 
     getCloudBanks, 
     createCloudBank, 
@@ -156,18 +157,18 @@ export const BankManager: React.FC<BankManagerProps> = ({
   return (
     <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 h-[calc(100vh-8rem)] relative">
       {loading && (
-          <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-50 flex items-center justify-center rounded-3xl">
+          <div className="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[2px] z-50 flex items-center justify-center rounded-3xl">
               <div className="flex flex-col items-center gap-3">
-                  <Loader2 className="text-brand-600 animate-spin" size={40} />
-                  <p className="text-sm font-bold text-slate-500">正在處理雲端資料...</p>
+                  <SkeletonLoader width="40px" height="40px" count={1} />
+                  <p className="text-sm font-bold text-slate-500 dark:text-slate-400">正在處理雲端資料...</p>
               </div>
           </div>
       )}
       
       {/* Left Sidebar: Bank List */}
-      <div className="md:col-span-4 flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden h-full">
-        <div className="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-          <h3 className="font-bold text-slate-700">我的題庫 ({banks.length})</h3>
+      <div className="md:col-span-4 flex flex-col bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden h-full">
+        <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 flex justify-between items-center">
+          <h3 className="font-bold text-slate-700 dark:text-slate-200">我的題庫 ({banks.length})</h3>
           <button 
             onClick={() => setIsCreating(true)} 
             className="p-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
@@ -178,12 +179,12 @@ export const BankManager: React.FC<BankManagerProps> = ({
         </div>
 
         {isCreating && (
-          <div className="p-3 bg-brand-50 border-b border-brand-100 animate-in fade-in slide-in-from-top-2">
+          <div className="p-3 bg-brand-50 dark:bg-brand-900/30 border-b border-brand-100 dark:border-brand-800 animate-in fade-in slide-in-from-top-2">
             <input 
               autoFocus
               type="text" 
               placeholder="輸入題庫名稱..." 
-              className="w-full p-2 border border-brand-200 rounded-lg text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="w-full p-2 border border-brand-200 dark:border-brand-800 rounded-lg text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
               value={newBankName}
               onChange={(e) => setNewBankName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleCreateBank()}
@@ -197,7 +198,7 @@ export const BankManager: React.FC<BankManagerProps> = ({
 
         <div className="flex-1 overflow-y-auto p-2 space-y-1">
           {banks.length === 0 && !isCreating && (
-            <div className="text-center py-10 text-slate-400 text-sm">
+            <div className="text-center py-10 text-slate-400 dark:text-slate-500 text-sm">
               <FolderOpen size={32} className="mx-auto mb-2 opacity-50" />
               尚未建立題庫<br/>請點擊「+」新增
             </div>
@@ -209,15 +210,15 @@ export const BankManager: React.FC<BankManagerProps> = ({
               onClick={() => onBankChange(bank.id)}
               className={`group flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all ${
                 currentBankId === bank.id 
-                  ? 'bg-brand-50 border-brand-200 shadow-sm ring-1 ring-brand-200' 
-                  : 'hover:bg-slate-50 border border-transparent'
+                  ? 'bg-brand-50 dark:bg-brand-900/30 border-brand-200 dark:border-brand-800 shadow-sm ring-1 ring-brand-200 dark:ring-brand-800' 
+                  : 'hover:bg-slate-50 dark:hover:bg-slate-700 border border-transparent'
               }`}
             >
               <div className="flex-1 min-w-0">
-                <div className={`font-medium truncate ${currentBankId === bank.id ? 'text-brand-900' : 'text-slate-700'}`}>
+                <div className={`font-medium truncate ${currentBankId === bank.id ? 'text-brand-900 dark:text-brand-300' : 'text-slate-700 dark:text-slate-300'}`}>
                   {bank.name}
                 </div>
-                <div className="text-xs text-slate-400">
+                <div className="text-xs text-slate-400 dark:text-slate-500">
                   {bank.questionCount} 題
                 </div>
               </div>
@@ -239,23 +240,23 @@ export const BankManager: React.FC<BankManagerProps> = ({
       {/* Right Content: Actions */}
       <div className="md:col-span-8 flex flex-col gap-6 overflow-y-auto">
         {!currentBankId ? (
-           <div className="flex-1 flex flex-col items-center justify-center text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl p-10">
+           <div className="flex-1 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-10">
              <p>請先在左側選擇一個題庫</p>
            </div>
         ) : (
           <>
             {/* Import Section */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-              <div className="flex border-b border-slate-100">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+              <div className="flex border-b border-slate-100 dark:border-slate-700">
                 <button 
                   onClick={() => setActiveTab('upload')}
-                  className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 ${activeTab === 'upload' ? 'bg-white text-brand-600 border-b-2 border-brand-600' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}`}
+                  className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 ${activeTab === 'upload' ? 'bg-white dark:bg-slate-800 text-brand-600 border-b-2 border-brand-600' : 'bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-600'}`}
                 >
                   <FileJson size={18} /> 上傳 JSON 檔案
                 </button>
                 <button 
                   onClick={() => setActiveTab('paste')}
-                  className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 ${activeTab === 'paste' ? 'bg-white text-brand-600 border-b-2 border-brand-600' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}`}
+                  className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 ${activeTab === 'paste' ? 'bg-white dark:bg-slate-800 text-brand-600 border-b-2 border-brand-600' : 'bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-600'}`}
                 >
                   <FileText size={18} /> 貼上文字 (Paste)
                 </button>
@@ -263,11 +264,11 @@ export const BankManager: React.FC<BankManagerProps> = ({
 
               <div className="p-6">
                 {activeTab === 'upload' ? (
-                  <div className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
-                    <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-3">
+                  <div className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mb-3">
                       <Upload size={24} />
                     </div>
-                    <p className="text-slate-600 mb-4">點擊選擇或拖曳 JSON 檔案至此</p>
+                    <p className="text-slate-600 dark:text-slate-400 mb-4">點擊選擇或拖曳 JSON 檔案至此</p>
                     <label className="cursor-pointer bg-brand-600 hover:bg-brand-700 text-white py-2 px-6 rounded-lg transition-colors shadow-sm">
                       <span>選擇檔案</span>
                       <input type="file" className="hidden" accept=".json" onChange={handleFileUpload} />
@@ -279,7 +280,7 @@ export const BankManager: React.FC<BankManagerProps> = ({
                       value={jsonText}
                       onChange={(e) => setJsonText(e.target.value)}
                       placeholder='在此貼上 AI 生成的 JSON 代碼... [{"question": "...", ...}]'
-                      className="w-full h-48 p-4 border border-slate-200 rounded-xl font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none"
+                      className="w-full h-48 p-4 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
                     />
                     <button 
                       onClick={handlePasteImport}
@@ -292,7 +293,7 @@ export const BankManager: React.FC<BankManagerProps> = ({
                 )}
 
                 {error && (
-                  <div className="mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+                  <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 text-sm rounded-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
                     <AlertCircle size={16} />
                     {error}
                   </div>
@@ -302,17 +303,17 @@ export const BankManager: React.FC<BankManagerProps> = ({
 
             {/* Bottom Actions */}
             <div className="grid grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center text-center">
-                <h4 className="font-bold text-slate-700 mb-2">匯出此題庫</h4>
-                <p className="text-xs text-slate-400 mb-4">備份或分享目前選中的題庫</p>
-                <button onClick={handleExport} className="flex items-center gap-2 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+              <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center text-center">
+                <h4 className="font-bold text-slate-700 dark:text-slate-200 mb-2">匯出此題庫</h4>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">備份或分享目前選中的題庫</p>
+                <button onClick={handleExport} className="flex items-center gap-2 text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                   <Download size={16} /> 下載 .JSON
                 </button>
               </div>
 
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center text-center">
-                <h4 className="font-bold text-slate-700 mb-2">清除錯題記錄</h4>
-                <p className="text-xs text-slate-400 mb-4">只清除錯題狀態，保留題目</p>
+              <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center text-center">
+                <h4 className="font-bold text-slate-700 dark:text-slate-200 mb-2">清除錯題記錄</h4>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">只清除錯題狀態，保留題目</p>
                 <button 
                   onClick={() => { 
                     if(confirm("確定清除錯題記錄？")) {
@@ -321,7 +322,7 @@ export const BankManager: React.FC<BankManagerProps> = ({
                       alert("錯題記錄已清除！");
                     }
                   }} 
-                  className="flex items-center gap-2 text-red-600 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  className="flex items-center gap-2 text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
                   <Trash2 size={16} /> 清除記錄
                 </button>
@@ -333,3 +334,5 @@ export const BankManager: React.FC<BankManagerProps> = ({
     </div>
   );
 };
+
+export default React.memo(BankManager);

@@ -4,6 +4,7 @@ import useSound from 'use-sound';
 import { Question } from '../types';
 import { Lightbulb, CheckCircle, XCircle, ArrowRight, CheckSquare, Square, Volume2, VolumeX } from 'lucide-react';
 import { AIHelper } from './AIHelper';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 
 interface QuizCardProps {
   question: Question;
@@ -12,7 +13,16 @@ interface QuizCardProps {
   onAnswer: (isCorrect: boolean, selectedOption: string | string[]) => void;
   onNext: () => void;
   isLastQuestion: boolean;
+  onExit: () => void;
 }
+
+// Motion variants extracted for stability
+const QUIZ_CARD_ANIM = {
+  enter: { x: 0, opacity: 1 },
+  initial: { x: 20, opacity: 0 },
+  exit: { x: -20, opacity: 0 },
+  shake: (feedback: 'none' | 'correct' | 'incorrect') => ({ rotateZ: feedback === 'incorrect' ? [0, -1, 1, -1, 1, 0] : 0 })
+};
 
 export const QuizCard: React.FC<QuizCardProps> = ({ 
   question, 
@@ -20,7 +30,8 @@ export const QuizCard: React.FC<QuizCardProps> = ({
   totalQuestions, 
   onAnswer, 
   onNext, 
-  isLastQuestion 
+  isLastQuestion,
+  onExit 
 }) => {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [showHint, setShowHint] = useState(false);
@@ -61,6 +72,32 @@ export const QuizCard: React.FC<QuizCardProps> = ({
     setShowExplanation(false);
     setFeedback('none');
   }, [question]);
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    onSelectOption: (index: number) => {
+      if (index < currentOptions.length) {
+        handleOptionClick(currentOptions[index]);
+      }
+    },
+    onSubmitOrNext: () => {
+      if (!isAnswered) {
+        if (isMultiple) {
+          if (selectedOptions.length > 0) {
+            submitAnswer(selectedOptions);
+          }
+        } else {
+          if (selectedOptions.length === 1) {
+            submitAnswer(selectedOptions);
+          }
+        }
+      } else {
+        onNext();
+      }
+    },
+    onToggleHint: () => setShowHint(!showHint),
+    onExit
+  });
 
   const handleOptionClick = (option: string) => {
     if (isAnswered) return;
@@ -153,31 +190,27 @@ export const QuizCard: React.FC<QuizCardProps> = ({
         </div>
       </div>
 
-      <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait">
         <motion.div
           key={question.id}
-          initial={{ x: 20, opacity: 0 }}
-          animate={{ 
-            x: 0, 
-            opacity: 1,
-            rotateZ: feedback === 'incorrect' ? [0, -1, 1, -1, 1, 0] : 0,
-            transition: { 
-                rotateZ: { duration: 0.4, ease: "easeInOut" },
-                x: { duration: 0.3 }
-            }
+          initial={QUIZ_CARD_ANIM.initial}
+          animate={{
+            ...QUIZ_CARD_ANIM.enter,
+            ...QUIZ_CARD_ANIM.shake(feedback),
+            transition: { rotateZ: { duration: 0.4, ease: "easeInOut" }, x: { duration: 0.3 } }
           }}
-          exit={{ x: -20, opacity: 0 }}
-          className={`bg-white rounded-3xl shadow-xl border overflow-hidden ${
-            feedback === 'correct' ? 'border-green-200 shadow-green-100' : 
-            feedback === 'incorrect' ? 'border-red-200 shadow-red-100' : 
-            'border-slate-100'
+          exit={QUIZ_CARD_ANIM.exit}
+          className={`bg-white dark:bg-slate-800 rounded-3xl shadow-xl border overflow-hidden ${
+            feedback === 'correct' ? 'border-green-200 dark:border-green-700 shadow-green-100' : 
+            feedback === 'incorrect' ? 'border-red-200 dark:border-red-700 shadow-red-100' : 
+            'border-slate-100 dark:border-slate-700'
           }`}
         >
           {/* Header Area */}
           <div className="p-8 pb-4">
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 text-slate-500">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
                     Q-{currentIndex + 1}
                   </span>
                   {isMultiple && (
@@ -208,7 +241,7 @@ export const QuizCard: React.FC<QuizCardProps> = ({
               )}
             </div>
 
-            <h2 className="text-xl md:text-2xl font-bold text-slate-800 leading-relaxed mb-2">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-100 leading-relaxed mb-2">
               {question.question}
             </h2>
 
@@ -220,7 +253,7 @@ export const QuizCard: React.FC<QuizCardProps> = ({
                     exit={{ height: 0, opacity: 0 }}
                     className="overflow-hidden"
                 >
-                    <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-xl text-sm italic mb-4">
+                    <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 p-4 rounded-xl text-sm italic mb-4">
                     💡 提示: {question.hint}
                     </div>
                 </motion.div>
@@ -275,15 +308,15 @@ export const QuizCard: React.FC<QuizCardProps> = ({
                     >
                         <div className={`p-6 rounded-2xl border ${
                             feedback === 'correct'
-                            ? 'bg-green-50 border-green-200' 
-                            : 'bg-red-50 border-red-200'
+                            ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
+                            : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
                         }`}>
                         <h3 className={`text-sm font-black uppercase tracking-widest mb-3 flex items-center gap-2 ${
                              feedback === 'correct' ? 'text-green-700' : 'text-red-700'
                         }`}>
                             {feedback === 'correct' ? '🎉 太棒了！回答正確' : '❌ 再接再厲！解析如下'}
                         </h3>
-                        <p className="text-slate-700 text-sm leading-7 font-medium">
+                        <p className="text-slate-700 dark:text-slate-300 text-sm leading-7 font-medium">
                             {question.explanation || "此題暫無解析。"}
                         </p>
                         </div>
@@ -308,3 +341,5 @@ export const QuizCard: React.FC<QuizCardProps> = ({
     </div>
   );
 };
+
+export default React.memo(QuizCard);

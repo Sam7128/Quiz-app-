@@ -19,6 +19,15 @@ export interface MistakeLog {
   [questionId: string]: MistakeLogEntry;
 }
 
+export interface SpacedRepetitionItem {
+  questionId: string;
+  easinessFactor: number; // default 2.5, min 1.3
+  interval: number; // days since last review
+  repetitions: number; // consecutive correct reviews (default 0)
+  nextReviewDate: number; // timestamp when next review is due
+  lastReviewDate?: number; // timestamp of last review
+}
+
 export interface Folder {
   id: string;
   name: string;
@@ -31,10 +40,30 @@ export interface BankMetadata {
   createdAt: number;
   questionCount: number;
   description?: string;
-  folderId?: string; // Optional reference to a parent folder
+  folderId?: string | null; // Optional reference to a parent folder
 }
 
 export type AppView = 'dashboard' | 'quiz' | 'mistakes' | 'manager' | 'guide' | 'social';
+
+export interface AppState {
+  view: AppView;
+  guestMode: boolean;
+  isSettingsOpen: boolean;
+  sharingBank: BankMetadata | null;
+  banks: BankMetadata[];
+  folders: Folder[];
+  editingBankId: string | null;
+  selectedQuizBankIds: string[];
+}
+
+export type AppAction =
+  | { type: 'set_view'; view: AppView }
+  | { type: 'set_guest_mode'; guestMode: boolean }
+  | { type: 'set_settings_open'; isSettingsOpen: boolean }
+  | { type: 'set_sharing_bank'; sharingBank: BankMetadata | null }
+  | { type: 'sync_banks_data'; banks: BankMetadata[]; folders: Folder[] }
+  | { type: 'set_editing_bank_id'; editingBankId: string | null }
+  | { type: 'toggle_quiz_bank_id'; bankId: string };
 
 export interface QuizState {
   currentQuestionIndex: number;

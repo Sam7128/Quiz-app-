@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { AppView, Question, QuizState, BankMetadata, Folder } from './types';
+import React, { useEffect, useReducer, useState, useCallback } from 'react';
+import { AppAction, AppState, BankMetadata, Folder, Question, QuizState } from './types';
 import { 
   getQuestions, 
   saveQuestions, 
@@ -15,13 +15,33 @@ import {
   deleteFolder,
   moveBankToFolder,
   getBankFolderMap,
-  updateBankFolder
+  updateBankFolder,
+  getSpacedRepetitionItem,
+  saveSpacedRepetitionItem
 } from './services/storage';
 import { 
     getCloudBanks, 
     getCloudQuestions, 
-    syncLocalToCloud 
+    syncLocalToCloud,
+    saveCloudSpacedRepetition,
+    updateCloudBankFolder
 } from './services/cloudStorage';
+import { 
+  updateSpacedRepetition,
+  createSpacedRepetitionItem
+} from './services/spacedRepetition';
+import { 
+  recordStudySession,
+  recordLocalStudySession
+} from './services/analytics';
+import { 
+  unlockCloudAchievement,
+  unlockLocalAchievement
+} from './services/achievements';
+import { 
+  submitChallengeScore
+} from './services/challenges';
+import { QuizProvider } from './contexts/QuizContext';
 import { DEFAULT_QUESTIONS, APP_NAME } from './constants';
 import { Dashboard } from './components/Dashboard';
 import { QuizCard } from './components/QuizCard';
@@ -33,6 +53,8 @@ import { Social } from './components/Social';
 import { ShareModal } from './components/ShareModal';
 import { useAuth } from './contexts/AuthContext';
 import { BrainCircuit, LayoutDashboard, FileText, Settings, X, RotateCcw, User as UserIcon, Users } from 'lucide-react';
+import SkeletonLoader from './components/SkeletonLoader';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // Fisher-Yates Shuffle
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -44,20 +66,71 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return newArray;
 };
 
+export const initialAppState: AppState = {
+  view: 'dashboard',
+  guestMode: false,
+  isSettingsOpen: false,
+  sharingBank: null,
+  banks: [],
+  folders: [],
+  editingBankId: null,
+  selectedQuizBankIds: []
+};
+
+export const appReducer = (state: AppState, action: AppAction): AppState => {
+  switch (action.type) {
+    case 'set_view':
+      return { ...state, view: action.view };
+    case 'set_guest_mode':
+      return { ...state, guestMode: action.guestMode };
+    case 'set_settings_open':
+      return { ...state, isSettingsOpen: action.isSettingsOpen };
+    case 'set_sharing_bank':
+      return { ...state, sharingBank: action.sharingBank };
+    case 'sync_banks_data': {
+      const validIds = action.banks.map(bank => bank.id);
+      const preservedSelection = state.selectedQuizBankIds.filter(id => validIds.includes(id));
+      const selectedQuizBankIds = preservedSelection.length > 0
+        ? preservedSelection
+        : (action.banks.length > 0 ? [action.banks[0].id] : []);
+
+      return {
+        ...state,
+        banks: action.banks,
+        folders: action.folders,
+        selectedQuizBankIds
+      };
+    }
+    case 'set_editing_bank_id':
+      return { ...state, editingBankId: action.editingBankId };
+    case 'toggle_quiz_bank_id': {
+      const isSelected = state.selectedQuizBankIds.includes(action.bankId);
+      const selectedQuizBankIds = isSelected
+        ? state.selectedQuizBankIds.filter(id => id !== action.bankId)
+        : [...state.selectedQuizBankIds, action.bankId];
+
+      return { ...state, selectedQuizBankIds };
+    }
+    default:
+      return state;
+  }
+};
+
 const App: React.FC = () => {
   const { user, loading, signOut } = useAuth();
-  const [view, setView] = useState<AppView>('dashboard');
-  const [guestMode, setGuestMode] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [sharingBank, setSharingBank] = useState<BankMetadata | null>(null);
-  
-  // Bank & Folder Management State
-  const [banks, setBanks] = useState<BankMetadata[]>([]);
-  const [folders, setFolders] = useState<Folder[]>([]);
-  const [editingBankId, setEditingBankId] = useState<string | null>(null);
+  const [appState, dispatch] = useReducer(appReducer, initialAppState);
+  const {
+    view,
+    guestMode,
+    isSettingsOpen,
+    sharingBank,
+    banks,
+    folders,
+    editingBankId,
+    selectedQuizBankIds
+  } = appState;
   
   // Data State
-  const [selectedQuizBankIds, setSelectedQuizBankIds] = useState<string[]>([]);
   const [quizPoolQuestions, setQuizPoolQuestions] = useState<Question[]>([]);
   const [editingQuestions, setEditingQuestions] = useState<Question[]>([]);
   const [mistakeLog, setMistakeLog] = useState(getMistakeLog());
@@ -71,9 +144,15 @@ const App: React.FC = () => {
     activeQuestions: [],
     mode: 'random'
   });
+  
+  // Session tracking for analytics
+  const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
+
+  // Challenge state
+  const [currentChallengeId, setCurrentChallengeId] = useState<string | null>(null);
 
   // Refresh helper (Consolidated Logic)
-  const refreshBanksData = async () => {
+  const refreshBanksData = useCallback(async () => {
     let latest: BankMetadata[] = [];
     
     if (user) {
@@ -100,21 +179,15 @@ const App: React.FC = () => {
     const folderMap = getBankFolderMap();
     latest = latest.map(b => ({
       ...b,
-      folderId: folderMap[b.id] || b.folderId
+      // Use local folder map if exists (including explicit null for root), otherwise keep cloud value
+      folderId: Object.prototype.hasOwnProperty.call(folderMap, b.id) ? folderMap[b.id] : b.folderId
     }));
 
-    setBanks(latest);
-    setFolders(getFolders());
-    
-    // Update selection if needed (preserve selection if possible)
-    setSelectedQuizBankIds(prev => {
-        const validIds = latest.map(b => b.id);
-        const newSelection = prev.filter(id => validIds.includes(id));
-        return newSelection.length > 0 ? newSelection : (latest.length > 0 ? [latest[0].id] : []);
-    });
-    
+    const latestFolders = getFolders();
+    dispatch({ type: 'sync_banks_data', banks: latest, folders: latestFolders });
+
     return latest;
-  };
+  }, [user]);
 
   // Initialization: Auth & Initial Banks
   useEffect(() => {
@@ -130,48 +203,102 @@ const App: React.FC = () => {
       }
 
       if (defaultId) {
-        setEditingBankId(defaultId);
+        dispatch({ type: 'set_editing_bank_id', editingBankId: defaultId });
         setCurrentBankId(defaultId);
-        // setSelectedQuizBankIds is handled in refreshBanksData
+        // selectedQuizBankIds is handled in refreshBanksData
       }
     };
 
     init();
   }, [loading, user]);
 
-  const handleCreateFolder = (name: string) => {
+  const loadQuizPool = useCallback(async () => {
+    if (selectedQuizBankIds.length === 0) {
+      setQuizPoolQuestions([]);
+      return;
+    }
+    try {
+      const arrays = await Promise.all(
+        selectedQuizBankIds.map(id =>
+          user ? getCloudQuestions(id) : Promise.resolve(getQuestions(id))
+        )
+      );
+      setQuizPoolQuestions(arrays.flat());
+    } catch (error) {
+      console.error('Failed to load quiz pool questions', error);
+      setQuizPoolQuestions([]);
+    }
+  }, [selectedQuizBankIds, user]);
+
+  useEffect(() => {
+    void loadQuizPool();
+  }, [loadQuizPool]);
+
+  const loadEditingQuestions = useCallback(async () => {
+    if (!editingBankId) {
+      setEditingQuestions([]);
+      return;
+    }
+    try {
+      const questions = user ? await getCloudQuestions(editingBankId) : getQuestions(editingBankId);
+      setEditingQuestions(questions);
+    } catch (error) {
+      console.error('Failed to load editing questions', error);
+      setEditingQuestions([]);
+    }
+  }, [editingBankId, user]);
+
+  useEffect(() => {
+    void loadEditingQuestions();
+  }, [loadEditingQuestions]);
+
+  const handleCreateFolder = useCallback((name: string) => {
     createFolder(name);
-    refreshBanksData();
-  };
+    void refreshBanksData();
+  }, [refreshBanksData]);
 
-  const handleDeleteFolder = (id: string) => {
+  const handleDeleteFolder = useCallback((id: string) => {
     deleteFolder(id);
-    refreshBanksData();
-  };
+    void refreshBanksData();
+  }, [refreshBanksData]);
 
-  const handleMoveBank = async (bankId: string, folderId: string | undefined) => {
-    updateBankFolder(bankId, folderId);
-    await refreshBanksData();
-  };
+  const handleMoveBank = useCallback(async (bankId: string, folderId: string | undefined) => {
+    try {
+      // Update local storage first (synchronous)
+      updateBankFolder(bankId, folderId);
+      
+      // Sync to cloud if authenticated
+      if (user) {
+        await updateCloudBankFolder(bankId, folderId);
+      }
+      
+      // Refresh data after all updates complete
+      await refreshBanksData();
+    } catch (error) {
+      console.error('Error moving bank:', error);
+      // Refresh anyway to ensure UI consistency
+      await refreshBanksData();
+    }
+  }, [refreshBanksData, user]);
 
-  const handleEditingBankChange = (id: string) => {
-    setEditingBankId(id);
+  const handleEditingBankChange = useCallback((id: string) => {
+    dispatch({ type: 'set_editing_bank_id', editingBankId: id });
     setCurrentBankId(id);
-  };
+  }, []);
 
-  const handleToggleQuizBank = (id: string) => {
-    setSelectedQuizBankIds(prev => prev.includes(id) ? prev.filter(b => b !== id) : [...prev, id]);
-  };
+  const handleToggleQuizBank = useCallback((id: string) => {
+    dispatch({ type: 'toggle_quiz_bank_id', bankId: id });
+  }, []);
 
-  const startQuiz = async (count: number, mode: 'random' | 'mistake' | 'retry_session' = 'random', specificIds?: string[]) => {
+  const startQuiz = useCallback(async (count: number, mode: 'random' | 'mistake' | 'retry_session' = 'random', specificIds?: string[]) => {
     let pool: Question[] = [];
 
     // Fetch all questions from selected banks
-    const allSelectedQuestions: Question[] = [];
-    for (const id of selectedQuizBankIds) {
-        const qs = user ? await getCloudQuestions(id) : getQuestions(id);
-        allSelectedQuestions.push(...qs);
-    }
+    const questionPromises = selectedQuizBankIds.map(id =>
+      user ? getCloudQuestions(id) : getQuestions(id)
+    );
+    const questionArrays = await Promise.all(questionPromises);
+    const allSelectedQuestions = questionArrays.flat();
 
     if (mode === 'mistake') {
       const log = getMistakeLog();
@@ -199,11 +326,63 @@ const App: React.FC = () => {
       mode: mode,
       wrongQuestionIds: []
     });
-    setView(mode === 'mistake' ? 'mistakes' : 'quiz');
-  };
+    setSessionStartTime(Date.now());
+    dispatch({ type: 'set_view', view: mode === 'mistake' ? 'mistakes' : 'quiz' });
+  }, [selectedQuizBankIds, user]);
 
-  const handleAnswer = (isCorrect: boolean, selectedAnswer: string | string[]) => {
+  // Start a challenge quiz with specific bank
+  const startChallengeQuiz = useCallback(async (challengeId: string, bankId: string) => {
+    // Fetch questions from the challenge bank
+    const questions = user ? await getCloudQuestions(bankId) : getQuestions(bankId);
+    
+    if (questions.length === 0) {
+      alert("該題庫沒有題目！");
+      return;
+    }
+    
+    // Store current challenge ID for score submission
+    setCurrentChallengeId(challengeId);
+    
+    const shuffled = shuffleArray(questions);
+    
+    setQuizState({
+      currentQuestionIndex: 0,
+      score: 0,
+      totalQuestions: shuffled.length,
+      isFinished: false,
+      activeQuestions: shuffled,
+      mode: 'challenge',
+      wrongQuestionIds: [],
+      challengeId: challengeId
+    });
+    setSessionStartTime(Date.now());
+    dispatch({ type: 'set_view', view: 'quiz' });
+  }, [user]);
+
+  const handleAnswer = useCallback((isCorrect: boolean, selectedAnswer: string | string[]) => {
     const currentQ = quizState.activeQuestions[quizState.currentQuestionIndex];
+    if (!currentQ) return;
+
+    // SM-2 Spaced Repetition Update
+    const questionId = String(currentQ.id);
+    let srItem = getSpacedRepetitionItem(questionId);
+    
+    if (!srItem) {
+      srItem = createSpacedRepetitionItem(questionId);
+    }
+
+    // Grade mapping: correct answers get grade 4-5, incorrect get 0-2
+    const grade = isCorrect ? 4 : 1;
+    const updatedSrItem = updateSpacedRepetition(srItem, grade);
+    
+    // Save to local storage
+    saveSpacedRepetitionItem(updatedSrItem);
+    
+    // Save to cloud if authenticated
+    if (user) {
+      void saveCloudSpacedRepetition(updatedSrItem);
+    }
+
     if (isCorrect) {
       setQuizState(prev => ({ ...prev, score: prev.score + 1 }));
       if (quizState.mode === 'mistake') {
@@ -215,30 +394,37 @@ const App: React.FC = () => {
       logMistake(currentQ.id, Array.isArray(selectedAnswer) ? selectedAnswer.join(', ') : selectedAnswer);
       setMistakeLog(getMistakeLog()); // Update state
     }
-  };
+  }, [quizState, user]);
 
-  const nextQuestion = () => {
+  const nextQuestion = useCallback(() => {
     if (quizState.currentQuestionIndex < quizState.totalQuestions - 1) {
       setQuizState(prev => ({ ...prev, currentQuestionIndex: prev.currentQuestionIndex + 1 }));
     } else {
       setQuizState(prev => ({ ...prev, isFinished: true }));
     }
-  };
+  }, [quizState]);
+
+  const handleShare = useCallback((bank: BankMetadata | null) => {
+    dispatch({ type: 'set_sharing_bank', sharingBank: bank });
+  }, []);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="flex flex-col items-center gap-4">
-          <BrainCircuit className="text-brand-600 animate-pulse" size={48} />
-          <p className="text-slate-400 font-medium animate-pulse">正在準備您的學習空間...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <SkeletonLoader variant="card" count={1} className="w-48 h-48" />
       </div>
     );
   }
 
-  if (!user && !guestMode) return <Login onGuestMode={() => setGuestMode(true)} />;
+  if (!user && !guestMode) return <Login onGuestMode={() => dispatch({ type: 'set_guest_mode', guestMode: true })} />;
 
-  const renderContent = () => {
+  const animationVariants = {
+  initial: { opacity: 0, x: -50 },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.5 } },
+  exit: { opacity: 0, x: 50, transition: { duration: 0.3 } }
+};
+
+const renderContent = () => {
     if (view === 'quiz' || view === 'mistakes') {
             if (quizState.isFinished) {
               return (
@@ -266,7 +452,60 @@ const App: React.FC = () => {
                       >
                         <RotateCcw size={18} /> 再做一次 (隨機)
                       </button>
-                      <button onClick={() => setView('dashboard')} className="w-full py-3 text-slate-600 hover:text-slate-800 font-medium transition-colors">返回首頁</button>
+                      <button onClick={() => {
+                        // Record study session for analytics
+                        if (sessionStartTime) {
+                          const durationSeconds = Math.floor((Date.now() - sessionStartTime) / 1000);
+                          const correctCount = quizState.score;
+                          const totalQuestions = quizState.totalQuestions;
+                          
+                          if (user) {
+                            void recordStudySession(totalQuestions, correctCount, durationSeconds);
+                          } else {
+                            recordLocalStudySession(totalQuestions, correctCount, durationSeconds);
+                          }
+                          
+                          // Check and unlock achievements
+                          const accuracy = totalQuestions > 0 ? (correctCount / totalQuestions) : 0;
+                          
+                          // Perfect score achievement
+                          if (accuracy === 1 && totalQuestions >= 5) {
+                            if (user) {
+                              void unlockCloudAchievement('perfect_score');
+                            } else {
+                              unlockLocalAchievement('perfect_score');
+                            }
+                          }
+                          
+                          // First question achievement (always unlock on any completed quiz)
+                          if (user) {
+                            void unlockCloudAchievement('first_question');
+                          } else {
+                            unlockLocalAchievement('first_question');
+                          }
+                          
+                          // Night owl achievement (10 PM - 6 AM)
+                          const hour = new Date().getHours();
+                          if (hour >= 22 || hour < 6) {
+                            if (user) {
+                              void unlockCloudAchievement('night_owl');
+                            } else {
+                              unlockLocalAchievement('night_owl');
+                            }
+                          }
+                          
+                          // Early bird achievement (before 6 AM)
+                          if (hour < 6) {
+                            if (user) {
+                              void unlockCloudAchievement('early_bird');
+                            } else {
+                              unlockLocalAchievement('early_bird');
+                            }
+                          }
+                        }
+                        setSessionStartTime(null);
+                        dispatch({ type: 'set_view', view: 'dashboard' });
+                      }} className="w-full py-3 text-slate-600 hover:text-slate-800 font-medium transition-colors">返回首頁</button>
                     </div>
                   </div>
                 </div>
@@ -274,14 +513,15 @@ const App: React.FC = () => {
             }
       return (
         <div className="py-4">
-           <QuizCard 
-             question={quizState.activeQuestions[quizState.currentQuestionIndex]}
-             currentIndex={quizState.currentQuestionIndex}
-             totalQuestions={quizState.totalQuestions}
-             onAnswer={handleAnswer}
-             onNext={nextQuestion}
-             isLastQuestion={quizState.currentQuestionIndex === quizState.totalQuestions - 1}
-           />
+            <QuizCard 
+              question={quizState.activeQuestions[quizState.currentQuestionIndex]}
+              currentIndex={quizState.currentQuestionIndex}
+              totalQuestions={quizState.totalQuestions}
+              onAnswer={handleAnswer}
+              onNext={nextQuestion}
+              isLastQuestion={quizState.currentQuestionIndex === quizState.totalQuestions - 1}
+              onExit={() => dispatch({ type: 'set_view', view: 'dashboard' })}
+            />
         </div>
       );
     }
@@ -295,12 +535,13 @@ const App: React.FC = () => {
           folders={folders}
           selectedBankIds={selectedQuizBankIds}
           onToggleBank={handleToggleQuizBank}
-          onStartQuiz={(n) => startQuiz(Math.min(n, quizPoolQuestions.length), 'random')}
+          onStartQuiz={(n) => startQuiz(n, 'random')}
           onStartMistakes={() => startQuiz(20, 'mistake')} 
-          onShareBank={(bank) => setSharingBank(bank)}
+          onShareBank={(bank) => dispatch({ type: 'set_sharing_bank', sharingBank: bank })}
           onCreateFolder={handleCreateFolder}
           onDeleteFolder={handleDeleteFolder}
           onMoveBank={handleMoveBank}
+          isAuthenticated={!!user}
         />;
       case 'manager':
         return <BankManager 
@@ -318,30 +559,30 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900">
+      <SettingsModal isOpen={isSettingsOpen} onClose={() => dispatch({ type: 'set_settings_open', isSettingsOpen: false })} />
       <ShareModal 
         isOpen={sharingBank !== null} 
-        onClose={() => setSharingBank(null)} 
+        onClose={() => dispatch({ type: 'set_sharing_bank', sharingBank: null })} 
         bank={sharingBank} 
       />
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
+      <header className="bg-white border-b border-slate-200 dark:bg-slate-800 dark:border-slate-700 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => setView('dashboard')}>
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => dispatch({ type: 'set_view', view: 'dashboard' })}>
             <div className="bg-brand-600 text-white p-1.5 rounded-lg"><BrainCircuit size={24} /></div>
             <div className="flex flex-col">
-              <span className="font-bold text-lg text-slate-800 leading-none">{APP_NAME}</span>
-              <span className="text-[10px] text-slate-500 font-medium">
+              <span className="font-bold text-lg text-slate-800 dark:text-slate-200 leading-none">{APP_NAME}</span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
                 {view === 'manager' ? (banks.find(b => b.id === editingBankId)?.name || '管理題庫') : (selectedQuizBankIds.length > 1 ? `已選 ${selectedQuizBankIds.length} 個題庫` : banks.find(b => b.id === selectedQuizBankIds[0])?.name || '')}
               </span>
             </div>
           </div>
           <nav className="hidden md:flex items-center gap-6">
-            <button onClick={() => setView('dashboard')} className={`font-medium text-sm ${view === 'dashboard' ? 'text-brand-600' : 'text-slate-500 hover:text-slate-800'}`}>首頁</button>
-            <button onClick={() => setView('manager')} className={`font-medium text-sm ${view === 'manager' ? 'text-brand-600' : 'text-slate-500 hover:text-slate-800'}`}>題庫管理</button>
-            <button onClick={() => setView('guide')} className={`font-medium text-sm ${view === 'guide' ? 'text-brand-600' : 'text-slate-500 hover:text-slate-800'}`}>AI 指引</button>
-            <button onClick={() => setView('social')} className={`font-medium text-sm ${view === 'social' ? 'text-brand-600' : 'text-slate-500 hover:text-slate-800'}`}>社交</button>
-            <button onClick={() => setIsSettingsOpen(true)} className="p-2 text-slate-400 hover:text-brand-600 transition-colors"><Settings size={20} /></button>
+            <button onClick={() => dispatch({ type: 'set_view', view: 'dashboard' })} className={`font-medium text-sm ${view === 'dashboard' ? 'text-brand-600' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}>首頁</button>
+            <button onClick={() => dispatch({ type: 'set_view', view: 'manager' })} className={`font-medium text-sm ${view === 'manager' ? 'text-brand-600' : 'text-slate-500 hover:text-slate-800'}`}>題庫管理</button>
+            <button onClick={() => dispatch({ type: 'set_view', view: 'guide' })} className={`font-medium text-sm ${view === 'guide' ? 'text-brand-600' : 'text-slate-500 hover:text-slate-800'}`}>AI 指引</button>
+            <button onClick={() => dispatch({ type: 'set_view', view: 'social' })} className={`font-medium text-sm ${view === 'social' ? 'text-brand-600' : 'text-slate-500 hover:text-slate-800'}`}>社交</button>
+            <button onClick={() => dispatch({ type: 'set_settings_open', isSettingsOpen: true })} className="p-2 text-slate-400 hover:text-brand-600 transition-colors"><Settings size={20} /></button>
             <div className="h-4 w-px bg-slate-200 mx-2"></div>
             {user ? (
               <div className="flex items-center gap-3">
@@ -352,17 +593,31 @@ const App: React.FC = () => {
                 <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 border border-slate-200"><UserIcon size={18} /></div>
               </div>
             ) : (
-              <button onClick={() => setGuestMode(false)} className="text-sm font-bold text-brand-600 hover:text-brand-500">登入雲端</button>
+              <button onClick={() => dispatch({ type: 'set_guest_mode', guestMode: false })} className="text-sm font-bold text-brand-600 hover:text-brand-500">登入雲端</button>
             )}
           </nav>
         </div>
       </header>
-      <main className="flex-1 max-w-6xl w-full mx-auto p-4 md:p-8 pb-24 md:pb-8">{renderContent()}</main>
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-2 flex justify-around z-50 safe-area-bottom">
-        <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'dashboard' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><LayoutDashboard size={20} /><span className="text-[10px] font-medium">首頁</span></button>
-        <button onClick={() => setView('manager')} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'manager' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><Settings size={20} /><span className="text-[10px] font-medium">管理</span></button>
-        <button onClick={() => setView('social')} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'social' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><Users size={20} /><span className="text-[10px] font-medium">社交</span></button>
-        <button onClick={() => setView('guide')} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'guide' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><FileText size={20} /><span className="text-[10px] font-medium">指引</span></button>
+      <main className="flex-1 max-w-6xl w-full mx-auto p-4 md:p-8 pb-24 md:pb-8">
+  <AnimatePresence mode="wait">
+     <motion.div
+       key={view}
+       variants={animationVariants}
+       initial="initial"
+       animate="animate"
+       exit="exit"
+     >
+       <QuizProvider startChallengeQuiz={startChallengeQuiz}>
+         {renderContent()}
+       </QuizProvider>
+     </motion.div>
+  </AnimatePresence>
+</main>
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 p-2 flex justify-around z-50 safe-area-bottom">
+        <button onClick={() => dispatch({ type: 'set_view', view: 'dashboard' })} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'dashboard' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><LayoutDashboard size={20} /><span className="text-[10px] font-medium">首頁</span></button>
+        <button onClick={() => dispatch({ type: 'set_view', view: 'manager' })} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'manager' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><Settings size={20} /><span className="text-[10px] font-medium">管理</span></button>
+        <button onClick={() => dispatch({ type: 'set_view', view: 'social' })} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'social' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><Users size={20} /><span className="text-[10px] font-medium">社交</span></button>
+        <button onClick={() => dispatch({ type: 'set_view', view: 'guide' })} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${view === 'guide' ? 'text-brand-600 bg-brand-50' : 'text-slate-400 hover:text-slate-600'}`}><FileText size={20} /><span className="text-[10px] font-medium">指引</span></button>
       </div>
     </div>
   );
