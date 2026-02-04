@@ -72,3 +72,4 @@ The application uses a **Serverless/Local-First** architecture.
 *   **Social Sharing**: Implemented a friendship system and direct bank sharing feature via Supabase. Users can now send their question banks directly to friends.
 *   **Settings System**: Added a centralized Settings modal for API Key and model configuration.
 *   **Dashboard**: Added "Share" action to bank cards.
+*   **Game Mode**: Implemented RPG-style gamification ("Battle Arena") with global toggle, "Underground" theme, and stage transitions. Users can switch between Study Mode and Game Mode in Settings.

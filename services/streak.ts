@@ -22,8 +22,11 @@ export const getCloudStreak = async (): Promise<StreakData | null> => {
     .single();
 
   if (error) {
-    console.error('Error fetching streak:', error);
-    return null;
+    // PGRST116 means no rows found (new user or no streak yet)
+    if (error.code !== 'PGRST116') {
+      console.error('Error fetching streak:', error);
+      return null;
+    }
   }
 
   if (!data) {
@@ -83,17 +86,17 @@ export const getLocalStreak = (): StreakData => {
 export const updateLocalStreak = (): void => {
   const today = new Date().toISOString().split('T')[0];
   const streak = getLocalStreak();
-  
+
   // If already studied today, do nothing
   if (streak.lastStudyDate === today) {
     return;
   }
-  
+
   // Calculate yesterday's date
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
   const yesterdayStr = yesterday.toISOString().split('T')[0];
-  
+
   // Check if streak continues
   if (streak.lastStudyDate === yesterdayStr) {
     streak.currentStreak += 1;
@@ -104,8 +107,8 @@ export const updateLocalStreak = (): void => {
     // Streak broken, reset to 1
     streak.currentStreak = 1;
   }
-  
+
   streak.lastStudyDate = today;
-  
+
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(streak));
 };

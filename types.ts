@@ -54,6 +54,7 @@ export interface AppState {
   folders: Folder[];
   editingBankId: string | null;
   selectedQuizBankIds: string[];
+  gameMode: boolean;
 }
 
 export type AppAction =
@@ -63,7 +64,8 @@ export type AppAction =
   | { type: 'set_sharing_bank'; sharingBank: BankMetadata | null }
   | { type: 'sync_banks_data'; banks: BankMetadata[]; folders: Folder[] }
   | { type: 'set_editing_bank_id'; editingBankId: string | null }
-  | { type: 'toggle_quiz_bank_id'; bankId: string };
+  | { type: 'toggle_quiz_bank_id'; bankId: string }
+  | { type: 'set_game_mode'; gameMode: boolean };
 
 export interface QuizState {
   currentQuestionIndex: number;

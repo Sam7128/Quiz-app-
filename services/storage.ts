@@ -9,6 +9,18 @@ const STORAGE_KEYS = {
   FOLDERS: 'mindspark_folders', // New key
   FOLDER_MAP: 'mindspark_bank_folder_map', // Independent map for cloud/local
   SPACED_REPETITION: 'mindspark_spaced_repetition',
+  GAME_MODE: 'mindspark_game_mode',
+};
+
+// --- Game Mode ---
+
+export const getGameMode = (): boolean => {
+  const data = localStorage.getItem(STORAGE_KEYS.GAME_MODE);
+  return data ? JSON.parse(data) : true; // Default to true (Game Mode ON)
+};
+
+export const saveGameMode = (enabled: boolean) => {
+  localStorage.setItem(STORAGE_KEYS.GAME_MODE, JSON.stringify(enabled));
 };
 
 // --- Folder Management ---
@@ -35,7 +47,7 @@ export const updateBankFolder = (bankId: string, folderId: string | undefined) =
     map[bankId] = folderId;
   }
   saveBankFolderMap(map);
-  
+
   // Also update local meta for consistency if user goes offline
   moveBankToFolder(bankId, folderId);
 };
@@ -148,8 +160,8 @@ export const moveBankToFolder = (bankId: string, folderId: string | undefined) =
     if (b.id === bankId) {
       // Explicitly handle undefined to remove the key or set it to undefined
       if (folderId === undefined) {
-         const { folderId: _, ...rest } = b;
-         return rest;
+        const { folderId: _, ...rest } = b;
+        return rest;
       }
       return { ...b, folderId };
     }
@@ -182,7 +194,7 @@ export const getQuestions = (bankId: string): Question[] => {
 export const saveQuestions = (bankId: string, questions: Question[]) => {
   try {
     localStorage.setItem(STORAGE_KEYS.BANK_PREFIX + bankId, JSON.stringify(questions));
-    
+
     // Update count in metadata
     const banks = getBanksMeta();
     const bankIndex = banks.findIndex(b => b.id === bankId);
@@ -209,9 +221,9 @@ export const getMistakeLog = (): MistakeLog => {
 export const logMistake = (questionId: string | number, wrongAnswer: string) => {
   const log = getMistakeLog();
   const idStr = String(questionId);
-  
+
   const entry = log[idStr] || { count: 0, lastWrongAnswer: '', timestamp: 0 };
-  
+
   log[idStr] = {
     count: entry.count + 1,
     lastWrongAnswer: wrongAnswer,

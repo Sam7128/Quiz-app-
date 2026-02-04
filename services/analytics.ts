@@ -88,8 +88,11 @@ export const getStudyStats = async (): Promise<StudyStats | null> => {
     .single();
 
   if (error) {
-    console.error('Error fetching study stats:', error);
-    return null;
+    // PGRST116 means no rows found (not truly an error for analytics)
+    if (error.code !== 'PGRST116') {
+      console.error('Error fetching study stats:', error);
+      return null;
+    }
   }
 
   if (!data) {
@@ -179,7 +182,7 @@ export const recordLocalStudySession = (
   // Keep only last 30 days
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  const filteredSessions = sessions.filter(s => 
+  const filteredSessions = sessions.filter(s =>
     new Date(s.sessionDate) >= thirtyDaysAgo
   );
 
@@ -203,7 +206,7 @@ export const getLocalStudySessions = (): LocalStudySession[] => {
  */
 export const getLocalStudyStats = (): StudyStats => {
   const sessions = getLocalStudySessions();
-  
+
   if (sessions.length === 0) {
     return {
       studyDays: 0,
