@@ -31,12 +31,14 @@ export const recordStudySession = async (
   const today = new Date().toISOString().split('T')[0];
 
   // Check if session exists for today
-  const { data: existing } = await supabase
+  const { data: sessions, error: fetchError } = await supabase
     .from('study_sessions')
     .select('*')
     .eq('user_id', user.id)
     .eq('session_date', today)
-    .single();
+    .limit(1);
+
+  const existing = sessions?.[0];
 
   if (existing) {
     // Update existing session
@@ -81,11 +83,13 @@ export const getStudyStats = async (): Promise<StudyStats | null> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const { data, error } = await supabase
+  const { data: statsRows, error } = await supabase
     .from('user_study_stats_30day')
     .select('*')
     .eq('user_id', user.id)
-    .single();
+    .limit(1);
+
+  const data = statsRows?.[0];
 
   if (error) {
     // PGRST116 means no rows found (not truly an error for analytics)

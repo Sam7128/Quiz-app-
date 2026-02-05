@@ -19,14 +19,19 @@ import {
   getSpacedRepetitionItem,
   saveSpacedRepetitionItem,
   getGameMode,
-  saveGameMode
+  saveGameMode,
+  nukeAllBanks,
+  deleteBank,
+  clearMistakes,
+  clearSpacedRepetition
 } from './services/storage';
 import {
   getCloudBanks,
   getCloudQuestions,
   syncLocalToCloud,
   saveCloudSpacedRepetition,
-  updateCloudBankFolder
+  updateCloudBankFolder,
+  deleteCloudBank
 } from './services/cloudStorage';
 import {
   updateSpacedRepetition,
@@ -57,6 +62,9 @@ import { useAuth } from './contexts/AuthContext';
 import { BrainCircuit, LayoutDashboard, FileText, Settings, X, RotateCcw, User as UserIcon, Users } from 'lucide-react';
 import SkeletonLoader from './components/SkeletonLoader';
 import { AnimatePresence, motion } from 'framer-motion';
+
+// --- Root Out Protocol (The "Perfection" Reset) ---
+// This handles full cleanup for both local and cloud states if needed.
 
 // Fisher-Yates Shuffle
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -272,6 +280,56 @@ const App: React.FC = () => {
   const handleToggleGameMode = useCallback(() => {
     dispatch({ type: 'set_game_mode', gameMode: !gameMode });
   }, [gameMode]);
+
+  const handleBatchDelete = useCallback(async () => {
+    if (selectedQuizBankIds.length === 0) return;
+    if (!window.confirm(`確定要「剷除」這 ${selectedQuizBankIds.length} 個選中的題庫嗎？此動作無法復原。`)) return;
+
+    for (const bankId of selectedQuizBankIds) {
+      if (user) {
+        // Sync delete to cloud if logged in
+        await deleteCloudBank(bankId);
+      } else {
+        // Local only
+        deleteBank(bankId);
+      }
+    }
+
+    // Clear selection
+    selectedQuizBankIds.forEach(id => {
+      dispatch({ type: 'toggle_quiz_bank_id', bankId: id });
+    });
+
+    await refreshBanksData();
+    alert('已成功剷除所選題庫。');
+  }, [selectedQuizBankIds, refreshBanksData, user]);
+
+  const handleSystemNuke = useCallback(async () => {
+    if (!window.confirm('🚨 警告：這將會剷除所有本地題庫、資料夾與設定！此動作極度危險且無法復原。確定要執行嗎？')) return;
+    if (!window.confirm('最後確認：真的要「徹底剷除」目前的全部數據並登出嗎？')) return;
+
+    // 1. Clear cloud session if authenticated
+    if (user) {
+      try {
+        await signOut();
+      } catch (e) {
+        console.error("Sign out failed during nuke, proceeding with local clear", e);
+      }
+    }
+
+    // 2. Clear all local storage keys
+    nukeAllBanks();
+    clearMistakes();
+    clearSpacedRepetition();
+
+    // 3. Optional: Clear actual Supabase cookie/localStorage explicitly just in case
+    // supabase-js handles its own but sometimes it sticks.
+    // However, signOut() is better.
+
+    await refreshBanksData();
+    alert('所有本地與連線數據經已徹底剷除。系統將重新載入。');
+    window.location.reload();
+  }, [user, signOut, refreshBanksData]);
 
   const handleMoveBank = useCallback(async (bankId: string, folderId: string | undefined) => {
     try {
@@ -553,6 +611,7 @@ const App: React.FC = () => {
           onCreateFolder={handleCreateFolder}
           onDeleteFolder={handleDeleteFolder}
           onMoveBank={handleMoveBank}
+          onBatchDelete={handleBatchDelete}
           isAuthenticated={!!user}
         />;
       case 'manager':
@@ -579,6 +638,7 @@ const App: React.FC = () => {
         onClose={() => dispatch({ type: 'set_settings_open', isSettingsOpen: false })}
         gameMode={gameMode}
         onToggleGameMode={handleToggleGameMode}
+        onSystemNuke={handleSystemNuke}
       />
       <ShareModal
         isOpen={sharingBank !== null}

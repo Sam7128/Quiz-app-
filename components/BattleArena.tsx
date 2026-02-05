@@ -1,14 +1,11 @@
-/**
- * 戰鬥場景元件
- * Battle Arena Component
- */
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BattleState, Monster } from '../types/battleTypes';
+import { BattleState } from '../types/battleTypes';
 import { DialogueBubble } from './DialogueBubble.tsx';
 import { SkillAnimation } from './SkillAnimation.tsx';
-import { Zap, Heart, Skull, Flame, Trophy, ArrowRight, Layers } from 'lucide-react';
+import { FireballAttack } from './FireballAttack.tsx';
+import { useSoundEffects } from '../hooks/useSoundEffects.ts';
+import { Zap, Trophy, Skull, Flame, Layers, ArrowRight } from 'lucide-react';
 
 interface BattleArenaProps {
     battleState: BattleState;
@@ -90,9 +87,11 @@ const CharacterSprite: React.FC<{
     isHurt?: boolean;
     isAttacking?: boolean;
     isHero?: boolean;
-}> = ({ imagePath, name, isHurt, isAttacking, isHero }) => {
+    forwardRef?: React.RefObject<HTMLDivElement | null>;
+}> = ({ imagePath, name, isHurt, isAttacking, isHero, forwardRef }) => {
     return (
         <motion.div
+            ref={forwardRef}
             className="relative"
             animate={
                 isHurt
@@ -129,12 +128,12 @@ const CharacterSprite: React.FC<{
                     />
                 )}
 
-                {/* 攻擊效果 */}
-                {isAttacking && (
+                {/* 攻擊效果 (舊版閃電，若有火球則由 FireballAttack 取代視覺，但也可並存) */}
+                {isAttacking && !isHero && (
                     <motion.div
-                        className="absolute -right-4 top-1/2 transform -translate-y-1/2"
+                        className="absolute -left-4 top-1/2 transform -translate-y-1/2"
                         initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: [0, 1, 0], scale: [0.5, 1.5, 0], x: [0, 40, 60] }}
+                        animate={{ opacity: [0, 1, 0], scale: [0.5, 1.5, 0], x: [0, -40, -60] }}
                         transition={{ duration: 0.4 }}
                     >
                         <Zap className="w-8 h-8 text-yellow-400" />
@@ -142,7 +141,7 @@ const CharacterSprite: React.FC<{
                 )}
             </div>
 
-            {/* 名稱標籤 - 不會被翻轉 */}
+            {/* 名稱標籤 */}
             <div className={`
         absolute -bottom-2 left-1/2 transform -translate-x-1/2
         px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap min-w-[60px] text-center shadow-md z-10
@@ -183,6 +182,46 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
         pendingSkill,
     } = battleState;
 
+    const { playBgm, playAttackSfx, stopBgm } = useSoundEffects();
+
+    // 用於火球定位
+    const heroRef = useRef<HTMLDivElement>(null);
+    const monsterRef = useRef<HTMLDivElement>(null);
+    const [fireballCoords, setFireballCoords] = useState<{ startX: number; startY: number; targetX: number; targetY: number } | null>(null);
+
+    // BGM 控制
+    useEffect(() => {
+        playBgm();
+        return () => stopBgm();
+        // 依賴項不放 playBgm/stopBgm 以免重複觸發，僅在組件掛載/卸載時執行
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // 處理火球動畫觸發
+    useEffect(() => {
+        if (currentAnimation?.type === 'hero_attack' && heroRef.current && monsterRef.current) {
+            const heroRect = heroRef.current.getBoundingClientRect();
+            const monsterRect = monsterRef.current.getBoundingClientRect();
+            const parentElement = heroRef.current.offsetParent as HTMLElement;
+
+            if (parentElement) {
+                const parentRect = parentElement.getBoundingClientRect();
+
+                setFireballCoords({
+                    startX: heroRect.left - parentRect.left + heroRect.width / 2,
+                    startY: heroRect.top - parentRect.top + heroRect.height / 3, // 從稍微上方發射
+                    targetX: monsterRect.left - parentRect.left + monsterRect.width / 2,
+                    targetY: monsterRect.top - parentRect.top + monsterRect.height / 2,
+                });
+
+                // 播放音效
+                playAttackSfx();
+            }
+        } else {
+            setFireballCoords(null);
+        }
+    }, [currentAnimation, playAttackSfx]);
+
     // 如果沒有怪物，不渲染戰鬥場景
     if (!currentMonster) {
         return null;
@@ -199,9 +238,12 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
         <div className="relative w-full mb-6">
             {/* 戰鬥場景背景 - 地下城風格 */}
             <div
-                className="relative rounded-2xl p-4 md:p-6 overflow-hidden shadow-2xl border-4 border-slate-700 bg-black bg-dungeon bg-cover bg-center"
+                className="relative rounded-2xl p-4 md:p-6 overflow-hidden shadow-2xl border-4 border-slate-700 bg-black bg-dungeon bg-cover bg-center cursor-pointer"
+                onClick={() => {
+                    // Hack: Interact to enable audio context if blocked
+                    playBgm();
+                }}
             >
-
                 {/* 背景遮罩 - 增加暗角與氛圍 */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/60 pointer-events-none"></div>
 
@@ -238,6 +280,7 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
                             isHurt={isHeroHurt}
                             isAttacking={isHeroAttacking || isSkillCasting}
                             isHero={true}
+                            forwardRef={heroRef}
                         />
 
                         <HealthBar
@@ -276,6 +319,7 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
                             isHurt={isMonsterHurt}
                             isAttacking={isMonsterAttacking}
                             isHero={false}
+                            forwardRef={monsterRef}
                         />
 
                         <HealthBar
@@ -285,6 +329,19 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
                         />
                     </div>
                 </div>
+
+                {/* 火球動畫層 */}
+                {/* 注意：這裡獨立於 AnimatePresence 之外處理，因為 FireballAttack 內部有自己的生命週期 */}
+                {isHeroAttacking && fireballCoords && (
+                    <FireballAttack
+                        startX={fireballCoords.startX}
+                        startY={fireballCoords.startY}
+                        targetX={fireballCoords.targetX}
+                        targetY={fireballCoords.targetY}
+                        damage={Math.floor(Math.max(monsterMaxHp * 0.15, 10) * (1 + streak * 0.1))} // 估算傷害顯示
+                    // onComplete 由父層的 setAnimation 計時器控制整體流程，這裡純視覺
+                    />
+                )}
 
                 {/* 技能動畫層 */}
                 <AnimatePresence>

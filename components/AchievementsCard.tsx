@@ -2,6 +2,7 @@ import React from 'react';
 import { Award, Lock } from 'lucide-react';
 import { ACHIEVEMENTS } from '../constants/achievements';
 import { useAchievements } from '../hooks/useAchievements';
+import { motion } from 'framer-motion';
 
 interface AchievementsCardProps {
   isAuthenticated: boolean;
@@ -26,9 +27,11 @@ export const AchievementsCard: React.FC<AchievementsCardProps> = ({ isAuthentica
 
       {/* Progress Bar */}
       <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2 mb-4">
-        <div
-          className="bg-gradient-to-r from-yellow-400 to-yellow-500 h-2 rounded-full transition-all"
-          style={{ width: `${progress}%` }}
+        <motion.div
+          className="bg-gradient-to-r from-yellow-400 to-yellow-500 h-2 rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         />
       </div>
 
@@ -39,11 +42,10 @@ export const AchievementsCard: React.FC<AchievementsCardProps> = ({ isAuthentica
           return (
             <div
               key={achievement.id}
-              className={`p-3 rounded-xl border transition-all ${
-                isUnlocked
+              className={`p-3 rounded-xl border transition-all ${isUnlocked
                   ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800'
                   : 'bg-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-700 opacity-60'
-              }`}
+                }`}
             >
               <div className="flex items-start gap-2">
                 <span className="text-2xl">{achievement.icon}</span>

@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Key, ExternalLink, Info, Server, Cpu, Sun, Moon, Monitor, Swords } from 'lucide-react';
+import { X, Save, Key, ExternalLink, Info, Server, Cpu, Sun, Moon, Monitor, Swords, Music, Volume2, AlertTriangle, Trash2 } from 'lucide-react';
 import { getAIConfig, saveAIConfig } from '../services/ai';
 import { AIConfig } from '../types';
+import { useSoundEffects } from '../hooks/useSoundEffects';
 
 interface SettingsProps {
   isOpen: boolean;
   onClose: () => void;
   gameMode?: boolean; // Optional to prevent breaking if not passed immediately, though typically will be
   onToggleGameMode?: () => void;
+  onSystemNuke?: () => void;
 }
 
 import { useTheme } from '../contexts/ThemeContext';
 
-export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, onToggleGameMode }) => {
+export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, onToggleGameMode, onSystemNuke }) => {
   const { theme, setTheme } = useTheme();
+  const { isBgmEnabled, isSfxEnabled, toggleBgm, toggleSfx } = useSoundEffects();
   const [config, setConfig] = useState<AIConfig>({
     provider: 'google',
     apiKey: '',
@@ -73,6 +76,46 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, o
                 className={`w-12 h-7 rounded-full transition-colors relative ${gameMode ? 'bg-white/90' : 'bg-black/20'}`}
               >
                 <div className={`absolute top-1 w-5 h-5 rounded-full shadow-sm transition-all duration-300 ${gameMode ? 'left-6 bg-purple-600' : 'left-1 bg-white/80'}`} />
+              </button>
+            </div>
+          </section>
+
+          {/* Audio Settings mode */}
+          <section className="space-y-3">
+            <label className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <Swords size={16} className="text-slate-400" /> 音效設定
+            </label>
+            <div className="flex items-center gap-4">
+              {/* BGM Toggle */}
+              <button
+                onClick={toggleBgm}
+                className={`flex-1 p-3 rounded-xl border flex items-center justify-between transition-all ${isBgmEnabled
+                  ? 'border-purple-500 bg-purple-50 text-purple-700 ring-1 ring-purple-500 dark:bg-purple-900/20 dark:text-purple-300'
+                  : 'border-slate-200 dark:border-slate-600 text-slate-500'
+                  }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold">背景音樂</span>
+                </div>
+                <div className={`w-8 h-5 rounded-full relative transition-colors ${isBgmEnabled ? 'bg-purple-500' : 'bg-slate-300'}`}>
+                  <div className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${isBgmEnabled ? 'left-4' : 'left-1'}`} />
+                </div>
+              </button>
+
+              {/* SFX Toggle */}
+              <button
+                onClick={toggleSfx}
+                className={`flex-1 p-3 rounded-xl border flex items-center justify-between transition-all ${isSfxEnabled
+                  ? 'border-indigo-500 bg-indigo-50 text-indigo-700 ring-1 ring-indigo-500 dark:bg-indigo-900/20 dark:text-indigo-300'
+                  : 'border-slate-200 dark:border-slate-600 text-slate-500'
+                  }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold">音效</span>
+                </div>
+                <div className={`w-8 h-5 rounded-full relative transition-colors ${isSfxEnabled ? 'bg-indigo-500' : 'bg-slate-300'}`}>
+                  <div className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${isSfxEnabled ? 'left-4' : 'left-1'}`} />
+                </div>
               </button>
             </div>
           </section>
@@ -207,18 +250,42 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, o
               <Cpu size={16} className="text-slate-400" /> 模型名稱
             </label>
             {config.provider === 'google' ? (
-              <select
-                aria-label="選擇 AI 模型"
-                value={config.model}
-                onChange={(e) => setConfig({ ...config, model: e.target.value })}
-                className="w-full p-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all text-sm font-medium appearance-none text-slate-900 dark:text-slate-100"
-              >
-                <option value="gemini-2.0-flash">Gemini 2.0 Flash (最新預覽)</option>
-                <option value="gemini-1.5-flash">Gemini 1.5 Flash (快速)</option>
-                <option value="gemini-1.5-pro">Gemini 1.5 Pro (精確但慢)</option>
-                <option value="gemma-2-27b-it">Gemma 2 27B IT</option>
-                <option value="gemma-3-27b-it">Gemma 3 27B IT (最新)</option>
-              </select>
+              <div className="space-y-2">
+                <input
+                  list="google-models"
+                  type="text"
+                  value={config.model}
+                  onChange={(e) => setConfig({ ...config, model: e.target.value })}
+                  placeholder="輸入或選擇模型 (例如: gemini-1.5-flash)"
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all font-mono text-sm text-slate-900 dark:text-slate-100"
+                />
+                <datalist id="google-models">
+                  <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                  <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                  <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                  <option value="gemma-3-27b-it">Gemma 3 27B IT</option>
+                </datalist>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => setConfig({ ...config, model: 'gemini-1.5-flash' })}
+                    className="text-[10px] px-2 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-md text-slate-600 dark:text-slate-400 font-medium transition-colors"
+                  >
+                    1.5 Flash
+                  </button>
+                  <button
+                    onClick={() => setConfig({ ...config, model: 'gemini-1.5-pro' })}
+                    className="text-[10px] px-2 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-md text-slate-600 dark:text-slate-400 font-medium transition-colors"
+                  >
+                    1.5 Pro
+                  </button>
+                  <button
+                    onClick={() => setConfig({ ...config, model: 'gemini-2.0-flash' })}
+                    className="text-[10px] px-2 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-md text-slate-600 dark:text-slate-400 font-medium transition-colors"
+                  >
+                    2.0 Flash
+                  </button>
+                </div>
+              </div>
             ) : (
               <div className="space-y-2">
                 <input
@@ -264,6 +331,31 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, o
               您的金鑰將僅儲存在此瀏覽器的 LocalStorage 中。我們不會將您的金鑰上傳至任何伺服器。
             </p>
           </div>
+
+          <div className="h-px bg-slate-100 dark:bg-slate-700" />
+
+          {/* Danger Zone - The "Root Out" functionality */}
+          <section className="space-y-4">
+            <label className="text-sm font-bold text-red-500 flex items-center gap-2">
+              <AlertTriangle size={16} /> 危險區域 (剷除數據)
+            </label>
+            <div className="p-4 bg-red-50 dark:bg-red-900/10 rounded-2xl border border-red-100 dark:border-red-900/30 space-y-3">
+              <p className="text-[10px] text-red-600 dark:text-red-400 font-medium">
+                這裏的動作是不可逆的，執行前請三思。
+              </p>
+
+              <button
+                onClick={onSystemNuke}
+                className="w-full flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-red-200 dark:border-red-900/50 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group"
+              >
+                <div className="flex flex-col items-start gap-0.5">
+                  <span className="text-xs font-bold">徹底剷除所有本地數據</span>
+                  <span className="text-[9px] opacity-70">包括題庫、資料夾與測驗紀錄</span>
+                </div>
+                <Trash2 size={16} className="group-hover:scale-110 transition-transform" />
+              </button>
+            </div>
+          </section>
         </div>
 
         <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 shrink-0">

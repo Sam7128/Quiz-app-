@@ -67,9 +67,10 @@ The application uses a **Serverless/Local-First** architecture.
 *   **JSON Strictness:** The `BankManager` implies strict JSON structure for imports. When debugging import issues, check `BankManager.tsx`'s validation logic.
 *   **Tailwind:** Use Tailwind classes for styling changes.
 
-## 7. Recent Changes (v0.2.0)
+## 7. Recent Changes (v0.3.1)
+*   **Accessibility Improvements**: Fixed "Buttons must have discernible text" errors in `AIHelper` by adding ARIA labels.
+*   **Game Mode**: Implemented RPG-style gamification ("Battle Arena") with global toggle, "Underground" theme, and stage transitions.
 *   **AI Tutor Expansion**: Integrated Google GenAI SDK with support for Gemma 3/Gemini models. Added `AIHelper` component to provide contextual help during quizzes.
 *   **Social Sharing**: Implemented a friendship system and direct bank sharing feature via Supabase. Users can now send their question banks directly to friends.
 *   **Settings System**: Added a centralized Settings modal for API Key and model configuration.
 *   **Dashboard**: Added "Share" action to bank cards.
-*   **Game Mode**: Implemented RPG-style gamification ("Battle Arena") with global toggle, "Underground" theme, and stage transitions. Users can switch between Study Mode and Game Mode in Settings.

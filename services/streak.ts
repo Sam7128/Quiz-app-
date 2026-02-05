@@ -15,18 +15,17 @@ export const getCloudStreak = async (): Promise<StreakData | null> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const { data, error } = await supabase
+  const { data: streakRows, error } = await supabase
     .from('user_streaks')
     .select('current_streak, longest_streak, last_study_date')
     .eq('user_id', user.id)
-    .single();
+    .limit(1);
+
+  const data = streakRows?.[0];
 
   if (error) {
-    // PGRST116 means no rows found (new user or no streak yet)
-    if (error.code !== 'PGRST116') {
-      console.error('Error fetching streak:', error);
-      return null;
-    }
+    console.error('Error fetching streak:', error);
+    return null;
   }
 
   if (!data) {

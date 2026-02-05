@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import OpenAI from "openai";
 import { Question, AIConfig } from "../types";
 
@@ -7,7 +7,7 @@ const AI_CONFIG_KEY = 'mindspark_ai_config';
 export const getAIConfig = (): AIConfig | null => {
   const data = localStorage.getItem(AI_CONFIG_KEY);
   if (!data) return null;
-  
+
   const config = JSON.parse(data);
   // Migration for old config without provider
   if (!config.provider) {
@@ -50,10 +50,7 @@ ${question.explanation ? `原解析：${question.explanation}` : ''}
 
   try {
     if (config.provider === 'nvidia') {
-      // Use local proxy if baseUrl is default, otherwise use configured url
-      // Note: Proxy only works in dev mode. For production, you need a backend proxy.
       const isDefaultUrl = !config.baseUrl || config.baseUrl === "https://integrate.api.nvidia.com/v1";
-      // OpenAI client requires a full URL, so we prepend origin to the proxy path
       const baseURL = isDefaultUrl ? `${window.location.origin}/api/nvidia` : config.baseUrl;
 
       const client = new OpenAI({
@@ -75,12 +72,11 @@ ${question.explanation ? `原解析：${question.explanation}` : ''}
       return completion.choices[0].message.content || "";
 
     } else {
-      // Default to Google
       const genAI = new GoogleGenerativeAI(config.apiKey);
       const model = genAI.getGenerativeModel({ model: config.model || "gemini-1.5-flash" });
 
       const prompt = `${systemInstruction}\n\n${contextData}`;
-      
+
       const result = await model.generateContent(prompt);
       const response = await result.response;
       return response.text();
@@ -88,5 +84,84 @@ ${question.explanation ? `原解析：${question.explanation}` : ''}
   } catch (error: any) {
     console.error("AI Error:", error);
     throw new Error(error.message || "AI 請求失敗，請檢查 API 金鑰或網路連線。");
+  }
+};
+
+export const generateQuestionsFromPDF = async (
+  pdfBase64: string,
+  topic: string = "",
+  count: number = 5,
+  options: {
+    langOutput: string;
+    questionType: string;
+    langExplanation: string;
+  } = { langOutput: 'zh-TW', questionType: 'mixed', langExplanation: 'zh-TW' }
+): Promise<Question[]> => {
+  const config = getAIConfig();
+  if (!config || !config.apiKey) throw new Error("請先配置 API 金鑰");
+
+  if (config.provider !== 'google') {
+    throw new Error("目前 PDF 生成功能僅支援 Google Gemini 模型，請在設定中切換。");
+  }
+
+  try {
+    const genAI = new GoogleGenerativeAI(config.apiKey);
+    const model = genAI.getGenerativeModel({ model: config.model || "gemini-1.5-flash" });
+
+    const typeInstruction = options.questionType === 'single'
+      ? '請只生成「單選題」。'
+      : options.questionType === 'multiple'
+        ? '請只生成「多選題」。'
+        : '請包含「單選題」與「多選題」。';
+
+    const outputLang = options.langOutput === 'zh-TW' ? '繁體中文 (Traditional Chinese)' : 'English';
+    const explanationLang = options.langExplanation === 'zh-TW' ? '繁體中文' : 'English';
+
+    const prompt = `
+      請根據附件的 PDF 文件內容${topic ? `，並專注於「${topic}」主題` : ''}，
+      生成 ${count} 題。
+      
+      【內容要求】
+      ${typeInstruction}
+      詳解語言：${explanationLang}
+
+      【輸出格式要求】
+      1. 請直接輸出純 JSON 陣列 (Array)，不要包含 Markdown 標記 (如 \`\`\`json ... \`\`\`)。
+      2. 格式範例：
+      [
+        {
+          "question": "題目描述",
+          "options": ["選項A", "選項B", "選項C", "選項D"],
+          "answer": "正確選項的完整文字 (如果是多選題則為字串陣列)",
+          "explanation": "詳解 (${explanationLang})",
+          "type": "single 或 multiple",
+          "id": "由你生成的唯一亂數ID"
+        }
+      ]
+      3. 題目語言：${outputLang}
+    `;
+
+    // Explicitly construct parts with 'any' cast to avoid strict union discrimination issues specific to some SDK versions
+    // The structure is correct per documentation: { text: string } | { inlineData: ... }
+    const parts: any[] = [
+      { text: prompt },
+      {
+        inlineData: {
+          mimeType: "application/pdf",
+          data: pdfBase64
+        }
+      }
+    ];
+
+    const result = await model.generateContent(parts);
+    const response = await result.response;
+    const text = response.text();
+
+    const cleanJson = text.replace(/```json\n?|\n?```/g, "").trim();
+
+    return JSON.parse(cleanJson);
+  } catch (error: any) {
+    console.error("PDF Generate Error:", error);
+    throw new Error("生成失敗：" + (error.message || "未知錯誤"));
   }
 };

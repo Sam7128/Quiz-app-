@@ -38,9 +38,25 @@
     - [x] 地下城風格戰鬥場景 (BattleArena.tsx)
     - [x] 關卡切換過場動畫 (Stage Transition)
     - [x] 狀態持久化 (localStorage)
-
-## 🟡 進行中 (In Progress)
+- [x] **[Fix]** 修復 AIHelper 按鈕無障礙標籤缺失 (Accessibility Fixes)
+- [x] **[Feature]** 戰鬥模式強化 (Battle Mode Enhancements)
+    - [x] 實作火球攻擊動畫 (FireballAttack.tsx)
+    - [x] 整合音效系統 (useSoundEffects.ts)
+- [x] **[Feature]** AI 講義生成系統 (PDF -> Questions)
+    - [x] 實作 Google Gemini PDF 分析功能 (services/ai.ts)
+    - [x] 實作 BankManager AI 生成頁面
+    - [x] 支持自定義語言、題目類型與詳解語言 (AI Generator Options)
+- [x] **[UX]** 設定頁面優化
+    - [x] 支援自訂 AI 模型名稱
+- [x] **[Core]** 資料管理與徹底剷除功能 (Data Management & Root Out)
+    - [x] 多選題庫範例提供 (multiple_choice_sample.json)
+    - [x] 儀表板批量題庫刪除按鈕 (Dashboard.tsx)
+    - [x] 設定頁面「徹底剷除數據」系統重置功能 (Settings.tsx)
+    - [x] 擴展 Nuke 邏輯：清理本地存儲 prefix 及強制雲端登出 (App.tsx / storage.ts)
+    - [x] 消除 PostgREST 406 錯誤日誌 (analytics.ts / streak.ts)
 - [x] **[Testing]** 應用程式功能線上測試 (Ready for Deployment)
+- [x] **[Fix]** 首頁批量刪除無法同步雲端修復 (App.tsx)
+- [x] **[Refactor]** 音效系統遷移至 Howler.js 以解決自動播放問題 (useSoundEffects.ts)
 
 ## 📝 備註 (Notes)
 - 請隨時更新此文件以反映最新狀態。

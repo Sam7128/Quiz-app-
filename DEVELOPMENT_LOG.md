@@ -20,3 +20,35 @@
 ### 📝 Documentation
 - Updated `CHECKLIST.md` marking Game Mode as complete.
 - Updated `GEMINI.md` with recent changes.
+
+## 2026-02-05 [v0.3.1]
+### 🐛 Bug Fixes
+- **Accessibility (A11y)**:
+  - Fixed "Buttons must have discernible text" in `AIHelper.tsx` by adding `aria-label` and `title` to close and send buttons.
+  - Fixed "Form elements must have labels" in `BankManager.tsx` by associating inputs with labels.
+
+### ✨ New Features
+- **AI PDF Question Generation**:
+  - Added PDF upload support in `BankManager` (AI Tab).
+  - Integrated Google Gemini 1.5 for analyzing PDF content and generating questions.
+  - Added options for **Question Language**, **Question Type** (Single/Multiple/Mixed), and **Explanation Language**.
+- **Battle Mode Enhancements**:
+  - Added `FireballAttack` animation with `framer-motion` (GPU accelerated).
+  - Integrated Sound Effects System (`useSoundEffects`) for BGM and SFX.
+- **Settings**:
+  - Added Custom Model Name support for Google provider.
+  - Added Audio Settings (BGM/SFX toggles).
+
+## 2026-02-05 [v0.3.2]
+### ✨ New Features
+- **Data Management (Root Out)**:
+  - **Batch Delete**: Implemented multi-bank deletion in `Dashboard.tsx` via checkbox selection.
+  - **System Nuke**: Added "Danger Zone" in `Settings.tsx` to wipe all local data and configurations.
+  - **Enhanced Reset Protocol**: Modified nuke logic to forcefully sign out from Supabase and clear all `localStorage` keys with prefix `mindspark_` to ensure total cleanup.
+  - **Sample Data**: Created `multiple_choice_sample.json` for testing multiple-choice imports.
+
+### 🐛 Bug Fixes
+- **Console Optimization**:
+  - Replaced Supabase `.single()` with `.limit(1)` in analytics and streak services. This eliminates noisy "406 Not Acceptable" log errors when no rows are found, improving developer experience and console purity.
+- **Naming Alignment**:
+  - Renamed `lich_king.png` to `skeleton_wizard.png` to match updated monster data and prevent asset potential 404s.

@@ -10,6 +10,10 @@ const STORAGE_KEYS = {
   FOLDER_MAP: 'mindspark_bank_folder_map', // Independent map for cloud/local
   SPACED_REPETITION: 'mindspark_spaced_repetition',
   GAME_MODE: 'mindspark_game_mode',
+  STUDY_SESSIONS: 'mindspark_study_sessions',
+  ACHIEVEMENTS: 'mindspark_achievements',
+  AI_CONFIG: 'mindspark_ai_config',
+  SOUND_SETTINGS: 'mindspark_sound_settings'
 };
 
 // --- Game Mode ---
@@ -287,4 +291,19 @@ export const deleteSpacedRepetitionItem = (questionId: string): void => {
 
 export const clearSpacedRepetition = (): void => {
   localStorage.removeItem(STORAGE_KEYS.SPACED_REPETITION);
+};
+
+// --- Data Nuke (The "Root Out" functionality) ---
+
+export const nukeAllBanks = () => {
+  // Ultra-comprehensive clear: remove ALL keys starting with mindspark_
+  const keysToRemove: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('mindspark_')) {
+      keysToRemove.push(key);
+    }
+  }
+
+  keysToRemove.forEach(key => localStorage.removeItem(key));
 };
