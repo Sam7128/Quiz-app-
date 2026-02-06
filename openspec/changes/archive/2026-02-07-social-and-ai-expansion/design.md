@@ -34,13 +34,13 @@ Acts as an inbox for shared content.
 ## 2. AI Architecture
 
 ### 2.1 Configuration
-- **Provider:** Google GenAI SDK (`@google/genai`).
+- **Provider:** Google GenAI SDK (`@google/generative-ai`).
 - **Model:** Default to `gemini-3-flash-preview` (as per user-provided guide) or `gemma-3-27b-it` if available via the same API.
 - **Storage:** API Key stored in `localStorage` under `mindspark_ai_config`.
 - **Security:** Client-side only. Warn users that the key is stored locally and not synced to Supabase for security.
 
 ### 2.2 Integration
-- **SDK:** Use `@google/genai` for structured and streaming responses.
+- **SDK:** Use `@google/generative-ai` for structured and streaming responses.
 - **Context:** When asking, prompt includes:
   - Current Question Text
   - Options

@@ -13,7 +13,42 @@ const STORAGE_KEYS = {
   STUDY_SESSIONS: 'mindspark_study_sessions',
   ACHIEVEMENTS: 'mindspark_achievements',
   AI_CONFIG: 'mindspark_ai_config',
-  SOUND_SETTINGS: 'mindspark_sound_settings'
+  SOUND_SETTINGS: 'mindspark_sound_settings',
+  QUIZ_SESSION: 'mindspark_quiz_session',
+  SETTINGS: 'mindspark_settings',
+  RECENT_MISTAKES: 'mindspark_recent_mistakes'
+};
+
+import { SavedQuizProgress, UserSettings, DEFAULT_SETTINGS, RecentMistakeSession } from '../types/battleTypes';
+
+export const getUserSettings = (): UserSettings => {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+    return data ? JSON.parse(data) : DEFAULT_SETTINGS;
+  } catch (e) {
+    return DEFAULT_SETTINGS;
+  }
+};
+
+export const saveUserSettings = (settings: UserSettings) => {
+  localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+};
+
+export const getQuizSession = (): SavedQuizProgress | null => {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.QUIZ_SESSION);
+    return data ? JSON.parse(data) : null;
+  } catch (e) {
+    return null;
+  }
+};
+
+export const saveQuizSession = (session: SavedQuizProgress) => {
+  localStorage.setItem(STORAGE_KEYS.QUIZ_SESSION, JSON.stringify(session));
+};
+
+export const clearQuizSession = () => {
+  localStorage.removeItem(STORAGE_KEYS.QUIZ_SESSION);
 };
 
 // --- Game Mode ---
@@ -248,6 +283,37 @@ export const removeMistake = (questionId: string | number) => {
 
 export const clearMistakes = () => {
   localStorage.removeItem(STORAGE_KEYS.MISTAKES);
+};
+
+// --- Recent Mistake Sessions (FIFO 5) ---
+
+export const getRecentMistakeSessions = (): RecentMistakeSession[] => {
+  try {
+    const data = localStorage.getItem(STORAGE_KEYS.RECENT_MISTAKES);
+    return data ? JSON.parse(data) : [];
+  } catch (e) {
+    return [];
+  }
+};
+
+export const addRecentMistakeSession = (session: RecentMistakeSession) => {
+  try {
+    const list = getRecentMistakeSessions();
+    // Premium FIFO: Add new to start, keep max 5
+    const updated = [session, ...list].slice(0, 5);
+    localStorage.setItem(STORAGE_KEYS.RECENT_MISTAKES, JSON.stringify(updated));
+  } catch (e) {
+    console.error("Failed to add recent mistake session", e);
+  }
+};
+
+export const clearRecentMistakeSession = (sessionId: string) => {
+  const list = getRecentMistakeSessions().filter(s => s.sessionId !== sessionId);
+  localStorage.setItem(STORAGE_KEYS.RECENT_MISTAKES, JSON.stringify(list));
+};
+
+export const clearAllRecentMistakes = () => {
+  localStorage.removeItem(STORAGE_KEYS.RECENT_MISTAKES);
 };
 
 // --- Spaced Repetition (Local Storage) ---

@@ -38,13 +38,13 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, bank })
 
       // 2. Fetch Profiles manually
       const friendIds = friendships.map(f => f.user_id === user?.id ? f.friend_id : f.user_id);
-      
+
       let profilesMap: Record<string, any> = {};
       if (friendIds.length > 0) {
         const { data: profiles, error: pError } = await supabase
-            .from('profiles')
-            .select('id, username, avatar_url')
-            .in('id', friendIds);
+          .from('profiles')
+          .select('id, username, avatar_url')
+          .in('id', friendIds);
 
         if (pError) throw pError;
         profiles?.forEach(p => profilesMap[p.id] = p);
@@ -72,23 +72,23 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, bank })
       // Since user is logged in (checked above), we should try cloud first as that's where current data lives for logged-in users.
       let questions: Question[] = [];
       try {
-          questions = await getCloudQuestions(bank.id);
+        questions = await getCloudQuestions(bank.id);
       } catch (cloudErr) {
-          console.warn("Cloud fetch failed, falling back to local for sharing", cloudErr);
-          questions = getQuestions(bank.id);
+        console.warn("Cloud fetch failed, falling back to local for sharing", cloudErr);
+        questions = getQuestions(bank.id);
       }
-      
+
       // Fallback: If cloud returned empty but we have local data (edge case), try local
       if (questions.length === 0) {
-          const localQ = getQuestions(bank.id);
-          if (localQ.length > 0) questions = localQ;
+        const localQ = getQuestions(bank.id);
+        if (localQ.length > 0) questions = localQ;
       }
 
       if (questions.length === 0) {
-          if (!confirm("此題庫似乎沒有題目 (0 題)。確定要傳送空題庫嗎？")) {
-              setSharingId(null);
-              return;
-          }
+        if (!confirm("此題庫似乎沒有題目 (0 題)。確定要傳送空題庫嗎？")) {
+          setSharingId(null);
+          return;
+        }
       }
 
       const { error } = await supabase
@@ -104,7 +104,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, bank })
         });
 
       if (error) throw error;
-      
+
       alert(`已傳送題庫「${bank.name}」！`);
     } catch (err: any) {
       alert("分享失敗: " + err.message);
@@ -123,24 +123,29 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, bank })
             <Share2 className="text-brand-600" size={20} />
             <h2 className="text-lg font-bold">分享題庫</h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"
+            aria-label="關閉"
+            title="關閉"
+          >
             <X size={20} />
           </button>
         </div>
 
         <div className="p-6">
           <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-700 rounded-2xl border border-slate-100 dark:border-slate-600 flex items-center gap-3">
-             <div className="p-2 bg-white dark:bg-slate-600 rounded-lg shadow-sm">
-               <BookOpen className="text-brand-500" size={20} />
-             </div>
-             <div>
-               <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">正在分享</p>
-               <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{bank.name}</p>
-             </div>
+            <div className="p-2 bg-white dark:bg-slate-600 rounded-lg shadow-sm">
+              <BookOpen className="text-brand-500" size={20} />
+            </div>
+            <div>
+              <p className="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">正在分享</p>
+              <p className="text-sm font-bold text-slate-800 dark:text-slate-100">{bank.name}</p>
+            </div>
           </div>
 
           <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-widest">選擇好友</h3>
-          
+
           <div className="space-y-2 max-h-64 overflow-y-auto">
             {loading ? (
               <div className="flex justify-center py-8"><Loader2 className="animate-spin text-brand-600" /></div>
@@ -155,7 +160,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, bank })
                     </div>
                     <span className="text-sm font-bold text-slate-700 dark:text-slate-200">{f.friend_profile?.username}</span>
                   </div>
-                  <button 
+                  <button
                     onClick={() => handleShare(f.friend_id)}
                     disabled={sharingId !== null}
                     className="p-2 bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-300 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-brand-600 hover:text-white transition-all shadow-sm"
@@ -172,4 +177,4 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, bank })
   );
 };
 
-export default React.memo(ShareModal);
+// export default React.memo(ShareModal);

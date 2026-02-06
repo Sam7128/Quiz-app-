@@ -261,3 +261,8 @@ export function getMonsterByProgress(defeatedCount: number): Monster {
     }
     return getRandomMonster('normal');
 }
+
+// 匯出怪物 ID 列表供隨機與輪替使用
+export const NORMAL_MONSTER_IDS = NORMAL_MONSTERS.map(m => m.id);
+export const ELITE_MONSTER_IDS = ELITE_MONSTERS.map(m => m.id);
+export const BOSS_MONSTER_IDS = BOSS_MONSTERS.map(m => m.id);

@@ -23,7 +23,11 @@ import {
   nukeAllBanks,
   deleteBank,
   clearMistakes,
-  clearSpacedRepetition
+  clearSpacedRepetition,
+  getQuizSession,
+  saveQuizSession,
+  clearQuizSession,
+  addRecentMistakeSession
 } from './services/storage';
 import {
   getCloudBanks,
@@ -50,6 +54,7 @@ import {
 } from './services/challenges';
 import { QuizProvider } from './contexts/QuizContext';
 import { DEFAULT_QUESTIONS, APP_NAME } from './constants';
+import { QuizResult } from './components/QuizResult';
 import { Dashboard } from './components/Dashboard';
 import { QuizCard } from './components/QuizCard';
 import { BankManager } from './components/BankManager';
@@ -59,6 +64,8 @@ import { Settings as SettingsModal } from './components/Settings';
 import { Social } from './components/Social';
 import { ShareModal } from './components/ShareModal';
 import { useAuth } from './contexts/AuthContext';
+import { ResumePrompt } from './components/ResumePrompt';
+import { SavedQuizProgress, MistakeDetail, RecentMistakeSession } from './types/battleTypes';
 import { BrainCircuit, LayoutDashboard, FileText, Settings, X, RotateCcw, User as UserIcon, Users } from 'lucide-react';
 import SkeletonLoader from './components/SkeletonLoader';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -103,7 +110,7 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
       const preservedSelection = state.selectedQuizBankIds.filter(id => validIds.includes(id));
       const selectedQuizBankIds = preservedSelection.length > 0
         ? preservedSelection
-        : (action.banks.length > 0 ? [action.banks[0].id] : []);
+        : (action.banks.map(b => b.id));
 
       return {
         ...state,
@@ -122,6 +129,8 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
 
       return { ...state, selectedQuizBankIds };
     }
+    case 'set_selected_bank_ids':
+      return { ...state, selectedQuizBankIds: action.bankIds };
     case 'set_game_mode':
       saveGameMode(action.gameMode);
       return { ...state, gameMode: action.gameMode };
@@ -149,6 +158,7 @@ const App: React.FC = () => {
   const [quizPoolQuestions, setQuizPoolQuestions] = useState<Question[]>([]);
   const [editingQuestions, setEditingQuestions] = useState<Question[]>([]);
   const [mistakeLog, setMistakeLog] = useState(getMistakeLog());
+  const [currentSessionMistakes, setCurrentSessionMistakes] = useState<MistakeDetail[]>([]);
 
   // Quiz Session State
   const [quizState, setQuizState] = useState<QuizState>({
@@ -165,6 +175,68 @@ const App: React.FC = () => {
 
   // Challenge state
   const [currentChallengeId, setCurrentChallengeId] = useState<string | null>(null);
+
+  // Persistence: Auto-save Quiz Session
+  useEffect(() => {
+    if (quizState.activeQuestions.length > 0 && !quizState.isFinished) {
+      saveQuizSession({
+        bankIds: selectedQuizBankIds,
+        questionIds: quizState.activeQuestions.map(q => String(q.id)),
+        currentIndex: quizState.currentQuestionIndex,
+        score: quizState.score,
+        wrongQuestionIds: quizState.wrongQuestionIds,
+        savedAt: Date.now()
+      });
+    } else if (quizState.isFinished) {
+      clearQuizSession();
+    }
+  }, [quizState, selectedQuizBankIds]);
+
+  const [showResumePrompt, setShowResumePrompt] = useState(false);
+  const [pendingSession, setPendingSession] = useState<SavedQuizProgress | null>(null);
+
+  const restoreSession = useCallback(async (session: SavedQuizProgress) => {
+    try {
+      const poolPromises = session.bankIds.map(id =>
+        user ? getCloudQuestions(id) : Promise.resolve(getQuestions(id))
+      );
+      const pools = await Promise.all(poolPromises);
+      const allQuestions = pools.flat();
+
+      const restoredQuestions = session.questionIds
+        .map(id => allQuestions.find(q => String(q.id) === id))
+        .filter((q): q is Question => !!q);
+
+      if (restoredQuestions.length > 0) {
+        setQuizState({
+          currentQuestionIndex: session.currentIndex,
+          score: session.score,
+          totalQuestions: restoredQuestions.length,
+          isFinished: false,
+          activeQuestions: restoredQuestions,
+          mode: 'random',
+          wrongQuestionIds: session.wrongQuestionIds
+        });
+        dispatch({ type: 'set_view', view: 'quiz' });
+      }
+    } catch (e) {
+      console.error("Failed to restore session", e);
+      clearQuizSession();
+    } finally {
+      setShowResumePrompt(false);
+      setPendingSession(null);
+    }
+  }, [user]);
+
+  // Check for saved session on mount
+  useEffect(() => {
+    if (loading) return;
+    const session = getQuizSession();
+    if (session && session.questionIds.length > 0 && quizState.activeQuestions.length === 0) {
+      setPendingSession(session);
+      setShowResumePrompt(true);
+    }
+  }, [loading]);
 
   // Refresh helper (Consolidated Logic)
   const refreshBanksData = useCallback(async () => {
@@ -396,8 +468,52 @@ const App: React.FC = () => {
       wrongQuestionIds: []
     });
     setSessionStartTime(Date.now());
+    setCurrentSessionMistakes([]); // Reset session mistakes
     dispatch({ type: 'set_view', view: mode === 'mistake' ? 'mistakes' : 'quiz' });
   }, [selectedQuizBankIds, user]);
+
+  // Practice specific mistakes from RecentMistakesCard
+  const handlePracticeMistakes = useCallback((mistakes: MistakeDetail[]) => {
+    // Convert MistakeDetail back to Question format for the quiz
+    const questions: Question[] = mistakes.map(m => ({
+      id: m.questionId,
+      question: m.questionText,
+      options: m.options,
+      answer: Array.isArray(m.correctAnswer) ? (m.correctAnswer as any) : m.correctAnswer, // Cast to any to handle potential array mismatch in types vs runtime
+      explanation: "（來自錯題回顧）"
+    }));
+
+    if (questions.length === 0) return;
+
+    setQuizState({
+      currentQuestionIndex: 0,
+      score: 0,
+      totalQuestions: questions.length,
+      isFinished: false,
+      activeQuestions: questions,
+      mode: 'mistake',
+      wrongQuestionIds: []
+    });
+    setSessionStartTime(Date.now());
+    setCurrentSessionMistakes([]);
+    dispatch({ type: 'set_view', view: 'quiz' });
+  }, []);
+
+  const handleExitQuiz = useCallback(() => {
+    // Save Recent Mistakes Session if any
+    if (currentSessionMistakes.length > 0) {
+      const session: RecentMistakeSession = {
+        sessionId: crypto.randomUUID(),
+        timestamp: Date.now(),
+        bankNames: banks.filter(b => selectedQuizBankIds.includes(b.id)).map(b => b.name),
+        mistakes: currentSessionMistakes
+      };
+      addRecentMistakeSession(session);
+    }
+    setSessionStartTime(null);
+    dispatch({ type: 'set_view', view: 'dashboard' });
+    setCurrentSessionMistakes([]);
+  }, [currentSessionMistakes, banks, selectedQuizBankIds]);
 
   // Start a challenge quiz with specific bank
   const startChallengeQuiz = useCallback(async (challengeId: string, bankId: string) => {
@@ -462,6 +578,16 @@ const App: React.FC = () => {
       setQuizState(prev => ({ ...prev, wrongQuestionIds: [...prev.wrongQuestionIds, String(currentQ.id)] }));
       logMistake(currentQ.id, Array.isArray(selectedAnswer) ? selectedAnswer.join(', ') : selectedAnswer);
       setMistakeLog(getMistakeLog()); // Update state
+
+      // Track session mistake
+      const mistake: MistakeDetail = {
+        questionId: String(currentQ.id),
+        questionText: currentQ.question,
+        options: currentQ.options,
+        userAnswer: selectedAnswer,
+        correctAnswer: currentQ.answer as any
+      };
+      setCurrentSessionMistakes(prev => [...prev, mistake]);
     }
   }, [quizState, user]);
 
@@ -497,87 +623,66 @@ const App: React.FC = () => {
     if (view === 'quiz' || view === 'mistakes') {
       if (quizState.isFinished) {
         return (
-          <div className="max-w-md mx-auto text-center pt-10">
-            <div className="bg-white p-10 rounded-3xl shadow-xl">
-              <div className="w-24 h-24 bg-gradient-to-br from-brand-400 to-brand-600 rounded-full flex items-center justify-center text-white mx-auto mb-6 shadow-lg">
-                <span className="text-3xl font-bold">{Math.round((quizState.score / quizState.totalQuestions) * 100)}%</span>
-              </div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">測驗完成！</h2>
-              <p className="text-slate-500 mb-8">你在 {quizState.totalQuestions} 題中答對了 {quizState.score} 題</p>
+          <QuizResult
+            score={quizState.score}
+            totalQuestions={quizState.totalQuestions}
+            wrongQuestions={quizState.activeQuestions.filter(q => quizState.wrongQuestionIds.includes(String(q.id)))}
+            onRetry={() => startQuiz(quizState.wrongQuestionIds.length, 'retry_session', quizState.wrongQuestionIds)}
+            onRestart={() => startQuiz(quizState.totalQuestions, 'random')}
+            onHome={() => {
+              // Record study session for analytics
+              if (sessionStartTime) {
+                const durationSeconds = Math.floor((Date.now() - sessionStartTime) / 1000);
+                const correctCount = quizState.score;
+                const totalQuestions = quizState.totalQuestions;
 
-              <div className="space-y-3">
-                {quizState.wrongQuestionIds.length > 0 && (
-                  <button
-                    onClick={() => startQuiz(quizState.wrongQuestionIds.length, 'retry_session', quizState.wrongQuestionIds)}
-                    className="w-full flex items-center justify-center gap-2 bg-amber-500 text-white py-3 rounded-xl font-medium hover:bg-amber-600 transition-colors shadow-md shadow-amber-200"
-                  >
-                    <RotateCcw size={18} /> 立即複習錯題 ({quizState.wrongQuestionIds.length})
-                  </button>
-                )}
+                if (user) {
+                  void recordStudySession(totalQuestions, correctCount, durationSeconds);
+                } else {
+                  recordLocalStudySession(totalQuestions, correctCount, durationSeconds);
+                }
 
-                <button
-                  onClick={() => startQuiz(quizState.totalQuestions, 'random')}
-                  className="w-full flex items-center justify-center gap-2 bg-brand-600 text-white py-3 rounded-xl font-medium hover:bg-brand-500 transition-colors"
-                >
-                  <RotateCcw size={18} /> 再做一次 (隨機)
-                </button>
-                <button onClick={() => {
-                  // Record study session for analytics
-                  if (sessionStartTime) {
-                    const durationSeconds = Math.floor((Date.now() - sessionStartTime) / 1000);
-                    const correctCount = quizState.score;
-                    const totalQuestions = quizState.totalQuestions;
+                // Check and unlock achievements
+                const accuracy = totalQuestions > 0 ? (correctCount / totalQuestions) : 0;
 
-                    if (user) {
-                      void recordStudySession(totalQuestions, correctCount, durationSeconds);
-                    } else {
-                      recordLocalStudySession(totalQuestions, correctCount, durationSeconds);
-                    }
-
-                    // Check and unlock achievements
-                    const accuracy = totalQuestions > 0 ? (correctCount / totalQuestions) : 0;
-
-                    // Perfect score achievement
-                    if (accuracy === 1 && totalQuestions >= 5) {
-                      if (user) {
-                        void unlockCloudAchievement('perfect_score');
-                      } else {
-                        unlockLocalAchievement('perfect_score');
-                      }
-                    }
-
-                    // First question achievement (always unlock on any completed quiz)
-                    if (user) {
-                      void unlockCloudAchievement('first_question');
-                    } else {
-                      unlockLocalAchievement('first_question');
-                    }
-
-                    // Night owl achievement (10 PM - 6 AM)
-                    const hour = new Date().getHours();
-                    if (hour >= 22 || hour < 6) {
-                      if (user) {
-                        void unlockCloudAchievement('night_owl');
-                      } else {
-                        unlockLocalAchievement('night_owl');
-                      }
-                    }
-
-                    // Early bird achievement (before 6 AM)
-                    if (hour < 6) {
-                      if (user) {
-                        void unlockCloudAchievement('early_bird');
-                      } else {
-                        unlockLocalAchievement('early_bird');
-                      }
-                    }
+                // Perfect score achievement
+                if (accuracy === 1 && totalQuestions >= 5) {
+                  if (user) {
+                    void unlockCloudAchievement('perfect_score');
+                  } else {
+                    unlockLocalAchievement('perfect_score');
                   }
-                  setSessionStartTime(null);
-                  dispatch({ type: 'set_view', view: 'dashboard' });
-                }} className="w-full py-3 text-slate-600 hover:text-slate-800 font-medium transition-colors">返回首頁</button>
-              </div>
-            </div>
-          </div>
+                }
+
+                // First question achievement (always unlock on any completed quiz)
+                if (user) {
+                  void unlockCloudAchievement('first_question');
+                } else {
+                  unlockLocalAchievement('first_question');
+                }
+
+                // Night owl achievement (10 PM - 6 AM)
+                const hour = new Date().getHours();
+                if (hour >= 22 || hour < 6) {
+                  if (user) {
+                    void unlockCloudAchievement('night_owl');
+                  } else {
+                    unlockLocalAchievement('night_owl');
+                  }
+                }
+
+                // Early bird achievement (before 6 AM)
+                if (hour < 6) {
+                  if (user) {
+                    void unlockCloudAchievement('early_bird');
+                  } else {
+                    unlockLocalAchievement('early_bird');
+                  }
+                }
+              }
+              handleExitQuiz();
+            }}
+          />
         );
       }
       return (
@@ -589,7 +694,7 @@ const App: React.FC = () => {
             onAnswer={handleAnswer}
             onNext={nextQuestion}
             isLastQuestion={quizState.currentQuestionIndex === quizState.totalQuestions - 1}
-            onExit={() => dispatch({ type: 'set_view', view: 'dashboard' })}
+            onExit={handleExitQuiz}
             gameMode={gameMode} // Pass global game mode setting
           />
         </div>
@@ -607,7 +712,16 @@ const App: React.FC = () => {
           onToggleBank={handleToggleQuizBank}
           onStartQuiz={(n) => startQuiz(n, 'random')}
           onStartMistakes={() => startQuiz(20, 'mistake')}
+          onPracticeMistakes={handlePracticeMistakes}
           onShareBank={(bank) => dispatch({ type: 'set_sharing_bank', sharingBank: bank })}
+          onSelectAll={(selected) => {
+            if (selected) {
+              const allIds = banks.map(b => b.id);
+              dispatch({ type: 'set_selected_bank_ids', bankIds: allIds });
+            } else {
+              dispatch({ type: 'set_selected_bank_ids', bankIds: [] });
+            }
+          }}
           onCreateFolder={handleCreateFolder}
           onDeleteFolder={handleDeleteFolder}
           onMoveBank={handleMoveBank}
@@ -633,13 +747,36 @@ const App: React.FC = () => {
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${view === 'quiz' && gameMode ? 'bg-dungeon-page bg-repeat bg-fixed' : 'bg-slate-50 dark:bg-slate-900'
       }`}>
       {view === 'quiz' && gameMode && <div className="fixed inset-0 bg-black/50 pointer-events-none" />}
+      {/* Settings Modal */}
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => dispatch({ type: 'set_settings_open', isSettingsOpen: false })}
         gameMode={gameMode}
-        onToggleGameMode={handleToggleGameMode}
-        onSystemNuke={handleSystemNuke}
+        onToggleGameMode={() => {
+          const newVal = !gameMode;
+          handleToggleGameMode(newVal);
+        }}
+        onSystemNuke={() => {
+          if (confirm('確定要徹底剷除所有本地數據嗎？這將無法復原。')) {
+            nukeAllBanks();
+            window.location.reload();
+          }
+        }}
       />
+
+      {/* Progress Recovery Prompt */}
+      <ResumePrompt
+        isOpen={showResumePrompt}
+        progress={pendingSession}
+        onContinue={() => pendingSession && restoreSession(pendingSession)}
+        onRestart={() => {
+          clearQuizSession();
+          setShowResumePrompt(false);
+          setPendingSession(null);
+        }}
+      />
+
+      {/* Share Modal */}
       <ShareModal
         isOpen={sharingBank !== null}
         onClose={() => dispatch({ type: 'set_sharing_bank', sharingBank: null })}

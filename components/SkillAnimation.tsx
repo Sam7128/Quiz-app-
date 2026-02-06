@@ -99,10 +99,11 @@ const CSSSkillEffect: React.FC<{ skill: Skill }> = ({ skill }) => {
     const config = ELEMENT_CONFIG[skill.element];
     const intensity = TIER_INTENSITY[skill.tier];
     const { Icon } = config;
+    const [imgError, setImgError] = useState(false);
 
     return (
         <div className="relative">
-            {/* 主技能圖標 */}
+            {/* 主技能圖示/圖片 */}
             <motion.div
                 className={`relative z-10 ${config.color}`}
                 initial={{ scale: 0, rotate: -180 }}
@@ -116,7 +117,16 @@ const CSSSkillEffect: React.FC<{ skill: Skill }> = ({ skill }) => {
                     ease: 'easeOut',
                 }}
             >
-                <Icon className="w-24 h-24 md:w-32 md:h-32 drop-shadow-2xl" />
+                {skill.assetPath && !imgError && skill.animationType === 'css' ? (
+                    <img
+                        src={skill.assetPath}
+                        alt={skill.name}
+                        className="w-24 h-24 md:w-32 md:h-32 object-contain drop-shadow-2xl"
+                        onError={() => setImgError(true)}
+                    />
+                ) : (
+                    <Icon className="w-24 h-24 md:w-32 md:h-32 drop-shadow-2xl" />
+                )}
             </motion.div>
 
             {/* 光環效果 */}

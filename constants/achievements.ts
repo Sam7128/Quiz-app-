@@ -90,5 +90,97 @@ export const ACHIEVEMENTS: Achievement[] = [
     description: '建立 3 個題庫',
     icon: '📁',
     condition: 'create_3_banks'
+  },
+  // 新增戰鬥成就
+  {
+    id: 'first_boss_kill',
+    title: '屠龍者',
+    description: '首次擊敗 Boss 級怪物',
+    icon: '🐉',
+    condition: 'boss_kill_1'
+  },
+  {
+    id: 'defeat_5_monsters',
+    title: '怪物獵人',
+    description: '連續擊敗 5 隻怪物',
+    icon: '⚔️',
+    condition: 'monster_kill_5'
+  },
+  {
+    id: 'perfect_session_10',
+    title: '十全十美',
+    description: '單次測驗連續答對 10 題',
+    icon: '🔟',
+    condition: 'perfect_10'
+  },
+  {
+    id: 'perfect_session_20',
+    title: '登峰造極',
+    description: '單次測驗連續答對 20 題',
+    icon: '🏆',
+    condition: 'perfect_20'
+  },
+  {
+    id: 'trigger_5_skills',
+    title: '元素掌控者',
+    description: '單場戰鬥觸發 5 次技能',
+    icon: '⚡',
+    condition: 'skill_5'
+  },
+  {
+    id: 'trigger_legendary',
+    title: '傳說降臨',
+    description: '觸發傳說級技能 (50連擊)',
+    icon: '🌈',
+    condition: 'skill_legendary'
+  },
+  {
+    id: 'complete_500',
+    title: '博學多聞',
+    description: '累計完成 500 題',
+    icon: '📖',
+    condition: 'total_500'
+  },
+  {
+    id: 'complete_1000',
+    title: '知識淵博',
+    description: '累計完成 1000 題',
+    icon: '🎓',
+    condition: 'total_1000'
+  },
+  {
+    id: 'weekend_warrior',
+    title: '週末戰士',
+    description: '在週末進行學習',
+    icon: '🏖️',
+    condition: 'study_weekend'
+  },
+  {
+    id: 'streak_14',
+    title: '雙週挑戰',
+    description: '連續學習 14 天',
+    icon: '📅',
+    condition: 'streak_14'
+  },
+  {
+    id: 'first_crit',
+    title: '會心一擊',
+    description: '首次觸發暴擊傷害',
+    icon: '💥',
+    condition: 'crit_1'
+  },
+  {
+    id: 'crit_master',
+    title: '暴擊大師',
+    description: '累計觸發 50 次暴擊',
+    icon: '🎯',
+    condition: 'crit_50'
+  },
+  {
+    id: 'zero_mistakes',
+    title: '零誤答',
+    description: '完成一場 20 題以上的測驗且無失誤',
+    icon: '🛡️',
+    condition: 'perfect_run_20'
   }
 ];

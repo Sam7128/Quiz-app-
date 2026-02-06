@@ -65,6 +65,7 @@ export type AppAction =
   | { type: 'sync_banks_data'; banks: BankMetadata[]; folders: Folder[] }
   | { type: 'set_editing_bank_id'; editingBankId: string | null }
   | { type: 'toggle_quiz_bank_id'; bankId: string }
+  | { type: 'set_selected_bank_ids'; bankIds: string[] }
   | { type: 'set_game_mode'; gameMode: boolean };
 
 export interface QuizState {

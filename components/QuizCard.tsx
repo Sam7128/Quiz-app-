@@ -2,11 +2,22 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useSound from 'use-sound';
 import { Question } from '../types';
-import { Lightbulb, CheckCircle, XCircle, ArrowRight, CheckSquare, Square, Volume2, VolumeX, Swords } from 'lucide-react';
+import {
+  getMistakeLog,
+  getQuizSession,
+  saveQuizSession,
+  clearQuizSession,
+  getUserSettings
+} from '../services/storage';
+import { Lightbulb, CheckCircle, XCircle, ArrowRight, CheckSquare, Square, Volume2, VolumeX, Swords, Trophy } from 'lucide-react';
 import { AIHelper } from './AIHelper';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useBattleSystem } from '../hooks/useBattleSystem';
 import { BattleArena } from './BattleArena';
+import { MiniTimer } from './MiniTimer';
+import { RestBreakModal } from './RestBreakModal';
+import { AchievementsModal } from './AchievementsModal';
+import { useAchievements } from '../hooks/useAchievements';
 
 interface QuizCardProps {
   question: Question;
@@ -43,6 +54,29 @@ export const QuizCard: React.FC<QuizCardProps> = ({
   const [showExplanation, setShowExplanation] = useState(false);
   const [feedback, setFeedback] = useState<'none' | 'correct' | 'incorrect'>('none');
   const [soundEnabled, setSoundEnabled] = useState(true);
+
+  // Timer & Rest State
+  const [timerActive, setTimerActive] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(25 * 60);
+  const [questionsSinceBreak, setQuestionsSinceBreak] = useState(0);
+  const [showRestModal, setShowRestModal] = useState(false);
+  const [suppressRestModal, setSuppressRestModal] = useState(false);
+  const [showAchievements, setShowAchievements] = useState(false);
+
+  const { unlockedIds } = useAchievements(true);
+
+  // Timer Effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (timerActive && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      setTimerActive(false);
+    }
+    return () => clearInterval(interval);
+  }, [timerActive, timeLeft]);
 
   // 戰鬥系統 Hook
   const {
@@ -154,6 +188,16 @@ export const QuizCard: React.FC<QuizCardProps> = ({
     const answerToPass = isMultiple ? selection : selection[0];
     onAnswer(isCorrect, answerToPass);
 
+    // Update Rest Count
+    const newCount = questionsSinceBreak + 1;
+    setQuestionsSinceBreak(newCount);
+
+    // Check Rest Break
+    const settings = getUserSettings();
+    if (!suppressRestModal && settings.restBreakInterval > 0 && newCount >= settings.restBreakInterval) {
+      setTimeout(() => setShowRestModal(true), 1500); // Show after feedback
+    }
+
     setTimeout(() => setShowExplanation(true), 400);
   };
 
@@ -226,8 +270,20 @@ export const QuizCard: React.FC<QuizCardProps> = ({
         <div className="flex justify-between items-end text-sm font-bold text-slate-400">
           <span>題目 {currentIndex + 1} / {totalQuestions}</span>
           <div className="flex items-center gap-3">
-            {/* 戰鬥模式切換 - 已移至設定 */}
+            {/* Timer & Achievements */}
+            <MiniTimer
+              isActive={timerActive}
+              timeLeft={timeLeft}
+              onToggle={() => setTimerActive(!timerActive)}
+            />
             <span>{Math.round(progress)}%</span>
+            <button
+              onClick={() => setShowAchievements(true)}
+              className="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full text-slate-400"
+              aria-label="查看成就"
+            >
+              <Trophy size={16} />
+            </button>
           </div>
         </div>
         <div className={`h-2 w-full rounded-full overflow-hidden ${gameMode ? 'bg-slate-700' : 'bg-slate-200'}`}>
@@ -246,6 +302,26 @@ export const QuizCard: React.FC<QuizCardProps> = ({
           onAnimationComplete={onAnimationComplete}
         />
       )}
+
+      <RestBreakModal
+        isOpen={showRestModal}
+        questionCount={questionsSinceBreak}
+        onContinue={(dontAskAgain) => {
+          setShowRestModal(false);
+          setQuestionsSinceBreak(0);
+          if (dontAskAgain) setSuppressRestModal(true);
+        }}
+        onStop={() => {
+          setShowRestModal(false);
+          onExit();
+        }}
+      />
+
+      <AchievementsModal
+        isOpen={showAchievements}
+        onClose={() => setShowAchievements(false)}
+        unlockedIds={unlockedIds}
+      />
 
       <AnimatePresence mode="wait">
         <motion.div
@@ -332,7 +408,12 @@ export const QuizCard: React.FC<QuizCardProps> = ({
                   disabled={isAnswered}
                   className={getOptionClass(option)}
                 >
-                  <span className="font-semibold pr-4 z-10">{option}</span>
+                  <span className="font-semibold pr-4 z-10 flex items-center gap-2">
+                    <span className="inline-flex w-5 h-5 items-center justify-center rounded border border-slate-400/50 text-[10px] bg-slate-100/50 dark:bg-slate-800/50 text-slate-500 font-mono">
+                      {idx + 1}
+                    </span>
+                    {option}
+                  </span>
                   <div className="shrink-0 z-10">
                     {renderOptionIcon(option)}
                   </div>
@@ -348,7 +429,10 @@ export const QuizCard: React.FC<QuizCardProps> = ({
             </div>
 
             {isMultiple && !isAnswered && (
-              <div className="mt-6 flex justify-end">
+              <div className="mt-6 flex justify-end items-center gap-4">
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 text-[10px] text-slate-400 font-mono">
+                  <span className="font-bold">Enter</span> 送出
+                </div>
                 <button
                   onClick={() => submitAnswer(selectedOptions)}
                   disabled={selectedOptions.length === 0}
@@ -359,6 +443,17 @@ export const QuizCard: React.FC<QuizCardProps> = ({
                 >
                   送出答案
                 </button>
+              </div>
+            )}
+
+            {!isAnswered && (
+              <div className="mt-4 flex justify-start items-center gap-4">
+                <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-mono">
+                  <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 font-bold">H</span> 提示
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-mono">
+                  <span className="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 font-bold">Esc</span> 退出
+                </div>
               </div>
             )}
 
@@ -383,7 +478,10 @@ export const QuizCard: React.FC<QuizCardProps> = ({
                     </p>
                   </div>
 
-                  <div className="mt-8 flex justify-end">
+                  <div className="mt-8 flex justify-end items-center gap-4">
+                    <div className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-xs text-slate-500 font-mono">
+                      <span className="font-bold">Enter</span> {isLastQuestion ? '查看結果' : '下一題'}
+                    </div>
                     <button
                       onClick={onNext}
                       className={`flex items-center gap-2 text-white font-bold py-4 px-10 rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 active:scale-95 ${feedback === 'correct' ? 'bg-green-600 hover:bg-green-500' : 'bg-slate-800 hover:bg-slate-700'

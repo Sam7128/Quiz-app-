@@ -67,10 +67,18 @@ The application uses a **Serverless/Local-First** architecture.
 *   **JSON Strictness:** The `BankManager` implies strict JSON structure for imports. When debugging import issues, check `BankManager.tsx`'s validation logic.
 *   **Tailwind:** Use Tailwind classes for styling changes.
 
-## 7. Recent Changes (v0.3.1)
-*   **Accessibility Improvements**: Fixed "Buttons must have discernible text" errors in `AIHelper` by adding ARIA labels.
-*   **Game Mode**: Implemented RPG-style gamification ("Battle Arena") with global toggle, "Underground" theme, and stage transitions.
-*   **AI Tutor Expansion**: Integrated Google GenAI SDK with support for Gemma 3/Gemini models. Added `AIHelper` component to provide contextual help during quizzes.
-*   **Social Sharing**: Implemented a friendship system and direct bank sharing feature via Supabase. Users can now send their question banks directly to friends.
-*   **Settings System**: Added a centralized Settings modal for API Key and model configuration.
-*   **Dashboard**: Added "Share" action to bank cards.
+## 7. Recent Changes (v0.3.4)
+*   **Dashboard UX Polish**:
+    *   **Interactive Achievements**: Full details accessible via modal on dashboard.
+    *   **Recent Mistakes Card**: Added tracking of last 5 incorrect sessions with quick practice access.
+    *   **Quiz Flow**: Default question size set to "All", custom rest interval support.
+*   **Battle Mode Overhaul (v0.3.3)**: Complete refactoring of `useBattleSystem` and `QuizResult`.
+*   **Quiz UX Enhancements**:
+    *   **QuizResult**: New detailed summary page with Mistake Review and Analytics.
+    *   **Focus & Usability**: Introduced `MiniTimer`, `RestBreakModal`, `ResumePrompt` (restore confirm), and keyboard shortcut indicators.
+    *   **Dashboard Improvements**: Added "Select All" bank toggle and default select all logic.
+    *   **Settings**: Added configurable "Rest Break Interval" (20/30/Off).
+    *   **Persistence**: Implemented auto-save/restore for active quiz sessions and battle state via `localStorage`.
+*   **System Integrity**: Expanded "Root Out" functionality in `App.tsx`/`storage.ts` to ensure clean state resets, including session clearing.
+*   **Accessibility**: Fixed ARIA label issues in new components and updated SVG animations to use Tailwind classes.
+

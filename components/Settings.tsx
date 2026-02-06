@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Key, ExternalLink, Info, Server, Cpu, Sun, Moon, Monitor, Swords, Music, Volume2, AlertTriangle, Trash2 } from 'lucide-react';
+import { X, Save, Key, ExternalLink, Info, Server, Cpu, Sun, Moon, Monitor, Swords, Music, Volume2, AlertTriangle, Trash2, Coffee } from 'lucide-react';
 import { getAIConfig, saveAIConfig } from '../services/ai';
 import { AIConfig } from '../types';
 import { useSoundEffects } from '../hooks/useSoundEffects';
+import { getUserSettings, saveUserSettings } from '../services/storage';
+import { UserSettings } from '../types/battleTypes';
 
 interface SettingsProps {
   isOpen: boolean;
@@ -23,17 +25,24 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, o
     model: 'gemini-1.5-flash',
     baseUrl: ''
   });
+  const [userSettings, setUserSettings] = useState<UserSettings>({
+    restBreakInterval: 20
+  });
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       const existing = getAIConfig();
       if (existing) setConfig(existing);
+
+      const settings = getUserSettings();
+      setUserSettings(settings);
     }
   }, [isOpen]);
 
   const handleSave = () => {
     saveAIConfig(config);
+    saveUserSettings(userSettings);
     setSaved(true);
     setTimeout(() => {
       setSaved(false);
@@ -162,6 +171,69 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, o
               {theme === 'system' ? '跟隨系統設定自動切換' : theme === 'dark' ? '深色模式已啟用' : '亮色模式已啟用'}
             </p>
           </section>
+
+          {/* Rest Break Interval */}
+          <section className="space-y-3">
+            <label className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <Coffee size={16} className="text-amber-600" /> 休息站間隔
+            </label>
+            <div className="grid grid-cols-4 gap-2">
+              {[20, 30, 0].map((interval) => (
+                <button
+                  key={interval}
+                  onClick={() => setUserSettings({ ...userSettings, restBreakInterval: interval })}
+                  className={`p-3 rounded-xl border flex flex-col items-center gap-1.5 transition-all ${userSettings.restBreakInterval === interval
+                    ? 'border-amber-500 bg-amber-50 text-amber-700 ring-1 ring-amber-500'
+                    : 'border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400'
+                    }`}
+                >
+                  <span className="font-bold text-sm">
+                    {interval === 0 ? '關閉' : `${interval} 題`}
+                  </span>
+                </button>
+              ))}
+              <button
+                onClick={() => {
+                  // If not already custom (i.e. is one of the presets), default to 10 or keep current
+                  const isPreset = [20, 30, 0].includes(userSettings.restBreakInterval);
+                  if (isPreset) setUserSettings({ ...userSettings, restBreakInterval: 10 });
+                }}
+                className={`p-3 rounded-xl border flex flex-col items-center gap-1.5 transition-all ${![20, 30, 0].includes(userSettings.restBreakInterval)
+                  ? 'border-amber-500 bg-amber-50 text-amber-700 ring-1 ring-amber-500'
+                  : 'border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400'
+                  }`}
+              >
+                <span className="font-bold text-sm">自訂</span>
+              </button>
+            </div>
+
+            {/* Custom Input */}
+            {![20, 30, 0].includes(userSettings.restBreakInterval) && (
+              <div className="animate-in fade-in slide-in-from-top-2">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min="1"
+                    max="999"
+                    aria-label="自訂休息間隔"
+                    value={userSettings.restBreakInterval}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val) && val > 0) {
+                        setUserSettings({ ...userSettings, restBreakInterval: val });
+                      }
+                    }}
+                    className="flex-1 p-2 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-bold text-center"
+                  />
+                  <span className="text-sm font-bold text-slate-500">題後休息</span>
+                </div>
+              </div>
+            )}
+
+            <p className="text-[11px] text-slate-400 dark:text-slate-500">
+              每完成指定題數後，系統會提示您休息一下。
+            </p>
+          </section>
           {/* Provider Selection */}
           <section className="space-y-3">
             <label className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
@@ -241,6 +313,12 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, o
               <p className="text-[10px] text-slate-400 dark:text-slate-500">
                 預設：https://integrate.api.nvidia.com/v1
               </p>
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg flex gap-2">
+                <Info className="text-blue-500 shrink-0" size={12} />
+                <p className="text-[9px] text-blue-700 dark:text-blue-300 leading-tight">
+                  提示：整合 NVIDIA API 可能受 CORS 限制。建議填寫自定義 Proxy URL 或本地兼容的 OpenAI 端點 (如 LM Studio)。
+                </p>
+              </div>
             </section>
           )}
 

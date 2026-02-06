@@ -1,11 +1,66 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BattleState } from '../types/battleTypes';
-import { DialogueBubble } from './DialogueBubble.tsx';
-import { SkillAnimation } from './SkillAnimation.tsx';
-import { FireballAttack } from './FireballAttack.tsx';
-import { useSoundEffects } from '../hooks/useSoundEffects.ts';
+import { DialogueBubble } from './DialogueBubble';
+import { SkillAnimation } from './SkillAnimation';
+import { AttackEffect } from './AttackEffect';
+import { useSoundEffects } from '../hooks/useSoundEffects';
 import { Zap, Trophy, Skull, Flame, Layers, ArrowRight } from 'lucide-react';
+
+interface BattleArenaProps {
+    battleState: BattleState;
+    onAnimationComplete?: () => void;
+}
+
+// ... helper components (HealthBar, StreakCounter) kept same ...
+// Keep HealthBar & StreakCounter definitions if they are inline or I should have copied them.
+// I can view the file to copy them, OR I can just replace the imports and the rendering part.
+// The user instruction "Replace FireballAttack with AttackEffect" implies I can target specific lines?
+// But `FireballAttack` usage is deep inside the render.
+// I will use `replace_file_content` targeting the import and the render block.
+
+// Imports first
+// Then render block:
+/*
+{currentAnimation?.type === 'hero_attack' && (
+    <AttackEffect
+        type="random" // Or decided by logic? Spec says "Unified attack effect". 
+                      // Let's use 'random' for basic attacks.
+        startX={50} // Approximate hero position
+        startY={300}
+        targetX={300} // Monster position
+        targetY={100}
+        damage={damageValue?} // We need damage value.
+                              // BattleState doesn't explicitly store "lastDamage" for UI separate from hp change.
+                              // But we can just pass 0 or a visual number if the AttackEffect handles it.
+                              // AttackEffect prop `damage` is used for DamageNumber.
+                              // We need to calculate or retrieve it.
+                              // In `useBattleSystem` I removed `FireballAttack` passing damage explicitly from hook?
+                              // No, hook sets 'hero_attack' animation.
+                              // For now, let's just pass a default or try to deduce.
+                              // BETTER: AttackEffect shouldn't handle DamageNumber if it's awkward.
+                              // But I integrated it.
+                              // `damage` is needed.
+                              // Let's look at `BattleState`.
+                              // I added `lastAction` etc.
+                              // Maybe I should pass `15` or `12` based on base values for visual, or 0.
+                              // Wait, `DamageNumber` is useful.
+                              // Let's use a dummy value or modify `BattleState` to include `lastDamageAmount`?
+                              // I didn't add `lastDamageAmount` to `BattleState`.
+                              // I can modify `useBattleSystem` to add it, OR
+                              // Just pass a visual number like "15" for now, or use `monsterMaxHp - monsterHp` diff?
+                              // Diff is tricky if multiple updates.
+                              // I'll stick to a visual default if actual is hard, but user wants `DamageNumber`.
+                              // Let's assume standard damage for ID "hero_attack" is ~15.
+        // ...
+    />
+)}
+*/
+// Actually, `useBattleSystem` handles the logic.
+// I should update `BattleArena` to render `AttackEffect`.
+
+// Let's look at `BattleArena` render loop roughly around line 350+
+
 
 interface BattleArenaProps {
     battleState: BattleState;
@@ -330,16 +385,17 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
                     </div>
                 </div>
 
-                {/* 火球動畫層 */}
-                {/* 注意：這裡獨立於 AnimatePresence 之外處理，因為 FireballAttack 內部有自己的生命週期 */}
+                {/* 攻擊特效層 (Unified AttackEffect) */}
                 {isHeroAttacking && fireballCoords && (
-                    <FireballAttack
+                    <AttackEffect
+                        type="random"
                         startX={fireballCoords.startX}
                         startY={fireballCoords.startY}
                         targetX={fireballCoords.targetX}
                         targetY={fireballCoords.targetY}
-                        damage={Math.floor(Math.max(monsterMaxHp * 0.15, 10) * (1 + streak * 0.1))} // 估算傷害顯示
-                    // onComplete 由父層的 setAnimation 計時器控制整體流程，這裡純視覺
+                        damage={battleState.lastDamage || 0}
+                        isCrit={battleState.isLastHitCrit}
+                    // onComplete is handled by parent timer, but we can pass void to avoid prop warning if any
                     />
                 )}
 

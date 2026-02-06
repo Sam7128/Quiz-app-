@@ -52,3 +52,30 @@
   - Replaced Supabase `.single()` with `.limit(1)` in analytics and streak services. This eliminates noisy "406 Not Acceptable" log errors when no rows are found, improving developer experience and console purity.
 - **Naming Alignment**:
   - Renamed `lich_king.png` to `skeleton_wizard.png` to match updated monster data and prevent asset potential 404s.
+
+## 2026-02-05 [v0.3.3] "Battle Mode Overhaul"
+### ✨ New Features
+- **Battle System 2.0**:
+  - Refactored `useBattleSystem` with dynamic damage, critical hits, and shielding mechanics.
+  - Implemented Monster rotation (Normal -> Elite -> Boss) with difficulty scaling based on questions answered.
+  - Unified `AttackEffect` system supporting random animations (Fireball/Ice Arrow) and visual feedback.
+- **Quiz Experience**:
+  - **Result Dashboard**: New `QuizResult` component with detailed stats, mistake review mode, and achievement summary.
+  - **Focus Tools**: Added `MiniTimer` (Pomodoro style) and `RestBreakModal` (Study fatigue check).
+  - **Keyboard Hints**: Added visual shortcut keys (1-4) to option buttons for better usability.
+- **Persistence**:
+  - Implemented auto-save/restore for active quiz sessions (survives refresh).
+  - Battle state is now persistent (HP/Streak/Monster maintained across reloads).
+
+### 🐛 Bug Fixes
+- **Accessibility**: Fixed missing aria-labels in `AchievementsModal` and `QuizCard` header buttons.
+- **Visuals**: Standardized damage number rendering with `DamageNumber` component.
+
+## 2026-02-05 [v0.3.4] "Dashboard & UX Polish"
+### ✨ New Features
+- **Dashboard UX**:
+  - **Recent Mistakes**: Added a dedicated card to track and review the last 5 incorrect answer sessions (FIFO).
+  - **Achievements**: Made the achievements card interactive with a full-view modal.
+  - **Default Quiz Size**: Changed default from 20 to "All questions" for continuous study flow.
+- **Settings**:
+  - **Custom Rest Interval**: Users can now set a custom numeric value for rest break intervals (e.g., every 15 questions).

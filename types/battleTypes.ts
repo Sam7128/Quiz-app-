@@ -119,6 +119,12 @@ export interface BattleState {
   currentMonster: Monster | null;
   /** 已擊敗怪物數量 */
   monstersDefeated: number;
+  /** 已作答題數 (用於 Boss 出場判定) */
+  questionsAnswered: number;
+  /** 剩餘怪物池 (用於不重複隨機) */
+  monsterPool: string[];
+  /** 已出現過的怪物 (用於重置) */
+  seenMonsters: string[];
   /** 待觸發的技能 */
   pendingSkill: Skill | null;
   /** 當前動畫 */
@@ -132,6 +138,24 @@ export interface BattleState {
     speaker: 'hero' | 'monster';
     text: string;
   } | null;
+  /** 上一次造成的傷害 (用於 UI 顯示) */
+  lastDamage: number;
+  /** 上一次攻擊是否暴擊 */
+  isLastHitCrit: boolean;
+}
+
+/** 暴擊判定結果 */
+export interface CritResult {
+  isCrit: boolean;
+  multiplier: number;
+}
+
+/** 傷害計算結果 */
+export interface DamageResult {
+  baseDamage: number;
+  critResult: CritResult;
+  finalDamage: number;
+  shieldAbsorbed?: number;
 }
 
 /** 戰鬥狀態初始值 */
@@ -144,11 +168,16 @@ export const INITIAL_BATTLE_STATE: BattleState = {
   monsterMaxHp: 100,
   currentMonster: null,
   monstersDefeated: 0,
+  questionsAnswered: 0,
+  monsterPool: [],
+  seenMonsters: [],
   pendingSkill: null,
   currentAnimation: null,
   lastAction: 'idle',
   isActive: false,
   currentDialogue: null,
+  lastDamage: 0,
+  isLastHitCrit: false,
 };
 
 // ==================== 戰鬥事件 ====================
@@ -183,4 +212,41 @@ export interface UseBattleSystemReturn {
   hasPendingSkill: boolean;
   /** 當前連擊達到的技能等級 */
   currentSkillTier: SkillTier | null;
+}
+
+/** 進度持久化資料結構 */
+export interface SavedQuizProgress {
+  bankIds: string[];
+  questionIds: string[];
+  currentIndex: number;
+  score: number;
+  wrongQuestionIds: string[];
+  battleState?: Partial<BattleState>;
+  savedAt: number;
+}
+// ==================== 用戶設定 ====================
+
+export interface UserSettings {
+  restBreakInterval: number; // 0 = 關閉, 任意正整數 = 間隔
+}
+
+export const DEFAULT_SETTINGS: UserSettings = {
+  restBreakInterval: 20
+};
+
+// ==================== 錯題回顧 ====================
+
+export interface MistakeDetail {
+  questionId: string;
+  questionText: string;
+  options: string[];
+  userAnswer: string | string[];
+  correctAnswer: string | string[];
+}
+
+export interface RecentMistakeSession {
+  sessionId: string;
+  timestamp: number;
+  bankNames: string[];
+  mistakes: MistakeDetail[];
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Question, MistakeLog, BankMetadata, Folder, SpacedRepetitionItem } from '../types';
+import { MistakeDetail } from '../types/battleTypes';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { BookOpen, AlertTriangle, Zap, CheckSquare, Square, Layers, Share2, Folder as FolderIcon, FolderPlus, ArrowLeft, MoreVertical, Trash2, FolderInput, Calendar } from 'lucide-react';
 import { getSpacedRepetition } from '../services/storage';
@@ -8,6 +9,7 @@ import { getDueQuestions } from '../services/spacedRepetition';
 import { StudyStatsCard } from './StudyStatsCard';
 import { StreakCard } from './StreakCard';
 import { AchievementsCard } from './AchievementsCard';
+import { RecentMistakesCard } from './RecentMistakesCard';
 import { FocusTimer } from './FocusTimer';
 
 interface DashboardProps {
@@ -19,11 +21,13 @@ interface DashboardProps {
   onToggleBank: (id: string) => void;
   onStartQuiz: (count: number) => void;
   onStartMistakes: () => void;
+  onPracticeMistakes?: (mistakes: MistakeDetail[]) => void;
   onShareBank: (bank: BankMetadata) => void;
   onCreateFolder: (name: string) => void;
   onDeleteFolder: (id: string) => void;
   onMoveBank: (bankId: string, folderId: string | undefined) => void;
   onBatchDelete: () => void;
+  onSelectAll?: (selected: boolean) => void;
   isAuthenticated?: boolean;
 }
 
@@ -41,9 +45,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onDeleteFolder,
   onMoveBank,
   onBatchDelete,
+  onSelectAll,
+  onPracticeMistakes, // Add this
   isAuthenticated = false
 }) => {
-  const [quizSize, setQuizSize] = React.useState<number | 'all' | 'custom'>(20);
+  const [quizSize, setQuizSize] = React.useState<number | 'all' | 'custom'>('all');
   const [customSize, setCustomSize] = React.useState<string>('10');
   const [currentFolderId, setCurrentFolderId] = useState<string | undefined>(undefined);
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
@@ -242,6 +248,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <Trash2 size={14} /> 剷除選中 ({selectedBankIds.length})
                 </button>
               )}
+
+              <button
+                onClick={() => onSelectAll?.(selectedBankIds.length < banks.length)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs rounded-lg border border-slate-200 dark:border-slate-600 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all shadow-sm"
+              >
+                {selectedBankIds.length === banks.length ? '取消全選' : '全選題庫'}
+              </button>
             </div>
           </div>
 
@@ -430,6 +443,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="md:col-span-4 space-y-6">
           <StreakCard isAuthenticated={isAuthenticated} />
           <StudyStatsCard isAuthenticated={isAuthenticated} />
+          <RecentMistakesCard onPracticeSession={onPracticeMistakes} />
           <AchievementsCard isAuthenticated={isAuthenticated} />
           <FocusTimer />
         </div>
@@ -437,5 +451,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
     </div>
   );
 };
+
 
 export default React.memo(Dashboard);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { DamageNumber } from './DamageNumber';
 
 interface FireballAttackProps {
     startX: number;
@@ -7,29 +8,9 @@ interface FireballAttackProps {
     targetX: number;
     targetY: number;
     damage: number;
+    isCrit?: boolean;
     onComplete?: () => void;
 }
-
-/**
- * 傷害數字飄出元件 (Refactored to remove inline styles)
- */
-const DamageNumber: React.FC<{ x: number; y: number; damage: number }> = ({ x, y, damage }) => {
-    return (
-        <motion.div
-            className="absolute z-50 pointer-events-none font-black text-4xl text-white drop-shadow-md"
-            initial={{ x, y: y, opacity: 0, scale: 0.5 }}
-            animate={{
-                opacity: [0, 1, 1, 0],
-                scale: [0.5, 1.5, 1],
-                y: y - 80,
-                rotate: [-5, 5, -5]
-            }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-            <span className="text-red-500 drop-shadow-md">{damage}</span>
-        </motion.div>
-    );
-};
 
 /**
  * 爆炸效果元件 (Refactored to remove inline styles)
@@ -84,6 +65,7 @@ export const FireballAttack: React.FC<FireballAttackProps> = ({
     targetX,
     targetY,
     damage,
+    isCrit,
     onComplete
 }) => {
     const [phase, setPhase] = useState<'flying' | 'impact'>('flying');
@@ -137,7 +119,7 @@ export const FireballAttack: React.FC<FireballAttackProps> = ({
                 {phase === 'impact' && (
                     <>
                         <Explosion x={targetX} y={targetY} />
-                        <DamageNumber x={targetX} y={targetY - 50} damage={damage} />
+                        <DamageNumber x={targetX} y={targetY - 50} damage={damage} isCrit={isCrit} />
                     </>
                 )}
             </AnimatePresence>

@@ -57,6 +57,18 @@
 - [x] **[Testing]** 應用程式功能線上測試 (Ready for Deployment)
 - [x] **[Fix]** 首頁批量刪除無法同步雲端修復 (App.tsx)
 - [x] **[Refactor]** 音效系統遷移至 Howler.js 以解決自動播放問題 (useSoundEffects.ts)
+- [x] **[Feature]** 戰鬥模式全面進化 (Battle Mode Overhaul)
+    - [x] 重構 `useBattleSystem` (動態數值、難度輪替、Boss 生成、暴擊/護盾機制)
+    - [x] 更新 `BattleArena` (統一特效 AttackEffect、冰箭/火球隨機、傷害數值 DamageNumber)
+    - [x] 實作戰鬥輔助 UI (MiniTimer 專注計時、RestBreakModal 休息提醒、AchievementsModal 成就總覽)
+    - [x] 實作 QuizResult 結算頁面 (錯題回顧、詳細數據、成就解鎖)
+    - [x] 整合測驗進度持久化 (Auto-save/restore session)
+    - [x] 優化答題體驗 (鍵盤快捷鍵提示 UI)
+- [x] **[UX]** 儀表板與學習體驗優化 (Dashboard UX Enhancements)
+    - [x] **[Feature]** 最近 5 輪錯題回顧系統 (RecentMistakesCard / Storage / App Integration)
+    - [x] **[UX]** 成就區塊點擊互動化 (AchievementsCard)
+    - [x] **[Setting]** 自訂休息間隔 (支援任意題數輸入)
+    - [x] **[Config]** 調整預設測驗題數為 "All"
 
 ## 📝 備註 (Notes)
 - 請隨時更新此文件以反映最新狀態。
