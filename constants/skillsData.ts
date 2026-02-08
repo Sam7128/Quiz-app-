@@ -83,7 +83,7 @@ export const ADVANCED_SKILLS: Skill[] = [
         name: '隕石衝擊',
         tier: 'advanced',
         element: 'fire',
-        animationType: 'sequence',
+        animationType: 'css',
         assetPath: '/battle/skills/meteor_strike.png',
         duration: 2500,
         description: '召喚燃燒的隕石撞擊大地'
@@ -93,7 +93,7 @@ export const ADVANCED_SKILLS: Skill[] = [
         name: '絕對零度',
         tier: 'advanced',
         element: 'ice',
-        animationType: 'sequence',
+        animationType: 'css',
         assetPath: '/battle/skills/absolute_zero.png',
         duration: 2200,
         description: '將周圍溫度降至絕對零度'
@@ -103,7 +103,7 @@ export const ADVANCED_SKILLS: Skill[] = [
         name: '審判之雷',
         tier: 'advanced',
         element: 'lightning',
-        animationType: 'sequence',
+        animationType: 'css',
         assetPath: '/battle/skills/judgment_thunder.png',
         duration: 2400,
         description: '神聖的雷電審判一切'
@@ -196,19 +196,34 @@ export function getRandomSkill(tier: SkillTier): Skill | null {
     return skills[index];
 }
 
-/** 根據連擊數獲取應觸發的最高技能等級 */
+/** 根據連擊數獲取應觸發的技能等級 */
 export function getSkillTierByStreak(streak: number): SkillTier | null {
-    if (streak >= 50) return 'legendary';
-    if (streak >= 40) return 'epic';
-    if (streak >= 30) return 'ultimate';
-    if (streak >= 20) return 'advanced';
-    if (streak >= 10) return 'intermediate';
-    if (streak >= 5) return 'basic';
+    // 大招影片觸發點: 30, 40, 50, 60, 70, 80... (每10題從30開始)
+    // 規則: streak >= 30 且 streak 是 10 的倍數
+    if (streak >= 30 && streak % 10 === 0) {
+        // 循環使用三種大招影片: ultimate(30,60,90...), epic(40,70,100...), legendary(50,80,110...)
+        // 計算是第幾個大招觸發點 (1=30, 2=40, 3=50, 4=60, 5=70, 6=80...)
+        const videoIndex = (streak - 30) / 10; // 0, 1, 2, 3, 4, 5...
+        const cycle = videoIndex % 3; // 循環 0, 1, 2, 0, 1, 2...
+
+        switch (cycle) {
+            case 0: return 'ultimate';   // 30, 60, 90...
+            case 1: return 'epic';       // 40, 70, 100...
+            case 2: return 'legendary';  // 50, 80, 110...
+        }
+    }
+
+    // 小技能觸發點: 其他5的倍數 (5, 10, 15, 20, 25, 35, 45, 55, 65...)
+    // 根據連勝數分級
+    if (streak >= 20) return 'advanced';    // 20, 25, 35, 45, 55, 65...
+    if (streak >= 10) return 'intermediate'; // 10, 15
+    if (streak >= 5) return 'basic';         // 5
+
     return null;
 }
 
 /** 檢查是否剛好達到技能觸發點 */
 export function shouldTriggerSkill(streak: number): boolean {
-    return streak === 5 || streak === 10 || streak === 20 ||
-        streak === 30 || streak === 40 || streak === 50;
+    // 每 5 題連勝觸發一次技能: 5, 10, 15, 20, 25, 30, 35, 40, 45, 50...
+    return streak > 0 && streak % 5 === 0;
 }

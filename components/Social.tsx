@@ -202,19 +202,21 @@ export const Social: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col md:flex-row gap-8">
 
         {/* Left: Friends List */}
         <div className="flex-1 space-y-6">
-          <section className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-            <div className="p-6 border-b border-slate-50 dark:border-slate-700 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Users className="text-brand-600" size={20} />
-                <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">我的好友</h2>
+          <section className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-lg border border-white/20 dark:border-white/5 overflow-hidden">
+            <div className="p-6 border-b border-slate-100/50 dark:border-white/5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-brand-50 dark:bg-brand-900/20 text-brand-600 rounded-lg">
+                  <Users size={20} />
+                </div>
+                <h2 className="text-xl font-bold text-slate-800 dark:text-white">我的好友</h2>
               </div>
-              <span className="text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2.5 py-1 rounded-full">
-                {friends.filter(f => f.status === 'accepted').length}
+              <span className="text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1.5 rounded-full">
+                {friends.filter(f => f.status === 'accepted').length} 位好友
               </span>
             </div>
 
@@ -232,7 +234,7 @@ export const Social: React.FC = () => {
                 <button
                   onClick={handleAddFriend}
                   disabled={loading}
-                  className="bg-brand-600 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-brand-500 transition-all shadow-md shadow-brand-100 flex items-center gap-2"
+                  className="bg-brand-600 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-brand-500 transition-all shadow-md shadow-brand-900/20 flex items-center gap-2"
                 >
                   <UserPlus size={18} />
                   <span className="hidden sm:inline">新增</span>
@@ -295,21 +297,23 @@ export const Social: React.FC = () => {
         {/* Right: Inbox & Challenges */}
         <div className="w-full md:w-80 space-y-6">
           {/* Challenges Section */}
-          <section className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-            <div className="p-6 border-b border-slate-50 dark:border-slate-700 flex items-center justify-between bg-amber-50/30 dark:bg-amber-900/10">
-              <div className="flex items-center gap-2">
-                <Trophy className="text-amber-600" size={20} />
-                <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">好友挑戰</h2>
+          <section className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-lg border border-white/20 dark:border-white/5 overflow-hidden">
+            <div className="p-6 border-b border-slate-100/50 dark:border-white/5 flex items-center justify-between bg-amber-50/50 dark:bg-amber-900/10">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-100 dark:bg-amber-900/30 text-amber-600 rounded-lg">
+                  <Trophy size={20} />
+                </div>
+                <h2 className="text-lg font-bold text-slate-800 dark:text-white">好友挑戰</h2>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 {pendingCount > 0 && (
-                  <span className="w-5 h-5 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full animate-bounce">
+                  <span className="w-5 h-5 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full animate-bounce shadow-lg shadow-red-500/30">
                     {pendingCount}
                   </span>
                 )}
                 <button
                   onClick={() => setIsChallengeModalOpen(true)}
-                  className="p-1.5 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
+                  className="p-2 bg-brand-600 text-white rounded-xl hover:bg-brand-700 transition-colors shadow-lg shadow-brand-500/20"
                   title="發起挑戰"
                 >
                   <Trophy size={16} />
@@ -337,14 +341,16 @@ export const Social: React.FC = () => {
           </section>
 
           {/* Inbox Section */}
-          <section className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-            <div className="p-6 border-b border-slate-50 dark:border-slate-700 flex items-center justify-between bg-indigo-50/30 dark:bg-indigo-900/10">
-              <div className="flex items-center gap-2">
-                <Inbox className="text-indigo-600" size={20} />
-                <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">題庫收件匣</h2>
+          <section className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-lg border border-white/20 dark:border-white/5 overflow-hidden">
+            <div className="p-6 border-b border-slate-100/50 dark:border-white/5 flex items-center justify-between bg-indigo-50/50 dark:bg-indigo-900/10">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 rounded-lg">
+                  <Inbox size={20} />
+                </div>
+                <h2 className="text-lg font-bold text-slate-800 dark:text-white">題庫收件匣</h2>
               </div>
               {inbox.length > 0 && (
-                <span className="w-5 h-5 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full animate-bounce">
+                <span className="w-5 h-5 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full animate-bounce shadow-lg shadow-red-500/30">
                   {inbox.length}
                 </span>
               )}
@@ -379,7 +385,7 @@ export const Social: React.FC = () => {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleAcceptBank(share)}
-                        className="flex-1 bg-brand-600 text-white py-2 rounded-lg text-xs font-bold hover:bg-brand-500 transition-all shadow-md shadow-brand-100"
+                        className="flex-1 bg-brand-600 text-white py-2 rounded-lg text-xs font-bold hover:bg-brand-500 transition-all shadow-md shadow-brand-900/20"
                       >
                         接受
                       </button>

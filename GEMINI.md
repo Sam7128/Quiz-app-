@@ -67,8 +67,17 @@ The application uses a **Serverless/Local-First** architecture.
 *   **JSON Strictness:** The `BankManager` implies strict JSON structure for imports. When debugging import issues, check `BankManager.tsx`'s validation logic.
 *   **Tailwind:** Use Tailwind classes for styling changes.
 
-## 7. Recent Changes (v0.3.4)
-*   **Dashboard UX Polish**:
+## 7. Recent Changes (v0.3.5)
+*   **Security & Tech Stack (v0.3.6)**:
+    - **Tailwind CSS v4**: Migrated from v3/CDN to v4 local integration with Vite plugin.
+    - **Security First**: Implemented CSP and removed all external scripts/styles from unreliable CDNs.
+    - **Visual Fix**: Corrected theme color definitions to ensure contrast compliance and visibility on light backgrounds.
+*   **Battle Mode Bugfixes**:
+    *   **Meteor Skill**: Fixed image not displaying by changing `animationType` from `sequence` to `css`.
+    *   **Skill Milestones**: Skills now trigger only at level-up milestones (5, 10, 20, 30, 40, 50), not every 5 streaks (15, 25, 35, 45 no longer trigger).
+    *   **Damage Balance**: Extended shield mechanism to all monster types (Normal: max 70%, Elite: max 50%, Boss: max 40% damage per hit).
+    *   **Skeleton Wizard Scale**: Increased `visualScale` from 1.5 to 1.8 for more imposing appearance.
+*   **Dashboard UX Polish (v0.3.4)**:
     *   **Interactive Achievements**: Full details accessible via modal on dashboard.
     *   **Recent Mistakes Card**: Added tracking of last 5 incorrect sessions with quick practice access.
     *   **Quiz Flow**: Default question size set to "All", custom rest interval support.

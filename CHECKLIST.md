@@ -69,6 +69,16 @@
     - [x] **[UX]** 成就區塊點擊互動化 (AchievementsCard)
     - [x] **[Setting]** 自訂休息間隔 (支援任意題數輸入)
     - [x] **[Config]** 調整預設測驗題數為 "All"
+- [x] **[Security]** 專案安全審計與防護強化 (Security Audit & Hardening)
+    - [x] 實施內容安全策略 (CSP) 以防範 XSS 與 CDN 劫持 (index.html)
+    - [x] 遷移 Tailwind CSS 從 CDN 至本地構建流程 (tailwind v4 / postcss)
+    - [x] 執行依賴項安全掃描 (`npm audit`) - 結果：0 漏洞
+    - [x] 審核敏感數據存儲風險 (LocalStorage API Key - 已確認為必要設計)
+    - [x] 生成詳細安全審計報告 (`SECURITY_AUDIT_REPORT.md`)
+- [x] **[Refactor]** 遷移至 Tailwind CSS v4 與模組化配置
+    - [x] 修正 ESM 模組下的 PostCSS/Tailwind 配置語法錯誤
+    - [x] 整合 `@tailwindcss/vite` 插件提升開發速度
+    - [x] 優化主題顏色定義（補全 `accent-600/700`）解決漸變撞色問題
 
 ## 📝 備註 (Notes)
 - 請隨時更新此文件以反映最新狀態。

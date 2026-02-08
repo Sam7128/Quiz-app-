@@ -52,9 +52,9 @@ export const AIHelper: React.FC<AIHelperProps> = ({ question, userAnswer }) => {
       {/* Ask Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-500 to-indigo-600 text-white rounded-full text-sm font-bold shadow-lg shadow-brand-200 hover:scale-105 transition-transform"
+        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-500 to-indigo-600 text-white rounded-full text-sm font-bold shadow-lg shadow-brand-950/20 hover:scale-105 transition-transform"
       >
-        <Sparkles size={16} className="animate-pulse" />
+        <Sparkles size={16} className="animate-pulse-slow" />
         詢問解題小助手
       </button>
 
@@ -94,8 +94,8 @@ export const AIHelper: React.FC<AIHelperProps> = ({ question, userAnswer }) => {
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] p-3 rounded-2xl text-sm leading-relaxed ${msg.role === 'user'
-                    ? 'bg-brand-600 text-white rounded-tr-none shadow-md'
-                    : 'bg-white text-slate-700 border border-slate-200 rounded-tl-none shadow-sm'
+                  ? 'bg-brand-600 text-white rounded-tr-none shadow-md'
+                  : 'bg-white text-slate-700 border border-slate-200 rounded-tl-none shadow-sm'
                   }`}>
                   {msg.content}
                 </div>
@@ -131,7 +131,7 @@ export const AIHelper: React.FC<AIHelperProps> = ({ question, userAnswer }) => {
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || isLoading}
-                className="p-2 bg-brand-600 text-white rounded-xl hover:bg-brand-500 disabled:opacity-50 disabled:hover:bg-brand-600 transition-colors shadow-md shadow-brand-100"
+                className="p-2 bg-brand-600 text-white rounded-xl hover:bg-brand-500 disabled:opacity-50 disabled:hover:bg-brand-600 transition-colors shadow-md shadow-brand-900/20"
                 aria-label="發送訊息"
                 title="發送訊息"
               >

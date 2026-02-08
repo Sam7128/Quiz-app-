@@ -184,7 +184,7 @@ export const getMyChallenges = async (): Promise<ChallengeWithDetails[]> => {
       *,
       challenger:profiles!challenger_id(username),
       opponent:profiles!opponent_id(username),
-      bank:banks!bank_id(title)
+      bank:banks(title)
     `)
     .or(`challenger_id.eq.${user.id},opponent_id.eq.${user.id}`)
     .order('created_at', { ascending: false });

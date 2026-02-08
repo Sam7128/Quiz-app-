@@ -60,6 +60,7 @@ export interface Monster {
   attackDialogues: string[];
   hurtDialogues: string[];
   defeatDialogues: string[];
+  visualScale?: number;
 }
 
 // ==================== 主角系統 ====================

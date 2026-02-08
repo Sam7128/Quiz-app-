@@ -168,6 +168,12 @@ export const QuizCard: React.FC<QuizCardProps> = ({
   };
 
   const submitAnswer = (selection: string[]) => {
+    // 防護：如果沒有選擇任何選項，不提交答案
+    if (selection.length === 0) {
+      console.warn('[QuizCard] submitAnswer called with empty selection, ignoring.');
+      return;
+    }
+
     const isCorrect = selection.length === correctAnswers.length &&
       selection.every(s => correctAnswers.includes(s));
 

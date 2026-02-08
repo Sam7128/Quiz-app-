@@ -96,10 +96,16 @@ interface UserSettings {
 - 修改 `handleCorrectAnswer()` - 整合上述系統
 - 修改 `spawnNewMonster()` - 基於 `questionsAnswered` 判斷 Boss
 
+### `components/SkillAnimation.tsx`
+- 修改 `CSSSkillEffect`: 支持多層粒子、漸層光環、螢幕震動。
+- 修改 `VideoSkillEffect`: 新增 Loading 指示器 (`SUMMONING...`)。
+- 影片載入失敗 Fallback: 使用增強版 CSS 動畫 (包含全螢幕閃光 + 強烈震動 + 加量粒子)。
+
 ### `components/BattleArena.tsx`
 - 整合 `AttackEffect` 取代硬編碼 `FireballAttack`
 - 新增暴擊螢幕閃光效果
 - 顯示 `DamageNumber` 浮動傷害
+- **怪物縮放**: 根據 `visualScale` 數據自動調整 (Boss 1.5x, Elite 1.25x)。
 
 ### `components/QuizCard.tsx`
 - 頂部新增 `MiniTimer`
@@ -108,33 +114,16 @@ interface UserSettings {
 ### `components/AchievementsCard.tsx`
 - 點擊時開啟 `AchievementsModal`
 
-### `components/SkillAnimation.tsx`
-- 修改 `CSSSkillEffect` 使用 `<img>` 載入技能圖片
-- 保留 lucide 圖標作為 fallback
-
-### `components/Dashboard.tsx`
-- 題庫選擇預設全選
-
-### `constants/achievements.ts`
-新增 13 個成就：
-- `first_boss_kill` - 首殺 Boss
-- `defeat_5_monsters` - 連續擊敗 5 怪
-- `perfect_session_10` - 10 題全對
-- `perfect_session_20` - 20 題全對
-- `trigger_5_skills` - 觸發 5 次技能
-- `trigger_legendary` - 觸發傳說技能
-- `complete_500` - 累計完成 500 題
-- `complete_1000` - 累計完成 1000 題
-- `weekend_warrior` - 週末學習
-- `streak_14` - 連續學習 14 天
-- `first_crit` - 首次暴擊
-- `crit_master` - 累計 50 次暴擊
-- `zero_mistakes` - 單場 0 失誤
+### `constants/skillsData.ts`
+- **技能觸發**: 改為 `streak % 5 === 0 && streak > 0` (每 5 題觸發一次)。
 
 ### `constants/battleDialogues.ts`
 新增護盾相關對話
 
 ### `constants/monstersData.ts`
+- **血量分層**:
+    - Boss (龍/巫師): 500-700 HP
+    - Elite (骷髏戰士/獸人): 180-220 HP
 - 新增 `NORMAL_MONSTER_IDS` 匯出
 - 新增 `ELITE_MONSTER_IDS` 匯出
 

@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Outfit", sans-serif;
+
+  --color-brand-50: #f5f3ff;
+  --color-brand-100: #ede9fe;
+  --color-brand-200: #ddd6fe;
+  --color-brand-300: #c4b5fd;
+  --color-brand-400: #a78bfa;
+  --color-brand-500: #8b5cf6;
+  --color-brand-600: #7c3aed;
+  --color-brand-700: #6d28d9;
+  --color-brand-800: #5b21b6;
+  --color-brand-900: #4c1d95;
+  --color-brand-950: #2e1065;
+
+  --color-accent-600: #c026d3;
+  --color-accent-700: #a21caf;
+  --color-accent-500: #d946ef;
+  --color-accent-400: #e879f9;
+
+  --color-cyan-400: #22d3ee;
+  --color-cyan-500: #06b6d4;
+
+  --background-image-dungeon: url('/battle/dungeon_bg.png');
+  --background-image-dungeon-page: url('/battle/dungeon_page_bg.png');
+  --background-image-glass-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  --background-image-mesh-gradient: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+  --background-image-mesh-light: radial-gradient(at 0% 0%, hsla(253,16%,93%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,90%,1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,90%,1) 0, transparent 50%);
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@layer base {
+  html, body {
+    @apply bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 antialiased;
+  }
+}

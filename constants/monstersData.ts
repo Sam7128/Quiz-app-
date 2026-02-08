@@ -106,7 +106,7 @@ export const ELITE_MONSTERS: Monster[] = [
         imagePath: '/battle/monsters/skeleton_warrior.png',
         hurtImagePath: '/battle/monsters/skeleton_warrior.png',
         attackImagePath: '/battle/monsters/skeleton_warrior.png',
-        maxHp: 100,
+        maxHp: 180,
         attackPower: 18,
         attackDialogues: [
             "咯咯咯...無知者！",
@@ -126,6 +126,7 @@ export const ELITE_MONSTERS: Monster[] = [
             "咯咯...下次再會...",
             ...MONSTER_DEFEAT_DIALOGUES.slice(0, 2),
         ],
+        visualScale: 1.25,
     },
     {
         id: 'orc_berserker',
@@ -134,7 +135,7 @@ export const ELITE_MONSTERS: Monster[] = [
         imagePath: '/battle/monsters/orc_berserker.png',
         hurtImagePath: '/battle/monsters/orc_berserker.png',
         attackImagePath: '/battle/monsters/orc_berserker.png',
-        maxHp: 120,
+        maxHp: 220,
         attackPower: 20,
         attackDialogues: [
             "嗚啊啊啊！",
@@ -154,6 +155,7 @@ export const ELITE_MONSTERS: Monster[] = [
             "光榮的...死亡...",
             ...MONSTER_DEFEAT_DIALOGUES.slice(2, 4),
         ],
+        visualScale: 1.25,
     },
 ];
 
@@ -167,7 +169,7 @@ export const BOSS_MONSTERS: Monster[] = [
         imagePath: '/battle/monsters/dragon_fire.png',
         hurtImagePath: '/battle/monsters/dragon_fire.png',
         attackImagePath: '/battle/monsters/dragon_fire.png',
-        maxHp: 200,
+        maxHp: 500,
         attackPower: 25,
         attackDialogues: [
             "區區人類，敢挑戰龍族？",
@@ -189,6 +191,7 @@ export const BOSS_MONSTERS: Monster[] = [
             "傳說...竟然成真了...",
             "吾認可你...勇者...",
         ],
+        visualScale: 1.5,
     },
     {
         id: 'skeleton_wizard',
@@ -197,7 +200,7 @@ export const BOSS_MONSTERS: Monster[] = [
         imagePath: '/battle/monsters/skeleton_wizard.png',
         hurtImagePath: '/battle/monsters/skeleton_wizard.png',
         attackImagePath: '/battle/monsters/skeleton_wizard.png',
-        maxHp: 250,
+        maxHp: 700,
         attackPower: 22,
         attackDialogues: [
             "感受禁忌魔法的威力！",
@@ -217,6 +220,7 @@ export const BOSS_MONSTERS: Monster[] = [
             "知識終將傳承...在黑暗中...",
             "魔力正在枯竭...",
         ],
+        visualScale: 1.8,
     },
 ];
 

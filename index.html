@@ -4,30 +4,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Content Security Policy -->
+  <!-- 
+    script-src: 'self' 'unsafe-inline' is allowed for dev mode (Vite HMR often needs it). 
+    In strict production builds, we aim for 'self'.
+    style-src: 'self' 'unsafe-inline' (Google Fonts and some dynamic styles might need it).
+    img-src: 'self' data: https: (for loaded images).
+    connect-src: 'self' https: (for API calls to Google/Nvidia/Supabase).
+    font-src: 'self' https://fonts.gstatic.com; (Google Fonts).
+  -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval';
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    img-src 'self' data: https: blob:;
+    font-src 'self' https://fonts.gstatic.com;
+    connect-src 'self' https: ws: wss:;
+    media-src 'self' https: blob:;
+  ">
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <title>MindSpark - AI 學習助手</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: '#f0f9ff',
-              100: '#e0f2fe',
-              500: '#0ea5e9',
-              600: '#0284c7',
-              900: '#0c4a6e',
-            },
-          },
-          backgroundImage: {
-            'dungeon': "url('/battle/dungeon_bg.png')",
-            'dungeon-page': "url('/battle/dungeon_page_bg.png')",
-          }
-        }
-      }
-    }
-  </script>
 </head>
 
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 font-sans antialiased">

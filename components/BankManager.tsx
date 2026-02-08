@@ -3,6 +3,7 @@ import { Question, BankMetadata } from '../types';
 import { Upload, Download, Trash2, AlertCircle, Plus, FileJson, FileText, Check, FolderOpen, Loader2, Sparkles, FileType } from 'lucide-react';
 import { saveQuestions, clearMistakes, getBanksMeta, createBank, deleteBank } from '../services/storage';
 import { generateQuestionsFromPDF } from '../services/ai';
+import DOMPurify from 'dompurify';
 import { useAuth } from '../contexts/AuthContext';
 import { SkeletonLoader } from './SkeletonLoader';
 import {
@@ -246,11 +247,22 @@ export const BankManager: React.FC<BankManagerProps> = ({
 
   const processJson = async (jsonString: string) => {
     try {
-      const data = JSON.parse(jsonString);
+      let data = JSON.parse(jsonString);
 
       // Basic validation
       if (!Array.isArray(data)) throw new Error("資料必須是 JSON 陣列 (Array)");
       if (data.length > 0 && !data[0].question) throw new Error("格式無效：缺少 'question' 欄位");
+
+      // Security Sanitization: Clean all string fields to prevent XSS
+      data = data.map((q: any) => ({
+        ...q,
+        question: typeof q.question === 'string' ? DOMPurify.sanitize(q.question) : q.question,
+        options: Array.isArray(q.options) 
+          ? q.options.map((opt: any) => typeof opt === 'string' ? DOMPurify.sanitize(opt) : opt)
+          : q.options,
+        hint: typeof q.hint === 'string' ? DOMPurify.sanitize(q.hint) : q.hint,
+        explanation: typeof q.explanation === 'string' ? DOMPurify.sanitize(q.explanation) : q.explanation,
+      }));
 
       if (currentBankId) {
         setLoading(true);
@@ -310,15 +322,18 @@ export const BankManager: React.FC<BankManagerProps> = ({
       )}
 
       {/* Left Sidebar: Bank List */}
-      <div className="md:col-span-4 flex flex-col bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden h-full">
-        <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 flex justify-between items-center">
-          <h3 className="font-bold text-slate-700 dark:text-slate-200">我的題庫 ({banks.length})</h3>
+      <div className="md:col-span-4 flex flex-col bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-lg border border-white/20 dark:border-white/5 overflow-hidden h-full">
+        <div className="p-6 border-b border-slate-100/50 dark:border-white/10 flex justify-between items-center bg-white/40 dark:bg-slate-800/40">
+          <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+            <FolderOpen className="text-brand-500" size={20} />
+            我的題庫 ({banks.length})
+          </h3>
           <button
             onClick={() => setIsCreating(true)}
-            className="p-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
+            className="p-2 bg-brand-600 text-white rounded-xl hover:bg-brand-500 transition-all shadow-lg shadow-brand-500/20 active:scale-95"
             title="新增題庫"
           >
-            <Plus size={18} />
+            <Plus size={20} />
           </button>
         </div>
 
@@ -389,8 +404,8 @@ export const BankManager: React.FC<BankManagerProps> = ({
         ) : (
           <>
             {/* Import Section */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-              <div className="flex border-b border-slate-100 dark:border-slate-700">
+            <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 dark:border-white/5 overflow-hidden">
+              <div className="flex border-b border-slate-100/50 dark:border-white/10">
                 <button
                   onClick={() => setActiveTab('upload')}
                   className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 ${activeTab === 'upload' ? 'bg-white dark:bg-slate-800 text-brand-600 border-b-2 border-brand-600' : 'bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-600'}`}
@@ -477,17 +492,17 @@ export const BankManager: React.FC<BankManagerProps> = ({
 
             {/* Bottom Actions */}
             <div className="grid grid-cols-2 gap-6">
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center text-center">
-                <h4 className="font-bold text-slate-700 dark:text-slate-200 mb-2">匯出此題庫</h4>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">備份或分享目前選中的題庫</p>
-                <button onClick={handleExport} className="flex items-center gap-2 text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+              <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-white/20 dark:border-white/5 flex flex-col items-center text-center">
+                <h4 className="font-bold text-slate-800 dark:text-white mb-2">匯出此題庫</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">備份或分享目前選中的題庫</p>
+                <button onClick={handleExport} className="flex items-center gap-2 text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm">
                   <Download size={16} /> 下載 .JSON
                 </button>
               </div>
 
-              <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center text-center">
-                <h4 className="font-bold text-slate-700 dark:text-slate-200 mb-2">清除錯題記錄</h4>
-                <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">只清除錯題狀態，保留題目</p>
+              <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-white/20 dark:border-white/5 flex flex-col items-center text-center">
+                <h4 className="font-bold text-slate-800 dark:text-white mb-2">清除錯題記錄</h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">只清除錯題狀態，保留題目</p>
                 <button
                   onClick={() => {
                     if (confirm("確定清除錯題記錄？")) {

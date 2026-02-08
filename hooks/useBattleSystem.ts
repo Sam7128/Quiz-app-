@@ -263,12 +263,18 @@ export function useBattleSystem(): UseBattleSystemReturn {
         let final = Math.floor(base * multiplier * crit.multiplier);
 
         // 護盾機制 (動態調整)
-        // 如果傷害超過怪物當前血量太多 (例如一下秒殺 Boss)，且不是透過技能或暴擊
-        // 或者為了拉長戰鬥，可以強制減傷
-        // 這裡實作簡單版：如果是非技能傷害且大於 50% 血量，觸發護盾 (避免秒殺)
+        // 根據怪物難度限制單次傷害上限，避免一擊秒殺
         let shieldAbsorbed = 0;
-        if (!skillTier && final > monster.maxHp * 0.5 && monster.difficulty === 'boss') {
-            const capped = Math.floor(monster.maxHp * 0.4);
+        if (final > monster.maxHp * 0.5) {
+            // 根據怪物難度設定傷害上限
+            let maxDamagePercent = 0.7; // 普通怪物: 最多 70% 血量
+            if (monster.difficulty === 'elite') {
+                maxDamagePercent = 0.5; // 精英怪物: 最多 50% 血量
+            } else if (monster.difficulty === 'boss') {
+                maxDamagePercent = 0.4; // Boss: 最多 40% 血量
+            }
+
+            const capped = Math.floor(monster.maxHp * maxDamagePercent);
             shieldAbsorbed = final - capped;
             final = capped;
         }

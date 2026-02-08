@@ -66,7 +66,7 @@ import { ShareModal } from './components/ShareModal';
 import { useAuth } from './contexts/AuthContext';
 import { ResumePrompt } from './components/ResumePrompt';
 import { SavedQuizProgress, MistakeDetail, RecentMistakeSession } from './types/battleTypes';
-import { BrainCircuit, LayoutDashboard, FileText, Settings, X, RotateCcw, User as UserIcon, Users } from 'lucide-react';
+import { BrainCircuit, LayoutDashboard, FileText, Settings, X, RotateCcw, User as UserIcon, Users, Sparkles } from 'lucide-react';
 import SkeletonLoader from './components/SkeletonLoader';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -468,7 +468,12 @@ const App: React.FC = () => {
       wrongQuestionIds: []
     });
     setSessionStartTime(Date.now());
+    setSessionStartTime(Date.now());
     setCurrentSessionMistakes([]); // Reset session mistakes
+
+    // 清除舊的戰鬥狀態，確保新的一局從頭開始
+    localStorage.removeItem('mindspark_battle_state');
+
     dispatch({ type: 'set_view', view: mode === 'mistake' ? 'mistakes' : 'quiz' });
   }, [selectedQuizBankIds, user]);
 
@@ -744,9 +749,9 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${view === 'quiz' && gameMode ? 'bg-dungeon-page bg-repeat bg-fixed' : 'bg-slate-50 dark:bg-slate-900'
+    <div className={`min-h-screen flex flex-col transition-colors duration-500 font-sans selection:bg-brand-500/30 ${view === 'quiz' && gameMode ? 'bg-dungeon-page bg-repeat bg-fixed' : 'bg-slate-50 dark:bg-slate-900 bg-mesh-light dark:bg-mesh-gradient bg-fixed bg-cover'
       }`}>
-      {view === 'quiz' && gameMode && <div className="fixed inset-0 bg-black/50 pointer-events-none" />}
+      {view === 'quiz' && gameMode && <div className="fixed inset-0 bg-black/60 pointer-events-none z-0" />}
       {/* Settings Modal */}
       <SettingsModal
         isOpen={isSettingsOpen}
@@ -782,42 +787,79 @@ const App: React.FC = () => {
         onClose={() => dispatch({ type: 'set_sharing_bank', sharingBank: null })}
         bank={sharingBank}
       />
-      <header className={`${view === 'quiz' && gameMode
-        ? 'bg-slate-900 border-slate-700'
-        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
-        } border-b sticky top-0 z-50`}>
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => dispatch({ type: 'set_view', view: 'dashboard' })}>
-            <div className={`${view === 'quiz' && gameMode ? 'bg-amber-600' : 'bg-brand-600'} text-white p-1.5 rounded-lg`}><BrainCircuit size={24} /></div>
+      <header className={`transition-all duration-300 z-50 ${view === 'quiz' && gameMode
+        ? 'sticky top-0 bg-slate-900/90 border-b border-slate-700 backdrop-blur-md'
+        : 'fixed top-4 left-4 right-4 md:left-8 md:right-8 bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-lg shadow-black/5 dark:shadow-black/20 rounded-2xl'
+        }`}>
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => dispatch({ type: 'set_view', view: 'dashboard' })}>
+            <div className={`p-2 rounded-xl transition-transform group-hover:scale-110 shadow-lg ${view === 'quiz' && gameMode ? 'bg-amber-600 shadow-amber-900/20' : 'bg-gradient-to-br from-brand-500 to-accent-600 shadow-brand-500/30'}`}>
+              <BrainCircuit size={20} className="text-white" />
+            </div>
             <div className="flex flex-col">
-              <span className={`font-bold text-lg leading-none ${view === 'quiz' && gameMode ? 'text-amber-100' : 'text-slate-800 dark:text-slate-200'}`}>{APP_NAME}</span>
-              <span className={`text-[10px] font-medium ${view === 'quiz' && gameMode ? 'text-amber-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
+              <span className={`font-bold text-lg leading-none tracking-tight ${view === 'quiz' && gameMode ? 'text-amber-100' : 'text-slate-800 dark:text-white'}`}>
+                Mind<span className={view === 'quiz' && gameMode ? '' : 'text-transparent bg-clip-text bg-gradient-to-r from-brand-500 to-accent-500'}>Spark</span>
+              </span>
+              <span className={`text-[10px] font-medium truncate max-w-[150px] ${view === 'quiz' && gameMode ? 'text-amber-400/80' : 'text-slate-500 dark:text-slate-400'}`}>
                 {view === 'manager' ? (banks.find(b => b.id === editingBankId)?.name || '管理題庫') : (selectedQuizBankIds.length > 1 ? `已選 ${selectedQuizBankIds.length} 個題庫` : banks.find(b => b.id === selectedQuizBankIds[0])?.name || '')}
               </span>
             </div>
           </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <button onClick={() => dispatch({ type: 'set_view', view: 'dashboard' })} className={`font-medium text-sm ${view === 'dashboard' ? 'text-brand-600' : (view === 'quiz' && gameMode ? 'text-slate-400 hover:text-amber-300' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200')}`}>首頁</button>
-            <button onClick={() => dispatch({ type: 'set_view', view: 'manager' })} className={`font-medium text-sm ${view === 'manager' ? 'text-brand-600' : (view === 'quiz' && gameMode ? 'text-slate-400 hover:text-amber-300' : 'text-slate-500 hover:text-slate-800')}`}>題庫管理</button>
-            <button onClick={() => dispatch({ type: 'set_view', view: 'guide' })} className={`font-medium text-sm ${view === 'guide' ? 'text-brand-600' : (view === 'quiz' && gameMode ? 'text-slate-400 hover:text-amber-300' : 'text-slate-500 hover:text-slate-800')}`}>AI 指引</button>
-            <button onClick={() => dispatch({ type: 'set_view', view: 'social' })} className={`font-medium text-sm ${view === 'social' ? 'text-brand-600' : (view === 'quiz' && gameMode ? 'text-slate-400 hover:text-amber-300' : 'text-slate-500 hover:text-slate-800')}`}>社交</button>
-            <button onClick={() => dispatch({ type: 'set_settings_open', isSettingsOpen: true })} className={`p-2 transition-colors ${view === 'quiz' && gameMode ? 'text-slate-400 hover:text-amber-400' : 'text-slate-400 hover:text-brand-600'}`} aria-label="開啟設定"><Settings size={20} /></button>
-            <div className={`h-4 w-px mx-2 ${view === 'quiz' && gameMode ? 'bg-slate-700' : 'bg-slate-200'}`}></div>
+          <nav className="hidden md:flex items-center gap-2">
+            {[
+              { id: 'dashboard', label: '首頁', icon: LayoutDashboard },
+              { id: 'manager', label: '題庫', icon: BrainCircuit },
+              { id: 'guide', label: 'AI 指引', icon: Sparkles },
+              { id: 'social', label: '社群', icon: Users },
+            ].map(item => (
+              <button
+                key={item.id}
+                onClick={() => dispatch({ type: 'set_view', view: item.id as any })}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 ${view === item.id
+                  ? (view === 'quiz' && gameMode ? 'text-amber-400 bg-amber-950/30' : 'text-brand-600 dark:text-white bg-brand-50 dark:bg-white/10 shadow-sm')
+                  : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+              >
+                {/* @ts-ignore */}
+                <item.icon size={16} className={view === item.id ? 'stroke-[2.5px]' : ''} />
+                {item.label}
+              </button>
+            ))}
+
+            <div className={`h-6 w-px mx-2 ${view === 'quiz' && gameMode ? 'bg-slate-700' : 'bg-slate-200 dark:bg-white/10'}`}></div>
+
+            <button
+              onClick={() => dispatch({ type: 'set_settings_open', isSettingsOpen: true })}
+              className={`p-2 rounded-xl transition-all ${view === 'quiz' && gameMode ? 'text-slate-400 hover:text-amber-400 hover:bg-amber-950/30' : 'text-slate-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-white/10'
+                }`}
+              aria-label="開啟設定"
+            >
+              <Settings size={20} />
+            </button>
+
             {user ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 pl-2">
                 <div className="flex flex-col items-end">
-                  <span className={`text-xs font-bold ${view === 'quiz' && gameMode ? 'text-amber-200' : 'text-slate-700'}`}>{user.user_metadata.full_name || user.email}</span>
+                  <span className={`text-xs font-bold ${view === 'quiz' && gameMode ? 'text-amber-200' : 'text-slate-700 dark:text-slate-200'}`}>{user.user_metadata.full_name || user.email?.split('@')[0]}</span>
                   <button onClick={signOut} className="text-[10px] text-red-500 hover:text-red-600 font-bold uppercase tracking-tight">登出</button>
                 </div>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${view === 'quiz' && gameMode ? 'bg-slate-800 text-amber-400 border-slate-600' : 'bg-slate-100 text-slate-500 border-slate-200'}`}><UserIcon size={18} /></div>
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 shadow-sm ${view === 'quiz' && gameMode ? 'bg-slate-800 text-amber-400 border-slate-600' : 'bg-gradient-to-br from-slate-100 to-white dark:from-slate-800 dark:to-slate-700 text-slate-500 dark:text-slate-300 border-white dark:border-slate-600'}`}>
+                  <UserIcon size={18} />
+                </div>
               </div>
             ) : (
-              <button onClick={() => dispatch({ type: 'set_guest_mode', guestMode: false })} className={`text-sm font-bold ${view === 'quiz' && gameMode ? 'text-amber-400 hover:text-amber-300' : 'text-brand-600 hover:text-brand-500'}`}>登入雲端</button>
+              <button
+                onClick={() => dispatch({ type: 'set_guest_mode', guestMode: false })}
+                className={`ml-2 px-5 py-2 rounded-xl text-sm font-bold shadow-lg shadow-brand-500/20 transition-all hover:scale-105 active:scale-95 ${view === 'quiz' && gameMode ? 'bg-amber-600 text-white hover:bg-amber-500' : 'bg-gradient-to-r from-brand-600 to-accent-600 text-white hover:from-brand-500 hover:to-accent-500'
+                  }`}
+              >
+                登入雲端
+              </button>
             )}
           </nav>
         </div>
       </header>
-      <main className={`flex-1 max-w-6xl w-full mx-auto p-4 md:p-8 pb-24 md:pb-8 relative z-10 ${view === 'quiz' && gameMode ? 'backdrop-blur-sm bg-black/30 md:rounded-b-2xl' : ''}`}>
+      <main className={`flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 pt-24 md:pt-28 pb-24 md:pb-12 relative z-10 ${view === 'quiz' && gameMode ? 'backdrop-blur-sm bg-black/30 md:rounded-b-2xl' : ''}`}>
         <AnimatePresence mode="wait">
           <motion.div
             key={view}

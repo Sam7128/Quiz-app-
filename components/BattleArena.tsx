@@ -143,11 +143,14 @@ const CharacterSprite: React.FC<{
     isAttacking?: boolean;
     isHero?: boolean;
     forwardRef?: React.RefObject<HTMLDivElement | null>;
-}> = ({ imagePath, name, isHurt, isAttacking, isHero, forwardRef }) => {
+    className?: string;
+    style?: React.CSSProperties;
+}> = ({ imagePath, name, isHurt, isAttacking, isHero, forwardRef, className, style }) => {
     return (
         <motion.div
             ref={forwardRef}
-            className="relative"
+            className={`relative ${className || ''}`}
+            style={style}
             animate={
                 isHurt
                     ? { x: [0, -10, 10, -5, 5, 0], opacity: [1, 0.5, 1] }
@@ -162,7 +165,8 @@ const CharacterSprite: React.FC<{
                 <img
                     src={imagePath}
                     alt={name}
-                    className="w-full h-full object-contain drop-shadow-lg"
+                    className={`w-full h-full object-contain drop-shadow-lg transition-all duration-300 ${isAttacking && !isHero ? 'brightness-125 sepia-0 hue-rotate-15 saturate-150 drop-shadow-[0_0_15px_rgba(168,85,247,0.6)]' : ''
+                        }`}
                     onError={(e) => {
                         // 圖片載入失敗時顯示 SVG 佔位符 (避免 network error)
                         const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="160" viewBox="0 0 128 160">
@@ -375,6 +379,9 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
                             isAttacking={isMonsterAttacking}
                             isHero={false}
                             forwardRef={monsterRef}
+                            // 動態調整怪物大小：優先使用資料定義的 visualScale，預設為 1
+                            className="origin-bottom"
+                            style={{ transform: `scale(${currentMonster.visualScale || 1})` }}
                         />
 
                         <HealthBar

@@ -79,3 +79,16 @@
   - **Default Quiz Size**: Changed default from 20 to "All questions" for continuous study flow.
 - **Settings**:
   - **Custom Rest Interval**: Users can now set a custom numeric value for rest break intervals (e.g., every 15 questions).
+
+## 2026-02-08 [v0.3.6] "Security & Tailwind v4 Migration"
+### ✨ Security Hardening
+- **Content Security Policy (CSP)**: Added strict meta tags in `index.html` to control resource sources.
+- **CDN Elimination**: Removed unauthenticated Tailwind CDN and migrated to local build process to mitigate supply chain risks.
+- **Security Audit**: Completed full audit using `security-audit` skill; achieved Security Score **A**.
+
+### 🛠️ Technical Refactoring
+- **Tailwind CSS v4 Migration**:
+    - Upgraded to Tailwind v4 using `@tailwindcss/vite` and standard CSS variables in `index.css`.
+    - Resolved PostCSS ESM module compatibility issues (`postcss.config.js` syntax).
+    - Fixed UI contrast issues by defining full range of brand and accent colors (fixing "fade-to-white" bug).
+- **VS Code Optimization**: Added `.vscode/settings.json` to suppress Tailwind-specific linting warnings in CSS files.

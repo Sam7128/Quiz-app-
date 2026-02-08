@@ -156,28 +156,31 @@ export const Dashboard: React.FC<DashboardProps> = ({
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
       {/* Welcome Hero */}
-      <div className="flex flex-col md:flex-row items-center justify-between bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-200">歡迎回來，學習者！</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-2">
-            已選擇 {selectedBankIds.length} 個題庫，共 <strong>{totalQuestions}</strong> 題。
+      {/* Welcome Hero */}
+      <div className="flex flex-col md:flex-row items-center justify-between bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl p-8 shadow-sm border border-white/20 dark:border-white/5 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none transition-opacity opacity-50 group-hover:opacity-100" />
+
+        <div className="relative z-10">
+          <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-600 dark:from-white dark:to-slate-300">歡迎回來，學習者！</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
+            已選擇 {selectedBankIds.length} 個題庫，共 <strong className="text-brand-600 dark:text-brand-400">{totalQuestions}</strong> 題。
           </p>
           {dueCount > 0 && (
-            <div className="mt-3 flex items-center gap-2 text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 px-3 py-2 rounded-lg border border-amber-200 dark:border-amber-800">
+            <div className="mt-4 flex items-center gap-2 text-amber-600 dark:text-amber-300 bg-amber-50/80 dark:bg-amber-900/20 px-4 py-2 rounded-xl border border-amber-200/50 dark:border-amber-800/50 backdrop-blur-sm shadow-sm inline-flex">
               <Calendar size={16} />
-              <span className="text-sm font-semibold">
+              <span className="text-sm font-bold">
                 有 {dueCount} 題需要複習
               </span>
             </div>
           )}
         </div>
-        <div className="mt-6 md:mt-0 flex flex-wrap gap-4 items-center">
-          <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-700 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
-            <span className="text-xs font-bold text-slate-400 dark:text-slate-300 ml-2 uppercase tracking-wider">題數</span>
+        <div className="mt-6 md:mt-0 flex flex-wrap gap-4 items-center relative z-10">
+          <div className="flex items-center gap-2 bg-slate-50/50 dark:bg-slate-800/50 p-1.5 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 backdrop-blur-sm">
+            <span className="text-xs font-bold text-slate-400 dark:text-slate-500 ml-2 uppercase tracking-wider">題數</span>
             <select
               value={quizSize}
               onChange={(e) => setQuizSize(e.target.value === 'all' || e.target.value === 'custom' ? e.target.value : Number(e.target.value))}
-              className="bg-white dark:bg-slate-800 border-none text-slate-700 dark:text-slate-200 text-sm font-semibold rounded-lg focus:ring-0 cursor-pointer pr-2 py-1.5"
+              className="bg-transparent border-none text-slate-700 dark:text-slate-200 text-sm font-bold rounded-lg focus:ring-0 cursor-pointer pr-8 py-2 min-w-[80px]"
               title="選擇測驗題數"
             >
               <option value={10}>10 題</option>
@@ -191,28 +194,28 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <input
                 type="number"
                 min="1"
-                placeholder="輸入數量"
+                placeholder="數量"
                 value={customSize}
                 onChange={(e) => setCustomSize(e.target.value)}
-                className="w-24 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg px-2 py-1.5 text-sm font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-20 bg-white/50 dark:bg-black/20 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1.5 text-sm font-bold text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
               />
             )}
           </div>
           <button
             onClick={handleStartQuiz}
             disabled={totalQuestions === 0}
-            className="flex items-center gap-2 bg-brand-600 hover:bg-brand-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-brand-200 transition-all hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-500 hover:to-accent-500 text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-brand-500/30 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
           >
-            <Zap size={20} />
+            <Zap size={20} className="fill-current" />
             開始測驗
           </button>
           <button
             onClick={onStartMistakes}
             disabled={relevantMistakes === 0}
-            className="flex items-center gap-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 px-6 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 bg-white/50 dark:bg-white/5 text-slate-700 dark:text-slate-200 border border-slate-200/60 dark:border-white/10 hover:border-red-300 dark:hover:border-red-800 hover:bg-red-50/50 dark:hover:bg-red-900/10 px-6 py-3.5 rounded-2xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
           >
             <AlertTriangle size={20} className="text-red-500" />
-            錯題複習 ({relevantMistakes})
+            錯題 ({relevantMistakes})
           </button>
         </div>
       </div>
@@ -220,10 +223,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="grid md:grid-cols-12 gap-6">
 
         {/* Bank Selector */}
-        <div className="md:col-span-8 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-slate-700 dark:text-slate-200 font-bold flex items-center gap-2">
-              <Layers size={20} className="text-brand-500" />
+        <div className="md:col-span-8 bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl p-6 rounded-3xl shadow-sm border border-white/20 dark:border-white/5 h-fit">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-slate-800 dark:text-white font-bold flex items-center gap-2 text-lg">
+              <div className="p-2 bg-brand-50 dark:bg-white/10 rounded-lg text-brand-600 dark:text-brand-400">
+                <Layers size={20} />
+              </div>
               選擇練習題庫
             </h3>
 
@@ -341,34 +346,34 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   key={bank.id}
                   draggable
                   onDragStart={(e) => onDragStart(e, bank.id)}
-                  className={`relative p-3 rounded-xl border transition-all flex items-center justify-between group/card active:scale-95 active:rotate-1 cursor-grab active:cursor-grabbing ${isSelected
-                    ? 'bg-brand-50 dark:bg-brand-900/30 border-brand-200 dark:border-brand-800 shadow-sm'
-                    : 'bg-slate-50 dark:bg-slate-700 border-transparent hover:bg-slate-100 dark:hover:bg-slate-600'
+                  className={`relative p-3.5 rounded-2xl border transition-all duration-200 flex items-center justify-between group/card active:scale-[0.98] cursor-grab active:cursor-grabbing ${isSelected
+                    ? 'bg-brand-50/80 dark:bg-brand-900/20 border-brand-200/60 dark:border-brand-500/30 shadow-sm'
+                    : 'bg-slate-50/50 dark:bg-slate-800/40 border-transparent hover:bg-white dark:hover:bg-slate-700/60 hover:shadow-md hover:shadow-black/5 hover:-translate-y-0.5'
                     }`}
                 >
                   <div
-                    className="flex items-center gap-3 flex-1 cursor-pointer"
+                    className="flex items-center gap-3.5 flex-1 cursor-pointer"
                     onClick={() => onToggleBank(bank.id)}
                   >
                     {isSelected
-                      ? <CheckSquare className="text-brand-600 shrink-0" size={20} />
-                      : <Square className="text-slate-300 group-hover/card:text-slate-400 shrink-0" size={20} />
+                      ? <div className="text-brand-600 bg-white dark:bg-brand-500 rounded-md shadow-sm"><CheckSquare size={20} className={isSelected ? "text-brand-600 dark:text-white" : ""} /></div>
+                      : <Square className="text-slate-300 dark:text-slate-600 group-hover/card:text-brand-400 shrink-0 transition-colors" size={20} />
                     }
                     <div className="min-w-0">
-                      <div className={`font-medium text-sm truncate ${isSelected ? 'text-brand-900 dark:text-brand-200' : 'text-slate-600 dark:text-slate-300'}`}>
+                      <div className={`font-bold text-sm truncate ${isSelected ? 'text-brand-900 dark:text-white' : 'text-slate-600 dark:text-slate-300 group-hover/card:text-slate-900 dark:group-hover/card:text-white transition-colors'}`}>
                         {bank.name}
                       </div>
-                      <div className="text-xs text-slate-400 dark:text-slate-500">{bank.questionCount} 題</div>
+                      <div className="text-xs font-medium text-slate-400 dark:text-slate-500 group-hover/card:text-brand-500/60">{bank.questionCount} 題</div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1 opacity-0 group-hover/card:opacity-100 transition-all duration-200 translate-x-2 group-hover/card:translate-x-0">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onShareBank(bank);
                       }}
-                      className="p-1.5 text-slate-300 dark:text-slate-400 hover:text-brand-500 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-all"
+                      className="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-white/10 rounded-lg transition-all"
                       title="分享"
                     >
                       <Share2 size={16} />
@@ -381,16 +386,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           e.stopPropagation();
                           setMovingBankId(movingBankId === bank.id ? null : bank.id);
                         }}
-                        className={`p-1.5 rounded-lg transition-all ${movingBankId === bank.id ? 'text-brand-600 bg-brand-50 dark:bg-brand-900/30' : 'text-slate-300 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-white dark:hover:bg-slate-700'}`}
+                        className={`p-2 rounded-lg transition-all ${movingBankId === bank.id ? 'text-brand-600 bg-brand-50 dark:bg-brand-900/30' : 'text-slate-400 hover:text-brand-600 hover:bg-brand-50 dark:hover:bg-white/10'}`}
                         title="移動至..."
                       >
                         <FolderInput size={16} />
                       </button>
 
                       {movingBankId === bank.id && (
-                        <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 z-[60] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-                          <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 px-3 py-2 bg-slate-50 dark:bg-slate-700 border-b border-slate-100 dark:border-slate-700">移動至...</div>
-                          <div className="max-h-48 overflow-y-auto custom-scrollbar">
+                        <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 z-[60] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                          <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 px-4 py-3 bg-slate-50/80 dark:bg-slate-700/80 border-b border-slate-100 dark:border-slate-700 backdrop-blur-sm">移動至...</div>
+                          <div className="max-h-60 overflow-y-auto custom-scrollbar p-1">
                             <button
                               onClick={async (e) => {
                                 e.stopPropagation();
@@ -398,7 +403,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                 await onMoveBank(bank.id, undefined);
                                 setMovingBankId(null);
                               }}
-                              className="w-full text-left px-3 py-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-brand-50 dark:hover:bg-slate-700 hover:text-brand-600 flex items-center gap-2 transition-colors border-b border-slate-50 dark:border-slate-700 last:border-0"
+                              className="w-full text-left px-3 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-brand-50 dark:hover:bg-slate-700 hover:text-brand-600 rounded-xl flex items-center gap-2 transition-colors"
                             >
                               <Layers size={14} className="opacity-50" /> 主目錄
                             </button>
@@ -410,7 +415,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                                   await onMoveBank(bank.id, f.id);
                                   setMovingBankId(null);
                                 }}
-                                className="w-full text-left px-3 py-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-brand-50 dark:hover:bg-slate-700 hover:text-brand-600 flex items-center gap-2 transition-colors border-b border-slate-50 dark:border-slate-700 last:border-0"
+                                className="w-full text-left px-3 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-brand-50 dark:hover:bg-slate-700 hover:text-brand-600 rounded-xl flex items-center gap-2 transition-colors"
                               >
                                 <FolderIcon size={14} className="text-amber-400" fill="currentColor" /> {f.name}
                               </button>
