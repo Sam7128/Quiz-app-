@@ -32,6 +32,25 @@ export default defineConfig({
     minify: 'esbuild', // 將 'terser' 改為 'esbuild'，或直接刪除這一行
     rollupOptions: {
       output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-is')) {
+              return 'vendor-react';
+            }
+            if (id.includes('framer-motion')) {
+              return 'vendor-framer';
+            }
+            if (id.includes('recharts')) {
+              return 'vendor-recharts';
+            }
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons';
+            }
+            if (id.includes('@supabase') || id.includes('@google') || id.includes('openai')) {
+              return 'vendor-api';
+            }
+          }
+        },
         entryFileNames: '[name].[hash].js',
         chunkFileNames: '[name].[hash].js',
         assetFileNames: '[name].[hash].[ext]',
