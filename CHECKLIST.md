@@ -29,6 +29,7 @@
 - [x] **[Security]** 專案安全審計與防護強化 (Security Audit & Hardening)
 - [x] **[Refactor]** 遷移至 Tailwind CSS v4 與模組化配置
 - [x] **[Refactor]** 技能導向優化計畫 (Skills-Based Optimization Plan) `skills-based-optimization`
+- [x] **[Optimization]** 打包體積最佳化 (Bundle Size Optimization) `vite-bundle-split`
 
 ## 🟡 待辦 (Pending)
 - [ ] **[Build]** 單元測試覆蓋率提升 (Test Coverage Improvement)
