@@ -20,10 +20,13 @@
     "openai": "^6.17.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-is": "^19.2.4",
     "recharts": "^3.7.0",
     "use-sound": "^5.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/vite": "^4.1.18",
     "@testing-library/jest-dom": "^6.9.1",
@@ -32,6 +35,8 @@
     "@types/howler": "^2.2.12",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.1.0",
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.24",
     "eslint": "^10.0.0",
@@ -40,6 +45,7 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.8.2",
+    "typescript-eslint": "^8.55.0",
     "vite": "^6.2.0",
     "vitest": "^4.0.18"
   }

@@ -1,10 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  getCloudAchievements, 
-  unlockCloudAchievement,
-  getLocalAchievements,
-  unlockLocalAchievement
-} from '../services/achievements';
+import { useRepository } from '../contexts/RepositoryContext';
 
 interface UseAchievementsReturn {
   unlockedIds: string[];
@@ -13,7 +8,8 @@ interface UseAchievementsReturn {
   refresh: () => Promise<void>;
 }
 
-export const useAchievements = (isAuthenticated: boolean): UseAchievementsReturn => {
+export const useAchievements = (): UseAchievementsReturn => {
+  const repository = useRepository();
   const [unlockedIds, setUnlockedIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,18 +17,14 @@ export const useAchievements = (isAuthenticated: boolean): UseAchievementsReturn
     setLoading(true);
     
     try {
-      if (isAuthenticated) {
-        const ids = await getCloudAchievements();
-        setUnlockedIds(ids);
-      } else {
-        setUnlockedIds(getLocalAchievements());
-      }
+      const ids = await repository.getAchievements();
+      setUnlockedIds(ids);
     } catch (error) {
       console.error('Error fetching achievements:', error);
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [repository]);
 
   const unlockAchievement = useCallback(async (achievementId: string) => {
     try {
@@ -41,19 +33,13 @@ export const useAchievements = (isAuthenticated: boolean): UseAchievementsReturn
         return;
       }
 
-      if (isAuthenticated) {
-        const success = await unlockCloudAchievement(achievementId);
-        if (success) {
-          setUnlockedIds(prev => [...prev, achievementId]);
-        }
-      } else {
-        unlockLocalAchievement(achievementId);
-        setUnlockedIds(prev => [...prev, achievementId]);
-      }
+      await repository.unlockAchievement(achievementId);
+      const ids = await repository.getAchievements();
+      setUnlockedIds(ids);
     } catch (error) {
       console.error('Error unlocking achievement:', error);
     }
-  }, [isAuthenticated, unlockedIds]);
+  }, [repository, unlockedIds]);
 
   useEffect(() => {
     void fetchAchievements();

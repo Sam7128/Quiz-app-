@@ -1,0 +1,169 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6] [cursor=pointer]:
+        - img [ref=e8]
+        - generic [ref=e21]: MindSpark
+      - navigation [ref=e22]:
+        - button "首頁" [ref=e23]:
+          - img [ref=e24]
+          - text: 首頁
+        - button "題庫" [ref=e29]:
+          - img [ref=e30]
+          - text: 題庫
+        - button "AI 指引" [ref=e42]:
+          - img [ref=e43]
+          - text: AI 指引
+        - button "社群" [ref=e46]:
+          - img [ref=e47]
+          - text: 社群
+        - button "開啟設定" [ref=e53]:
+          - img [ref=e54]
+        - button "登入雲端" [ref=e57]
+  - main [ref=e58]:
+    - generic [ref=e60]:
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - heading "歡迎回來，學習者！" [level=1] [ref=e63]
+          - paragraph [ref=e64]:
+            - text: 已選擇 0 個題庫，共
+            - strong [ref=e65]: "0"
+            - text: 題。
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - generic [ref=e68]: 題數
+            - combobox "選擇測驗題數" [ref=e69] [cursor=pointer]:
+              - option "10 題"
+              - option "20 題"
+              - option "30 題"
+              - option "50 題"
+              - option "全部" [selected]
+              - option "自訂..."
+          - button "開始測驗" [disabled] [ref=e70]:
+            - img [ref=e71]
+            - text: 開始測驗
+          - button "錯題 (0)" [disabled] [ref=e73]:
+            - img [ref=e74]
+            - text: 錯題 (0)
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - generic [ref=e78]:
+            - heading "選擇練習題庫" [level=3] [ref=e79]:
+              - img [ref=e81]
+              - text: 選擇練習題庫
+            - generic [ref=e85]:
+              - button "新增資料夾" [ref=e86]:
+                - img [ref=e87]
+              - button "全選題庫" [ref=e89]
+          - generic [ref=e91]:
+            - generic [ref=e92] [cursor=pointer]:
+              - img [ref=e93]
+              - generic [ref=e95]:
+                - generic [ref=e96]: E2E Test Bank
+                - generic [ref=e97]: 1 題
+            - generic [ref=e98]:
+              - button "分享" [ref=e99]:
+                - img [ref=e100]
+              - button "移動至..." [ref=e107]:
+                - img [ref=e108]
+        - generic [ref=e111]:
+          - generic [ref=e112]:
+            - generic [ref=e114]:
+              - img [ref=e115]
+              - generic [ref=e117]: 學習連續
+            - generic [ref=e118]:
+              - generic [ref=e119]: "0"
+              - generic [ref=e120]: 天連續學習
+            - generic [ref=e121]:
+              - generic [ref=e122]:
+                - img [ref=e123]
+                - generic [ref=e127]: 最高記錄
+              - generic [ref=e128]: 0 天
+            - paragraph [ref=e129]: 開始學習，建立你的第一個連續記錄！
+          - generic [ref=e130]:
+            - heading "學習統計" [level=3] [ref=e131]:
+              - img [ref=e132]
+              - text: 學習統計
+            - paragraph [ref=e136]: 完成測驗後查看統計數據
+          - generic [ref=e137]:
+            - generic [ref=e138]:
+              - img [ref=e139]
+              - heading "最近 5 輪錯題" [level=3] [ref=e142]
+            - paragraph [ref=e143]: 目前暫無紀錄。完成測驗後，系統會自動將該輪的錯題記錄在此，方便您快速複習。
+          - generic [ref=e144] [cursor=pointer]:
+            - generic [ref=e145]:
+              - heading "成就系統" [level=3] [ref=e146]:
+                - img [ref=e147]
+                - text: 成就系統
+                - img [ref=e150]
+              - generic [ref=e154]: 0/25
+            - generic [ref=e156]:
+              - generic [ref=e158]:
+                - generic [ref=e159]: 🎯
+                - generic [ref=e160]:
+                  - generic [ref=e161]:
+                    - generic [ref=e162]: 初次嘗試
+                    - img [ref=e163]
+                  - paragraph [ref=e166]: 完成第一題
+              - generic [ref=e168]:
+                - generic [ref=e169]: 📝
+                - generic [ref=e170]:
+                  - generic [ref=e171]:
+                    - generic [ref=e172]: 小試身手
+                    - img [ref=e173]
+                  - paragraph [ref=e176]: 累計完成 10 題
+              - generic [ref=e178]:
+                - generic [ref=e179]: 📚
+                - generic [ref=e180]:
+                  - generic [ref=e181]:
+                    - generic [ref=e182]: 學習達人
+                    - img [ref=e183]
+                  - paragraph [ref=e186]: 累計完成 100 題
+              - generic [ref=e188]:
+                - generic [ref=e189]: 💯
+                - generic [ref=e190]:
+                  - generic [ref=e191]:
+                    - generic [ref=e192]: 完美答題
+                    - img [ref=e193]
+                  - paragraph [ref=e196]: 單次測驗 100% 正確率
+              - generic [ref=e198]:
+                - generic [ref=e199]: 🔥
+                - generic [ref=e200]:
+                  - generic [ref=e201]:
+                    - generic [ref=e202]: 持之以恆
+                    - img [ref=e203]
+                  - paragraph [ref=e206]: 連續學習 3 天
+              - generic [ref=e208]:
+                - generic [ref=e209]: 🌟
+                - generic [ref=e210]:
+                  - generic [ref=e211]:
+                    - generic [ref=e212]: 一週挑戰
+                    - img [ref=e213]
+                  - paragraph [ref=e216]: 連續學習 7 天
+            - paragraph [ref=e217]: 查看全部 25 個成就
+          - generic [ref=e218]:
+            - generic [ref=e219]:
+              - heading "🍅 專注計時器" [level=3] [ref=e220]:
+                - generic [ref=e221]: 🍅
+                - text: 專注計時器
+              - generic [ref=e222]:
+                - button "關閉聲音" [ref=e223]:
+                  - img [ref=e224]
+                - button "設定" [ref=e228]:
+                  - img [ref=e229]
+            - generic [ref=e232]:
+              - generic [ref=e233]:
+                - generic [ref=e234]: 🎯
+                - text: 專注模式
+              - generic [ref=e235]: 25:00
+              - generic [ref=e236]:
+                - img [ref=e237]
+                - button [ref=e241]:
+                  - img [ref=e242]
+              - button "重置" [ref=e245]:
+                - img [ref=e246]
+                - generic [ref=e249]: 重置
+```

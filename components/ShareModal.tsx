@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { X, Send, Users, Search, Check, Loader2, BookOpen, Share2 } from 'lucide-react';
 import { supabase } from '../services/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { useRepository } from '../contexts/RepositoryContext';
+import { useToast } from '../contexts/ToastContext';
+import { useConfirm } from '../hooks/useConfirm';
 import { BankMetadata, Friendship, Question } from '../types';
-import { getQuestions } from '../services/storage';
-import { getCloudQuestions } from '../services/cloudStorage';
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -14,6 +15,9 @@ interface ShareModalProps {
 
 export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, bank }) => {
   const { user } = useAuth();
+  const repository = useRepository();
+  const toast = useToast();
+  const confirmDialog = useConfirm();
   const [friends, setFriends] = useState<Friendship[]>([]);
   const [loading, setLoading] = useState(false);
   const [sharingId, setSharingId] = useState<string | null>(null);
@@ -68,24 +72,15 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, bank })
     setSharingId(friendId);
 
     try {
-      // 1. Get questions (Priority: Cloud > Local)
-      // Since user is logged in (checked above), we should try cloud first as that's where current data lives for logged-in users.
       let questions: Question[] = [];
       try {
-        questions = await getCloudQuestions(bank.id);
-      } catch (cloudErr) {
-        console.warn("Cloud fetch failed, falling back to local for sharing", cloudErr);
-        questions = getQuestions(bank.id);
-      }
-
-      // Fallback: If cloud returned empty but we have local data (edge case), try local
-      if (questions.length === 0) {
-        const localQ = getQuestions(bank.id);
-        if (localQ.length > 0) questions = localQ;
+        questions = await repository.getQuestions(bank.id);
+      } catch (error) {
+        console.warn('Question fetch failed for sharing', error);
       }
 
       if (questions.length === 0) {
-        if (!confirm("此題庫似乎沒有題目 (0 題)。確定要傳送空題庫嗎？")) {
+        if (!await confirmDialog({ title: '空題庫', message: '此題庫似乎沒有題目 (0 題)。確定要傳送空題庫嗎？' })) {
           setSharingId(null);
           return;
         }
@@ -105,9 +100,10 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, bank })
 
       if (error) throw error;
 
-      alert(`已傳送題庫「${bank.name}」！`);
-    } catch (err: any) {
-      alert("分享失敗: " + err.message);
+      toast.success(`已傳送題庫「${bank.name}」！`);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : '未知錯誤';
+      toast.error("分享失敗: " + message);
     } finally {
       setSharingId(null);
     }

@@ -1,0 +1,245 @@
+﻿{
+  "changeName": "architecture-quality-overhaul",
+  "changeDir": "C:\\Users\\user\\Desktop\\Quiz-app--main\\openspec\\changes\\architecture-quality-overhaul",
+  "schemaName": "spec-driven",
+  "contextFiles": {
+    "proposal": "C:\\Users\\user\\Desktop\\Quiz-app--main\\openspec\\changes\\architecture-quality-overhaul\\proposal.md",
+    "specs": "C:\\Users\\user\\Desktop\\Quiz-app--main\\openspec\\changes\\architecture-quality-overhaul\\specs\\**\\*.md",
+    "design": "C:\\Users\\user\\Desktop\\Quiz-app--main\\openspec\\changes\\architecture-quality-overhaul\\design.md",
+    "tasks": "C:\\Users\\user\\Desktop\\Quiz-app--main\\openspec\\changes\\architecture-quality-overhaul\\tasks.md"
+  },
+  "progress": {
+    "total": 45,
+    "complete": 32,
+    "remaining": 13
+  },
+  "tasks": [
+    {
+      "id": "1",
+      "description": "1.1 Create `contexts/ToastContext.tsx` with `ToastProvider` and `useToast()` hook (success/error/warning/info methods)",
+      "done": true
+    },
+    {
+      "id": "2",
+      "description": "1.2 Create `components/ToastContainer.tsx` using React Portal + Framer Motion for animation and stacking",
+      "done": true
+    },
+    {
+      "id": "3",
+      "description": "1.3 Create `components/ConfirmDialog.tsx` with Promise-based async API, overlay, and focus trap",
+      "done": true
+    },
+    {
+      "id": "4",
+      "description": "1.4 Create `hooks/useConfirm.ts` hook wrapping the ConfirmDialog context",
+      "done": true
+    },
+    {
+      "id": "5",
+      "description": "1.5 Wrap app root with `ToastProvider` in `index.tsx`",
+      "done": true
+    },
+    {
+      "id": "6",
+      "description": "1.6 Replace all `alert()` calls across codebase with `toast.success()` or `toast.info()`",
+      "done": true
+    },
+    {
+      "id": "7",
+      "description": "1.7 Replace all `window.confirm()` / `confirm()` calls with async `useConfirm()` hook",
+      "done": true
+    },
+    {
+      "id": "8",
+      "description": "1.8 Verify: grep for `alert(` and `confirm(` returns zero results outside test files",
+      "done": true
+    },
+    {
+      "id": "9",
+      "description": "2.1 Create `components/ErrorBoundary.tsx` class component with theme-aware fallback UI",
+      "done": true
+    },
+    {
+      "id": "10",
+      "description": "2.2 Wrap root app in global Error Boundary in `index.tsx`",
+      "done": true
+    },
+    {
+      "id": "11",
+      "description": "2.3 Wrap each view (dashboard/quiz/manager/guide/social) in route-level Error Boundary in `App.tsx`",
+      "done": true
+    },
+    {
+      "id": "12",
+      "description": "2.4 Verify: intentionally throw in a component to confirm boundary catches it",
+      "done": true
+    },
+    {
+      "id": "13",
+      "description": "3.1 Define `IStorageRepository` interface in `services/repository.ts` covering banks, questions, mistakes, analytics, streaks, achievements, spaced repetition",
+      "done": true
+    },
+    {
+      "id": "14",
+      "description": "3.2 Implement `LocalStorageRepository` in `services/localRepo.ts` (migrate logic from `storage.ts`, `analytics.ts`, `streak.ts`, `achievements.ts`)",
+      "done": true
+    },
+    {
+      "id": "15",
+      "description": "3.3 Implement `CloudStorageRepository` in `services/cloudRepo.ts` (migrate logic from `cloudStorage.ts`, cloud sections of `analytics.ts`, `streak.ts`, `achievements.ts`)",
+      "done": true
+    },
+    {
+      "id": "16",
+      "description": "3.4 Create `contexts/RepositoryContext.tsx` with `useRepository()` hook that returns correct impl based on `useAuth()`",
+      "done": true
+    },
+    {
+      "id": "17",
+      "description": "3.5 Refactor `App.tsx` to use `useRepository()` instead of direct if(user) branching",
+      "done": false
+    },
+    {
+      "id": "18",
+      "description": "3.6 Refactor `components/Dashboard.tsx` and hooks to use repository",
+      "done": false
+    },
+    {
+      "id": "19",
+      "description": "3.7 Refactor `components/BankManager.tsx` to use repository",
+      "done": false
+    },
+    {
+      "id": "20",
+      "description": "3.8 Verify: grep for `if.*user.*getCloud|if.*user.*Cloud` returns zero results in component/hook files",
+      "done": false
+    },
+    {
+      "id": "21",
+      "description": "4.1 Extract `hooks/useQuizEngine.ts` ??move `startQuiz`, `handleAnswer`, `nextQuestion`, `restoreSession`, `handleExitQuiz`, `handlePracticeMistakes`, and all quiz state",
+      "done": false
+    },
+    {
+      "id": "22",
+      "description": "4.2 Extract `hooks/useAchievementTracker.ts` ??move achievement-checking logic from `onHome` callback",
+      "done": false
+    },
+    {
+      "id": "23",
+      "description": "4.3 Extract `hooks/useBankManager.ts` ??move `refreshBanksData`, `handleMoveBank`, `handleBatchDelete`, `handleCreateFolder`, `handleDeleteFolder`, folder/bank CRUD callbacks",
+      "done": false
+    },
+    {
+      "id": "24",
+      "description": "4.4 Extract `components/AppHeader.tsx` ??move desktop header + nav bar JSX",
+      "done": true
+    },
+    {
+      "id": "25",
+      "description": "4.5 Extract `components/MobileNav.tsx` ??move mobile bottom nav JSX, add dark mode support",
+      "done": true
+    },
+    {
+      "id": "26",
+      "description": "4.6 Wire all extracted hooks and components back into `App.tsx`",
+      "done": true
+    },
+    {
+      "id": "27",
+      "description": "4.7 Verify: `App.tsx` line count ??300 lines",
+      "done": false
+    },
+    {
+      "id": "28",
+      "description": "4.8 Verify: `npx tsc --noEmit` passes with zero errors",
+      "done": false
+    },
+    {
+      "id": "29",
+      "description": "5.1 Create `utils/typeGuards.ts` with `isMultipleAnswer(question)` type guard function",
+      "done": true
+    },
+    {
+      "id": "30",
+      "description": "5.2 Replace `as any` at `App.tsx:487` (correctAnswer cast) with type guard",
+      "done": true
+    },
+    {
+      "id": "31",
+      "description": "5.3 Replace `as any` at `App.tsx:593` (currentQ.answer cast) with type guard",
+      "done": true
+    },
+    {
+      "id": "32",
+      "description": "5.4 Replace `as any` at `App.tsx:823` (view item.id cast) with proper AppView typing",
+      "done": true
+    },
+    {
+      "id": "33",
+      "description": "5.5 Remove `@ts-ignore` at `App.tsx:829` by fixing icon component typing",
+      "done": true
+    },
+    {
+      "id": "34",
+      "description": "5.6 Fix `as any` in `challenges.ts:195` with proper error typing",
+      "done": true
+    },
+    {
+      "id": "35",
+      "description": "5.7 Fix `as any` in `FocusTimer.tsx:52` with proper AudioContext typing",
+      "done": true
+    },
+    {
+      "id": "36",
+      "description": "5.8 Verify: grep for `as any` and `@ts-ignore` returns zero results outside test files",
+      "done": true
+    },
+    {
+      "id": "37",
+      "description": "6.1 Update `index.html` CSP: remove `unsafe-eval`, restrict `connect-src` to specific Supabase + AI API domains",
+      "done": true
+    },
+    {
+      "id": "38",
+      "description": "6.2 Verify that dev mode (`npm run dev`) still works after CSP changes (Vite HMR may need adjustment)",
+      "done": true
+    },
+    {
+      "id": "39",
+      "description": "6.3 Verify that production build (`npm run build`) passes and serves correctly",
+      "done": true
+    },
+    {
+      "id": "40",
+      "description": "7.1 Run `npx tsc --noEmit` ??zero errors",
+      "done": false
+    },
+    {
+      "id": "41",
+      "description": "7.2 Run `npm run build` ??zero build errors",
+      "done": false
+    },
+    {
+      "id": "42",
+      "description": "7.3 Manual smoke test: Login ??Dashboard ??Start Quiz ??Answer ??Exit ??Bank Manager ??Settings",
+      "done": false
+    },
+    {
+      "id": "43",
+      "description": "7.4 Verify Toast notifications appear correctly for all previously-alerted actions",
+      "done": true
+    },
+    {
+      "id": "44",
+      "description": "7.5 Verify Error Boundary renders fallback when error is thrown",
+      "done": true
+    },
+    {
+      "id": "45",
+      "description": "7.6 Update `GEMINI.md` and `DEVELOPMENT_LOG.md` with changes",
+      "done": false
+    }
+  ],
+  "state": "ready",
+  "instruction": "Read context files, work through pending tasks, mark complete as you go.\nPause if you hit blockers or need clarification."
+}

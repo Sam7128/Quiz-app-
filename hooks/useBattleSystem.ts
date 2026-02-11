@@ -74,16 +74,40 @@ export function useBattleSystem(): UseBattleSystemReturn {
     // Persistence Effect
     useEffect(() => {
         // Only save if battle is active or there's some progress (HP loss, streak)
-        // This prevents saving the initial, untouched state unnecessarily
         if (battleState.isActive || battleState.heroHp < INITIAL_BATTLE_STATE.heroHp || battleState.monsterHp < INITIAL_BATTLE_STATE.monsterHp || battleState.streak > 0) {
             localStorage.setItem(BATTLE_STATE_KEY, JSON.stringify(battleState));
         } else {
-            // If battle is inactive and state is essentially reset, clear localStorage
-            // This handles cases where a battle ends and we want to start fresh on next load
             const isInitialState = JSON.stringify(battleState) === JSON.stringify(INITIAL_BATTLE_STATE);
             if (isInitialState) {
                 localStorage.removeItem(BATTLE_STATE_KEY);
             }
+        }
+    }, [battleState]);
+
+    // Debug Logging (DEV only)
+    const prevBattleStateRef = useRef(battleState);
+    useEffect(() => {
+        if (import.meta.env.DEV) {
+            const prev = prevBattleStateRef.current;
+            const curr = battleState;
+
+            if (prev === curr) return;
+
+            const changes: string[] = [];
+            if (prev.isActive !== curr.isActive) changes.push(`Active: ${prev.isActive} -> ${curr.isActive}`);
+            if (prev.streak !== curr.streak) changes.push(`Streak: ${prev.streak} -> ${curr.streak}`);
+            if (prev.heroHp !== curr.heroHp) changes.push(`HeroHP: ${prev.heroHp} -> ${curr.heroHp}`);
+            if (prev.monsterHp !== curr.monsterHp) changes.push(`MonsterHP: ${prev.monsterHp} -> ${curr.monsterHp}`);
+            if (prev.currentAnimation?.type !== curr.currentAnimation?.type) changes.push(`Anim: ${prev.currentAnimation?.type} -> ${curr.currentAnimation?.type}`);
+
+            if (changes.length > 0) {
+                console.groupCollapsed(`[Battle] State Change (${changes.length})`);
+                changes.forEach(c => console.log(c));
+                console.log('Full State:', curr);
+                console.groupEnd();
+            }
+
+            prevBattleStateRef.current = curr;
         }
     }, [battleState]);
 
@@ -94,8 +118,8 @@ export function useBattleSystem(): UseBattleSystemReturn {
     }, []);
 
     const lastDialogueRef = useRef<string>('');
-    const animationTimerRef = useRef<NodeJS.Timeout | null>(null);
-    const dialogueTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const animationTimerRef = useRef<any>(null);
+    const dialogueTimerRef = useRef<any>(null);
 
     // 清理計時器
     useEffect(() => {
@@ -384,7 +408,7 @@ export function useBattleSystem(): UseBattleSystemReturn {
             const isMonsterDefeated = newMonsterHp <= 0;
 
             // 3. 處理護盾對話 (如果沒觸發技能且有減傷)
-            if (shieldAbsorbed > 0 && !triggerSkill) {
+            if ((shieldAbsorbed ?? 0) > 0 && !triggerSkill) {
                 // 這裡不能直接 setDialogue (因為是 reducer)，需透過副作用處理
                 // 但為了簡化，我們在下面的副作用區塊處理
             }
@@ -466,7 +490,7 @@ export function useBattleSystem(): UseBattleSystemReturn {
 
             // 視覺與對話處理
             if (triggerSkill) {
-                const skillDialogues = HERO_SKILL_DIALOGUES[skillTier!] || HERO_ATTACK_DIALOGUES;
+                const skillDialogues = HERO_SKILL_DIALOGUES[skillTier as SkillTier] || HERO_ATTACK_DIALOGUES;
                 setDialogue('hero', skillDialogues);
                 setAnimation('skill_cast', triggerSkill, () => {
                     if (isMonsterDefeated) {
@@ -479,7 +503,7 @@ export function useBattleSystem(): UseBattleSystemReturn {
                 setDialogue('hero', HERO_ATTACK_DIALOGUES);
 
                 // 護盾對話優先於受傷對話
-                if (shieldAbsorbed > 0) {
+                if ((shieldAbsorbed ?? 0) > 0) {
                     setTimeout(() => setDialogue('monster', MONSTER_SHIELD_DIALOGUES), 500);
                 }
 

@@ -18,6 +18,7 @@ import { MiniTimer } from './MiniTimer';
 import { RestBreakModal } from './RestBreakModal';
 import { AchievementsModal } from './AchievementsModal';
 import { useAchievements } from '../hooks/useAchievements';
+import { isMultipleAnswer } from '../utils/typeGuards';
 
 interface QuizCardProps {
   question: Question;
@@ -63,7 +64,7 @@ export const QuizCard: React.FC<QuizCardProps> = ({
   const [suppressRestModal, setSuppressRestModal] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
 
-  const { unlockedIds } = useAchievements(true);
+  const { unlockedIds } = useAchievements();
 
   // Timer Effect
   useEffect(() => {
@@ -101,12 +102,12 @@ export const QuizCard: React.FC<QuizCardProps> = ({
 
   // Detect if question is multiple choice
   const isMultiple = useMemo(() => {
-    return question.type === 'multiple' || Array.isArray(question.answer);
+    return question.type === 'multiple' || isMultipleAnswer(question);
   }, [question]);
 
   // Normalize correct answer to array
   const correctAnswers = useMemo(() => {
-    if (Array.isArray(question.answer)) return question.answer;
+    if (isMultipleAnswer(question)) return question.answer;
     return [question.answer];
   }, [question]);
 

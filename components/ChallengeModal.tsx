@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, Trophy, UserPlus, Search, Check } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useRepository } from '../contexts/RepositoryContext';
 import { Friendship, BankMetadata } from '../types';
-import { getCloudBanks } from '../services/cloudStorage';
 import { supabase } from '../services/supabase';
 import { sendChallenge } from '../services/challenges';
 
@@ -18,6 +18,7 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
   onChallengeSent
 }) => {
   const { user } = useAuth();
+  const repository = useRepository();
   const [friends, setFriends] = useState<Friendship[]>([]);
   const [banks, setBanks] = useState<BankMetadata[]>([]);
   const [selectedFriend, setSelectedFriend] = useState<string | null>(null);
@@ -44,7 +45,7 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
       if (fError) throw fError;
 
       // Get friend profiles
-      const friendIds = friendships?.map(f => 
+      const friendIds = friendships?.map(f =>
         f.user_id === user?.id ? f.friend_id : f.user_id
       ) || [];
 
@@ -59,7 +60,7 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
           const profile = profiles?.find(p => p.id === friendId);
           return {
             ...f,
-            friendProfile: profile
+            friend_profile: profile
           };
         });
 
@@ -67,7 +68,7 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
       }
 
       // Load my banks
-      const myBanks = await getCloudBanks();
+      const myBanks = await repository.getBanks();
       setBanks(myBanks);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -103,7 +104,7 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
             <Trophy className="text-brand-600" size={20} />
             <h2 className="text-xl font-bold">發起挑戰</h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full text-slate-400 dark:text-slate-500 transition-colors">
+          <button onClick={onClose} aria-label="關閉" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full text-slate-400 dark:text-slate-500 transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -118,7 +119,7 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
           {step === 1 && (
             <div className="space-y-4">
               <h3 className="font-bold text-slate-700 dark:text-slate-200">選擇好友</h3>
-              
+
               {friends.length === 0 ? (
                 <div className="text-center py-8 text-slate-400 dark:text-slate-500">
                   <UserPlus size={48} className="mx-auto mb-3 opacity-30" />
@@ -129,18 +130,17 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
                 <div className="space-y-2 max-h-64 overflow-y-auto">
                   {friends.map((friend) => {
                     const friendId = friend.user_id === user?.id ? friend.friend_id : friend.user_id;
-                    const profile = friend.friendProfile;
+                    const profile = friend.friend_profile;
                     const isSelected = selectedFriend === friendId;
 
                     return (
                       <button
                         key={friend.id}
                         onClick={() => setSelectedFriend(friendId)}
-                        className={`w-full p-3 rounded-xl border flex items-center gap-3 transition-all ${
-                          isSelected
-                            ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/30 dark:border-brand-700'
-                            : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-                        }`}
+                        className={`w-full p-3 rounded-xl border flex items-center gap-3 transition-all ${isSelected
+                          ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/30 dark:border-brand-700'
+                          : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
+                          }`}
                       >
                         <div className="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-900 flex items-center justify-center text-brand-600 dark:text-brand-300 font-bold">
                           {profile?.username?.[0]?.toUpperCase() || '?'}
@@ -177,9 +177,9 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
                   ← 返回
                 </button>
               </div>
-              
+
               <h3 className="font-bold text-slate-700 dark:text-slate-200">選擇題庫</h3>
-              
+
               {banks.length === 0 ? (
                 <div className="text-center py-8 text-slate-400 dark:text-slate-500">
                   <Search size={48} className="mx-auto mb-3 opacity-30" />
@@ -195,11 +195,10 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
                       <button
                         key={bank.id}
                         onClick={() => setSelectedBank(bank.id)}
-                        className={`w-full p-3 rounded-xl border flex items-center gap-3 transition-all ${
-                          isSelected
-                            ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/30 dark:border-brand-700'
-                            : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-                        }`}
+                        className={`w-full p-3 rounded-xl border flex items-center gap-3 transition-all ${isSelected
+                          ? 'border-brand-500 bg-brand-50 dark:bg-brand-900/30 dark:border-brand-700'
+                          : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
+                          }`}
                       >
                         <div className="flex-1 text-left">
                           <div className="font-medium text-slate-700 dark:text-slate-200">{bank.name}</div>

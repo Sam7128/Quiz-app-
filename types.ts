@@ -74,8 +74,9 @@ export interface QuizState {
   totalQuestions: number;
   isFinished: boolean;
   activeQuestions: Question[];
-  mode: 'random' | 'mistake' | 'retry_session'; // Added retry_session
-  wrongQuestionIds: string[]; // Track session mistakes
+  mode: 'random' | 'mistake' | 'retry_session' | 'challenge';
+  wrongQuestionIds: string[];
+  challengeId?: string;
 }
 
 export interface AIConfig {

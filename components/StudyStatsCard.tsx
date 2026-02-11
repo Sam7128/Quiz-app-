@@ -8,7 +8,7 @@ interface StudyStatsCardProps {
 }
 
 export const StudyStatsCard: React.FC<StudyStatsCardProps> = ({ isAuthenticated }) => {
-  const { stats, dailyStats, loading } = useStudyStats(isAuthenticated);
+  const { stats, dailyStats, loading } = useStudyStats();
 
   if (loading) {
     return (

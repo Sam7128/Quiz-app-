@@ -1,11 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  getCloudStreak, 
-  updateCloudStreak,
-  getLocalStreak,
-  updateLocalStreak,
-  StreakData
-} from '../services/streak';
+import { useRepository } from '../contexts/RepositoryContext';
+import { StreakData } from '../services/repository';
 
 interface UseStreakReturn {
   streak: StreakData;
@@ -14,7 +9,8 @@ interface UseStreakReturn {
   refresh: () => Promise<void>;
 }
 
-export const useStreak = (isAuthenticated: boolean): UseStreakReturn => {
+export const useStreak = (): UseStreakReturn => {
+  const repository = useRepository();
   const [streak, setStreak] = useState<StreakData>({
     currentStreak: 0,
     longestStreak: 0,
@@ -26,33 +22,23 @@ export const useStreak = (isAuthenticated: boolean): UseStreakReturn => {
     setLoading(true);
     
     try {
-      if (isAuthenticated) {
-        const data = await getCloudStreak();
-        if (data) {
-          setStreak(data);
-        }
-      } else {
-        setStreak(getLocalStreak());
-      }
+      const data = await repository.getStreak();
+      setStreak(data);
     } catch (error) {
       console.error('Error fetching streak:', error);
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [repository]);
 
   const updateStreak = useCallback(async () => {
     try {
-      if (isAuthenticated) {
-        await updateCloudStreak();
-      } else {
-        updateLocalStreak();
-      }
+      await repository.updateStreak();
       await fetchStreak();
     } catch (error) {
       console.error('Error updating streak:', error);
     }
-  }, [isAuthenticated, fetchStreak]);
+  }, [repository, fetchStreak]);
 
   useEffect(() => {
     void fetchStreak();

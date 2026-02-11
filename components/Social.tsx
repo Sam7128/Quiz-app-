@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Users, UserPlus, Send, Inbox, Check, X, Clock, Search, BookOpen, Share2, Trash2, Trophy } from 'lucide-react';
 import { supabase } from '../services/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import { Friendship, SharedBank, UserProfile, BankMetadata, Question } from '../types';
-import { getQuestions, createBank, saveQuestions } from '../services/storage';
+import { useRepository } from '../contexts/RepositoryContext';
+import { useToast } from '../contexts/ToastContext';
+import { useConfirm } from '../hooks/useConfirm';
+import { Friendship, SharedBank, UserProfile } from '../types';
 import { ChallengeList } from './ChallengeList';
 import { ChallengeModal } from './ChallengeModal';
 import { useChallenges } from '../hooks/useChallenges';
@@ -12,6 +14,9 @@ import { useQuiz } from '../contexts/QuizContext';
 export const Social: React.FC = () => {
   const { startChallengeQuiz } = useQuiz();
   const { user } = useAuth();
+  const repository = useRepository();
+  const toast = useToast();
+  const confirmDialog = useConfirm();
   const [friends, setFriends] = useState<Friendship[]>([]);
   const [inbox, setInbox] = useState<SharedBank[]>([]);
   const [searchEmail, setSearchEmail] = useState('');
@@ -157,7 +162,7 @@ export const Social: React.FC = () => {
   };
 
   const handleDeleteFriend = async (friendshipId: string, friendName: string) => {
-    if (!confirm(`確定要刪除好友 ${friendName} 嗎？`)) return;
+    if (!await confirmDialog({ title: '刪除好友', message: `確定要刪除好友 ${friendName} 嗎？` })) return;
     try {
       await supabase
         .from('friendships')
@@ -173,8 +178,8 @@ export const Social: React.FC = () => {
     try {
       const { meta, questions } = share.bank_snapshot;
       // Create local bank
-      const newBank = createBank(`${meta.name} (來自 ${share.sender_profile?.username})`);
-      saveQuestions(newBank.id, questions);
+      const newBank = await repository.createBank(`${meta.name} (來自 ${share.sender_profile?.username})`);
+      await repository.saveQuestions(newBank.id, questions);
 
       // Update status on cloud
       await supabase
@@ -182,7 +187,7 @@ export const Social: React.FC = () => {
         .update({ status: 'accepted' })
         .eq('id', share.id);
 
-      alert(`已接受題庫：${meta.name}`);
+      toast.success(`已接受題庫：${meta.name}`);
       fetchSocialData();
     } catch (err) {
       console.error(err);

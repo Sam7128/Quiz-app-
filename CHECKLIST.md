@@ -3,7 +3,18 @@
 此文件用於追蹤專案開發進度、待辦事項與已完成項目。
 
 ## 🟢 已完成 (Done)
-- [x] **[Feature]** 整合 NVIDIA API 與題庫資料夾系統 `integrate-nvidia-and-folders`
+- [x] **[Refactor]** 架構品質全面優化 (Architecture Quality Overhaul) `architecture-quality-overhaul`
+    - [x] 重構 `App.tsx` 抽離 `AppContent.tsx` (行數從 309 降至 149)
+    - [x] 修正 `startQuiz`、`handleAnswer`、`restoreSession` 等型別不匹配
+    - [x] 達成 `npx tsc --noEmit` 零錯誤與 `npm run build` 通過
+    - [x] 移動 `typeGuards.ts` 至 `utils/` 目錄並修正導入
+    - [x] 統一 Hook 變數命名衝突（`confirm` -> `confirmDialog`）
+- [x] **[Refactor]** 抽離 useBankManager Hook `extract-useBankManager`
+- [x] **[Refactor]** 抽離 useQuizEngine 測驗引擎 Hook `extract-useQuizEngine`
+- [x] **[Refactor]** 抽離成就追蹤 Hook `extract-useAchievementTracker`
+- [x] **[Refactor]** 抽離 useAppDataLoader 與 appReducer `extract-loader-reducer`
+- [x] **[Refactor]** 分離全域彈窗組件 GlobalModals `extract-global-modals`
+- [x] **[Refactor]** 整合 NVIDIA API 與題庫資料夾系統 `integrate-nvidia-and-folders`
     - [x] [AI] 安裝並配置 OpenAI Client
     - [x] [AI] 重構 `ai.ts` 支援多重 Provider (Google/NVIDIA)
     - [x] [AI] 更新 `Settings.tsx` 支援 BaseURL 與 Provider 切換
@@ -11,74 +22,18 @@
     - [x] [Storage] 實作 Folder CRUD 與關聯邏輯
     - [x] [UI] 更新 Dashboard 支援資料夾瀏覽與操作 (麵包屑/移動)
 - [x] **[AI]** 實作 Gemma 3 27B 解題小助手
-    - [x] API Key 配置介面 (Settings.tsx)
-    - [x] QuizCard 整合 AI 詢問按鈕 (AIHelper.tsx)
-    - [x] 串接 LLM API (@google/genai)
-    - [x] 撰寫 `配置示範.md`
 - [x] **[Social]** 實作好友與題庫分享功能
-    - [x] 好友系統 (新增/列表/邀請) (Social.tsx)
-    - [x] 題庫傳送與接收 (Inbox / ShareModal.tsx)
-    - [x] Supabase Schema 更新 (supabase_social_migration.sql)
 - [x] **[UX]** 實作 Quiz UX 優化 (動畫/音效/錯誤解析) `quiz-ux-enhancement`
 - [x] **[Backend]** 實作 Supabase 雲端遷移 `supabase-cloud-sync`
-- [x] 建立檢查清單文件 (CHECKLIST.md)
-- [x] 分析用戶需求 (增強測驗設定與 AI 提示詞)
-- [x] 建立 OpenSpec 提案 (enhance-quiz-experience)
-- [x] 實作功能 (enhance-quiz-experience)
-    - [x] 解除題數 20 題限制 (Dashboard.tsx)
-    - [x] 實作動態 AI 提示詞表單 (AIPromptGuide.tsx)
-- [x] 初始專案設置確認
-- [x] 檢查並更新 GEMINI.md
-- [x] 實作 Supabase 認證系統 (Email/Password)
-- [x] 實作雲端同步邏輯 (Local -> Cloud Migration)
-- [x] 優化 QuizCard 動態反饋與解析 UI
-- [x] **[UI/UX]** 修復手機端登入頁面捲動鎖死與底部導航遮擋問題 (Mobile Layout Fixes)
 - [x] **[Feature]** 實作遊戲化模式 (Game Mode)
-    - [x] 全域遊戲模式開關 (Settings.tsx)
-    - [x] 地下城風格戰鬥場景 (BattleArena.tsx)
-    - [x] 關卡切換過場動畫 (Stage Transition)
-    - [x] 狀態持久化 (localStorage)
-- [x] **[Fix]** 修復 AIHelper 按鈕無障礙標籤缺失 (Accessibility Fixes)
-- [x] **[Feature]** 戰鬥模式強化 (Battle Mode Enhancements)
-    - [x] 實作火球攻擊動畫 (FireballAttack.tsx)
-    - [x] 整合音效系統 (useSoundEffects.ts)
-- [x] **[Feature]** AI 講義生成系統 (PDF -> Questions)
-    - [x] 實作 Google Gemini PDF 分析功能 (services/ai.ts)
-    - [x] 實作 BankManager AI 生成頁面
-    - [x] 支持自定義語言、題目類型與詳解語言 (AI Generator Options)
-- [x] **[UX]** 設定頁面優化
-    - [x] 支援自訂 AI 模型名稱
-- [x] **[Core]** 資料管理與徹底剷除功能 (Data Management & Root Out)
-    - [x] 多選題庫範例提供 (multiple_choice_sample.json)
-    - [x] 儀表板批量題庫刪除按鈕 (Dashboard.tsx)
-    - [x] 設定頁面「徹底剷除數據」系統重置功能 (Settings.tsx)
-    - [x] 擴展 Nuke 邏輯：清理本地存儲 prefix 及強制雲端登出 (App.tsx / storage.ts)
-    - [x] 消除 PostgREST 406 錯誤日誌 (analytics.ts / streak.ts)
-- [x] **[Testing]** 應用程式功能線上測試 (Ready for Deployment)
-- [x] **[Fix]** 首頁批量刪除無法同步雲端修復 (App.tsx)
-- [x] **[Refactor]** 音效系統遷移至 Howler.js 以解決自動播放問題 (useSoundEffects.ts)
-- [x] **[Feature]** 戰鬥模式全面進化 (Battle Mode Overhaul)
-    - [x] 重構 `useBattleSystem` (動態數值、難度輪替、Boss 生成、暴擊/護盾機制)
-    - [x] 更新 `BattleArena` (統一特效 AttackEffect、冰箭/火球隨機、傷害數值 DamageNumber)
-    - [x] 實作戰鬥輔助 UI (MiniTimer 專注計時、RestBreakModal 休息提醒、AchievementsModal 成就總覽)
-    - [x] 實作 QuizResult 結算頁面 (錯題回顧、詳細數據、成就解鎖)
-    - [x] 整合測驗進度持久化 (Auto-save/restore session)
-    - [x] 優化答題體驗 (鍵盤快捷鍵提示 UI)
-- [x] **[UX]** 儀表板與學習體驗優化 (Dashboard UX Enhancements)
-    - [x] **[Feature]** 最近 5 輪錯題回顧系統 (RecentMistakesCard / Storage / App Integration)
-    - [x] **[UX]** 成就區塊點擊互動化 (AchievementsCard)
-    - [x] **[Setting]** 自訂休息間隔 (支援任意題數輸入)
-    - [x] **[Config]** 調整預設測驗題數為 "All"
 - [x] **[Security]** 專案安全審計與防護強化 (Security Audit & Hardening)
-    - [x] 實施內容安全策略 (CSP) 以防範 XSS 與 CDN 劫持 (index.html)
-    - [x] 遷移 Tailwind CSS 從 CDN 至本地構建流程 (tailwind v4 / postcss)
-    - [x] 執行依賴項安全掃描 (`npm audit`) - 結果：0 漏洞
-    - [x] 審核敏感數據存儲風險 (LocalStorage API Key - 已確認為必要設計)
-    - [x] 生成詳細安全審計報告 (`SECURITY_AUDIT_REPORT.md`)
 - [x] **[Refactor]** 遷移至 Tailwind CSS v4 與模組化配置
-    - [x] 修正 ESM 模組下的 PostCSS/Tailwind 配置語法錯誤
-    - [x] 整合 `@tailwindcss/vite` 插件提升開發速度
-    - [x] 優化主題顏色定義（補全 `accent-600/700`）解決漸變撞色問題
+- [x] **[Refactor]** 技能導向優化計畫 (Skills-Based Optimization Plan) `skills-based-optimization`
+
+## 🟡 待辦 (Pending)
+- [ ] **[Build]** 單元測試覆蓋率提升 (Test Coverage Improvement)
+- [ ] **[Feature]** PWA 離線支持 (PWA Offline Support)
 
 ## 📝 備註 (Notes)
-- 請隨時更新此文件以反映最新狀態。
+- 已完成 App 组件的徹底瘦身，後續新增視圖請優先於 `AppContent.tsx` 進行註冊。
+- `tsc` 與 `build` 接通過，目前架構體質健康。

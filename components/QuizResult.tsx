@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { RotateCcw, Home, CheckCircle, XCircle, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Question } from '../types';
+import { isMultipleAnswer } from '../utils/typeGuards';
 
 interface QuizResultProps {
     score: number;
@@ -95,7 +96,7 @@ export const QuizResult: React.FC<QuizResultProps> = ({
 
                                         <div className="space-y-2 mb-4">
                                             {q.options.map((opt, optIdx) => {
-                                                const isCorrect = Array.isArray(q.answer)
+                                                const isCorrect = isMultipleAnswer(q)
                                                     ? q.answer.includes(opt)
                                                     : q.answer === opt;
 

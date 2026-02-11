@@ -4,6 +4,58 @@ import { Question, AIConfig } from "../types";
 
 const AI_CONFIG_KEY = 'mindspark_ai_config';
 
+const QUESTION_JSON_SCHEMA = `{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": { "type": "string", "description": "Unique UUID" },
+      "question": { "type": "string" },
+      "options": { "type": "array", "items": { "type": "string" } },
+      "answer": { "type": "string | array", "description": "Correct option text(s)" },
+      "type": { "enum": ["single", "multiple"] },
+      "explanation": { "type": "string" },
+      "hint": { "type": "string", "optional": true }
+    },
+    "required": ["id", "question", "options", "answer", "type", "explanation"]
+  }
+}`;
+
+const FEW_SHOT_EXAMPLES = `
+[
+  {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "type": "single",
+    "question": "React 中用於處理副作用的 Hook 是什麼？",
+    "options": ["useState", "useEffect", "useContext", "useReducer"],
+    "answer": "useEffect",
+    "explanation": "useEffect 是 React 函數元件中處理副作用（如資料獲取、訂閱或手動修改 DOM）的 Hook。"
+  },
+  {
+    "id": "223e4567-e89b-12d3-a456-426614174001",
+    "type": "multiple",
+    "question": "以下哪些是 JavaScript 的基本資料型別？",
+    "options": ["String", "Number", "Boolean", "Object", "Symbol"],
+    "answer": ["String", "Number", "Boolean", "Symbol"],
+    "explanation": "JavaScript 的基本型別包括 String, Number, Boolean, Null, Undefined, Symbol 和 BigInt。Object 是參照型別。"
+  }
+]
+`;
+
+export const cleanJsonResponse = (raw: string): string => {
+  // Remove markdown code blocks
+  let clean = raw.replace(/```json\n?|\n?```/g, "").trim();
+  // Remove potential leading/trailing non-JSON characters like comments or text
+  const start = clean.indexOf('[');
+  const end = clean.lastIndexOf(']');
+  if (start !== -1 && end !== -1) {
+    clean = clean.substring(start, end + 1);
+  }
+  // Remove trailing commas from objects and arrays (common LLM error)
+  clean = clean.replace(/,(\s*[\]}])/g, '$1');
+  return clean;
+};
+
 export const getAIConfig = (): AIConfig | null => {
   const data = localStorage.getItem(AI_CONFIG_KEY);
   if (!data) return null;
@@ -126,19 +178,14 @@ export const generateQuestionsFromPDF = async (
       詳解語言：${explanationLang}
 
       【輸出格式要求】
-      1. 請直接輸出純 JSON 陣列 (Array)，不要包含 Markdown 標記 (如 \`\`\`json ... \`\`\`)。
-      2. 格式範例：
-      [
-        {
-          "question": "題目描述",
-          "options": ["選項A", "選項B", "選項C", "選項D"],
-          "answer": "正確選項的完整文字 (如果是多選題則為字串陣列)",
-          "explanation": "詳解 (${explanationLang})",
-          "type": "single 或 multiple",
-          "id": "由你生成的唯一亂數ID"
-        }
-      ]
-      3. 題目語言：${outputLang}
+      1. 請直接輸出純 JSON 陣列 (Array)，遵守以下 JSON Schema：
+      ${QUESTION_JSON_SCHEMA}
+      
+      2. 參考範例 (Few-Shot Examples)：
+      ${FEW_SHOT_EXAMPLES}
+
+      3. 不要包含任何 Markdown 標記 (如 \`\`\`json ... \`\`\`)。
+      4. 題目語言：${outputLang}
     `;
 
     // Explicitly construct parts with 'any' cast to avoid strict union discrimination issues specific to some SDK versions
@@ -157,7 +204,7 @@ export const generateQuestionsFromPDF = async (
     const response = await result.response;
     const text = response.text();
 
-    const cleanJson = text.replace(/```json\n?|\n?```/g, "").trim();
+    const cleanJson = cleanJsonResponse(text);
 
     return JSON.parse(cleanJson);
   } catch (error: any) {

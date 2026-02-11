@@ -7,7 +7,7 @@ interface StreakCardProps {
 }
 
 export const StreakCard: React.FC<StreakCardProps> = ({ isAuthenticated }) => {
-  const { streak, loading } = useStreak(isAuthenticated);
+  const { streak, loading } = useStreak();
 
   if (loading) {
     return (

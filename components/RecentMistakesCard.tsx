@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ClipboardList, Trash2, ChevronDown, ChevronUp, Play, X, Clock } from 'lucide-react';
 import { RecentMistakeSession, MistakeDetail } from '../types/battleTypes';
-import { getRecentMistakeSessions, clearRecentMistakeSession, clearAllRecentMistakes } from '../services/storage';
+import { useRepository } from '../contexts/RepositoryContext';
+import { useConfirm } from '../hooks/useConfirm';
 
 interface RecentMistakesCardProps {
     onPracticeSession?: (mistakes: MistakeDetail[]) => void;
@@ -9,24 +10,26 @@ interface RecentMistakesCardProps {
 }
 
 export const RecentMistakesCard: React.FC<RecentMistakesCardProps> = ({ onPracticeSession, lastSessionTimestamp }) => {
+    const confirmDialog = useConfirm();
+    const repository = useRepository();
     const [sessions, setSessions] = useState<RecentMistakeSession[]>([]);
     const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
 
     useEffect(() => {
-        setSessions(getRecentMistakeSessions());
-    }, [lastSessionTimestamp]);
+        setSessions(repository.getRecentMistakeSessions());
+    }, [lastSessionTimestamp, repository]);
 
-    const handleClearSession = (e: React.MouseEvent, sessionId: string) => {
+    const handleClearSession = async (e: React.MouseEvent, sessionId: string) => {
         e.stopPropagation();
-        if (confirm('確定要刪除這筆紀錄嗎？')) {
-            clearRecentMistakeSession(sessionId);
-            setSessions(getRecentMistakeSessions());
+        if (await confirmDialog({ title: '刪除紀錄', message: '確定要刪除這筆紀錄嗎？' })) {
+            repository.clearRecentMistakeSession(sessionId);
+            setSessions(repository.getRecentMistakeSessions());
         }
     };
 
-    const handleClearAll = () => {
-        if (confirm('確定要清空所有最近錯題紀錄嗎？')) {
-            clearAllRecentMistakes();
+    const handleClearAll = async () => {
+        if (await confirmDialog({ title: '清空紀錄', message: '確定要清空所有最近錯題紀錄嗎？' })) {
+            repository.clearAllRecentMistakes();
             setSessions([]);
         }
     };

@@ -1,4 +1,4 @@
-import { appReducer, initialAppState } from '../../App';
+import { appReducer, initialAppState } from '../../reducers/appReducer';
 import { BankMetadata } from '../../types';
 
 const createBank = (id: string): BankMetadata => ({

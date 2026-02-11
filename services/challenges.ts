@@ -180,19 +180,28 @@ export const getMyChallenges = async (): Promise<ChallengeWithDetails[]> => {
 
   const { data, error } = await supabase
     .from('challenges')
-    .select(`
-      *,
-      challenger:profiles!challenger_id(username),
-      opponent:profiles!opponent_id(username),
-      bank:banks(title)
-    `)
+    .select('*')
     .or(`challenger_id.eq.${user.id},opponent_id.eq.${user.id}`)
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching challenges:', error);
+    if (error.code === 'PGRST200' || error.message?.includes('400') || ('status' in error && (error as Record<string, unknown>).status === 400)) {
+      console.warn('Challenges: Schema relation mismatch. Social features may be unavailable.');
+    } else {
+      console.error('Error fetching challenges:', error);
+    }
     return [];
   }
+
+  // Manual Join: Fetch related data
+  const userIds = [...new Set(((data as any[]) || []).map(c => [c.challenger_id, c.opponent_id]).flat())];
+  const bankIds = [...new Set(((data as any[]) || []).map(c => c.bank_id))];
+
+  const { data: profiles } = await supabase.from('profiles').select('id, username').in('id', userIds);
+  const { data: banks } = await supabase.from('banks').select('id, title').in('id', bankIds);
+
+  const profileMap = new Map(profiles?.map(p => [p.id, p.username]));
+  const bankMap = new Map(banks?.map(b => [b.id, b.title]));
 
   return (data || []).map(item => ({
     id: item.id,
@@ -206,9 +215,9 @@ export const getMyChallenges = async (): Promise<ChallengeWithDetails[]> => {
     winnerId: item.winner_id,
     createdAt: item.created_at,
     updatedAt: item.updated_at,
-    challengerName: item.challenger?.username,
-    opponentName: item.opponent?.username,
-    bankName: item.bank?.title
+    challengerName: profileMap.get(item.challenger_id),
+    opponentName: profileMap.get(item.opponent_id),
+    bankName: bankMap.get(item.bank_id)
   }));
 };
 

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { supabase } from '../services/supabase';
 import { BrainCircuit, Mail, Lock, User, ArrowRight, Loader2, LogIn, Sparkles } from 'lucide-react';
+import { useToast } from '../contexts/ToastContext';
 
 interface LoginProps {
   onGuestMode: () => void;
 }
 
 export const Login: React.FC<LoginProps> = ({ onGuestMode }) => {
+  const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
@@ -37,7 +39,7 @@ export const Login: React.FC<LoginProps> = ({ onGuestMode }) => {
           }
         });
         if (error) throw error;
-        alert('註冊成功！請檢查電子郵件確認信（若有開啟驗證）或直接嘗試登入。');
+        toast.success('註冊成功！請檢查電子郵件確認信（若有開啟驗證）或直接嘗試登入。');
         setIsSignUp(false);
       } else {
         const { error } = await supabase.auth.signInWithPassword({

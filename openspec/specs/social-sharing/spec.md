@@ -19,3 +19,15 @@ Users MUST explicitly accept shared content before it is added to their library.
 
 #### Scenario: Accepting a Shared Bank
 User B sees "Math 101 from User A" in their Inbox. They click "Preview" or "Accept". On Accept, the bank is saved to User B's local storage as a new bank.
+
+## MODIFIED Requirements
+
+### Requirement: Challenge Data Fetching (Modified)
+The `getMyChallenges()` function MUST fetch challenge data and related profile/bank information without causing PostgREST 400 errors.
+
+#### Scenario: Fetching challenges with joined profile data
+- **WHEN** the app calls `getMyChallenges()`
+- **THEN** the Supabase query fetches raw challenges
+- **AND** the app manually queries and joins related `profiles` and `bank` data
+- **AND** the response status is `200 OK` (not `400 Bad Request`)
+

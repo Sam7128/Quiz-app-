@@ -16,13 +16,13 @@
 ## 2. Architecture & Design Patterns
 
 ### 2.1 State Management & Persistence
-The application uses a **Serverless/Local-First** architecture.
-*   **Database:** `localStorage` is used as the primary data store.
-*   **Persistence Layer:** `services/storage.ts` encapsulates all storage logic. Direct `localStorage` calls should be avoided in components.
-    *   **Banks Metadata:** `mindspark_banks_meta` (List of banks).
-    *   **Bank Data:** `mindspark_bank_{UUID}` (Questions for a specific bank).
-    *   **Mistake Log:** `mindspark_mistake_log` (Global tracking of wrong answers).
-*   **Component State:** React `useState` and `useEffect` manage the runtime session (quiz progress, active view).
+The application uses a **Serverless/Local-First** architecture with a **Repository Pattern**.
+*   **Database:** `localStorage` (Guest) or `Supabase` (Auth User).
+*   **Repository Layer:** `IStorageRepository` unifies data access.
+    *   `LocalStorageRepository`: Handles guest data via `localStorage`.
+    *   `CloudStorageRepository`: Handles auth data via `Supabase`.
+*   **Context:** `RepositoryContext` provides the correct repository instance based on auth state.
+*   **Component State:** React `useState`, `useReducer`, and custom hooks (`useQuizEngine`, `useAppDataLoader`) manage runtime session.
 
 ### 2.2 Routing
 *   **Custom View Router:** The app does *not* use `react-router`. Navigation is handled via a `view` state in `App.tsx` (`dashboard` | `quiz` | `mistakes` | `manager` | `guide`).
@@ -57,7 +57,15 @@ The application uses a **Serverless/Local-First** architecture.
     *   `QuizCard.tsx`: The actual quiz interface.
     *   `BankManager.tsx`: CRUD for banks and JSON import/export logic.
     *   `AIPromptGuide.tsx`: Dynamic AI Prompt Builder with configurable options (type, language).
+    *   `GlobalModals.tsx`: Centralized modal management.
+*   `contexts/`: Global state contexts (Auth, Theme, Toast, Repository).
+*   `hooks/`: Custom hooks (Business Logic).
+    *   `useQuizEngine.ts`: Core quiz logic.
+    *   `useAppDataLoader.ts`: Initial data fetching.
+*   `reducers/`: State reducers.
+    *   `appReducer.ts`: Main app state reducer.
 *   `services/`: Business logic.
+    *   `repository.ts`: Interface for storage operations.
     *   `storage.ts`: The "backend" (CRUD operations for localStorage).
 *   `types.ts`: TypeScript definitions (Schema).
 *   `constants.ts`: Global constants (Default questions, App Name).
@@ -90,4 +98,28 @@ The application uses a **Serverless/Local-First** architecture.
     *   **Persistence**: Implemented auto-save/restore for active quiz sessions and battle state via `localStorage`.
 *   **System Integrity**: Expanded "Root Out" functionality in `App.tsx`/`storage.ts` to ensure clean state resets, including session clearing.
 *   **Accessibility**: Fixed ARIA label issues in new components and updated SVG animations to use Tailwind classes.
+
+*   **Skills-Based Optimization (v0.3.7)**:
+    *   **AI**: Improved JSON robustness with schema enforcement and few-shot prompting (`services/ai.ts`).
+    *   **Performance**: Optimized `Dashboard` rendering by stabilizing props and fixing duplicate updates (`App.tsx`).
+    *   **Battle System**: Added DEV mode state logging (`useBattleSystem`) and unit tests for skill triggers (`src/__tests__/useBattleSystem.test.ts`).
+    *   **Security**: Validated app security (NPM audit: Clean, No XSS risks).
+*   **基礎建設與安全強化 (v0.3.8)**:
+    - **Toast/Confirm 系統**：統一通知與確認流程，改善使用者回饋。
+    - **ErrorBoundary**：新增全域錯誤攔截，避免 UI 直接崩潰。
+    - **型別安全修正**：補強型別檢查與邊界處理。
+    - **CSP 強化**：進一步收斂資源來源規則。
+    - **Repository 基礎架構**：導入 `IStorageRepository`、本地/雲端 repository 與 `RepositoryContext`。
+    - **導覽重構**：抽離 `AppHeader` 與 `MobileNav` 元件。
+*   **測試狀態**：因 shell/pwsh 不可用，未執行測試與建置。
+
+*   **Architecture Quality Overhaul (v0.3.9)**:
+    - **App Decomposition**: Extracted `appReducer`, `useAppDataLoader`, and `GlobalModals` to reduce monolith size.
+    - **Unified Data**: Centralized data loading logic.
+    - **Maintainability**: Improved code structure for better readability and testing.
+
+*   **Console Purity & Stability (v0.3.10)**:
+    - **Favicon Fix**: Added SVG favicon and linked in `index.html` to resolve 404 errors.
+    - **Supabase Fix**: Refactored `getMyChallenges` to use a manual join strategy, eliminating the 400 Bad Request error caused by ambiguous foreign keys.
+    - **Spec Sync**: Synchronized console warning fixes into the `social-sharing` main specification via OpenSpec workflow.
 

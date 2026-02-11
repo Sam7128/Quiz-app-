@@ -10,7 +10,7 @@ interface AchievementsCardProps {
 }
 
 export const AchievementsCard: React.FC<AchievementsCardProps> = ({ isAuthenticated }) => {
-  const { unlockedIds, loading } = useAchievements(isAuthenticated);
+  const { unlockedIds, loading } = useAchievements();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const totalAchievements = ACHIEVEMENTS.length;
   const unlockedCount = unlockedIds.length;

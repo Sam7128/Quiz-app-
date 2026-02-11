@@ -224,6 +224,8 @@ export function getSkillTierByStreak(streak: number): SkillTier | null {
 
 /** 檢查是否剛好達到技能觸發點 */
 export function shouldTriggerSkill(streak: number): boolean {
-    // 每 5 題連勝觸發一次技能: 5, 10, 15, 20, 25, 30, 35, 40, 45, 50...
-    return streak > 0 && streak % 5 === 0;
+    // 規則: 5, 10, 20, 30, 40, 50... (跳過 15, 25, 35...)
+    if (streak <= 0) return false;
+    if (streak === 5) return true;
+    return streak >= 10 && streak % 10 === 0;
 }

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Question, MistakeLog, BankMetadata, Folder, SpacedRepetitionItem } from '../types';
+import { Question, MistakeLog, BankMetadata, Folder } from '../types';
 import { MistakeDetail } from '../types/battleTypes';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { BookOpen, AlertTriangle, Zap, CheckSquare, Square, Layers, Share2, Folder as FolderIcon, FolderPlus, ArrowLeft, MoreVertical, Trash2, FolderInput, Calendar } from 'lucide-react';
-import { getSpacedRepetition } from '../services/storage';
-import { getCloudSpacedRepetition } from '../services/cloudStorage';
 import { getDueQuestions } from '../services/spacedRepetition';
 import { StudyStatsCard } from './StudyStatsCard';
 import { StreakCard } from './StreakCard';
 import { AchievementsCard } from './AchievementsCard';
 import { RecentMistakesCard } from './RecentMistakesCard';
 import { FocusTimer } from './FocusTimer';
+import { useConfirm } from '../hooks/useConfirm';
+import { useRepository } from '../contexts/RepositoryContext';
 
 interface DashboardProps {
   questions: Question[]; // Combined questions
@@ -31,7 +31,7 @@ interface DashboardProps {
   isAuthenticated?: boolean;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({
+const DashboardBase: React.FC<DashboardProps> = ({
   questions,
   mistakeLog,
   banks,
@@ -49,6 +49,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onPracticeMistakes, // Add this
   isAuthenticated = false
 }) => {
+  const confirmDialog = useConfirm();
   const [quizSize, setQuizSize] = React.useState<number | 'all' | 'custom'>('all');
   const [customSize, setCustomSize] = React.useState<string>('10');
   const [currentFolderId, setCurrentFolderId] = useState<string | undefined>(undefined);
@@ -56,6 +57,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [newFolderName, setNewFolderName] = useState('');
   const [movingBankId, setMovingBankId] = useState<string | null>(null);
   const [dueCount, setDueCount] = useState(0);
+  const repository = useRepository();
 
   // Drag State
   const [draggedBankId, setDraggedBankId] = useState<string | null>(null);
@@ -65,21 +67,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
   // Load spaced repetition data on mount
   useEffect(() => {
     const loadDueCount = async () => {
-      let allItems: SpacedRepetitionItem[] = [];
-
-      if (isAuthenticated) {
-        allItems = await getCloudSpacedRepetition();
-      } else {
-        const localData = getSpacedRepetition();
-        allItems = Object.values(localData);
+      try {
+        const data = await repository.getSpacedRepetition();
+        const allItems = Array.isArray(data) ? data : Object.values(data);
+        const dueItems = getDueQuestions(allItems);
+        setDueCount(dueItems.length);
+      } catch (error) {
+        console.error('Error loading spaced repetition data:', error);
       }
-
-      const dueItems = getDueQuestions(allItems);
-      setDueCount(dueItems.length);
     };
 
     void loadDueCount();
-  }, [isAuthenticated]);
+  }, [repository]);
 
   const totalQuestions = selectedBankIds.reduce((sum, id) => {
     const bank = banks.find(b => b.id === id);
@@ -282,8 +281,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </span>
               <div className="ml-auto">
                 <button
-                  onClick={() => {
-                    if (window.confirm(`確定要刪除資料夾「${currentFolder?.name}」嗎？裡面的題庫將會移回主目錄。`)) {
+                  onClick={async () => {
+                    if (await confirmDialog({ title: '刪除資料夾', message: `確定要刪除資料夾「${currentFolder?.name}」嗎？裡面的題庫將會移回主目錄。` })) {
                       onDeleteFolder(currentFolderId);
                       setCurrentFolderId(undefined);
                     }
@@ -457,5 +456,5 @@ export const Dashboard: React.FC<DashboardProps> = ({
   );
 };
 
-
-export default React.memo(Dashboard);
+export const Dashboard = React.memo(DashboardBase);
+export default Dashboard;

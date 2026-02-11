@@ -26,7 +26,7 @@ export const getCloudBanks = async (): Promise<BankMetadata[]> => {
   }));
 };
 
-export const createCloudBank = async (title: string, description: string = ''): Promise<string | null> => {
+export const createCloudBank = async (title: string, description: string = '', folderId?: string): Promise<string | null> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
@@ -35,7 +35,8 @@ export const createCloudBank = async (title: string, description: string = ''): 
     .insert({
       title,
       description,
-      user_id: user.id
+      user_id: user.id,
+      folder_id: folderId || null
     })
     .select()
     .single();
@@ -52,7 +53,7 @@ export const deleteCloudBank = async (bankId: string) => {
     .from('banks')
     .delete()
     .eq('id', bankId);
-  
+
   if (error) console.error('Error deleting cloud bank:', error);
 };
 
@@ -90,7 +91,7 @@ export const getCloudQuestions = async (bankId: string): Promise<Question[]> => 
 export const saveCloudQuestions = async (bankId: string, questions: Question[]) => {
   // Supabase strategy: Delete existing and re-insert (for simple batch update)
   // Or more efficient: Upsert based on ID
-  
+
   // First, remove old questions
   await supabase.from('questions').delete().eq('bank_id', bankId);
 
@@ -113,17 +114,17 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[]) 
  * Migration: Local -> Cloud
  */
 export const syncLocalToCloud = async (localBanks: BankMetadata[]) => {
-    const uploadPromises = localBanks.map(async (bank) => {
-        // 1. Create bank in cloud
-        const cloudBankId = await createCloudBank(bank.name, bank.description || 'From local storage');
-        if (cloudBankId) {
-            // 2. Get local questions
-            const localQuestions = JSON.parse(localStorage.getItem('mindspark_bank_' + bank.id) || '[]');
-            // 3. Save to cloud
-            await saveCloudQuestions(cloudBankId, localQuestions);
-        }
-    });
-    await Promise.all(uploadPromises);
+  const uploadPromises = localBanks.map(async (bank) => {
+    // 1. Create bank in cloud
+    const cloudBankId = await createCloudBank(bank.name, bank.description || 'From local storage');
+    if (cloudBankId) {
+      // 2. Get local questions
+      const localQuestions = JSON.parse(localStorage.getItem('mindspark_bank_' + bank.id) || '[]');
+      // 3. Save to cloud
+      await saveCloudQuestions(cloudBankId, localQuestions);
+    }
+  });
+  await Promise.all(uploadPromises);
 };
 
 /**

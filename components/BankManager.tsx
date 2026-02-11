@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Question, BankMetadata } from '../types';
 import { Upload, Download, Trash2, AlertCircle, Plus, FileJson, FileText, Check, FolderOpen, Loader2, Sparkles, FileType } from 'lucide-react';
-import { saveQuestions, clearMistakes, getBanksMeta, createBank, deleteBank } from '../services/storage';
+import { useRepository } from '../contexts/RepositoryContext';
 import { generateQuestionsFromPDF } from '../services/ai';
 import DOMPurify from 'dompurify';
-import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
+import { useConfirm } from '../hooks/useConfirm';
 import { SkeletonLoader } from './SkeletonLoader';
-import {
-  getCloudBanks,
-  createCloudBank,
-  deleteCloudBank,
-  saveCloudQuestions
-} from '../services/cloudStorage';
 
 interface BankManagerProps {
   currentQuestions: Question[];
@@ -23,6 +18,7 @@ interface BankManagerProps {
 }
 
 const PDFImportSection: React.FC<{ onImport: (q: Question[]) => void }> = ({ onImport }) => {
+  const toast = useToast();
   const [file, setFile] = useState<File | null>(null);
   const [topic, setTopic] = useState('');
   const [count, setCount] = useState(5);
@@ -52,15 +48,16 @@ const PDFImportSection: React.FC<{ onImport: (q: Question[]) => void }> = ({ onI
             langExplanation
           });
           onImport(questions);
-        } catch (e: any) {
-          alert('生成失敗: ' + e.message);
+        } catch (e: unknown) {
+          const message = e instanceof Error ? e.message : '未知錯誤';
+          toast.error('生成失敗: ' + message);
         } finally {
           setLoading(false);
           setStatus('');
         }
       };
-    } catch (e) {
-      alert('檔案讀取失敗');
+    } catch {
+      toast.error('檔案讀取失敗');
       setLoading(false);
     }
   };
@@ -173,7 +170,9 @@ export const BankManager: React.FC<BankManagerProps> = ({
   onRefreshBanks,
   onMistakesUpdate
 }) => {
-  const { user } = useAuth();
+  const repository = useRepository();
+  const toast = useToast();
+  const confirmDialog = useConfirm();
   const [banks, setBanks] = useState<BankMetadata[]>([]);
   const [activeTab, setActiveTab] = useState<'upload' | 'paste' | 'ai'>('upload');
   const [jsonText, setJsonText] = useState('');
@@ -183,12 +182,12 @@ export const BankManager: React.FC<BankManagerProps> = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    refreshBanks();
-  }, [user]);
+    void refreshBanks();
+  }, [repository]);
 
   const refreshBanks = async () => {
     setLoading(true);
-    const latestBanks = user ? await getCloudBanks() : getBanksMeta();
+    const latestBanks = await repository.getBanks();
     setBanks(latestBanks);
     setLoading(false);
   };
@@ -197,23 +196,16 @@ export const BankManager: React.FC<BankManagerProps> = ({
     if (!newBankName.trim()) return;
     setLoading(true);
 
-    let newId: string;
-    if (user) {
-      const cloudId = await createCloudBank(newBankName);
-      if (!cloudId) {
-        setError("建立雲端題庫失敗");
-        setLoading(false);
-        return;
-      }
-      newId = cloudId;
-    } else {
-      const newBank = createBank(newBankName);
-      newId = newBank.id;
+    const newBank = await repository.createBank(newBankName);
+    if (!newBank.id) {
+      setError("建立雲端題庫失敗");
+      setLoading(false);
+      return;
     }
 
     await refreshBanks();
     onRefreshBanks();
-    onBankChange(newId);
+    onBankChange(newBank.id);
     setNewBankName('');
     setIsCreating(false);
     setLoading(false);
@@ -221,20 +213,16 @@ export const BankManager: React.FC<BankManagerProps> = ({
 
   const handleDeleteBank = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    if (confirm("確定要刪除這個題庫嗎？此操作無法復原。")) {
+    if (await confirmDialog({ title: '確認刪除', message: '確定要刪除這個題庫嗎？此操作無法復原。' })) {
       setLoading(true);
-      if (user) {
-        await deleteCloudBank(id);
-      } else {
-        deleteBank(id);
-      }
+      await repository.deleteBank(id);
 
       await refreshBanks();
       onRefreshBanks();
 
       // If deleted active bank, switch to another or null
       if (id === currentBankId) {
-        const latestBanks = user ? await getCloudBanks() : getBanksMeta();
+        const latestBanks = await repository.getBanks();
         if (latestBanks.length > 0) {
           onBankChange(latestBanks[0].id);
         } else {
@@ -264,21 +252,17 @@ export const BankManager: React.FC<BankManagerProps> = ({
         explanation: typeof q.explanation === 'string' ? DOMPurify.sanitize(q.explanation) : q.explanation,
       }));
 
-      if (currentBankId) {
-        setLoading(true);
-        if (user) {
-          await saveCloudQuestions(currentBankId, data);
-        } else {
-          saveQuestions(currentBankId, data);
-        }
+        if (currentBankId) {
+          setLoading(true);
+          await repository.saveQuestions(currentBankId, data);
 
-        onUpdateQuestions(data);
-        await refreshBanks(); // Update counts
+          onUpdateQuestions(data);
+          await refreshBanks(); // Update counts
         onRefreshBanks(); // Sync parent
         setError(null);
         setJsonText('');
         setLoading(false);
-        alert(`成功匯入 ${data.length} 題！`);
+        toast.success(`成功匯入 ${data.length} 題！`);
       } else {
         setError("請先選擇或建立一個題庫");
       }
@@ -459,24 +443,21 @@ export const BankManager: React.FC<BankManagerProps> = ({
                 )}
 
                 {activeTab === 'ai' && (
-                  <PDFImportSection onImport={(questions) => {
+                  <PDFImportSection onImport={async (questions) => {
                     if (currentBankId) {
                       setLoading(true);
-                      const savePromise = user
-                        ? saveCloudQuestions(currentBankId, questions)
-                        : Promise.resolve(saveQuestions(currentBankId, questions));
-
-                      savePromise.then(async () => {
+                      try {
+                        await repository.saveQuestions(currentBankId, questions);
                         onUpdateQuestions(questions);
                         await refreshBanks();
                         onRefreshBanks();
-                        alert(`成功生成並匯入 ${questions.length} 題！`);
-                        setLoading(false);
+                        toast.success(`成功生成並匯入 ${questions.length} 題！`);
                         setActiveTab('paste');
-                      }).catch(err => {
-                        setError(err.message);
+                      } catch (err) {
+                        setError(err instanceof Error ? err.message : '匯入失敗');
+                      } finally {
                         setLoading(false);
-                      });
+                      }
                     }
                   }} />
                 )}
@@ -504,11 +485,11 @@ export const BankManager: React.FC<BankManagerProps> = ({
                 <h4 className="font-bold text-slate-800 dark:text-white mb-2">清除錯題記錄</h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">只清除錯題狀態，保留題目</p>
                 <button
-                  onClick={() => {
-                    if (confirm("確定清除錯題記錄？")) {
-                      clearMistakes();
+                  onClick={async () => {
+                    if (await confirmDialog({ title: '清除錯題', message: '確定清除錯題記錄？' })) {
+                      repository.clearMistakes();
                       onMistakesUpdate();
-                      alert("錯題記錄已清除！");
+                      toast.success("錯題記錄已清除！");
                     }
                   }}
                   className="flex items-center gap-2 text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 px-4 py-2 rounded-lg text-sm font-medium transition-colors"

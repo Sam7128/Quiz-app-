@@ -1,11 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  getStudyStats, 
-  getDailyStats, 
-  getLocalStudyStats, 
-  getLocalDailyStats,
-  StudyStats 
-} from '../services/analytics';
+import { StudyStats } from '../services/analytics';
+import { useRepository } from '../contexts/RepositoryContext';
 
 interface UseStudyStatsReturn {
   stats: StudyStats | null;
@@ -14,7 +9,8 @@ interface UseStudyStatsReturn {
   refresh: () => Promise<void>;
 }
 
-export const useStudyStats = (isAuthenticated: boolean): UseStudyStatsReturn => {
+export const useStudyStats = (): UseStudyStatsReturn => {
+  const repository = useRepository();
   const [stats, setStats] = useState<StudyStats | null>(null);
   const [dailyStats, setDailyStats] = useState<{ date: string; questions: number; correct: number }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,24 +19,18 @@ export const useStudyStats = (isAuthenticated: boolean): UseStudyStatsReturn => 
     setLoading(true);
     
     try {
-      if (isAuthenticated) {
-        const [statsData, dailyData] = await Promise.all([
-          getStudyStats(),
-          getDailyStats()
-        ]);
-        setStats(statsData);
-        setDailyStats(dailyData);
-      } else {
-        // Guest mode - use localStorage
-        setStats(getLocalStudyStats());
-        setDailyStats(getLocalDailyStats());
-      }
+      const [statsData, dailyData] = await Promise.all([
+        repository.getStudyStats(),
+        repository.getDailyStats()
+      ]);
+      setStats(statsData);
+      setDailyStats(dailyData);
     } catch (error) {
       console.error('Error fetching study stats:', error);
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [repository]);
 
   useEffect(() => {
     void fetchStats();
