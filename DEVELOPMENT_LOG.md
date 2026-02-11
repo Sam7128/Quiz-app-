@@ -165,3 +165,14 @@
 - **Verification**: Confirmed fix via `browser_subagent` and successful production build (`npm run build`).
 
 
+
+## 2026-02-11 [v0.3.11] "Deployment Stability & Optimization"
+### 🐛 Build Fixes
+- **Dependency Resolution**:
+  - Downgraded `eslint` and `@eslint/js` to v9.x to resolve peer dependency conflict with `typescript-eslint` causing `npm install` failures.
+  - Successfully verified fresh install and build process.
+
+### 🚀 Optimization
+- **Bundle Size**:
+  - Implemented manual chunk splitting in `vite.config.ts` to separate vendor libraries (React, Framer Motion, Recharts, API Clients).
+  - Reduced main entry bundle size and eliminated Vite "large chunk" warnings.
