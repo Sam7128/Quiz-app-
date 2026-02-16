@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Users, UserPlus, Send, Inbox, Check, X, Clock, Search, BookOpen, Share2, Trash2, Trophy } from 'lucide-react';
-import { supabase } from '../services/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useRepository } from '../contexts/RepositoryContext';
 import { useToast } from '../contexts/ToastContext';
@@ -10,6 +9,8 @@ import { ChallengeList } from './ChallengeList';
 import { ChallengeModal } from './ChallengeModal';
 import { useChallenges } from '../hooks/useChallenges';
 import { useQuiz } from '../contexts/QuizContext';
+import { normalizeToUuid } from '../utils/uuid';
+import { acceptFriendRequest, getFriendsAndInbox, removeFriend, sendFriendRequest, setSharedBankStatus } from '../services/socialService';
 
 export const Social: React.FC = () => {
   const { startChallengeQuiz } = useQuiz();
@@ -43,63 +44,9 @@ export const Social: React.FC = () => {
   const fetchSocialData = async () => {
     setLoading(true);
     try {
-      // 1. Fetch Friendships
-      const { data: friendships, error: fError } = await supabase
-        .from('friendships')
-        .select('*')
-        .or(`user_id.eq.${user?.id},friend_id.eq.${user?.id}`);
-
-      if (fError) throw fError;
-
-      // 2. Fetch Profiles for these friendships
-      // Extract all involved user IDs except me
-      const friendIds = friendships.map(f => f.user_id === user?.id ? f.friend_id : f.user_id);
-
-      let profilesMap: Record<string, UserProfile> = {};
-      if (friendIds.length > 0) {
-        const { data: profiles, error: pError } = await supabase
-          .from('profiles')
-          .select('id, username, avatar_url')
-          .in('id', friendIds);
-
-        if (pError) throw pError;
-
-        profiles?.forEach(p => {
-          profilesMap[p.id] = p;
-        });
-      }
-
-      // 3. Combine Data
-      const processedFriends = friendships.map(f => {
-        const friendId = f.user_id === user?.id ? f.friend_id : f.user_id;
-        return { ...f, friend_profile: profilesMap[friendId] };
-      });
-      setFriends(processedFriends);
-
-      // 4. Fetch Inbox
-      const { data: shares, error: sError } = await supabase
-        .from('shared_banks')
-        .select('*')
-        .eq('receiver_id', user?.id)
-        .eq('status', 'pending');
-
-      if (sError) throw sError;
-
-      // 5. Fetch Senders for Inbox
-      const senderIds = shares.map(s => s.sender_id);
-      if (senderIds.length > 0) {
-        const { data: senders } = await supabase
-          .from('profiles')
-          .select('id, username, avatar_url')
-          .in('id', senderIds);
-
-        const senderMap: Record<string, UserProfile> = {};
-        senders?.forEach(s => senderMap[s.id] = s);
-
-        setInbox(shares.map(s => ({ ...s, sender_profile: senderMap[s.sender_id] })));
-      } else {
-        setInbox([]);
-      }
+      const { friends: loadedFriends, inbox: loadedInbox } = await getFriendsAndInbox();
+      setFriends(loadedFriends);
+      setInbox(loadedInbox);
 
     } catch (err: any) {
       console.error(err);
@@ -114,31 +61,7 @@ export const Social: React.FC = () => {
     setMessage(null);
 
     try {
-      // 1. Find user by email (using auth.users is restricted, usually we'd have a public profiles table indexed by email or use a function)
-      // For this prototype, we'll assume we can search profiles if we had an email field there. 
-      // Since our schema only has username, let's search by username.
-      const { data: targetUser, error: uError } = await supabase
-        .from('profiles')
-        .select('id, username')
-        .eq('username', searchEmail.trim())
-        .single();
-
-      if (uError || !targetUser) throw new Error("找不到該用戶");
-      if (targetUser.id === user?.id) throw new Error("不能加自己為好友");
-
-      const { error: fError } = await supabase
-        .from('friendships')
-        .insert({
-          user_id: user?.id,
-          friend_id: targetUser.id,
-          status: 'pending'
-        });
-
-      if (fError) {
-        if (fError.code === '23505') throw new Error("好友請求已存在");
-        throw fError;
-      }
-
+      await sendFriendRequest(searchEmail.trim());
       setMessage({ type: 'success', text: "好友請求已送出！" });
       setSearchEmail('');
       fetchSocialData();
@@ -151,10 +74,7 @@ export const Social: React.FC = () => {
 
   const handleAcceptFriend = async (friendshipId: string) => {
     try {
-      await supabase
-        .from('friendships')
-        .update({ status: 'accepted' })
-        .eq('id', friendshipId);
+      await acceptFriendRequest(friendshipId);
       fetchSocialData();
     } catch (err) {
       console.error(err);
@@ -164,10 +84,7 @@ export const Social: React.FC = () => {
   const handleDeleteFriend = async (friendshipId: string, friendName: string) => {
     if (!await confirmDialog({ title: '刪除好友', message: `確定要刪除好友 ${friendName} 嗎？` })) return;
     try {
-      await supabase
-        .from('friendships')
-        .delete()
-        .eq('id', friendshipId);
+      await removeFriend(friendshipId);
       fetchSocialData();
     } catch (err) {
       console.error(err);
@@ -179,13 +96,11 @@ export const Social: React.FC = () => {
       const { meta, questions } = share.bank_snapshot;
       // Create local bank
       const newBank = await repository.createBank(`${meta.name} (來自 ${share.sender_profile?.username})`);
-      await repository.saveQuestions(newBank.id, questions);
+      const normalized = questions.map((q) => ({ ...q, id: normalizeToUuid(q.id) }));
+      await repository.saveQuestions(newBank.id, normalized);
 
       // Update status on cloud
-      await supabase
-        .from('shared_banks')
-        .update({ status: 'accepted' })
-        .eq('id', share.id);
+      await setSharedBankStatus(share.id, 'accepted');
 
       toast.success(`已接受題庫：${meta.name}`);
       fetchSocialData();
@@ -196,10 +111,7 @@ export const Social: React.FC = () => {
 
   const handleRejectBank = async (shareId: string) => {
     try {
-      await supabase
-        .from('shared_banks')
-        .update({ status: 'rejected' })
-        .eq('id', shareId);
+      await setSharedBankStatus(shareId, 'rejected');
       fetchSocialData();
     } catch (err) {
       console.error(err);

@@ -11,6 +11,7 @@ import { RecentMistakesCard } from './RecentMistakesCard';
 import { FocusTimer } from './FocusTimer';
 import { useConfirm } from '../hooks/useConfirm';
 import { useRepository } from '../contexts/RepositoryContext';
+import { useQuiz } from '../contexts/QuizContext';
 
 interface DashboardProps {
   questions: Question[]; // Combined questions
@@ -58,6 +59,7 @@ const DashboardBase: React.FC<DashboardProps> = ({
   const [movingBankId, setMovingBankId] = useState<string | null>(null);
   const [dueCount, setDueCount] = useState(0);
   const repository = useRepository();
+  const { startQuizByBank } = useQuiz();
 
   // Drag State
   const [draggedBankId, setDraggedBankId] = useState<string | null>(null);
@@ -367,6 +369,18 @@ const DashboardBase: React.FC<DashboardProps> = ({
                   </div>
 
                   <div className="flex items-center gap-1 opacity-0 group-hover/card:opacity-100 transition-all duration-200 translate-x-2 group-hover/card:translate-x-0">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void startQuizByBank(bank.id);
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-white bg-gradient-to-r from-brand-600 to-accent-600 hover:from-brand-500 hover:to-accent-500 rounded-lg transition-all shadow-md shadow-brand-500/20"
+                      title="直接開始"
+                      aria-label={`直接開始 ${bank.name}`}
+                    >
+                      <Zap size={14} className="fill-current" />
+                      直接開始
+                    </button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

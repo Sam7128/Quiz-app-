@@ -10,6 +10,16 @@ interface KeyboardShortcutsProps {
 export const useKeyboardShortcuts = ({ onSelectOption, onSubmitOrNext, onToggleHint, onExit }: KeyboardShortcutsProps) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const isEditableTarget =
+        !!target &&
+        (target.isContentEditable ||
+          ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) ||
+          target.getAttribute('role') === 'textbox');
+
+      // When the user is typing in an input (e.g., AI helper), do not hijack keystrokes.
+      if (isEditableTarget) return;
+
       // Prevent default for our shortcuts to avoid conflicts
       if (['1', '2', '3', '4', 'Enter', 'h', 'H', 'Escape'].includes(event.key)) {
         event.preventDefault();

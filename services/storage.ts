@@ -1,6 +1,7 @@
 import { Question, MistakeLog, BankMetadata, Folder, SpacedRepetitionItem } from '../types';
 
-const STORAGE_KEYS = {
+export const STORAGE_KEYS = {
+  PREFIX: 'mindspark_',
   LEGACY_BANK: 'mindspark_question_bank', // For migration
   BANKS_META: 'mindspark_banks_meta',
   BANK_PREFIX: 'mindspark_bank_',
@@ -11,12 +12,19 @@ const STORAGE_KEYS = {
   SPACED_REPETITION: 'mindspark_spaced_repetition',
   GAME_MODE: 'mindspark_game_mode',
   STUDY_SESSIONS: 'mindspark_study_sessions',
+  STREAK: 'mindspark_streak',
   ACHIEVEMENTS: 'mindspark_achievements',
   AI_CONFIG: 'mindspark_ai_config',
   SOUND_SETTINGS: 'mindspark_sound_settings',
   QUIZ_SESSION: 'mindspark_quiz_session',
   SETTINGS: 'mindspark_settings',
-  RECENT_MISTAKES: 'mindspark_recent_mistakes'
+  RECENT_MISTAKES: 'mindspark_recent_mistakes',
+
+  // Explicit keys used outside storage service (registry)
+  BGM_ENABLED: 'mindspark_bgm_enabled',
+  SFX_ENABLED: 'mindspark_sfx_enabled',
+  BATTLE_STATE: 'mindspark_battle_state',
+  THEME: 'mindspark_theme',
 };
 
 import { SavedQuizProgress, UserSettings, DEFAULT_SETTINGS, RecentMistakeSession } from '../types/battleTypes';
@@ -362,11 +370,11 @@ export const clearSpacedRepetition = (): void => {
 // --- Data Nuke (The "Root Out" functionality) ---
 
 export const nukeAllBanks = () => {
-  // Ultra-comprehensive clear: remove ALL keys starting with mindspark_
+  // Ultra-comprehensive clear: remove all app-owned keys by prefix.
   const keysToRemove: string[] = [];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key && key.startsWith('mindspark_')) {
+    if (key && key.startsWith(STORAGE_KEYS.PREFIX)) {
       keysToRemove.push(key);
     }
   }

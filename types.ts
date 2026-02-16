@@ -84,6 +84,8 @@ export interface AIConfig {
   apiKey: string;
   model: string;
   baseUrl?: string;
+  /** When false, store config in sessionStorage instead of localStorage. */
+  persist?: boolean;
 }
 
 export interface UserProfile {

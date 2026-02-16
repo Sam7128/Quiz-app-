@@ -7,6 +7,7 @@ import DOMPurify from 'dompurify';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../hooks/useConfirm';
 import { SkeletonLoader } from './SkeletonLoader';
+import { normalizeToUuid } from '../utils/uuid';
 
 interface BankManagerProps {
   currentQuestions: Question[];
@@ -181,6 +182,54 @@ export const BankManager: React.FC<BankManagerProps> = ({
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const sanitizeString = (value: unknown): string | undefined => {
+    if (typeof value !== 'string') return undefined;
+    return DOMPurify.sanitize(value);
+  };
+
+  const sanitizeStringArray = (value: unknown): string[] => {
+    if (!Array.isArray(value)) return [];
+    return value
+      .filter((v): v is string => typeof v === 'string')
+      .map((v) => DOMPurify.sanitize(v));
+  };
+
+  const normalizeImportedQuestions = (value: unknown): Question[] => {
+    if (!Array.isArray(value)) {
+      throw new Error("資料必須是 JSON 陣列 (Array)");
+    }
+
+    // Basic validation for shape
+    if (value.length > 0) {
+      const first = value[0];
+      if (!first || typeof first !== 'object' || !('question' in (first as Record<string, unknown>))) {
+        throw new Error("格式無效：缺少 'question' 欄位");
+      }
+    }
+
+    return value.map((item) => {
+      const q = (item && typeof item === 'object') ? (item as Record<string, unknown>) : ({} as Record<string, unknown>);
+
+      const rawAnswer = q.answer;
+      const answer = Array.isArray(rawAnswer)
+        ? rawAnswer.filter((v): v is string => typeof v === 'string').map((v) => DOMPurify.sanitize(v))
+        : (sanitizeString(rawAnswer) ?? '');
+
+      const type = q.type === 'single' || q.type === 'multiple' ? q.type : undefined;
+
+      return {
+        id: normalizeToUuid(q.id),
+        question: sanitizeString(q.question) ?? '',
+        options: sanitizeStringArray(q.options),
+        answer,
+        type,
+        hint: sanitizeString(q.hint),
+        explanation: sanitizeString(q.explanation),
+        tags: Array.isArray(q.tags) ? q.tags.filter((t): t is string => typeof t === 'string') : undefined,
+      };
+    });
+  };
+
   useEffect(() => {
     void refreshBanks();
   }, [repository]);
@@ -195,20 +244,19 @@ export const BankManager: React.FC<BankManagerProps> = ({
   const handleCreateBank = async () => {
     if (!newBankName.trim()) return;
     setLoading(true);
-
-    const newBank = await repository.createBank(newBankName);
-    if (!newBank.id) {
-      setError("建立雲端題庫失敗");
+    try {
+      const newBank = await repository.createBank(newBankName);
+      await refreshBanks();
+      onRefreshBanks();
+      onBankChange(newBank.id);
+      setNewBankName('');
+      setIsCreating(false);
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : '建立題庫失敗';
+      setError(message);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    await refreshBanks();
-    onRefreshBanks();
-    onBankChange(newBank.id);
-    setNewBankName('');
-    setIsCreating(false);
-    setLoading(false);
   };
 
   const handleDeleteBank = async (e: React.MouseEvent, id: string) => {
@@ -235,29 +283,15 @@ export const BankManager: React.FC<BankManagerProps> = ({
 
   const processJson = async (jsonString: string) => {
     try {
-      let data = JSON.parse(jsonString);
+      const parsed: unknown = JSON.parse(jsonString);
+      const data = normalizeImportedQuestions(parsed);
 
-      // Basic validation
-      if (!Array.isArray(data)) throw new Error("資料必須是 JSON 陣列 (Array)");
-      if (data.length > 0 && !data[0].question) throw new Error("格式無效：缺少 'question' 欄位");
+      if (currentBankId) {
+        setLoading(true);
+        await repository.saveQuestions(currentBankId, data);
 
-      // Security Sanitization: Clean all string fields to prevent XSS
-      data = data.map((q: any) => ({
-        ...q,
-        question: typeof q.question === 'string' ? DOMPurify.sanitize(q.question) : q.question,
-        options: Array.isArray(q.options) 
-          ? q.options.map((opt: any) => typeof opt === 'string' ? DOMPurify.sanitize(opt) : opt)
-          : q.options,
-        hint: typeof q.hint === 'string' ? DOMPurify.sanitize(q.hint) : q.hint,
-        explanation: typeof q.explanation === 'string' ? DOMPurify.sanitize(q.explanation) : q.explanation,
-      }));
-
-        if (currentBankId) {
-          setLoading(true);
-          await repository.saveQuestions(currentBankId, data);
-
-          onUpdateQuestions(data);
-          await refreshBanks(); // Update counts
+        onUpdateQuestions(data);
+        await refreshBanks(); // Update counts
         onRefreshBanks(); // Sync parent
         setError(null);
         setJsonText('');
@@ -447,11 +481,12 @@ export const BankManager: React.FC<BankManagerProps> = ({
                     if (currentBankId) {
                       setLoading(true);
                       try {
-                        await repository.saveQuestions(currentBankId, questions);
-                        onUpdateQuestions(questions);
+                        const normalized = questions.map((q) => ({ ...q, id: normalizeToUuid(q.id) }));
+                        await repository.saveQuestions(currentBankId, normalized);
+                        onUpdateQuestions(normalized);
                         await refreshBanks();
                         onRefreshBanks();
-                        toast.success(`成功生成並匯入 ${questions.length} 題！`);
+                        toast.success(`成功生成並匯入 ${normalized.length} 題！`);
                         setActiveTab('paste');
                       } catch (err) {
                         setError(err instanceof Error ? err.message : '匯入失敗');

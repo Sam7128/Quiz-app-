@@ -8,8 +8,8 @@ export interface Challenge {
   opponentId: string;
   bankId: string;
   status: 'pending' | 'active' | 'completed' | 'cancelled';
-  challengerScore: number;
-  opponentScore: number;
+  challengerScore: number | null;
+  opponentScore: number | null;
   currentTurn: string | null;
   winnerId: string | null;
   createdAt: string;
@@ -133,7 +133,14 @@ export const submitChallengeScore = async (
   }
 
   // Build update object
-  const updateData: any = {
+  const updateData: {
+    updated_at: string;
+    challenger_score?: number;
+    opponent_score?: number;
+    current_turn?: string;
+    status?: 'completed';
+    winner_id?: string;
+  } = {
     updated_at: new Date().toISOString()
   };
 
@@ -147,7 +154,7 @@ export const submitChallengeScore = async (
 
   // Check if both scores are submitted
   const otherScore = isChallenger ? challenge.opponent_score : challenge.challenger_score;
-  if (otherScore > 0) {
+  if (otherScore !== null && otherScore !== undefined) {
     // Both scores submitted - determine winner
     updateData.status = 'completed';
     if (score > otherScore) {
@@ -194,8 +201,23 @@ export const getMyChallenges = async (): Promise<ChallengeWithDetails[]> => {
   }
 
   // Manual Join: Fetch related data
-  const userIds = [...new Set(((data as any[]) || []).map(c => [c.challenger_id, c.opponent_id]).flat())];
-  const bankIds = [...new Set(((data as any[]) || []).map(c => c.bank_id))];
+  type ChallengeRow = {
+    id: string;
+    challenger_id: string;
+    opponent_id: string;
+    bank_id: string;
+    status: 'pending' | 'active' | 'completed' | 'cancelled';
+    challenger_score: number | null;
+    opponent_score: number | null;
+    current_turn: string | null;
+    winner_id: string | null;
+    created_at: string;
+    updated_at: string;
+  };
+  const rows = (data || []) as ChallengeRow[];
+
+  const userIds = [...new Set(rows.flatMap((c) => [c.challenger_id, c.opponent_id]))];
+  const bankIds = [...new Set(rows.map((c) => c.bank_id))];
 
   const { data: profiles } = await supabase.from('profiles').select('id, username').in('id', userIds);
   const { data: banks } = await supabase.from('banks').select('id, title').in('id', bankIds);
@@ -203,7 +225,7 @@ export const getMyChallenges = async (): Promise<ChallengeWithDetails[]> => {
   const profileMap = new Map(profiles?.map(p => [p.id, p.username]));
   const bankMap = new Map(banks?.map(b => [b.id, b.title]));
 
-  return (data || []).map(item => ({
+  return rows.map(item => ({
     id: item.id,
     challengerId: item.challenger_id,
     opponentId: item.opponent_id,

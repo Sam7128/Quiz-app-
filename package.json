@@ -7,7 +7,10 @@
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "lint": "eslint .",
+    "test:unit": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -40,6 +43,7 @@
     "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.24",
     "eslint": "^9.0.0",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-security": "^3.0.1",
     "jsdom": "^27.4.0",
     "postcss": "^8.5.6",

@@ -3,8 +3,8 @@ import { X, Trophy, UserPlus, Search, Check } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useRepository } from '../contexts/RepositoryContext';
 import { Friendship, BankMetadata } from '../types';
-import { supabase } from '../services/supabase';
 import { sendChallenge } from '../services/challenges';
+import { getFriendsAndInbox } from '../services/socialService';
 
 interface ChallengeModalProps {
   isOpen: boolean;
@@ -35,37 +35,8 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
   const loadData = async () => {
     setLoading(true);
     try {
-      // Load friends
-      const { data: friendships, error: fError } = await supabase
-        .from('friendships')
-        .select('*')
-        .or(`user_id.eq.${user?.id},friend_id.eq.${user?.id}`)
-        .eq('status', 'accepted');
-
-      if (fError) throw fError;
-
-      // Get friend profiles
-      const friendIds = friendships?.map(f =>
-        f.user_id === user?.id ? f.friend_id : f.user_id
-      ) || [];
-
-      if (friendIds.length > 0) {
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('id, username, avatar_url')
-          .in('id', friendIds);
-
-        const enrichedFriends = friendships?.map(f => {
-          const friendId = f.user_id === user?.id ? f.friend_id : f.user_id;
-          const profile = profiles?.find(p => p.id === friendId);
-          return {
-            ...f,
-            friend_profile: profile
-          };
-        });
-
-        setFriends(enrichedFriends || []);
-      }
+      const { friends } = await getFriendsAndInbox();
+      setFriends(friends.filter((f) => f.status === 'accepted'));
 
       // Load my banks
       const myBanks = await repository.getBanks();

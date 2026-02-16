@@ -37,7 +37,10 @@ export class CloudStorageRepository implements IStorageRepository {
 
   async createBank(name: string, folderId?: string): Promise<BankMetadata> {
     const id = await createCloudBank(name, '', folderId);
-    return { id: id || '', name, questionCount: 0, folderId, createdAt: Date.now() };
+    if (!id) {
+      throw new Error('建立雲端題庫失敗');
+    }
+    return { id, name, questionCount: 0, folderId, createdAt: Date.now() };
   }
 
   async deleteBank(bankId: string): Promise<void> {

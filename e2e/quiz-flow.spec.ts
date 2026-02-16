@@ -1,6 +1,20 @@
 import { test, expect } from '@playwright/test';
 
 test('完整測驗流程測試', async ({ page }) => {
+    await page.addInitScript(() => {
+        const now = Date.now();
+        const bankId = 'seed-bank';
+        const banks = [{ id: bankId, name: 'Seed Bank', createdAt: now, questionCount: 2 }];
+        const questions = [
+            { id: crypto.randomUUID(), question: 'Seed Q1', options: ['A', 'B'], answer: 'A', type: 'single', explanation: 'A' },
+            { id: crypto.randomUUID(), question: 'Seed Q2', options: ['C', 'D'], answer: 'C', type: 'single', explanation: 'C' },
+        ];
+
+        localStorage.setItem('mindspark_banks_meta', JSON.stringify(banks));
+        localStorage.setItem(`mindspark_bank_${bankId}`, JSON.stringify(questions));
+        localStorage.setItem('mindspark_current_bank_id', bankId);
+    });
+
     await page.goto('/');
     console.log('Page loaded');
 
@@ -15,32 +29,25 @@ test('完整測驗流程測試', async ({ page }) => {
     await expect(welcome).toBeVisible({ timeout: 20000 });
     console.log('Dashboard loaded');
 
-    // 3. 全選題庫
-    const selectAllBtn = page.getByRole('button', { name: /全選題庫|取消全選/ });
-    if (await selectAllBtn.count() > 0 && await selectAllBtn.isVisible()) {
-        await selectAllBtn.click();
-        console.log('Clicked select all');
-    }
-
-    // 4. 開始測驗
+    // 3. 開始測驗
     const startBtn = page.getByRole('button', { name: '開始測驗' });
     await expect(startBtn).toBeEnabled();
     await startBtn.click();
     console.log('Clicked start quiz');
 
-    // 5. 檢查是否進入 Quiz 頁面
+    // 4. 檢查是否進入 Quiz 頁面
     await expect(page.getByText(/題目 \d+ \//)).toBeVisible({ timeout: 15000 });
     console.log('Quiz started');
 
-    // 6. 點選第一個選項
+    // 5. 點選第一個選項
     await page.locator('.space-y-1 button').first().click();
     console.log('Selected first option');
 
-    // 7. 檢查解析是否出現
-    await expect(page.getByText(/下一題|查看結果/)).toBeVisible({ timeout: 15000 });
+    // 6. 檢查下一步按鈕是否出現
+    await expect(page.getByRole('button', { name: /下一題|查看結果/ })).toBeVisible({ timeout: 15000 });
     console.log('Answered');
 
-    // 8. 退出
+    // 7. 退出
     await page.keyboard.press('Escape');
     await expect(page.locator('h1', { hasText: '歡迎回來' })).toBeVisible({ timeout: 10000 });
     console.log('Exited quiz');

@@ -36,6 +36,7 @@ import {
     HERO_VICTORY_DIALOGUES,
     MONSTER_SHIELD_DIALOGUES,
 } from '../constants/battleDialogues';
+import { STORAGE_KEYS } from '../services/storage';
 
 // 基礎傷害設定
 const BASE_MONSTER_DAMAGE = 12;
@@ -57,13 +58,11 @@ const ATTACK_ANIMATION_DURATION = 800;
 const HURT_ANIMATION_DURATION = 600;
 const DIALOGUE_DISPLAY_DURATION = 2000;
 
-const BATTLE_STATE_KEY = 'mindspark_battle_state';
-
 export function useBattleSystem(): UseBattleSystemReturn {
     // 狀態初始化 (嘗試從 LocalStorage 讀取)
     const [battleState, setBattleState] = useState<BattleState>(() => {
         try {
-            const saved = localStorage.getItem(BATTLE_STATE_KEY);
+            const saved = localStorage.getItem(STORAGE_KEYS.BATTLE_STATE);
             if (saved) return JSON.parse(saved);
         } catch (e) {
             console.error('Failed to load battle state', e);
@@ -75,11 +74,11 @@ export function useBattleSystem(): UseBattleSystemReturn {
     useEffect(() => {
         // Only save if battle is active or there's some progress (HP loss, streak)
         if (battleState.isActive || battleState.heroHp < INITIAL_BATTLE_STATE.heroHp || battleState.monsterHp < INITIAL_BATTLE_STATE.monsterHp || battleState.streak > 0) {
-            localStorage.setItem(BATTLE_STATE_KEY, JSON.stringify(battleState));
+            localStorage.setItem(STORAGE_KEYS.BATTLE_STATE, JSON.stringify(battleState));
         } else {
             const isInitialState = JSON.stringify(battleState) === JSON.stringify(INITIAL_BATTLE_STATE);
             if (isInitialState) {
-                localStorage.removeItem(BATTLE_STATE_KEY);
+                localStorage.removeItem(STORAGE_KEYS.BATTLE_STATE);
             }
         }
     }, [battleState]);
@@ -113,7 +112,7 @@ export function useBattleSystem(): UseBattleSystemReturn {
 
     // Clear state helper (exported or internal used by endBattle)
     const clearBattleState = useCallback(() => {
-        localStorage.removeItem(BATTLE_STATE_KEY);
+        localStorage.removeItem(STORAGE_KEYS.BATTLE_STATE);
         setBattleState(INITIAL_BATTLE_STATE);
     }, []);
 

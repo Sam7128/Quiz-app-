@@ -363,3 +363,4 @@ These are implemented for accessibility and power-user experience. Add new short
 - [ ] Components typed properly.
 - [ ] New services/hooks have tests.
 - [ ] No XSS vulnerabilities (no `dangerouslySetInnerHTML`).
+- [ ] 完成動作後請以繁體中文說一次。

@@ -1,5 +1,7 @@
 import { supabase } from './supabase';
 import { Question, BankMetadata, SpacedRepetitionItem } from '../types';
+import { normalizeToUuid } from '../utils/uuid';
+import { STORAGE_KEYS } from './storage';
 
 /**
  * Cloud Storage Service (Supabase)
@@ -89,14 +91,13 @@ export const getCloudQuestions = async (bankId: string): Promise<Question[]> => 
 };
 
 export const saveCloudQuestions = async (bankId: string, questions: Question[]) => {
-  // Supabase strategy: Delete existing and re-insert (for simple batch update)
-  // Or more efficient: Upsert based on ID
+  const normalized = questions.map((q) => ({
+    ...q,
+    id: normalizeToUuid(q.id),
+  }));
 
-  // First, remove old questions
-  await supabase.from('questions').delete().eq('bank_id', bankId);
-
-  // Then, bulk insert
-  const toInsert = questions.map(q => ({
+  const toUpsert = normalized.map(q => ({
+    id: q.id,
     bank_id: bankId,
     question: q.question,
     options: q.options,
@@ -106,8 +107,33 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[]) 
     explanation: q.explanation
   }));
 
-  const { error } = await supabase.from('questions').insert(toInsert);
-  if (error) console.error('Error saving cloud questions:', error);
+  const { error: upsertError } = await supabase
+    .from('questions')
+    .upsert(toUpsert, { onConflict: 'id' });
+
+  if (upsertError) {
+    console.error('Error saving cloud questions (upsert):', upsertError);
+    return;
+  }
+
+  // Cleanup rows that were removed locally: delete questions in this bank not in keep list.
+  const keepIds = Array.from(new Set(normalized.map((q) => q.id))).filter((id) => typeof id === 'string' && id.length > 0);
+
+  if (keepIds.length === 0) {
+    const { error: deleteAllError } = await supabase.from('questions').delete().eq('bank_id', bankId);
+    if (deleteAllError) console.error('Error cleaning up cloud questions (delete all):', deleteAllError);
+    return;
+  }
+
+  // PostgREST expects `(uuid1,uuid2,...)` formatting for uuid lists in `in` filters.
+  const inList = `(${keepIds.join(',')})`;
+  const { error: cleanupError } = await supabase
+    .from('questions')
+    .delete()
+    .eq('bank_id', bankId)
+    .not('id', 'in', inList);
+
+  if (cleanupError) console.error('Error cleaning up cloud questions:', cleanupError);
 };
 
 /**
@@ -119,7 +145,7 @@ export const syncLocalToCloud = async (localBanks: BankMetadata[]) => {
     const cloudBankId = await createCloudBank(bank.name, bank.description || 'From local storage');
     if (cloudBankId) {
       // 2. Get local questions
-      const localQuestions = JSON.parse(localStorage.getItem('mindspark_bank_' + bank.id) || '[]');
+      const localQuestions = JSON.parse(localStorage.getItem(STORAGE_KEYS.BANK_PREFIX + bank.id) || '[]');
       // 3. Save to cloud
       await saveCloudQuestions(cloudBankId, localQuestions);
     }

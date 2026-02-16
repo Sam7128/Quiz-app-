@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { AppView, BankMetadata, MistakeLog, Question, QuizState } from '../types';
 import { createSpacedRepetitionItem, updateSpacedRepetition } from '../services/spacedRepetition';
-import { clearQuizSession, getQuizSession, saveQuizSession } from '../services/storage';
+import { clearQuizSession, getQuizSession, saveQuizSession, STORAGE_KEYS } from '../services/storage';
 import { IStorageRepository } from '../services/repository';
 import { MistakeDetail, RecentMistakeSession, SavedQuizProgress } from '../types/battleTypes';
 
@@ -44,6 +44,9 @@ export const useQuizEngine = ({
     mode: 'random',
     wrongQuestionIds: []
   });
+  // Bank IDs actually used by the current active quiz session.
+  // This must stay consistent even when dashboard selection changes.
+  const [sessionBankIds, setSessionBankIds] = useState<string[]>(selectedQuizBankIds);
   const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
   const [currentSessionMistakes, setCurrentSessionMistakes] = useState<MistakeDetail[]>([]);
   const [showResumePrompt, setShowResumePrompt] = useState(false);
@@ -52,7 +55,7 @@ export const useQuizEngine = ({
   useEffect(() => {
     if (quizState.activeQuestions.length > 0 && !quizState.isFinished) {
       saveQuizSession({
-        bankIds: selectedQuizBankIds,
+        bankIds: sessionBankIds,
         questionIds: quizState.activeQuestions.map(q => String(q.id)),
         currentIndex: quizState.currentQuestionIndex,
         score: quizState.score,
@@ -62,10 +65,11 @@ export const useQuizEngine = ({
     } else if (quizState.isFinished) {
       clearQuizSession();
     }
-  }, [quizState, selectedQuizBankIds]);
+  }, [quizState, sessionBankIds]);
 
   const restoreSession = useCallback(async (session: SavedQuizProgress) => {
     try {
+      setSessionBankIds(session.bankIds);
       const poolPromises = session.bankIds.map(id => repository.getQuestions(id));
       const pools = await Promise.all(poolPromises);
       const allQuestions = pools.flat();
@@ -110,10 +114,20 @@ export const useQuizEngine = ({
     setPendingSession(null);
   }, []);
 
-  const startQuiz = useCallback(async (count: number, mode: 'random' | 'mistake' | 'retry_session' = 'random', specificIds?: string[]) => {
+  const startQuiz = useCallback(async (
+    count: number,
+    mode: 'random' | 'mistake' | 'retry_session' = 'random',
+    specificIds?: string[],
+    overrideBankIds?: string[]
+  ) => {
     let pool: Question[] = [];
 
-    const questionPromises = selectedQuizBankIds.map(id => repository.getQuestions(id));
+    const effectiveBankIds = overrideBankIds && overrideBankIds.length > 0
+      ? overrideBankIds
+      : selectedQuizBankIds;
+
+    setSessionBankIds(effectiveBankIds);
+    const questionPromises = effectiveBankIds.map(id => repository.getQuestions(id));
     const questionArrays = await Promise.all(questionPromises);
     const allSelectedQuestions = questionArrays.flat();
 
@@ -146,7 +160,7 @@ export const useQuizEngine = ({
     setSessionStartTime(Date.now());
     setCurrentSessionMistakes([]);
 
-    localStorage.removeItem('mindspark_battle_state');
+    localStorage.removeItem(STORAGE_KEYS.BATTLE_STATE);
 
     onViewChange(mode === 'mistake' ? 'mistakes' : 'quiz');
   }, [onViewChange, repository, selectedQuizBankIds, toast]);
@@ -181,7 +195,7 @@ export const useQuizEngine = ({
       const session: RecentMistakeSession = {
         sessionId: crypto.randomUUID(),
         timestamp: Date.now(),
-        bankNames: banks.filter(b => selectedQuizBankIds.includes(b.id)).map(b => b.name),
+        bankNames: banks.filter(b => sessionBankIds.includes(b.id)).map(b => b.name),
         mistakes: currentSessionMistakes
       };
       repository.addRecentMistakeSession(session);
@@ -189,7 +203,7 @@ export const useQuizEngine = ({
     setSessionStartTime(null);
     onViewChange('dashboard');
     setCurrentSessionMistakes([]);
-  }, [banks, currentSessionMistakes, onViewChange, repository, selectedQuizBankIds]);
+  }, [banks, currentSessionMistakes, onViewChange, repository, sessionBankIds]);
 
   const startChallengeQuiz = useCallback(async (challengeId: string, bankId: string) => {
     const questions = await repository.getQuestions(bankId);
@@ -200,6 +214,7 @@ export const useQuizEngine = ({
     }
 
     onChallengeStart?.(challengeId);
+    setSessionBankIds([bankId]);
 
     const shuffled = shuffleArray(questions);
 

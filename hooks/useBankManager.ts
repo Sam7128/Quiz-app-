@@ -7,7 +7,8 @@ import {
   getBankFolderMap,
   getBanksMeta,
   getFolders,
-  setCurrentBankId
+  setCurrentBankId,
+  STORAGE_KEYS
 } from '../services/storage';
 import { IStorageRepository } from '../services/repository';
 import { useConfirm } from './useConfirm';
@@ -48,7 +49,7 @@ export const useBankManager = ({
       if (await confirmDialog({ title: '同步題庫', message: '偵測到您在本地端有題庫，但雲端是空的。是否要將本地題庫上傳至雲端同步？' })) {
         await repository.syncLocalToCloud(localMeta);
         latest = await repository.getBanks();
-        localStorage.removeItem('mindspark_banks_meta');
+        localStorage.removeItem(STORAGE_KEYS.BANKS_META);
         toast.success('同步完成！');
       }
     }

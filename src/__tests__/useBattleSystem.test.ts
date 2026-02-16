@@ -1,12 +1,18 @@
 
 import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import useBattleSystem from '../../hooks/useBattleSystem';
 
 describe('useBattleSystem Hook', () => {
     beforeEach(() => {
         localStorage.clear();
-        vi.clearAllMocks();
+        vi.restoreAllMocks();
+        // useBattleSystem logs a lot of debug output; capturing it can balloon memory usage in Vitest.
+        vi.spyOn(console, 'log').mockImplementation(() => { });
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
     });
 
     it('should initialize with default inactive state', () => {

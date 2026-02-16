@@ -57,14 +57,14 @@ export const ChallengeList: React.FC<ChallengeListProps> = ({
     );
   }
 
+  const formatScore = (score: number | null): string => (score === null ? '-' : String(score));
+
   return (
     <div className="space-y-3">
       {challenges.map((challenge) => {
         const isChallenger = challenge.challengerId === currentUserId;
         const isMyTurn = challenge.currentTurn === currentUserId;
         const opponentName = isChallenger ? challenge.opponentName : challenge.challengerName;
-        const myScore = isChallenger ? challenge.challengerScore : challenge.opponentScore;
-        const opponentScore = isChallenger ? challenge.opponentScore : challenge.challengerScore;
 
         return (
           <div
@@ -113,12 +113,12 @@ export const ChallengeList: React.FC<ChallengeListProps> = ({
             {challenge.status === 'completed' && (
               <div className="flex items-center justify-center gap-4 py-2 mb-3 bg-white dark:bg-slate-700 rounded-lg">
                 <div className="text-center">
-                  <div className="text-lg font-bold text-slate-700 dark:text-slate-200">{isChallenger ? challenge.challengerScore : challenge.opponentScore}</div>
+                  <div className="text-lg font-bold text-slate-700 dark:text-slate-200">{formatScore(isChallenger ? challenge.challengerScore : challenge.opponentScore)}</div>
                   <div className="text-xs text-slate-400 dark:text-slate-500">{isChallenger ? '你' : '對手'}</div>
                 </div>
                 <div className="text-slate-300 dark:text-slate-600">vs</div>
                 <div className="text-center">
-                  <div className="text-lg font-bold text-slate-700 dark:text-slate-200">{isChallenger ? challenge.opponentScore : challenge.challengerScore}</div>
+                  <div className="text-lg font-bold text-slate-700 dark:text-slate-200">{formatScore(isChallenger ? challenge.opponentScore : challenge.challengerScore)}</div>
                   <div className="text-xs text-slate-400 dark:text-slate-500">{isChallenger ? '對手' : '你'}</div>
                 </div>
               </div>

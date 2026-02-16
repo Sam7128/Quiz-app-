@@ -1,8 +1,8 @@
 import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import OpenAI from "openai";
 import { Question, AIConfig } from "../types";
-
-const AI_CONFIG_KEY = 'mindspark_ai_config';
+import { normalizeToUuid } from "../utils/uuid";
+import { STORAGE_KEYS } from "./storage";
 
 const QUESTION_JSON_SCHEMA = `{
   "type": "array",
@@ -57,7 +57,9 @@ export const cleanJsonResponse = (raw: string): string => {
 };
 
 export const getAIConfig = (): AIConfig | null => {
-  const data = localStorage.getItem(AI_CONFIG_KEY);
+  const sessionData = sessionStorage.getItem(STORAGE_KEYS.AI_CONFIG);
+  const localData = localStorage.getItem(STORAGE_KEYS.AI_CONFIG);
+  const data = sessionData || localData;
   if (!data) return null;
 
   const config = JSON.parse(data);
@@ -65,15 +67,42 @@ export const getAIConfig = (): AIConfig | null => {
   if (!config.provider) {
     config.provider = 'google';
   }
+  if (config.persist === undefined) {
+    config.persist = true;
+  }
   return config;
 };
 
 export const saveAIConfig = (config: AIConfig) => {
-  localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(config));
+  const persist = config.persist !== false;
+  if (persist) {
+    localStorage.setItem(STORAGE_KEYS.AI_CONFIG, JSON.stringify({ ...config, persist: true }));
+    sessionStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
+    return;
+  }
+
+  sessionStorage.setItem(STORAGE_KEYS.AI_CONFIG, JSON.stringify({ ...config, persist: false }));
+  localStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
 };
 
 export const clearAIConfig = () => {
-  localStorage.removeItem(AI_CONFIG_KEY);
+  localStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
+  sessionStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
+};
+
+const NVIDIA_DEFAULT_BASE_URL = "https://integrate.api.nvidia.com/v1";
+
+export const resolveNvidiaBaseUrl = (
+  baseUrl: string | undefined,
+  isProd: boolean = import.meta.env.PROD,
+  origin: string = window.location.origin
+): string => {
+  const isDefaultUrl = !baseUrl || baseUrl === NVIDIA_DEFAULT_BASE_URL;
+  if (isProd && isDefaultUrl) {
+    throw new Error('NVIDIA 供應商在正式環境需設定自訂 baseUrl（或部署後端 proxy）。請到設定中填入 baseUrl 後再試。');
+  }
+
+  return isDefaultUrl ? `${origin}/api/nvidia` : baseUrl;
 };
 
 export const askAI = async (
@@ -102,8 +131,7 @@ ${question.explanation ? `原解析：${question.explanation}` : ''}
 
   try {
     if (config.provider === 'nvidia') {
-      const isDefaultUrl = !config.baseUrl || config.baseUrl === "https://integrate.api.nvidia.com/v1";
-      const baseURL = isDefaultUrl ? `${window.location.origin}/api/nvidia` : config.baseUrl;
+      const baseURL = resolveNvidiaBaseUrl(config.baseUrl);
 
       const client = new OpenAI({
         apiKey: config.apiKey,
@@ -206,7 +234,34 @@ export const generateQuestionsFromPDF = async (
 
     const cleanJson = cleanJsonResponse(text);
 
-    return JSON.parse(cleanJson);
+    const parsed: unknown = JSON.parse(cleanJson);
+    if (!Array.isArray(parsed)) {
+      throw new Error("AI 回傳格式錯誤：預期為 JSON Array");
+    }
+
+    return parsed.map((item) => {
+      const q = (item && typeof item === 'object') ? (item as Record<string, unknown>) : ({} as Record<string, unknown>);
+
+      const optionsRaw = Array.isArray(q.options) ? q.options : [];
+      const options = optionsRaw.filter((v): v is string => typeof v === 'string');
+
+      const answerRaw = q.answer;
+      const answer = Array.isArray(answerRaw)
+        ? answerRaw.filter((v): v is string => typeof v === 'string')
+        : (typeof answerRaw === 'string' ? answerRaw : '');
+
+      const type = q.type === 'single' || q.type === 'multiple' ? q.type : 'single';
+
+      return {
+        id: normalizeToUuid(q.id),
+        question: typeof q.question === 'string' ? q.question : '',
+        options,
+        answer,
+        type,
+        hint: typeof q.hint === 'string' ? q.hint : undefined,
+        explanation: typeof q.explanation === 'string' ? q.explanation : undefined,
+      } satisfies Question;
+    });
   } catch (error: any) {
     console.error("PDF Generate Error:", error);
     throw new Error("生成失敗：" + (error.message || "未知錯誤"));

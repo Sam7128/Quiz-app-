@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { AppAction, Question, BankMetadata } from '../types';
 import { getCurrentBankId, setCurrentBankId } from '../services/storage';
 import { IStorageRepository } from '../services/repository';
@@ -22,6 +22,7 @@ export const useAppDataLoader = ({
 }: UseAppDataLoaderProps) => {
     const [quizPoolQuestions, setQuizPoolQuestions] = useState<Question[]>([]);
     const [editingQuestions, setEditingQuestions] = useState<Question[]>([]);
+    const loadVersionRef = useRef(0);
 
     // Initialization: Auth & Initial Banks
     useEffect(() => {
@@ -46,6 +47,7 @@ export const useAppDataLoader = ({
     }, [loading, refreshBanksData, dispatch]);
 
     const loadQuizPool = useCallback(async () => {
+        const version = ++loadVersionRef.current;
         if (selectedQuizBankIds.length === 0) {
             setQuizPoolQuestions([]);
             return;
@@ -54,9 +56,11 @@ export const useAppDataLoader = ({
             const arrays = await Promise.all(
                 selectedQuizBankIds.map(id => repository.getQuestions(id))
             );
+            if (version !== loadVersionRef.current) return;
             setQuizPoolQuestions(arrays.flat());
         } catch (error) {
             console.error('Failed to load quiz pool questions', error);
+            if (version !== loadVersionRef.current) return;
             setQuizPoolQuestions([]);
         }
     }, [repository, selectedQuizBankIds]);

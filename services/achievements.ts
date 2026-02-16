@@ -1,7 +1,5 @@
 import { supabase } from './supabase';
-import { ACHIEVEMENTS } from '../constants/achievements';
-
-const LOCAL_STORAGE_KEY = 'mindspark_achievements';
+import { STORAGE_KEYS } from './storage';
 
 /**
  * Get unlocked achievements from cloud
@@ -53,7 +51,7 @@ export const unlockCloudAchievement = async (achievementId: string): Promise<boo
  */
 export const getLocalAchievements = (): string[] => {
   try {
-    const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const data = localStorage.getItem(STORAGE_KEYS.ACHIEVEMENTS);
     return data ? JSON.parse(data) : [];
   } catch (e) {
     return [];
@@ -67,7 +65,7 @@ export const unlockLocalAchievement = (achievementId: string): void => {
   const achievements = getLocalAchievements();
   if (!achievements.includes(achievementId)) {
     achievements.push(achievementId);
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(achievements));
+    localStorage.setItem(STORAGE_KEYS.ACHIEVEMENTS, JSON.stringify(achievements));
   }
 };
 

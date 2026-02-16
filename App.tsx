@@ -60,7 +60,7 @@ const App: React.FC = () => {
     if (mode === 'challenge') {
       await quizEngine.startChallengeQuiz(crypto.randomUUID(), bankId);
     } else {
-      await quizEngine.startQuiz(20, 'random');
+      await quizEngine.startQuiz(20, 'random', undefined, [bankId]);
     }
   }, [dispatch, quizEngine]);
 

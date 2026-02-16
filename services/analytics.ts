@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { STORAGE_KEYS } from './storage';
 
 export interface StudySession {
   id?: string;
@@ -147,9 +148,6 @@ export const getDailyStats = async (): Promise<{ date: string; questions: number
   }));
 };
 
-// Local storage keys for guest mode
-const LOCAL_STORAGE_KEY = 'mindspark_study_sessions';
-
 interface LocalStudySession {
   sessionDate: string;
   questionsAnswered: number;
@@ -190,7 +188,7 @@ export const recordLocalStudySession = (
     new Date(s.sessionDate) >= thirtyDaysAgo
   );
 
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(filteredSessions));
+  localStorage.setItem(STORAGE_KEYS.STUDY_SESSIONS, JSON.stringify(filteredSessions));
 };
 
 /**
@@ -198,7 +196,7 @@ export const recordLocalStudySession = (
  */
 export const getLocalStudySessions = (): LocalStudySession[] => {
   try {
-    const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const data = localStorage.getItem(STORAGE_KEYS.STUDY_SESSIONS);
     return data ? JSON.parse(data) : [];
   } catch (e) {
     return [];

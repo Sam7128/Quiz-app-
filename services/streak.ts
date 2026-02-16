@@ -1,12 +1,11 @@
 import { supabase } from './supabase';
+import { STORAGE_KEYS } from './storage';
 
 export interface StreakData {
   currentStreak: number;
   longestStreak: number;
   lastStudyDate: string | null;
 }
-
-const LOCAL_STORAGE_KEY = 'mindspark_streak';
 
 /**
  * Get streak data from cloud
@@ -46,9 +45,7 @@ export const updateCloudStreak = async (): Promise<boolean> => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return false;
 
-  const { error } = await supabase.rpc('update_streak', {
-    p_user_id: user.id
-  });
+  const { error } = await supabase.rpc('update_streak');
 
   if (error) {
     console.error('Error updating streak:', error);
@@ -69,7 +66,7 @@ interface LocalStreakData {
  */
 export const getLocalStreak = (): StreakData => {
   try {
-    const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const data = localStorage.getItem(STORAGE_KEYS.STREAK);
     if (!data) {
       return { currentStreak: 0, longestStreak: 0, lastStudyDate: null };
     }
@@ -109,5 +106,5 @@ export const updateLocalStreak = (): void => {
 
   streak.lastStudyDate = today;
 
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(streak));
+  localStorage.setItem(STORAGE_KEYS.STREAK, JSON.stringify(streak));
 };

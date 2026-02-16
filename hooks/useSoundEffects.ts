@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Howl } from 'howler';
+import { STORAGE_KEYS } from '../services/storage';
 
 // 預設音效路徑 - 請確保這些檔案存在於 public/sounds/
 const SOUND_PATHS = {
@@ -63,12 +64,12 @@ const initSounds = () => {
 export function useSoundEffects(): UseSoundEffectsReturn {
     // 從 localStorage 讀取設定，預設開啟
     const [isBgmEnabled, setIsBgmEnabled] = useState(() => {
-        const saved = localStorage.getItem('mindspark_bgm_enabled');
+        const saved = localStorage.getItem(STORAGE_KEYS.BGM_ENABLED);
         return saved !== null ? saved === 'true' : true;
     });
 
     const [isSfxEnabled, setIsSfxEnabled] = useState(() => {
-        const saved = localStorage.getItem('mindspark_sfx_enabled');
+        const saved = localStorage.getItem(STORAGE_KEYS.SFX_ENABLED);
         return saved !== null ? saved === 'true' : true;
     });
 
@@ -79,11 +80,11 @@ export function useSoundEffects(): UseSoundEffectsReturn {
 
     // 保存設定
     useEffect(() => {
-        localStorage.setItem('mindspark_bgm_enabled', String(isBgmEnabled));
+        localStorage.setItem(STORAGE_KEYS.BGM_ENABLED, String(isBgmEnabled));
     }, [isBgmEnabled]);
 
     useEffect(() => {
-        localStorage.setItem('mindspark_sfx_enabled', String(isSfxEnabled));
+        localStorage.setItem(STORAGE_KEYS.SFX_ENABLED, String(isSfxEnabled));
     }, [isSfxEnabled]);
 
     const bgmIdRef = useRef<number | null>(null);

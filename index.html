@@ -12,6 +12,11 @@
     img-src: 'self' data: https: (for loaded images).
     connect-src: Whitelisted to Supabase, Google AI, NVIDIA API only.
     font-src: 'self' https://fonts.gstatic.com (Google Fonts).
+
+    Production guidance:
+    - Prefer removing 'unsafe-inline' by using nonces/hashes, and keep CSP as strict as possible.
+    - If you proxy third-party AI requests through your own backend, remove direct NVIDIA/Google endpoints from connect-src.
+    - Storing API keys in the browser (localStorage/sessionStorage) cannot protect against XSS; the safest setup is a backend proxy or short-lived tokens.
   -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';

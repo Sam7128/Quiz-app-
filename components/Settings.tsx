@@ -23,7 +23,8 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, o
     provider: 'google',
     apiKey: '',
     model: 'gemini-1.5-flash',
-    baseUrl: ''
+    baseUrl: '',
+    persist: true
   });
   const [userSettings, setUserSettings] = useState<UserSettings>({
     restBreakInterval: 20
@@ -33,7 +34,7 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, o
   useEffect(() => {
     if (isOpen) {
       const existing = getAIConfig();
-      if (existing) setConfig(existing);
+      if (existing) setConfig({ ...existing, persist: existing.persist !== false });
 
       const settings = getUserSettings();
       setUserSettings(settings);
@@ -295,6 +296,19 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, o
               placeholder={config.provider === 'google' ? "AIza..." : "nvapi-..."}
               className="w-full p-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all font-mono text-sm text-slate-900 dark:text-slate-100"
             />
+            <div className="flex items-center justify-between p-3 bg-slate-50/60 dark:bg-black/20 border border-slate-200/60 dark:border-white/10 rounded-xl">
+              <div className="text-xs">
+                <div className="font-bold text-slate-700 dark:text-slate-200">記住金鑰</div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400">關閉後僅在此分頁/瀏覽器工作階段有效 (sessionStorage)</div>
+              </div>
+              <button
+                onClick={() => setConfig((prev) => ({ ...prev, persist: !(prev.persist !== false) }))}
+                aria-label={config.persist !== false ? '關閉記住金鑰' : '開啟記住金鑰'}
+                className={`w-12 h-7 rounded-full transition-colors relative ${config.persist !== false ? 'bg-brand-600' : 'bg-slate-300 dark:bg-slate-600'}`}
+              >
+                <div className={`absolute top-1 w-5 h-5 rounded-full shadow-sm transition-all duration-300 ${config.persist !== false ? 'left-6 bg-white' : 'left-1 bg-white/90'}`} />
+              </button>
+            </div>
           </section>
 
           {/* Base URL (NVIDIA Only) */}
@@ -406,7 +420,11 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, o
           <div className="bg-amber-50 dark:bg-amber-900/20 p-3 rounded-xl flex gap-3">
             <Info className="text-amber-500 shrink-0" size={16} />
             <p className="text-[11px] text-amber-700 dark:text-amber-300 leading-relaxed font-medium">
-              您的金鑰將僅儲存在此瀏覽器的 LocalStorage 中。我們不會將您的金鑰上傳至任何伺服器。
+              {config.persist !== false
+                ? '您的金鑰會儲存在此瀏覽器的 localStorage。我們不會將金鑰上傳至任何伺服器。'
+                : '您的金鑰只會儲存在此瀏覽器的 sessionStorage，關閉瀏覽器後不會保留。'}
+              <br />
+              <span className="font-bold">安全聲明：</span>sessionStorage 只能降低「關閉瀏覽器後殘留」風險，無法防禦同頁面的 XSS。真正安全的方案是後端 proxy 或短期 token。
             </p>
           </div>
 

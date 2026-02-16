@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { X, Send, Users, Search, Check, Loader2, BookOpen, Share2 } from 'lucide-react';
-import { supabase } from '../services/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useRepository } from '../contexts/RepositoryContext';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../hooks/useConfirm';
 import { BankMetadata, Friendship, Question } from '../types';
+import { getFriendsAndInbox, shareBank } from '../services/socialService';
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -31,35 +31,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, bank })
   const fetchFriends = async () => {
     setLoading(true);
     try {
-      // 1. Fetch Friendships
-      const { data: friendships, error: fError } = await supabase
-        .from('friendships')
-        .select('*')
-        .or(`user_id.eq.${user?.id},friend_id.eq.${user?.id}`)
-        .eq('status', 'accepted');
-
-      if (fError) throw fError;
-
-      // 2. Fetch Profiles manually
-      const friendIds = friendships.map(f => f.user_id === user?.id ? f.friend_id : f.user_id);
-
-      let profilesMap: Record<string, any> = {};
-      if (friendIds.length > 0) {
-        const { data: profiles, error: pError } = await supabase
-          .from('profiles')
-          .select('id, username, avatar_url')
-          .in('id', friendIds);
-
-        if (pError) throw pError;
-        profiles?.forEach(p => profilesMap[p.id] = p);
-      }
-
-      // 3. Combine
-      const processed = friendships.map(f => {
-        const friendId = f.user_id === user?.id ? f.friend_id : f.user_id;
-        return { ...f, friend_profile: profilesMap[friendId] };
-      });
-      setFriends(processed);
+      const { friends } = await getFriendsAndInbox();
+      setFriends(friends.filter((f) => f.status === 'accepted'));
     } catch (err) {
       console.error(err);
     } finally {
@@ -86,19 +59,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, bank })
         }
       }
 
-      const { error } = await supabase
-        .from('shared_banks')
-        .insert({
-          sender_id: user.id,
-          receiver_id: friendId,
-          bank_snapshot: {
-            meta: bank,
-            questions: questions
-          },
-          status: 'pending'
-        });
-
-      if (error) throw error;
+      await shareBank(friendId, bank, questions);
 
       toast.success(`已傳送題庫「${bank.name}」！`);
     } catch (err: unknown) {
