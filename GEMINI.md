@@ -123,3 +123,16 @@ The application uses a **Serverless/Local-First** architecture with a **Reposito
     - **Supabase Fix**: Refactored `getMyChallenges` to use a manual join strategy, eliminating the 400 Bad Request error caused by ambiguous foreign keys.
     - **Spec Sync**: Synchronized console warning fixes into the `social-sharing` main specification via OpenSpec workflow.
 
+*   **Agent Skill: Plan Stress Test (2026-02-25)**:
+    - **新技能**: `plan-stress-test` — 以 Senior QA Architect + Staff Performance Engineer 角色，對 OpenSpec 計畫進行壓力測試。
+    - **快捷鍵**: `/plan-stress-test [change-name]` — 快速觸發技能。
+    - **輸出**: `stress-test-report.md` (問題報告 + 測試矩陣) 和 `benchmark-harness.md` (效能基準規格)。
+    - **嚴謹性設計**: 9 條絕對規則、5 階段管線、每階段必須通過 GATE 才能進入下一階段。
+    - **防跳過機制**: 強制每個模塊至少 3 個 issue、最低測試案例數量、完整的 anti-pattern 清單。
+
+*   **Agent Skill: Apply with Tests (2026-02-25)**:
+    - **新技能**: `openspec-apply-with-tests` — 結合標準 OpenSpec apply 流程和壓力測試引導的實作技能。
+    - **快捷鍵**: `/opsx-apply-tested [change-name]` — 帶壓力測試覆蓋的實作。
+    - **偵測模式**: 自動偵測 `stress-test-report.md` 存在與否，有則進入 TEST MODE，無則退回 STANDARD MODE。
+    - **整合三個驗證技能**: `review-check`、`auto-verify`、`tree-verity` 均加入可選的壓力測試偵測步驟，偵測到 artifacts 就追加驗證，未偵測到則完全不影響原流程。
+
