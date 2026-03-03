@@ -113,7 +113,7 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[]) 
 
   if (upsertError) {
     console.error('Error saving cloud questions (upsert):', upsertError);
-    return;
+    throw new Error(`Failed to save cloud questions: ${upsertError.message}`);
   }
 
   // Cleanup rows that were removed locally: delete questions in this bank not in keep list.
@@ -121,7 +121,10 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[]) 
 
   if (keepIds.length === 0) {
     const { error: deleteAllError } = await supabase.from('questions').delete().eq('bank_id', bankId);
-    if (deleteAllError) console.error('Error cleaning up cloud questions (delete all):', deleteAllError);
+    if (deleteAllError) {
+      console.error('Error cleaning up cloud questions (delete all):', deleteAllError);
+      throw new Error(`Failed to clean up cloud questions: ${deleteAllError.message}`);
+    }
     return;
   }
 
@@ -133,7 +136,10 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[]) 
     .eq('bank_id', bankId)
     .not('id', 'in', inList);
 
-  if (cleanupError) console.error('Error cleaning up cloud questions:', cleanupError);
+  if (cleanupError) {
+    console.error('Error cleaning up cloud questions:', cleanupError);
+    throw new Error(`Failed to clean up cloud questions: ${cleanupError.message}`);
+  }
 };
 
 /**

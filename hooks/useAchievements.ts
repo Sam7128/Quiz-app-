@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRepository } from '../contexts/RepositoryContext';
+import { isAbortError } from '../utils/isAbortError';
 
 interface UseAchievementsReturn {
   unlockedIds: string[];
@@ -15,11 +16,12 @@ export const useAchievements = (): UseAchievementsReturn => {
 
   const fetchAchievements = useCallback(async () => {
     setLoading(true);
-    
+
     try {
       const ids = await repository.getAchievements();
       setUnlockedIds(ids);
     } catch (error) {
+      if (isAbortError(error)) return;
       console.error('Error fetching achievements:', error);
     } finally {
       setLoading(false);

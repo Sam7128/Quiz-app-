@@ -1,5 +1,6 @@
 export interface Question {
   id: string | number;
+  original_question_id?: string | number;
   question: string;
   options: string[];
   answer: string | string[];

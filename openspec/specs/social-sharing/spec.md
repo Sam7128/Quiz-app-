@@ -15,10 +15,23 @@ Users SHALL be able to send a copy of a Question Bank to a friend.
 User A clicks "Share" on "Math 101". Selects User B. User B receives a notification.
 
 ### Requirement: Bank Acceptance
-Users MUST explicitly accept shared content before it is added to their library.
+Users MUST explicitly accept shared content before it is added to their library. Upon acceptance, the system SHALL create entirely new question records with freshly generated UUIDs to avoid RLS policy conflicts with the sender's original data.
 
 #### Scenario: Accepting a Shared Bank
-User B sees "Math 101 from User A" in their Inbox. They click "Preview" or "Accept". On Accept, the bank is saved to User B's local storage as a new bank.
+- **WHEN** User B sees "Math 101 from User A" in their Inbox
+- **AND** User B clicks "Accept"
+- **THEN** the system SHALL create a new bank owned by User B
+- **AND** the system SHALL generate a new UUID via a `generateUUID()` helper function (with fallback for non-HTTPS environments) for each question in the shared bank snapshot
+- **AND** the system SHALL save all questions with the new UUIDs to User B's bank
+- **AND** the bank SHALL persist with the correct question count after User B navigates away and returns
+- **AND** no 403 Forbidden errors SHALL occur during the save operation
+
+#### Scenario: Shared bank data integrity after navigation
+- **WHEN** User B has accepted a shared bank
+- **AND** User B navigates away from the social page to the Dashboard
+- **AND** User B returns to the Dashboard
+- **THEN** the accepted bank SHALL display the correct number of questions (matching the original shared bank)
+- **AND** the questions SHALL be fully accessible for quizzes
 
 ### Requirement: Challenge Zero Score Completion
 The challenge system MUST correctly handle the case where a participant scores 0 points. A score of 0 MUST be treated as a valid submitted score, not as "not yet submitted".

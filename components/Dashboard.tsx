@@ -12,6 +12,7 @@ import { FocusTimer } from './FocusTimer';
 import { useConfirm } from '../hooks/useConfirm';
 import { useRepository } from '../contexts/RepositoryContext';
 import { useQuiz } from '../contexts/QuizContext';
+import { isAbortError } from '../utils/isAbortError';
 
 interface DashboardProps {
   questions: Question[]; // Combined questions
@@ -75,6 +76,7 @@ const DashboardBase: React.FC<DashboardProps> = ({
         const dueItems = getDueQuestions(allItems);
         setDueCount(dueItems.length);
       } catch (error) {
+        if (isAbortError(error)) return;
         console.error('Error loading spaced repetition data:', error);
       }
     };
@@ -368,7 +370,7 @@ const DashboardBase: React.FC<DashboardProps> = ({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 opacity-0 group-hover/card:opacity-100 transition-all duration-200 translate-x-2 group-hover/card:translate-x-0">
+                  <div className="flex items-center gap-1 [@media(pointer:fine)]:opacity-0 [@media(pointer:fine)]:group-hover/card:opacity-100 [@media(pointer:fine)]:translate-x-2 [@media(pointer:fine)]:group-hover/card:translate-x-0 opacity-100 focus-within:opacity-100 transition-all duration-200">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

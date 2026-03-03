@@ -224,7 +224,11 @@ export const AppContent: React.FC<AppContentProps> = ({
                     </motion.div>
                 </AnimatePresence>
             </main>
-            <MobileNav view={view} onNavigate={actions.handleViewChange} />
+            <MobileNav
+                view={view}
+                onNavigate={actions.handleViewChange}
+                onOpenSettings={() => actions.dispatch({ type: 'set_settings_open', isSettingsOpen: true })}
+            />
         </div>
     );
 };

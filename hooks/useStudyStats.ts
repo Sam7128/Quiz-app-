@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { StudyStats } from '../services/analytics';
 import { useRepository } from '../contexts/RepositoryContext';
+import { isAbortError } from '../utils/isAbortError';
 
 interface UseStudyStatsReturn {
   stats: StudyStats | null;
@@ -17,7 +18,7 @@ export const useStudyStats = (): UseStudyStatsReturn => {
 
   const fetchStats = useCallback(async () => {
     setLoading(true);
-    
+
     try {
       const [statsData, dailyData] = await Promise.all([
         repository.getStudyStats(),
@@ -26,6 +27,7 @@ export const useStudyStats = (): UseStudyStatsReturn => {
       setStats(statsData);
       setDailyStats(dailyData);
     } catch (error) {
+      if (isAbortError(error)) return;
       console.error('Error fetching study stats:', error);
     } finally {
       setLoading(false);

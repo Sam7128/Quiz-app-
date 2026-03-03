@@ -9,7 +9,7 @@ import { ChallengeList } from './ChallengeList';
 import { ChallengeModal } from './ChallengeModal';
 import { useChallenges } from '../hooks/useChallenges';
 import { useQuiz } from '../contexts/QuizContext';
-import { normalizeToUuid } from '../utils/uuid';
+import { generateUUID } from '../utils/uuid';
 import { acceptFriendRequest, getFriendsAndInbox, removeFriend, sendFriendRequest, setSharedBankStatus } from '../services/socialService';
 
 export const Social: React.FC = () => {
@@ -96,14 +96,20 @@ export const Social: React.FC = () => {
       const { meta, questions } = share.bank_snapshot;
       // Create local bank
       const newBank = await repository.createBank(`${meta.name} (來自 ${share.sender_profile?.username})`);
-      const normalized = questions.map((q) => ({ ...q, id: normalizeToUuid(q.id) }));
-      await repository.saveQuestions(newBank.id, normalized);
+      try {
+        const normalized = questions.map((q) => ({ ...q, id: generateUUID(), original_question_id: q.id }));
+        await repository.saveQuestions(newBank.id, normalized);
 
-      // Update status on cloud
-      await setSharedBankStatus(share.id, 'accepted');
+        // Update status on cloud
+        await setSharedBankStatus(share.id, 'accepted');
 
-      toast.success(`已接受題庫：${meta.name}`);
-      fetchSocialData();
+        toast.success(`已接受題庫：${meta.name}`);
+        fetchSocialData();
+      } catch (saveError) {
+        await repository.deleteBank(newBank.id);
+        toast.error(`儲存題庫失敗，已取消操作`);
+        throw saveError;
+      }
     } catch (err) {
       console.error(err);
     }

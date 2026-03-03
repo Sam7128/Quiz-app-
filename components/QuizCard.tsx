@@ -232,23 +232,23 @@ export const QuizCard: React.FC<QuizCardProps> = ({
     }
 
     // Standard Mode Styling
-    const standardBase = `${baseClass} border`;
+    const standardBase = `${baseClass} border outline-none`;
     if (!isAnswered) {
       if (isSelected && isMultiple) {
-        return `${standardBase} border-brand-500 bg-brand-50 text-brand-900 shadow-sm`;
+        return `${standardBase} border-brand-500 dark:border-brand-400 bg-brand-50 dark:bg-brand-900/30 text-brand-900 dark:text-brand-100 shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500/50`;
       }
-      return `${standardBase} border-slate-200 hover:border-brand-500 hover:bg-brand-50 hover:shadow-md`;
+      return `${standardBase} border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200 hover:border-brand-500 dark:hover:border-brand-400 focus-visible:border-brand-500 dark:focus-visible:border-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/20 focus-visible:bg-brand-50 dark:focus-visible:bg-brand-900/20 hover:shadow-md focus-visible:shadow-md`;
     }
 
     if (isCorrect) {
-      return `${standardBase} border-green-500 bg-green-50 text-green-800 ring-1 ring-green-500`;
+      return `${standardBase} border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-300 ring-1 ring-green-500`;
     }
 
     if (isSelected && !isCorrect) {
-      return `${standardBase} border-red-500 bg-red-50 text-red-800`;
+      return `${standardBase} border-red-500 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-300`;
     }
 
-    return `${standardBase} border-slate-100 text-slate-400 opacity-60`;
+    return `${standardBase} border-slate-100 dark:border-slate-700 text-slate-400 dark:text-slate-400 opacity-80`;
   };
 
   const renderOptionIcon = (option: string) => {

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRepository } from '../contexts/RepositoryContext';
 import { StreakData } from '../services/repository';
+import { isAbortError } from '../utils/isAbortError';
 
 interface UseStreakReturn {
   streak: StreakData;
@@ -20,11 +21,12 @@ export const useStreak = (): UseStreakReturn => {
 
   const fetchStreak = useCallback(async () => {
     setLoading(true);
-    
+
     try {
       const data = await repository.getStreak();
       setStreak(data);
     } catch (error) {
+      if (isAbortError(error)) return;
       console.error('Error fetching streak:', error);
     } finally {
       setLoading(false);
