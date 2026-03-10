@@ -1,8 +1,9 @@
 import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import OpenAI from "openai";
 import { Question, AIConfig } from "../types";
-import { normalizeToUuid } from "../utils/uuid";
+import { generateUUID } from "../utils/uuid";
 import { STORAGE_KEYS } from "./storage";
+import { createQuestionFingerprint, normalizeSourceQuestionKey } from "../utils/questionIdentity";
 
 const QUESTION_JSON_SCHEMA = `{
   "type": "array",
@@ -161,9 +162,9 @@ ${question.explanation ? `原解析：${question.explanation}` : ''}
       const response = await result.response;
       return response.text();
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("AI Error:", error);
-    throw new Error(error.message || "AI 請求失敗，請檢查 API 金鑰或網路連線。");
+    throw new Error(error instanceof Error ? error.message : "AI 請求失敗，請檢查 API 金鑰或網路連線。");
   }
 };
 
@@ -216,9 +217,7 @@ export const generateQuestionsFromPDF = async (
       4. 題目語言：${outputLang}
     `;
 
-    // Explicitly construct parts with 'any' cast to avoid strict union discrimination issues specific to some SDK versions
-    // The structure is correct per documentation: { text: string } | { inlineData: ... }
-    const parts: any[] = [
+    const parts: Part[] = [
       { text: prompt },
       {
         inlineData: {
@@ -253,17 +252,26 @@ export const generateQuestionsFromPDF = async (
       const type = q.type === 'single' || q.type === 'multiple' ? q.type : 'single';
 
       return {
-        id: normalizeToUuid(q.id),
+        id: generateUUID(),
+        original_question_id: normalizeSourceQuestionKey(q.id),
+        sourceQuestionKey: normalizeSourceQuestionKey(q.id),
         question: typeof q.question === 'string' ? q.question : '',
         options,
         answer,
         type,
         hint: typeof q.hint === 'string' ? q.hint : undefined,
         explanation: typeof q.explanation === 'string' ? q.explanation : undefined,
+        sourceFingerprint: createQuestionFingerprint({
+          question: typeof q.question === 'string' ? q.question : '',
+          options,
+          answer,
+          type,
+        }),
       } satisfies Question;
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("PDF Generate Error:", error);
-    throw new Error("生成失敗：" + (error.message || "未知錯誤"));
+    const message = error instanceof Error ? error.message : "未知錯誤";
+    throw new Error("生成失敗：" + message);
   }
 };

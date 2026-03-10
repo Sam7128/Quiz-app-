@@ -95,7 +95,7 @@ export const ConfirmProvider: React.FC<{ children: ReactNode }> = ({ children })
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   {dialog.options.title}
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-6 whitespace-pre-line">
                   {dialog.options.message}
                 </p>
                 <div className="flex justify-end gap-3">

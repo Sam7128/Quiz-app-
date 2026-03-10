@@ -1,4 +1,34 @@
-# AGENTS.md - Development Guide
+# AGENTS.md - MindSpark Development Guide
+
+## 🔒 鐵規 (Absolute Rules)
+
+> **所有 Agent（Codex、Gemini CLI、Claude 等）進入本專案時，必須遵守以下不可違反的規則。**
+
+1. **LANGUAGE_ZH_TW**: 所有互動與回應必須使用**繁體中文**。
+2. **CHECKLIST_FIRST**: 每個重大任務必須維護並更新 `CHECKLIST.md`。
+3. **NO_ANY**: 嚴禁使用 `any` 型別。使用 `unknown` + 型別守衛。
+4. **DATA_SAFETY**: 絕對禁止對正式數據檔案（`user_data.json`、`localStorage` 中的 `mindspark_*`）執行破壞性測試。測試必須使用獨立路徑。進行任何可能影響用戶數據的操作前，必須先備份。
+5. **TYPE_FIRST**: 先在 `types.ts` 定義型別 → `npx tsc --noEmit` 編譯檢查 → 再實作邏輯。
+6. **REACT_18_SAFETY**: 使用 `useTranslation` 或 async 初始化的元件必須包在 `<Suspense>` 中。關鍵資料使用 Skeleton loader。
+7. **PERSISTENCE_INTEGRITY**: Zustand `persist` 必須在 `partialize` 中顯式列出所有欄位。實作自訂 `merge` 函式防止空資料覆蓋。
+8. **DEPENDENCY_VERIFY**: 匯入外部套件前先驗證其匯出。注意大版本升級的 breaking changes。
+9. **PERFECTIONIST_MODE**: 禁止截斷程式碼，必須輸出完整檔案內容。優先防禦式程式設計和資料安全。
+10. **DOCS_MAINTENANCE**: 在每次任務結束或有重大變更時，必須自動檢查並更新 [docs/DEVELOPMENT_LOG.md](file:///c:/Users/user/Desktop/Quiz-app--main/docs/DEVELOPMENT_LOG.md)，內容必須保持與最新代碼狀態同步。GEMINI.md 已廢除，不再維護。
+
+## 📍 模組快速索引
+
+> Agent 可直接跳轉至對應模組的巢狀 `AGENTS.md` 取得精準上下文，無需搜尋整個專案。
+
+| 模組 | 路徑 | 局部記憶 | 職責 |
+|------|------|----------|------|
+| Components | `components/` | `components/AGENTS.md` | UI 元件、動畫、頁面 |
+| Services | `services/` | `services/AGENTS.md` | 業務邏輯、資料存取、AI |
+| Hooks | `hooks/` | `hooks/AGENTS.md` | 領域 Hooks（Battle, Quiz 等） |
+| Constants | `constants/` | `constants/AGENTS.md` | 靜態資料定義（怪物、技能、成就） |
+| Contexts | `contexts/` | `contexts/AGENTS.md` | React Context（Auth, Theme 等） |
+| OpenSpec | `openspec/` | `openspec/AGENTS.md` | 規格管理、變更追蹤 |
+| Tests | `src/__tests__/` | `src/__tests__/AGENTS.md` | 單元測試 |
+| E2E | `e2e/` | `e2e/AGENTS.md` | 端對端測試 |
 
 ## Quick Start & Build Commands
 
@@ -364,3 +394,23 @@ These are implemented for accessibility and power-user experience. Add new short
 - [ ] New services/hooks have tests.
 - [ ] No XSS vulnerabilities (no `dangerouslySetInnerHTML`).
 - [ ] 完成動作後請以繁體中文說一次。
+
+<!-- >>> project-memory protocol >>> -->
+## Memory Refresh Protocol
+
+- This section is additive. Do not rewrite existing `/init` instructions, design system rules, style guidance, or architecture guidance above.
+- At task start, read `MEMORY.md` before broad exploration if the file exists.
+- If a matching `project-memory` MCP server is available for this repository, use it proactively at task start to inspect `Entry Points`, `Hotspots`, or targeted memory search before broad recursive search.
+- If `MEMORY.md` is missing, stale, or the project structure changed, refresh it before continuing.
+- At task end, update `MEMORY.md` when you changed architecture, moved files, added new modules, or discovered durable constraints.
+- Keep memory project-scoped: do not create `GEMINI.md`, dated memory logs, or duplicate note files unless explicitly requested.
+- Prefer one canonical `MEMORY.md` plus nested `AGENTS.md` files for local routing.
+- Keep `Aliases & Vocabulary`, `Entry Points`, and `Search Recipes` current so future agents can map user language to the right files quickly.
+- If archived reports live under `docs/`, update `docs/INDEX.md` after moving or adding report files.
+- If a local memory index is used, keep it under `.memory-index/` inside this project only and never merge it with other projects.
+- Never consult another project's `MEMORY.md`, `docs/INDEX.md`, or `.memory-index/` unless the user explicitly asks for cross-project analysis.
+- If multiple `project-memory`, `project-memory-*`, or `pm-*` servers are visible, use only the server whose wrapper path or declared root matches this repository. Ignore sibling project servers.
+- If `project-memory` MCP wiring is missing for this project, install the local wrapper and project-local MCP config before relying on it.
+- Codex: invoke `$project-memory-refresh` when memory needs to be created or refreshed.
+- Other agents: follow the same protocol manually by updating the `MEMORY.md` auto-generated map, then curating `Aliases & Vocabulary`, `Entry Points`, `Stable Facts`, `Active Decisions`, `Hotspots`, `Search Recipes`, and `Open Risks`.
+<!-- <<< project-memory protocol <<< -->

@@ -30,10 +30,43 @@
 - [x] **[Refactor]** 遷移至 Tailwind CSS v4 與模組化配置
 - [x] **[Refactor]** 技能導向優化計畫 (Skills-Based Optimization Plan) `skills-based-optimization`
 - [x] **[Optimization]** 打包體積最佳化 (Bundle Size Optimization) `vite-bundle-split`
+- [x] **[Infra]** 統一 Agent 記憶架構 (Unified Agent Memory Arch)
+    - [x] 建立 `.gemini/settings.json` 指向 `AGENTS.md`
+    - [x] 廢除 `GEMINI.md` 並遷移 Protocol 至 `AGENTS.md` 鐵規
+    - [x] 建立 8 個模組級巢狀 `AGENTS.md` (Components, Services, etc.)
+    - [x] 根目錄大掃除：搬移 40+ 個散落檔案至 `docs/` 子目錄
+    - [x] 修復 `project-memory` MCP `search_memory` 的 `score_entry` 作用域錯誤
+    - [x] 建立 repo-local `.project-memory/` wrapper 與 `.codex/config.toml`
+    - [x] 強化 `project-memory-refresh` skill：refresh 後自動驗證 MCP 可連線且可執行 `search_memory`
+    - [x] 調整 `project-memory-refresh` skill：保留 AntiGravity 預設安裝，但改為權限失敗時警告不中止
+
+
+- [x] **[Feature]** 知識圖工作區 (Knowledge Graph Workspace) `knowledge-graph-workspace`
+    - [x] 資料模型 (`GraphDocument`, `GraphNode`, `GraphEdge`, `GraphViewState`)
+    - [x] CRUD 服務層 (`graphStorage.ts`) 含 MutationResult 與 QuotaExceeded 偵測
+    - [x] Mermaid 雙向橋接 (`mermaidBridge.ts`) 含分號、行號、修正建議
+    - [x] ReactFlow 編輯器 (節點/連線 CRUD、Undo/Redo、自動儲存)
+    - [x] 閱讀模式 (漸進式 L1→L2→L3 + 全展開)
+    - [x] Beta 功能開關 + 條件導覽 + View Guardian
+    - [x] 手機唯讀模式 + 桌面全功能
+    - [x] React.lazy 代碼分割 (KG chunk 26.64KB gzip)
+    - [x] 47 個新測試 (graphStorage 15 + mermaidBridge 19 + betaFeature 4 + readingModes 9)
+    - [x] 8 輪多模型自動驗證 (Claude Opus + GPT-5.3 + GPT-5.4)
 
 ## 🟡 待辦 (Pending)
 - [ ] **[Build]** 單元測試覆蓋率提升 (Test Coverage Improvement)
 - [ ] **[Feature]** PWA 離線支持 (PWA Offline Support)
+
+## 🟢 本次完成 (Completed This Round)
+- [x] **[Data Integrity]** 題目識別與題庫編修安全升級 (Question Identity & Bank Editing Safety)
+    - [x] 分離內部題目 UUID 與外部來源識別，避免匯入/AI 造成跨題庫 ID 衝突
+    - [x] 匯入前去重並保留既有題目 ID，避免重複新增與學習紀錄斷鏈
+    - [x] 在題庫管理加入單題編輯/刪除，並清理錯題/複習殘留資料
+    - [x] 補齊雲端儲存與題庫管理測試
+- [x] **[UX]** 題庫匯入模式切換與匯入前摘要提示
+    - [x] 支援「追加新題 / 更新同來源題目 / 覆蓋整個題庫」
+    - [x] 貼上 JSON 後匯入不再自動清空文字內容
+    - [x] 匯入前顯示原始題數、重複合併數、實際匯入數與模式影響
 
 ## 📝 備註 (Notes)
 - 已完成 App 组件的徹底瘦身，後續新增視圖請優先於 `AppContent.tsx` 進行註冊。

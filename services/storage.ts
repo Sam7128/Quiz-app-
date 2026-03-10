@@ -19,6 +19,7 @@ export const STORAGE_KEYS = {
   QUIZ_SESSION: 'mindspark_quiz_session',
   SETTINGS: 'mindspark_settings',
   RECENT_MISTAKES: 'mindspark_recent_mistakes',
+  GRAPHS: 'mindspark_graphs',
 
   // Explicit keys used outside storage service (registry)
   BGM_ENABLED: 'mindspark_bgm_enabled',
@@ -57,6 +58,27 @@ export const saveQuizSession = (session: SavedQuizProgress) => {
 
 export const clearQuizSession = () => {
   localStorage.removeItem(STORAGE_KEYS.QUIZ_SESSION);
+};
+
+export const removeQuestionFromQuizSession = (questionId: string): void => {
+  const session = getQuizSession();
+  if (!session) return;
+
+  const nextQuestionIds = session.questionIds.filter((id) => id !== questionId);
+  const nextWrongIds = session.wrongQuestionIds.filter((id) => id !== questionId);
+
+  if (nextQuestionIds.length === 0) {
+    clearQuizSession();
+    return;
+  }
+
+  saveQuizSession({
+    ...session,
+    questionIds: nextQuestionIds,
+    wrongQuestionIds: nextWrongIds,
+    currentIndex: Math.min(session.currentIndex, nextQuestionIds.length - 1),
+    savedAt: Date.now(),
+  });
 };
 
 // --- Game Mode ---
@@ -320,6 +342,21 @@ export const clearRecentMistakeSession = (sessionId: string) => {
   localStorage.setItem(STORAGE_KEYS.RECENT_MISTAKES, JSON.stringify(list));
 };
 
+export const removeQuestionFromRecentMistakeSessions = (questionId: string): void => {
+  try {
+    const list = getRecentMistakeSessions()
+      .map((session) => ({
+        ...session,
+        mistakes: session.mistakes.filter((mistake) => mistake.questionId !== questionId),
+      }))
+      .filter((session) => session.mistakes.length > 0);
+
+    localStorage.setItem(STORAGE_KEYS.RECENT_MISTAKES, JSON.stringify(list));
+  } catch (e) {
+    console.error('Failed to remove question from recent mistake sessions', e);
+  }
+};
+
 export const clearAllRecentMistakes = () => {
   localStorage.removeItem(STORAGE_KEYS.RECENT_MISTAKES);
 };
@@ -365,6 +402,13 @@ export const deleteSpacedRepetitionItem = (questionId: string): void => {
 
 export const clearSpacedRepetition = (): void => {
   localStorage.removeItem(STORAGE_KEYS.SPACED_REPETITION);
+};
+
+export const deleteQuestionArtifacts = (questionId: string): void => {
+  removeMistake(questionId);
+  deleteSpacedRepetitionItem(questionId);
+  removeQuestionFromRecentMistakeSessions(questionId);
+  removeQuestionFromQuizSession(questionId);
 };
 
 // --- Data Nuke (The "Root Out" functionality) ---

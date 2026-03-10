@@ -47,11 +47,12 @@ description: 自動驗證實作是否符合 OpenSpec 變更計畫（規格、設
           <stress-test-report.md 內容>
           <benchmark-harness.md 內容>
           ```
-        - 執行命令：
+        - 執行命令（唯一已驗證有效語法）：
           ```powershell
-          Get-Content "$env:TEMP\verify_prompt.md" -Raw | npx codex exec -s read-only -o "$env:TEMP\codex_verify_report.md" -
+          # ✅ 已驗證正確：cmd.exe 包裝 + stdin 重導向（-q 和 -f 旗標在此版本不存在）
+          cmd.exe /c "npx codex exec --skip-git-repo-check -s read-only - < "%TEMP%\verify_prompt.md" > "%TEMP%\codex_verify_report.md" 2>&1"
           ```
-          *(註：參數 `-s read-only` 確保審查官不能亂改原始碼，只能探索並生成 `codex_verify_report.md`。)*
+          *(註：`-s read-only` 確保審查官不能亂改原始碼。`--skip-git-repo-check` 是必要旗標，在非 Git/非信任目錄執行缺少此旗標會直接失敗。禁止使用 `-f`、`-q`（此版本不支援）或 PowerShell 直接管道（被執行政策攔截）。)*
      2. **Validation & Fix Pass (由您進行實作修復)**:
         - 讀取 `$env:TEMP\codex_verify_report.md` 的意見。
         - **如果是真實存在的問題 (REAL)**：您必須立即親自去修改程式碼、建立缺失的模組，或把忘記打勾的 tasks.md 打勾補上。

@@ -31,6 +31,7 @@ export interface IStorageRepository {
   // Questions
   getQuestions(bankId: string): Promise<Question[]>;
   saveQuestions(bankId: string, questions: Question[]): Promise<void>;
+  deleteQuestionArtifacts(questionId: string): Promise<void>;
 
   // Mistakes
   getMistakeLog(): MistakeLog;

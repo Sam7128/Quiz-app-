@@ -1,6 +1,8 @@
 export interface Question {
   id: string | number;
   original_question_id?: string | number;
+  sourceQuestionKey?: string;
+  sourceFingerprint?: string;
   question: string;
   options: string[];
   answer: string | string[];
@@ -44,7 +46,7 @@ export interface BankMetadata {
   folderId?: string | null; // Optional reference to a parent folder
 }
 
-export type AppView = 'dashboard' | 'quiz' | 'mistakes' | 'manager' | 'guide' | 'social';
+export type AppView = 'dashboard' | 'quiz' | 'mistakes' | 'manager' | 'guide' | 'social' | 'graph';
 
 export interface AppState {
   view: AppView;

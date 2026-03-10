@@ -2,6 +2,7 @@ import { supabase } from './supabase';
 import { Question, BankMetadata, SpacedRepetitionItem } from '../types';
 import { normalizeToUuid } from '../utils/uuid';
 import { STORAGE_KEYS } from './storage';
+import { ensureStableQuestionId, normalizeQuestionForPersistence } from '../utils/questionIdentity';
 
 /**
  * Cloud Storage Service (Supabase)
@@ -81,6 +82,9 @@ export const getCloudQuestions = async (bankId: string): Promise<Question[]> => 
 
   return data.map(q => ({
     id: q.id,
+    original_question_id: q.original_question_id ?? undefined,
+    sourceQuestionKey: q.source_question_key ?? undefined,
+    sourceFingerprint: q.source_fingerprint ?? undefined,
     question: q.question,
     options: q.options,
     answer: q.answer,
@@ -91,7 +95,15 @@ export const getCloudQuestions = async (bankId: string): Promise<Question[]> => 
 };
 
 export const saveCloudQuestions = async (bankId: string, questions: Question[]) => {
-  const normalized = questions.map((q) => ({
+  const dedupedById = new Map<string, Question>();
+
+  questions
+    .map((question) => normalizeQuestionForPersistence(ensureStableQuestionId(question)))
+    .forEach((question) => {
+      dedupedById.set(normalizeToUuid(question.id), question);
+    });
+
+  const normalized = Array.from(dedupedById.values()).map((q) => ({
     ...q,
     id: normalizeToUuid(q.id),
   }));
@@ -99,6 +111,9 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[]) 
   const toUpsert = normalized.map(q => ({
     id: q.id,
     bank_id: bankId,
+    original_question_id: q.original_question_id ?? null,
+    source_question_key: q.sourceQuestionKey ?? null,
+    source_fingerprint: q.sourceFingerprint ?? null,
     question: q.question,
     options: q.options,
     answer: q.answer,

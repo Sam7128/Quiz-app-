@@ -1,7 +1,8 @@
 import React from 'react';
 import { AppView } from '../types';
 import { User } from '@supabase/supabase-js';
-import { BrainCircuit, LayoutDashboard, Settings, Users, Sparkles, User as UserIcon, LucideIcon } from 'lucide-react';
+import { BrainCircuit, LayoutDashboard, Settings, Users, Sparkles, User as UserIcon, LucideIcon, GitFork } from 'lucide-react';
+import { getUserSettings } from '../services/storage';
 
 interface AppHeaderProps {
   view: AppView;
@@ -16,12 +17,20 @@ interface AppHeaderProps {
   onLoginRedirect: () => void;
 }
 
-const NAV_ITEMS: { id: AppView; label: string; icon: LucideIcon }[] = [
+const BASE_NAV_ITEMS: { id: AppView; label: string; icon: LucideIcon }[] = [
   { id: 'dashboard', label: '首頁', icon: LayoutDashboard },
   { id: 'manager', label: '題庫', icon: BrainCircuit },
   { id: 'guide', label: 'AI 指引', icon: Sparkles },
   { id: 'social', label: '社群', icon: Users },
 ];
+
+function getNavItems(): { id: AppView; label: string; icon: LucideIcon }[] {
+  const settings = getUserSettings();
+  if (settings.betaFeatures?.knowledgeGraph) {
+    return [...BASE_NAV_ITEMS, { id: 'graph' as AppView, label: '🧠 知識圖', icon: GitFork }];
+  }
+  return BASE_NAV_ITEMS;
+}
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
   view, gameMode, user, banks, editingBankId, selectedQuizBankIds,
@@ -55,7 +64,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           </div>
         </div>
         <nav className="hidden md:flex items-center gap-2">
-          {NAV_ITEMS.map(item => (
+          {getNavItems().map(item => (
             <button
               key={item.id}
               onClick={() => onNavigate(item.id)}

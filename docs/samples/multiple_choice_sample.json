@@ -1,0 +1,61 @@
+[
+    {
+        "id": "mc-001",
+        "type": "multiple",
+        "question": "哪些是常見的網頁開發前端框架？",
+        "options": [
+            "React",
+            "Django",
+            "Vue.js",
+            "Spring Boot",
+            "Angular"
+        ],
+        "answer": [
+            "React",
+            "Vue.js",
+            "Angular"
+        ],
+        "explanation": "React, Vue.js 和 Angular 是目前最流行的三大前端框架。Django (Python) 和 Spring Boot (Java) 則是後端框架。",
+        "hint": "注意區分前端與後端。"
+    },
+    {
+        "id": "mc-002",
+        "type": "multiple",
+        "question": "哪些是作業系統的內核類型？",
+        "options": [
+            "Monolithic Kernel",
+            "Microkernel",
+            "Macrokernel",
+            "Hybrid Kernel",
+            "Exokernel"
+        ],
+        "answer": [
+            "Monolithic Kernel",
+            "Microkernel",
+            "Hybrid Kernel",
+            "Exokernel"
+        ],
+        "explanation": "常見的內核類型包括單核 (Monolithic)、微核 (Micro)、混合核 (Hybrid) 和外核 (Exokernel)。不存所謂的 Macrokernel。",
+        "hint": "巨集並非標準術語。"
+    },
+    {
+        "id": "mc-003",
+        "type": "multiple",
+        "question": "GitHub 提供哪些核心功能？",
+        "options": [
+            "版本控制 (Git)",
+            "程式碼託管",
+            "線上編譯 C++",
+            "專案管理 (Issues/Projects)",
+            "社交協作"
+        ],
+        "answer": [
+            "版本控制 (Git)",
+            "程式碼託管",
+            "專案管理 (Issues/Projects)",
+            "社交協作"
+        ],
+        "explanation": "GitHub 主要是基於 Git 的程式碼託管平台，雖然提供 Actions 等自動化功能，但其核心功能不包含通用的『線上編譯器』。",
+        "hint": "專注於平台本身的協作特性。"
+    }
+]

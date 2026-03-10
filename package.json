@@ -13,8 +13,10 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@dagrejs/dagre": "^2.0.4",
     "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.93.2",
+    "@xyflow/react": "^12.10.1",
     "classnames": "^2.5.1",
     "dompurify": "^3.3.1",
     "framer-motion": "^12.29.2",

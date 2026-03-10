@@ -229,6 +229,9 @@ export interface SavedQuizProgress {
 
 export interface UserSettings {
   restBreakInterval: number; // 0 = 關閉, 任意正整數 = 間隔
+  betaFeatures?: {
+    knowledgeGraph: boolean;
+  };
 }
 
 export const DEFAULT_SETTINGS: UserSettings = {

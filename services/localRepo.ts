@@ -19,7 +19,8 @@ import {
   getRecentMistakeSessions,
   addRecentMistakeSession,
   clearRecentMistakeSession,
-  clearAllRecentMistakes
+  clearAllRecentMistakes,
+  deleteQuestionArtifacts
 } from './storage';
 import { recordLocalStudySession, getLocalDailyStats, getLocalStudyStats } from './analytics';
 import { getLocalAchievements, unlockLocalAchievement } from './achievements';
@@ -52,6 +53,10 @@ export class LocalStorageRepository implements IStorageRepository {
 
   async saveQuestions(bankId: string, questions: Question[]): Promise<void> {
     saveLocalQuestions(bankId, questions);
+  }
+
+  async deleteQuestionArtifacts(questionId: string): Promise<void> {
+    deleteQuestionArtifacts(questionId);
   }
 
   getMistakeLog(): MistakeLog {

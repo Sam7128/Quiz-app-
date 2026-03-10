@@ -40,6 +40,8 @@ describe('saveCloudQuestions', () => {
     const questions: Question[] = [
       {
         id: fixedUuid,
+        sourceQuestionKey: 'legacy-1',
+        sourceFingerprint: 'fp-1',
         question: 'Q1',
         options: ['A', 'B'],
         answer: 'A',
@@ -47,6 +49,8 @@ describe('saveCloudQuestions', () => {
       },
       {
         id: 7,
+        sourceQuestionKey: 'legacy-2',
+        sourceFingerprint: 'fp-2',
         question: 'Q2',
         options: ['A', 'B'],
         answer: 'B',
@@ -59,8 +63,18 @@ describe('saveCloudQuestions', () => {
     expect(upsertMock).toHaveBeenCalledTimes(1);
     const upsertPayload = upsertMock.mock.calls[0][0] as Array<{ id: string; bank_id: string }>;
     expect(upsertPayload).toEqual([
-      expect.objectContaining({ id: fixedUuid, bank_id: 'bank-1' }),
-      expect.objectContaining({ id: generatedUuid, bank_id: 'bank-1' }),
+      expect.objectContaining({
+        id: fixedUuid,
+        bank_id: 'bank-1',
+        source_question_key: 'legacy-1',
+        source_fingerprint: expect.stringMatching(/^qfp_/),
+      }),
+      expect.objectContaining({
+        id: generatedUuid,
+        bank_id: 'bank-1',
+        source_question_key: 'legacy-2',
+        source_fingerprint: expect.stringMatching(/^qfp_/),
+      }),
     ]);
 
     expect(eqMock).toHaveBeenCalledWith('bank_id', 'bank-1');
@@ -82,5 +96,42 @@ describe('saveCloudQuestions', () => {
     expect(upsertMock).toHaveBeenCalledWith([], { onConflict: 'id' });
     expect(eqMock).toHaveBeenCalledWith('bank_id', 'bank-empty');
   });
-});
 
+  it('deduplicates same payload ids before upsert', async () => {
+    const upsertMock = vi.fn().mockResolvedValue({ error: null });
+    const notMock = vi.fn().mockResolvedValue({ error: null });
+    const eqMock = vi.fn().mockReturnValue({ not: notMock });
+    const deleteMock = vi.fn().mockReturnValue({ eq: eqMock });
+    mocks.from.mockReturnValue({
+      upsert: upsertMock,
+      delete: deleteMock,
+    });
+
+    const duplicateId = '123e4567-e89b-12d3-a456-426614174000';
+    const questions: Question[] = [
+      {
+        id: duplicateId,
+        question: 'Q1',
+        options: ['A', 'B'],
+        answer: 'A',
+        type: 'single',
+        sourceFingerprint: 'fp-1',
+      },
+      {
+        id: duplicateId,
+        question: 'Q1 updated',
+        options: ['A', 'B'],
+        answer: 'B',
+        type: 'single',
+        sourceFingerprint: 'fp-1b',
+      },
+    ];
+
+    await saveCloudQuestions('bank-dup', questions);
+
+    expect(upsertMock).toHaveBeenCalledTimes(1);
+    const upsertPayload = upsertMock.mock.calls[0][0] as Array<{ id: string; question: string }>;
+    expect(upsertPayload).toHaveLength(1);
+    expect(upsertPayload[0]).toEqual(expect.objectContaining({ id: duplicateId, question: 'Q1 updated' }));
+  });
+});

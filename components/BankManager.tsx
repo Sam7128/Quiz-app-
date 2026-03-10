@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Question, BankMetadata } from '../types';
-import { Upload, Download, Trash2, AlertCircle, Plus, FileJson, FileText, Check, FolderOpen, Loader2, Sparkles, FileType } from 'lucide-react';
+import { Upload, Download, Trash2, AlertCircle, Plus, FileJson, FileText, Check, FolderOpen, Loader2, Sparkles, FileType, PencilLine, Save, X } from 'lucide-react';
 import { useRepository } from '../contexts/RepositoryContext';
 import { generateQuestionsFromPDF } from '../services/ai';
 import DOMPurify from 'dompurify';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../hooks/useConfirm';
 import { SkeletonLoader } from './SkeletonLoader';
-import { normalizeToUuid } from '../utils/uuid';
+import { generateUUID } from '../utils/uuid';
+import {
+  normalizeQuestionForPersistence,
+  normalizeSourceQuestionKey,
+  planQuestionImport,
+  type ImportMode
+} from '../utils/questionIdentity';
 
 interface BankManagerProps {
   currentQuestions: Question[];
@@ -16,6 +22,15 @@ interface BankManagerProps {
   onUpdateQuestions: (questions: Question[]) => void;
   onRefreshBanks: () => void;
   onMistakesUpdate: () => void;
+}
+
+interface QuestionEditorDraft {
+  question: string;
+  type: 'single' | 'multiple';
+  optionsText: string;
+  answerText: string;
+  hint: string;
+  explanation: string;
 }
 
 const PDFImportSection: React.FC<{ onImport: (q: Question[]) => void }> = ({ onImport }) => {
@@ -176,11 +191,14 @@ export const BankManager: React.FC<BankManagerProps> = ({
   const confirmDialog = useConfirm();
   const [banks, setBanks] = useState<BankMetadata[]>([]);
   const [activeTab, setActiveTab] = useState<'upload' | 'paste' | 'ai'>('upload');
+  const [importMode, setImportMode] = useState<ImportMode>('append');
   const [jsonText, setJsonText] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [newBankName, setNewBankName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
+  const [questionDraft, setQuestionDraft] = useState<QuestionEditorDraft | null>(null);
 
   const sanitizeString = (value: unknown): string | undefined => {
     if (typeof value !== 'string') return undefined;
@@ -216,9 +234,15 @@ export const BankManager: React.FC<BankManagerProps> = ({
         : (sanitizeString(rawAnswer) ?? '');
 
       const type = q.type === 'single' || q.type === 'multiple' ? q.type : undefined;
+      const sourceQuestionKey =
+        sanitizeString(q.sourceQuestionKey) ??
+        normalizeSourceQuestionKey(q.original_question_id) ??
+        normalizeSourceQuestionKey(q.id);
 
       return {
-        id: normalizeToUuid(q.id),
+        id: normalizeSourceQuestionKey(q.id) ?? generateUUID(),
+        original_question_id: sourceQuestionKey,
+        sourceQuestionKey,
         question: sanitizeString(q.question) ?? '',
         options: sanitizeStringArray(q.options),
         answer,
@@ -230,9 +254,28 @@ export const BankManager: React.FC<BankManagerProps> = ({
     });
   };
 
+  const buildDraftFromQuestion = (question: Question): QuestionEditorDraft => ({
+    question: question.question,
+    type: question.type ?? 'single',
+    optionsText: question.options.join('\n'),
+    answerText: Array.isArray(question.answer) ? question.answer.join('\n') : question.answer,
+    hint: question.hint ?? '',
+    explanation: question.explanation ?? '',
+  });
+
   useEffect(() => {
     void refreshBanks();
   }, [repository]);
+
+  useEffect(() => {
+    if (!editingQuestionId) return;
+
+    const currentQuestion = currentQuestions.find((question) => String(question.id) === editingQuestionId);
+    if (!currentQuestion) {
+      setEditingQuestionId(null);
+      setQuestionDraft(null);
+    }
+  }, [currentQuestions, editingQuestionId]);
 
   const refreshBanks = async () => {
     setLoading(true);
@@ -287,16 +330,21 @@ export const BankManager: React.FC<BankManagerProps> = ({
       const data = normalizeImportedQuestions(parsed);
 
       if (currentBankId) {
-        setLoading(true);
-        await repository.saveQuestions(currentBankId, data);
+        const mergedQuestions = await confirmImportSummary(data);
+        if (!mergedQuestions) {
+          setError(null);
+          return;
+        }
 
-        onUpdateQuestions(data);
+        setLoading(true);
+        await repository.saveQuestions(currentBankId, mergedQuestions);
+
+        onUpdateQuestions(mergedQuestions);
         await refreshBanks(); // Update counts
         onRefreshBanks(); // Sync parent
         setError(null);
-        setJsonText('');
         setLoading(false);
-        toast.success(`成功匯入 ${data.length} 題！`);
+        toast.success(`成功匯入 ${mergedQuestions.length} 題！`);
       } else {
         setError("請先選擇或建立一個題庫");
       }
@@ -328,8 +376,159 @@ export const BankManager: React.FC<BankManagerProps> = ({
     downloadAnchorNode.remove();
   };
 
+  const confirmImportSummary = async (importedQuestions: Question[]): Promise<Question[] | null> => {
+    if (!currentBankId) {
+      setError("請先選擇或建立一個題庫");
+      return null;
+    }
+
+    const { questions: mergedQuestions, analysis } = planQuestionImport(
+      currentQuestions,
+      importedQuestions,
+      importMode
+    );
+
+    const summaryLines = [
+      `匯入模式：${importMode === 'append' ? '追加新題' : importMode === 'merge' ? '更新同來源題目' : '覆蓋整個題庫'}`,
+      `原始資料：${analysis.rawCount} 題`,
+      `重複來源 ID 合併：${analysis.duplicateSourceKeyMergedCount} 題`,
+      `相同題目內容合併：${analysis.duplicateFingerprintMergedCount} 題`,
+      `實際可匯入：${analysis.dedupedCount} 題`,
+      `符合既有題目：${analysis.matchedExistingCount} 題`,
+      `實際更新題目：${analysis.updatedQuestionCount} 題`,
+      `略過既有題目：${analysis.skippedMatchedCount} 題`,
+      `新增題目：${analysis.newQuestionCount} 題`,
+      `移除舊題目：${analysis.removedQuestionCount} 題`,
+      `匯入後題庫總數：${analysis.finalQuestionCount} 題`,
+    ];
+
+    const confirmed = await confirmDialog({
+      title: '匯入前檢查',
+      message: `${summaryLines.join('\n')}\n\n是否繼續匯入？`,
+      confirmText: '繼續匯入',
+      cancelText: '取消',
+    });
+
+    return confirmed ? mergedQuestions : null;
+  };
+
+  const beginEditQuestion = (question: Question) => {
+    setEditingQuestionId(String(question.id));
+    setQuestionDraft(buildDraftFromQuestion(question));
+  };
+
+  const resetQuestionEditor = () => {
+    setEditingQuestionId(null);
+    setQuestionDraft(null);
+  };
+
+  const parseLines = (value: string): string[] => {
+    return value
+      .split('\n')
+      .map((entry) => DOMPurify.sanitize(entry.trim()))
+      .filter((entry) => entry.length > 0);
+  };
+
+  const handleSaveQuestionEdit = async () => {
+    if (!currentBankId || !editingQuestionId || !questionDraft) return;
+
+    const sanitizedQuestion = DOMPurify.sanitize(questionDraft.question.trim());
+    const sanitizedHint = DOMPurify.sanitize(questionDraft.hint.trim());
+    const sanitizedExplanation = DOMPurify.sanitize(questionDraft.explanation.trim());
+    const options = parseLines(questionDraft.optionsText);
+    const answers = parseLines(questionDraft.answerText);
+
+    if (!sanitizedQuestion) {
+      setError('題目內容不可為空。');
+      return;
+    }
+
+    if (options.length < 2) {
+      setError('至少需要兩個選項。');
+      return;
+    }
+
+    if (answers.length === 0) {
+      setError('請至少填入一個正確答案。');
+      return;
+    }
+
+    const invalidAnswers = answers.filter((answer) => !options.includes(answer));
+    if (invalidAnswers.length > 0) {
+      setError('正確答案必須出現在選項中。');
+      return;
+    }
+
+    if (questionDraft.type === 'single' && answers.length !== 1) {
+      setError('單選題只能有一個正確答案。');
+      return;
+    }
+
+    const updatedQuestions = currentQuestions.map((question) => {
+      if (String(question.id) !== editingQuestionId) return question;
+
+      return normalizeQuestionForPersistence({
+        ...question,
+        question: sanitizedQuestion,
+        type: questionDraft.type,
+        options,
+        answer: questionDraft.type === 'single' ? answers[0] : answers,
+        hint: sanitizedHint || undefined,
+        explanation: sanitizedExplanation || undefined,
+      });
+    });
+
+    setLoading(true);
+    try {
+      await repository.saveQuestions(currentBankId, updatedQuestions);
+      onUpdateQuestions(updatedQuestions);
+      await refreshBanks();
+      onRefreshBanks();
+      setError(null);
+      toast.success('題目已更新。');
+      resetQuestionEditor();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '更新題目失敗');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteQuestion = async (question: Question) => {
+    if (!currentBankId) return;
+
+    const confirmed = await confirmDialog({
+      title: '刪除題目',
+      message: '確定要刪除這一題嗎？此操作會同步清理該題的錯題與複習資料。'
+    });
+
+    if (!confirmed) return;
+
+    const questionId = String(question.id);
+    const updatedQuestions = currentQuestions.filter((entry) => String(entry.id) !== questionId);
+
+    setLoading(true);
+    try {
+      await repository.saveQuestions(currentBankId, updatedQuestions);
+      await repository.deleteQuestionArtifacts(questionId);
+      onUpdateQuestions(updatedQuestions);
+      await refreshBanks();
+      onRefreshBanks();
+      onMistakesUpdate();
+      if (editingQuestionId === questionId) {
+        resetQuestionEditor();
+      }
+      setError(null);
+      toast.success('題目已刪除。');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '刪除題目失敗');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 h-[calc(100vh-8rem)] relative">
+    <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-8 min-h-[calc(100vh-8rem)] items-start relative">
       {loading && (
         <div className="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-[2px] z-50 flex items-center justify-center rounded-3xl">
           <div className="flex flex-col items-center gap-3">
@@ -340,7 +539,7 @@ export const BankManager: React.FC<BankManagerProps> = ({
       )}
 
       {/* Left Sidebar: Bank List */}
-      <div className="md:col-span-4 flex flex-col bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-lg border border-white/20 dark:border-white/5 overflow-hidden h-full">
+      <div className="md:col-span-4 flex flex-col bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-lg border border-white/20 dark:border-white/5 overflow-hidden w-full md:sticky md:top-4 md:max-h-[calc(100vh-9rem)]">
         <div className="p-6 border-b border-slate-100/50 dark:border-white/10 flex justify-between items-center bg-white/40 dark:bg-slate-800/40">
           <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <FolderOpen className="text-brand-500" size={20} />
@@ -414,7 +613,7 @@ export const BankManager: React.FC<BankManagerProps> = ({
       </div>
 
       {/* Right Content: Actions */}
-      <div className="md:col-span-8 flex flex-col gap-6 overflow-y-auto">
+      <div className="md:col-span-8 flex flex-col gap-6 min-w-0 pb-6">
         {!currentBankId ? (
           <div className="flex-1 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-10">
             <p>請先在左側選擇一個題庫</p>
@@ -445,6 +644,22 @@ export const BankManager: React.FC<BankManagerProps> = ({
               </div>
 
               <div className="p-6">
+                <div className="mb-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/60 p-4">
+                  <label className="text-xs font-bold text-slate-500 mb-2 block">匯入模式</label>
+                  <select
+                    value={importMode}
+                    onChange={(event) => setImportMode(event.target.value as ImportMode)}
+                    className="w-full p-3 border rounded-xl dark:bg-slate-700 dark:border-slate-600 text-sm font-medium"
+                  >
+                    <option value="append">追加新題：保留舊題，只加入全新題目</option>
+                    <option value="merge">更新同來源題目：保留舊題，並更新相同來源的題目</option>
+                    <option value="replace">覆蓋整個題庫：以這次匯入內容取代題庫</option>
+                  </select>
+                  <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                    建議平常新增題目時使用「追加新題」；只有你確定要同步修正版或整包覆蓋時，再切換其他模式。
+                  </p>
+                </div>
+
                 {activeTab === 'upload' && (
                   <div className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                     <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center mb-3">
@@ -464,7 +679,7 @@ export const BankManager: React.FC<BankManagerProps> = ({
                       value={jsonText}
                       onChange={(e) => setJsonText(e.target.value)}
                       placeholder='在此貼上 AI 生成的 JSON 代碼... [{"question": "...", ...}]'
-                      className="w-full h-48 p-4 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-none bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
+                      className="w-full min-h-[20rem] max-h-[60vh] p-4 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent resize-y bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
                     />
                     <button
                       onClick={handlePasteImport}
@@ -479,14 +694,19 @@ export const BankManager: React.FC<BankManagerProps> = ({
                 {activeTab === 'ai' && (
                   <PDFImportSection onImport={async (questions) => {
                     if (currentBankId) {
-                      setLoading(true);
                       try {
-                        const normalized = questions.map((q) => ({ ...q, id: normalizeToUuid(q.id) }));
-                        await repository.saveQuestions(currentBankId, normalized);
-                        onUpdateQuestions(normalized);
+                        const mergedQuestions = await confirmImportSummary(questions);
+                        if (!mergedQuestions) {
+                          setError(null);
+                          return;
+                        }
+
+                        setLoading(true);
+                        await repository.saveQuestions(currentBankId, mergedQuestions);
+                        onUpdateQuestions(mergedQuestions);
                         await refreshBanks();
                         onRefreshBanks();
-                        toast.success(`成功生成並匯入 ${normalized.length} 題！`);
+                        toast.success(`成功生成並匯入 ${mergedQuestions.length} 題！`);
                         setActiveTab('paste');
                       } catch (err) {
                         setError(err instanceof Error ? err.message : '匯入失敗');
@@ -531,6 +751,163 @@ export const BankManager: React.FC<BankManagerProps> = ({
                 >
                   <Trash2 size={16} /> 清除記錄
                 </button>
+              </div>
+            </div>
+
+            <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 dark:border-white/5 overflow-visible">
+              <div className="p-6 border-b border-slate-100/50 dark:border-white/10 flex items-center justify-between">
+                <div>
+                  <h4 className="font-bold text-slate-800 dark:text-white">題目清單與人工修正</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    目前題庫共有 {currentQuestions.length} 題。編輯會保留題目身份，刪除會同步清理學習殘留資料。
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid lg:grid-cols-[1.2fr,0.8fr] gap-0">
+                <div className="p-4 border-b lg:border-b-0 lg:border-r border-slate-100/50 dark:border-white/10 max-h-[520px] overflow-y-auto">
+                  {currentQuestions.length === 0 ? (
+                    <div className="text-sm text-slate-400 dark:text-slate-500 p-4">
+                      這個題庫目前沒有題目，可先用 JSON 或 AI 匯入。
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {currentQuestions.map((question, index) => {
+                        const isEditing = String(question.id) === editingQuestionId;
+                        return (
+                          <div
+                            key={String(question.id)}
+                            className={`rounded-2xl border p-4 transition-all ${isEditing
+                              ? 'border-brand-300 bg-brand-50/70 dark:bg-brand-900/20 dark:border-brand-700'
+                              : 'border-slate-100 dark:border-slate-700 bg-white/70 dark:bg-slate-800/50'
+                              }`}
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="min-w-0 space-y-2">
+                                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                                  <span>#{index + 1}</span>
+                                  <span>{question.type === 'multiple' ? '多選題' : '單選題'}</span>
+                                </div>
+                                <p className="font-semibold text-slate-800 dark:text-slate-100 break-words">
+                                  {question.question}
+                                </p>
+                                <ul className="text-sm text-slate-500 dark:text-slate-400 space-y-1">
+                                  {question.options.map((option) => (
+                                    <li key={option} className="break-words">• {option}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                  onClick={() => beginEditQuestion(question)}
+                                  className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold text-brand-700 bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/20 dark:text-brand-300"
+                                >
+                                  <PencilLine size={16} />
+                                  編輯
+                                </button>
+                                <button
+                                  onClick={() => void handleDeleteQuestion(question)}
+                                  className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-300"
+                                >
+                                  <Trash2 size={16} />
+                                  刪除
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-6">
+                  {!questionDraft ? (
+                    <div className="h-full min-h-[280px] flex items-center justify-center text-sm text-slate-400 dark:text-slate-500 border border-dashed border-slate-200 dark:border-slate-700 rounded-2xl">
+                      先從左側挑一題開始編修。
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h5 className="font-bold text-slate-800 dark:text-white">編輯題目</h5>
+                        <button
+                          onClick={resetQuestionEditor}
+                          className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                        >
+                          <X size={16} />
+                          取消
+                        </button>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 mb-1 block">題目類型</label>
+                        <select
+                          value={questionDraft.type}
+                          onChange={(event) => setQuestionDraft((prev) => prev ? { ...prev, type: event.target.value as 'single' | 'multiple' } : prev)}
+                          className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600"
+                        >
+                          <option value="single">單選題</option>
+                          <option value="multiple">多選題</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 mb-1 block">題目</label>
+                        <textarea
+                          value={questionDraft.question}
+                          onChange={(event) => setQuestionDraft((prev) => prev ? { ...prev, question: event.target.value } : prev)}
+                          className="w-full h-24 p-3 border rounded-xl dark:bg-slate-700 dark:border-slate-600"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 mb-1 block">選項（每行一個）</label>
+                        <textarea
+                          value={questionDraft.optionsText}
+                          onChange={(event) => setQuestionDraft((prev) => prev ? { ...prev, optionsText: event.target.value } : prev)}
+                          className="w-full h-32 p-3 border rounded-xl font-mono text-sm dark:bg-slate-700 dark:border-slate-600"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 mb-1 block">
+                          正確答案（{questionDraft.type === 'single' ? '單行' : '每行一個'}）
+                        </label>
+                        <textarea
+                          value={questionDraft.answerText}
+                          onChange={(event) => setQuestionDraft((prev) => prev ? { ...prev, answerText: event.target.value } : prev)}
+                          className="w-full h-24 p-3 border rounded-xl font-mono text-sm dark:bg-slate-700 dark:border-slate-600"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 mb-1 block">提示（選填）</label>
+                        <textarea
+                          value={questionDraft.hint}
+                          onChange={(event) => setQuestionDraft((prev) => prev ? { ...prev, hint: event.target.value } : prev)}
+                          className="w-full h-20 p-3 border rounded-xl dark:bg-slate-700 dark:border-slate-600"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-500 mb-1 block">詳解（選填）</label>
+                        <textarea
+                          value={questionDraft.explanation}
+                          onChange={(event) => setQuestionDraft((prev) => prev ? { ...prev, explanation: event.target.value } : prev)}
+                          className="w-full h-24 p-3 border rounded-xl dark:bg-slate-700 dark:border-slate-600"
+                        />
+                      </div>
+
+                      <button
+                        onClick={() => void handleSaveQuestionEdit()}
+                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white py-3 font-bold"
+                      >
+                        <Save size={16} />
+                        儲存題目變更
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </>

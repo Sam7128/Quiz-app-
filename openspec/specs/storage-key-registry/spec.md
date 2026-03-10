@@ -11,7 +11,8 @@ All localStorage key strings MUST be defined in a single registry (e.g., `STORAG
 #### Scenario: No hardcoded localStorage keys
 - **WHEN** a developer searches for `'mindspark_` in hooks, contexts, and services
 - **THEN** no hardcoded key strings SHALL be found
-- **AND** all keys SHALL reference `STORAGE_KEYS.<name>` from the central registry
+- **AND** all keys (including `mindspark_graphs` for knowledge diagrams) SHALL reference `STORAGE_KEYS.<name>` from the central registry
+- **AND** the Beta feature flags SHALL be integrated within the `mindspark_settings` key
 
 ### Requirement: Legacy File Cleanup
 The following files/directories MUST be removed: `src/services/supabase.ts`, `src/contexts/AuthContext.tsx` (if unused), and the `nul` file in the project root.

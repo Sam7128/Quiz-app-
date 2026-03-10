@@ -10,7 +10,8 @@ import {
   saveCloudQuestions,
   getCloudSpacedRepetition,
   saveCloudSpacedRepetition,
-  syncLocalToCloud
+  syncLocalToCloud,
+  deleteCloudSpacedRepetition
 } from './cloudStorage';
 import {
   getMistakeLog,
@@ -24,7 +25,8 @@ import {
   addRecentMistakeSession,
   clearRecentMistakeSession,
   clearAllRecentMistakes,
-  updateBankFolder as updateLocalBankFolder
+  updateBankFolder as updateLocalBankFolder,
+  deleteQuestionArtifacts as deleteLocalQuestionArtifacts
 } from './storage';
 import { recordStudySession, getDailyStats, getStudyStats } from './analytics';
 import { getCloudAchievements, unlockCloudAchievement } from './achievements';
@@ -62,6 +64,11 @@ export class CloudStorageRepository implements IStorageRepository {
 
   async saveQuestions(bankId: string, questions: Question[]): Promise<void> {
     await saveCloudQuestions(bankId, questions);
+  }
+
+  async deleteQuestionArtifacts(questionId: string): Promise<void> {
+    deleteLocalQuestionArtifacts(questionId);
+    await deleteCloudSpacedRepetition(questionId);
   }
 
   // Mistakes stay in localStorage even for authenticated users (device-specific learning)

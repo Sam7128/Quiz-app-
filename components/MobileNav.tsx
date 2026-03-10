@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppView } from '../types';
-import { LayoutDashboard, Settings, Users, FileText, LucideIcon } from 'lucide-react';
+import { LayoutDashboard, Settings, Users, FileText, LucideIcon, GitFork } from 'lucide-react';
+import { getUserSettings } from '../services/storage';
 
 interface MobileNavProps {
   view: AppView;
@@ -12,7 +13,7 @@ type NavItem =
   | { id: AppView; label: string; icon: LucideIcon }
   | { id: '__settings__'; label: string; icon: LucideIcon; isAction: true };
 
-const MOBILE_NAV_ITEMS: NavItem[] = [
+const BASE_MOBILE_NAV_ITEMS: NavItem[] = [
   { id: 'dashboard', label: '首頁', icon: LayoutDashboard },
   { id: 'manager', label: '管理', icon: Settings },
   { id: '__settings__' as const, label: '設定', icon: Settings, isAction: true },
@@ -20,10 +21,18 @@ const MOBILE_NAV_ITEMS: NavItem[] = [
   { id: 'guide', label: '指引', icon: FileText },
 ];
 
+function getMobileNavItems(): NavItem[] {
+  const settings = getUserSettings();
+  if (settings.betaFeatures?.knowledgeGraph) {
+    return [...BASE_MOBILE_NAV_ITEMS, { id: 'graph' as AppView, label: '🧠 知識圖', icon: GitFork }];
+  }
+  return BASE_MOBILE_NAV_ITEMS;
+}
+
 export const MobileNav: React.FC<MobileNavProps> = ({ view, onNavigate, onOpenSettings }) => {
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 p-2 flex justify-around z-50 safe-area-bottom">
-      {MOBILE_NAV_ITEMS.map(item => (
+      {getMobileNavItems().map(item => (
         <button
           key={item.id}
           onClick={(e) => {

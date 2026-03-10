@@ -10,6 +10,7 @@ import { ChallengeModal } from './ChallengeModal';
 import { useChallenges } from '../hooks/useChallenges';
 import { useQuiz } from '../contexts/QuizContext';
 import { generateUUID } from '../utils/uuid';
+import { createQuestionFingerprint } from '../utils/questionIdentity';
 import { acceptFriendRequest, getFriendsAndInbox, removeFriend, sendFriendRequest, setSharedBankStatus } from '../services/socialService';
 
 export const Social: React.FC = () => {
@@ -48,7 +49,7 @@ export const Social: React.FC = () => {
       setFriends(loadedFriends);
       setInbox(loadedInbox);
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
     } finally {
       setLoading(false);
@@ -65,8 +66,8 @@ export const Social: React.FC = () => {
       setMessage({ type: 'success', text: "好友請求已送出！" });
       setSearchEmail('');
       fetchSocialData();
-    } catch (err: any) {
-      setMessage({ type: 'error', text: err.message });
+    } catch (err: unknown) {
+      setMessage({ type: 'error', text: err instanceof Error ? err.message : '送出好友請求失敗' });
     } finally {
       setLoading(false);
     }
@@ -97,7 +98,13 @@ export const Social: React.FC = () => {
       // Create local bank
       const newBank = await repository.createBank(`${meta.name} (來自 ${share.sender_profile?.username})`);
       try {
-        const normalized = questions.map((q) => ({ ...q, id: generateUUID(), original_question_id: q.id }));
+        const normalized = questions.map((q) => ({
+          ...q,
+          id: generateUUID(),
+          original_question_id: q.original_question_id ?? q.id,
+          sourceQuestionKey: q.sourceQuestionKey ?? String(q.original_question_id ?? q.id),
+          sourceFingerprint: q.sourceFingerprint ?? createQuestionFingerprint(q),
+        }));
         await repository.saveQuestions(newBank.id, normalized);
 
         // Update status on cloud

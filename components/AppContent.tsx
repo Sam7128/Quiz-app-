@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AppAction, AppView, BankMetadata, Folder, Question, QuizState } from '../types';
 import { MistakeDetail, SavedQuizProgress } from '../types/battleTypes';
@@ -16,6 +16,10 @@ import { MobileNav } from './MobileNav';
 import SkeletonLoader from './SkeletonLoader';
 import { QuizProvider } from '../contexts/QuizContext';
 import { IStorageRepository } from '../services/repository';
+
+import { getUserSettings } from '../services/storage';
+
+const KnowledgeGraphWorkspace = React.lazy(() => import('./KnowledgeGraph/KnowledgeGraphWorkspace'));
 
 interface AppContentProps {
     user: any;
@@ -99,6 +103,15 @@ export const AppContent: React.FC<AppContentProps> = ({
     };
 
     const renderContent = () => {
+        // View Guardian: Beta off + view='graph' → force dashboard
+        if (view === 'graph') {
+            const settings = getUserSettings();
+            if (!(settings.betaFeatures?.knowledgeGraph)) {
+                actions.dispatch({ type: 'set_view', view: 'dashboard' });
+                return null;
+            }
+        }
+
         if (view === 'quiz' || view === 'mistakes') {
             if (quizEngine.quizState.isFinished) {
                 return (
@@ -173,6 +186,13 @@ export const AppContent: React.FC<AppContentProps> = ({
                 /></ErrorBoundary>;
             case 'guide': return <ErrorBoundary fallbackTitle="AI 指引發生錯誤"><AIPromptGuide /></ErrorBoundary>;
             case 'social': return <ErrorBoundary fallbackTitle="社群發生錯誤"><Social /></ErrorBoundary>;
+            case 'graph': return (
+                <ErrorBoundary fallbackTitle="知識圖發生錯誤">
+                    <Suspense fallback={<SkeletonLoader />}>
+                        <KnowledgeGraphWorkspace />
+                    </Suspense>
+                </ErrorBoundary>
+            );
             default: return <div>Not Found</div>;
         }
     };

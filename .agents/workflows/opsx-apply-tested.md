@@ -1,5 +1,5 @@
 ---
-description: This skill applies OpenSpec changes and runs stress‑test files to ensure stable, correct output, activating on test‑inclusive requests and falling back to normal apply when no stress data exists.
+description: his skill applies OpenSpec changes and runs stress‑test files to ensure stable, correct output, activating on test‑inclusive requests and falling back to normal apply when no stress data exists.
 ---
 
 Implement tasks from an OpenSpec change with stress test integration.
