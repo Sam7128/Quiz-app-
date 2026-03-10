@@ -27,14 +27,18 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-is')) {
-              return 'vendor-react';
-            }
-            if (id.includes('framer-motion')) {
-              return 'vendor-framer';
-            }
-            if (id.includes('recharts')) {
-              return 'vendor-recharts';
+            // 將 React 核心與圖表庫、動畫庫打包在一起，確保彼此間的 Context 與 ref 連結不中斷
+            if (
+              id.includes('react') || 
+              id.includes('react-dom') || 
+              id.includes('react-is') ||
+              id.includes('recharts') ||
+              id.includes('framer-motion') ||
+              id.includes('react-redux') ||
+              id.includes('@reduxjs/toolkit') ||
+              id.includes('victory-vendor')
+            ) {
+              return 'vendor-ui-core';
             }
             if (id.includes('lucide-react')) {
               return 'vendor-icons';
