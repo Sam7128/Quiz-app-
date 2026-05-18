@@ -1,4 +1,0 @@
-interface:
-  display_name: "Plan Stress Test"
-  short_description: "Stress test OpenSpec plans with QA report and benchmark harness"
-  default_prompt: "/plan-stress-test"

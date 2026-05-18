@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>GhostWriter</title>
+  <link rel="apple-touch-icon" href="/icons/icon.svg" />
+  <link rel="manifest" href="/manifest.json?v=20260213_3" />
+  <link rel="stylesheet" href="/style.css?v=20260213_3" />
+</head>
+
+<body>
+  <main class="app">
+    <header class="status-bar" id="statusBar">
+      <div class="status-left">
+        <span id="statusDot" class="dot disconnected"></span>
+        <span id="statusText" data-t="statusDisconnected">Disconnected</span>
+        <span id="hostName">-</span>
+      </div>
+      <select id="langSelect" class="lang-select" title="Language Selector">
+        <option value="en">EN</option>
+        <option value="zh">繁中</option>
+      </select>
+    </header>
+
+    <section class="panel">
+      <h1 data-t="title">GhostWriter</h1>
+      <p class="subtitle" data-t="subtitle">Type on phone, inject at your PC cursor instantly.</p>
+
+      <div id="contextArea" class="context-area">
+        <div class="context-header">
+          <span id="appName" class="app-name" data-t="waitingConn">Waiting for connection...</span>
+          <button id="refreshContext" class="refresh-btn" title="Refresh context">↻</button>
+        </div>
+        <div id="contextContent" class="context-content">
+          <span id="textBefore" class="text-dim"></span><span class="caret">|</span><span id="textAfter"
+            class="text-dim"></span>
+        </div>
+      </div>
+
+      <label for="modeSelect" data-t="labelMode">Mode</label>
+      <select id="modeSelect">
+        <option value="stream" data-t="modeStream">Real-time Stream</option>
+        <option value="batch" selected data-t="modeBatch">Batch (Commit)</option>
+        <option value="replace" data-t="modeReplace">Replace Selection</option>
+      </select>
+
+      <div class="actions">
+        <button id="sendBtn" class="primary-btn" data-t="btnSend">Send to PC</button>
+        <button id="grabBtn" class="secondary-btn hidden" data-t="btnGrab">Grab Selection</button>
+      </div>
+
+      <label for="textInput" data-t="labelInput">Input</label>
+      <textarea id="textInput" rows="5" autocomplete="off" autocorrect="on" autocapitalize="sentences" spellcheck="true"
+        placeholder="Type, write, or use voice input..."></textarea>
+
+      <p id="reconnectMsg" class="reconnect hidden" data-t="reconnecting">Reconnecting...</p>
+    </section>
+
+    <section class="panel help-panel">
+      <h2 data-t="helpTitle">How to use</h2>
+      <ul class="help-list">
+        <li data-t="help1">Select <b>Stream</b> for instant typing (like a remote keyboard).</li>
+        <li data-t="help2">Select <b>Batch</b> to write a full sentence first, then send.</li>
+        <li data-t="help3">Select <b>Replace</b> to grab PC text, edit it, and send it back.</li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="/sio4lite.js?v=20260213_3"></script>
+  <script src="/app.js?v=20260213_3"></script>
+</body>
+
+</html>

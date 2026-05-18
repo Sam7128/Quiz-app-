@@ -1,0 +1,10 @@
+flask
+flask-socketio
+pyautogui
+pyperclip
+qrcode
+comtypes
+uiautomation
+PyQt6
+pynput
+jsonschema

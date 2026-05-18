@@ -1,20 +1,86 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# GhostWriter 👻
+**手機變成電腦的「第二鍵盤」與「智慧觸控板」**
 
-# Run and deploy your AI Studio app
+GhostWriter 是一個超輕量級的開源工具，讓您能夠透過手機瀏覽器，即時且無縫地在電腦上打字、編輯文字，甚至控制游標。它不需要在手機上安裝任何 App，只要掃描 QR Code 即可使用！
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/drive/1FBc_CKK3Xpy4bmck-CMRQBERAd_hrHzF
+## 🌟 為什麼選擇 GhostWriter？ (核心優勢)
 
-## Run Locally
+### 1. 語音輸入的神器 🎙️
+電腦上的語音輸入通常不夠準確或需要特定硬體。使用 GhostWriter，您可以直接利用手機強大的 **Google 語音輸入** 或 **iOS 聽寫功能**，講完話後文字直接出現在電腦螢幕上。
 
-**Prerequisites:**  Node.js
+### 2. 躺著也能工作 🛌
+不想坐在電腦前？躺在沙發上或床上，用手機就能遠端控制電腦的文字輸入，回覆訊息、寫草稿，輕鬆自在。
 
+### 3. 無縫編輯體驗 ✏️
+*   **即時同步**：手機上能即時看到電腦游標前後的文字，就像在本地編輯一樣。
+*   **點擊定位**：在手機螢幕上點擊文字，電腦游標就會瞬間跳到那個位置，修改錯字超方便。
+*   **智慧刪除**：手機按 Backspace，電腦同步刪除，零延遲感。
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### 4. 針對「頑固」軟體的強力支援 💪
+即使是 **WeChat (微信)**、**Line** 或舊版軟體不支援文字讀取，GhostWriter 獨家的 **「閃電抓取 (Force Grab)」** 模式也能強制讀取內容供您編輯。
+
+### 5. 圓盤選單工具包 (Radial Menu Toolkit) 🎡 [NEW!]
+GhostWriter 現在內建了本地端的圓盤選單！只需按下 `Ctrl + 滑鼠中鍵`，即可在滑鼠位置呼出視覺化的圓盤選單，快速填入您的常用語句、電子郵件或商務模板，工作效率倍增。
+
+### 6. 100% 隱私安全 🔒
+所有資料只在您的 **區域網路 (Wi-Fi)** 內傳輸，完全不經過任何外部伺服器或雲端，絕對安全。
+
+---
+
+## 🚀 如何開始使用？
+
+### 步驟 1：啟動電腦端
+1. 下載並解壓縮 GhostWriter。
+2. 雙擊執行 `launcher.py` (或執行 `python launcher.py`)。
+   * 這會同時啟動 **GhostWriter Server** 與 **Radial Menu Toolkit**。
+3. 您會看到一個黑色視窗，上面顯示了連線網址與 QR Code。
+
+### 步驟 2：手機連線
+1. 確保手機和電腦連接到 **同一個 Wi-Fi**（或者手機透過 USB 連接電腦）。
+2. 打開手機相機，**掃描黑色視窗上的 QR Code**。
+3. 手機瀏覽器會打開 GhostWriter 的介面，連線成功後上方會顯示綠燈。
+
+---
+
+## 🎮 操作指南
+
+### 1. 即時序列模式 (Real-time Stream) [推薦]
+這是最常用的模式。您在手機打的所有字都會即時出現在電腦上。
+*   **打字**：手機輸入什麼，電腦就出現什麼。
+*   **刪除**：手機按刪除鍵，電腦同步刪除。
+*   **移動游標**：點擊手機上的預覽文字，電腦游標會自動跳轉。
+
+### 2. 批次傳送模式 (Batch Send)
+適合長篇大論。在手機上打完一段話，按「發送」才一次傳給電腦。
+
+### 3. 強制讀取 (Force Grab) ⚡
+如果遇到像 WeChat 這種讀不到文字的 App：
+*   **長按** 手機上的 **「刷新 (↻)」** 按鈕約 1 秒。
+*   按鈕會變成閃電符號 ⚡，系統會自動幫您全選並抓取文字。
+
+---
+
+## ❓ 常見問題 (FAQ)
+
+**Q: 我有開 VPN，手機連不上怎麼辦？**
+A: 請在 VPN 設定中開啟 **「Allow LAN Traffic (允許區域網路)」** 或 **Split Tunneling**。或者直接用 USB 線連接手機與電腦，開啟「USB 網路共用」，這招 100% 有效！
+
+**Q: 為什麼有些 App 讀不到文字？**
+A: 有些 App (如 Chrome 網址列) 結構特殊。GhostWriter 會自動切換模式嘗試讀取。如果還是失敗，請使用 **「長按刷新」** 的閃電模式。
+
+**Q: 這是免費的嗎？**
+A: 是的，完全開源免費！
+
+## 🎡 圓盤選單 (Radial Menu) 使用指南
+
+*   **觸發方式**：在任何視窗中，按住 **Ctrl** 並點擊 **滑鼠中鍵**。
+*   **選擇項目**：移動滑鼠至對應扇區，放開按鍵或點擊即可注入文字。
+*   **進入子選單**：選取分類項目後放開按鍵。
+*   **返回/取消**：點擊 **滑鼠右鍵** 返回上一層，或在選單外點擊以關閉。
+*   **自定義配置**：在系統托盤（右下角小圖示）右鍵點擊 GhostWriter 圖標，選擇「配置編輯器」即可自定義您的語句。
+
+---
+
+**Made with ❤️ for efficiency.**

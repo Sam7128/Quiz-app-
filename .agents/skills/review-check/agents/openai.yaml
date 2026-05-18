@@ -1,4 +1,0 @@
-interface:
-  display_name: "Review Check"
-  short_description: "Iterative OpenSpec plan audit loop"
-  default_prompt: "Use $review-check to audit the newest OpenSpec change plan and iterate until no critical issues remain."
