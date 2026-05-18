@@ -1,0 +1,5 @@
+{
+  "name": "MindSpark - AI 學習助手",
+  "description": "一個無伺服器、AI 驅動的測驗應用程式。具有錯題追蹤、間隔重複概念和基於 JSON 的題庫管理功能。",
+  "requestFramePermissions": []
+}

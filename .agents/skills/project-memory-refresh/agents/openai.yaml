@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Memory Refresh"
+  short_description: "Refresh project memory and upgrade local MCP wiring"
+  default_prompt: "Use $project-memory-refresh to normalize this project's AGENTS.md, refresh MEMORY.md, rebuild the searchable memory index, and upgrade the project-local memory MCP wrapper if needed."

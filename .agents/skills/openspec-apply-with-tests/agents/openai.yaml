@@ -1,0 +1,4 @@
+interface:
+  display_name: "Apply with Tests"
+  short_description: "Implement OpenSpec tasks with stress test integration"
+  default_prompt: "/opsx-apply-tested"

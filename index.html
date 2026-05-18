@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Content Security Policy -->
+  <!-- 
+    script-src: 'self' 'unsafe-inline' for Vite HMR. No 'unsafe-eval'.
+    style-src: 'self' 'unsafe-inline' (Google Fonts and dynamic styles).
+    img-src: 'self' data: https: (for loaded images).
+    connect-src: Whitelisted to Supabase, Google AI, NVIDIA API only.
+    font-src: 'self' https://fonts.gstatic.com (Google Fonts).
+
+    Production guidance:
+    - Prefer removing 'unsafe-inline' by using nonces/hashes, and keep CSP as strict as possible.
+    - If you proxy third-party AI requests through your own backend, remove direct NVIDIA/Google endpoints from connect-src.
+    - Storing API keys in the browser (localStorage/sessionStorage) cannot protect against XSS; the safest setup is a backend proxy or short-lived tokens.
+  -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    img-src 'self' data: https: blob:;
+    font-src 'self' https://fonts.gstatic.com;
+    connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://integrate.api.nvidia.com;
+    media-src 'self' https: blob:;
+  ">
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>MindSpark - AI 學習助手</title>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 font-sans antialiased">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>
