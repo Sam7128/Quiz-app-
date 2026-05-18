@@ -13,6 +13,7 @@
 - [PATH-006] `docs/DEVELOPMENT_LOG.md`: 重大變更歷史。
 - [PATH-007] `openspec/`: 規格、變更提案與 archived change 歷史。
 - [PATH-008] `start-dev.bat`: 快速啟動 Vite 開發伺服器、自動處理 Port 衝突與開啟瀏覽器的 Windows 批次腳本。
+- [PATH-009] `package.json`: npm scripts、Vercel build entry 與前端依賴版本來源。
 
 ## Aliases & Vocabulary
 - [ALIAS-001] 「題庫管理」「bank manager」-> `components/BankManager.tsx`, `services/storage.ts`, `services/cloudStorage.ts`
@@ -100,12 +101,14 @@
 - [FACT-019] `syncLocalPracticeSessions` 採 `updated_at` LWW，同步失敗會保留 dirty local fallback 以供後續重試。
 - [FACT-020] `App.tsx` + `useQuizEngine.ts`: 回調函數（如 `onChunkDraftUpdate`、`onChunkComplete`）必須使用 `useCallback` 封裝，避免在 React 渲染時因為引用變更引發與 `useQuizEngine` 異步載入題庫之間的競態條件，此規則已被 hotfix 完美證實。
 - [FACT-021] `CloudStorageRepository.savePracticeSession` 雲端保存成功後只能移除本地 session cache，不能清除 `mindspark_chunk_draft:*`；使用 `removePracticeSessionCache()`，避免登入狀態下刷新後續答回到第一題。
+- [FACT-022] Vercel build 的真正風險是遠端 Git 若追蹤 `node_modules/` 或 Windows 保留檔名（如 `nul`），會造成 Linux 部署依賴樹殘缺或 shim 權限錯誤；`package.json` 應維持標準 `vite build`，並確保依賴由 Vercel fresh install 產生。
 
 ## Active Decisions
 - [DEC-001] `AGENTS.md`: 採用 `AGENTS.md` 承載規則、`MEMORY.md` 承載動態事實，repo-local `GEMINI.md` 不再維護。
 - [DEC-002] `services/` + `hooks/`: 元件不直接碰 storage / Supabase，I/O 維持集中於 service layer。
 - [DEC-003] `.codex/config.toml` + `.project-memory/project_memory_mcp_entry.py`: 本專案改用 project-local MCP wrapper，避免只依賴全域 `project-memory-auto`。
 - [DEC-004] `vite.config.ts`: 將 React 核心與 Recharts/Framer-motion 強制打包在同一 `vendor-ui-core` chunk，解決生產環境下因拆分導致的 `forwardRef` undefined 錯誤。
+- [DEC-005] `package.json`: 部署 build 入口維持標準 `vite build`；跨平台 shim 權限問題應從 Git 依賴衛生修正，不能提交 `node_modules/`。
 
 ## Hotspots
 - [HOT-001] `App.tsx` & `vite.config.ts`: 全域流程、Provider 接線與生產環境打包配置，任何大型 UI 功能更新都需注意 Chunk 拆分相容性。
@@ -115,6 +118,7 @@
 - [HOT-005] `utils/questionIdentity.ts` + `components/BankManager.tsx`: 題目匯入、覆蓋與手動修正流程的核心熱區，影響題目穩定識別與學習紀錄是否斷鏈。
 - [HOT-006] `hooks/useChunkedPractice.ts` + `hooks/useQuizEngine.ts`: chunked session 與 quiz flow 的交界，容易出現 restore/完成回調與持久化時序問題。
 - [HOT-007] `services/cloudStorage.ts` + `services/storage.ts`: practice session 的 LWW/dirty/retry 與 guest retention 都在此，任何變更都要驗證資料完整性。
+- [HOT-008] `.gitignore` + Git index hygiene: Vercel 曾因遠端追蹤 `node_modules/` 造成 `.bin/vite` 權限失敗與 `vite/dist/node/cli.js` 缺檔；部署修復時先查 `git ls-tree -r origin/main node_modules`。
 
 ## Search Recipes
 - [RG-001] `rg -n "mindspark_" services hooks components`: 找所有持久化 key 與資料流入口。
@@ -124,6 +128,7 @@
 - [RG-005] `rg -n "sourceQuestionKey|sourceFingerprint|mergeImportedQuestions" components services utils src/__tests__`: 找題目身份與匯入合併實作。
 - [RG-006] `rg -n "planQuestionImport|importMode|匯入前檢查" components utils src/__tests__`: 找匯入模式、摘要提示與測試。
 - [RG-007] `rg -n "useChunkedPractice|chunkMeta|mindspark_practice_sessions|syncLocalPracticeSessions" App.tsx hooks services components src/__tests__`: 找分階段練習主流程與同步點。
+- [RG-008] `rg -n "\"build\"|vite|Vercel|Permission denied" package.json vercel.json docs CHECKLIST.md MEMORY.md`: 找部署 build 腳本與 Vercel 權限問題紀錄。
 
 ## Archive Index
 - [DOC-001] `docs/INDEX.md`: 已整理 reports、archive、migrations 與 root docs 索引，查歷史輸出先看這裡。

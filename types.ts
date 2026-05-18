@@ -1,3 +1,5 @@
+import type { ChunkMeta } from './types/battleTypes';
+
 export interface Question {
   id: string | number;
   original_question_id?: string | number;
@@ -77,9 +79,10 @@ export interface QuizState {
   totalQuestions: number;
   isFinished: boolean;
   activeQuestions: Question[];
-  mode: 'random' | 'mistake' | 'retry_session' | 'challenge';
+  mode: 'random' | 'mistake' | 'retry_session' | 'challenge' | 'chunked';
   wrongQuestionIds: string[];
   challengeId?: string;
+  chunkMeta?: ChunkMeta;
 }
 
 export interface AIConfig {
