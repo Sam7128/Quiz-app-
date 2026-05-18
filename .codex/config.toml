@@ -1,7 +1,0 @@
-# >>> project-memory mcp >>>
-[mcp_servers.project-memory]
-command = 'python'
-args = ['C:\Users\user\Desktop\voice transfer text\.project-memory\project_memory_mcp_entry.py']
-cwd = 'C:\Users\user\Desktop\voice transfer text'
-enabled = true
-# <<< project-memory mcp <<<

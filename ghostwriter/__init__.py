@@ -1,1 +1,0 @@
-"""GhostWriter package."""

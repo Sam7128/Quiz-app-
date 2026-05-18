@@ -1,2 +1,0 @@
-# Problems - MindSpark Upgrade
-
