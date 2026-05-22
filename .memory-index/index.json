@@ -1,7 +1,7 @@
 {
   "project_root": "C:\\Users\\user\\Desktop\\Quiz-app--main",
-  "built_at": "2026-05-18T18:39:06",
-  "entry_count": 1776,
+  "built_at": "2026-05-21T21:26:54",
+  "entry_count": 2038,
   "entries": [
     {
       "path": "AGENTS.md",
@@ -232,7 +232,7 @@
       "heading": "🟢 本次完成 (Completed This Round)",
       "category": "source-doc",
       "scope": "source",
-      "text": "- [x] **[Hotfix]** 修正 Vercel 部署時 `node_modules/.bin/vite: Permission denied` - [x] 查明 root cause：Vercel Linux build 在執行 npm script 時命中 `node_modules/.bin/vite` shim，該檔缺少可執行權限導致 exit 126；本地 Windows 會走 `.cmd` shim 因此不易重現。 - [x] 將 production build script 改為透過 `node` 直接執行 Vite JS entry，避開 Unix executable bit。 - [x] 執行 TypeScript 與 production build 驗證。 - [x] **[Hotfix]** 修正登入狀態下分階段練習中途刷新續答回到第一題 `chunked-practice-mid-refresh-resume` - [x] 查明 root cause：`CloudStorageRepository.savePracticeSession()` 雲端儲存成功後呼叫本地 `deletePracticeSession()`，連帶清除 `mindspark_chunk_draft:*`，導致 restore 前草稿消失。 - [x] 新增 `removePracticeSessionCache()`，將「移除本地 session cache」與「清除 session + drafts」分離；雲端成功同步只清 cache，不清進行中草稿。 - [x] 補上雲端 repository 回歸測試，確認 cloud save 後本地 draft 仍保留；補上 hook 組合測試，確認答到中途卸載再 restore 會回到原 index。 - [x] **[Hotfix]** 修正分階段練習刷新後進度丟失與競態覆蓋 Bug `chunked-practice-refresh-fix` - [x] 在 `App.tsx` 中將 `onChunkComplete` 與 `onChunkDraftUpdate` 使用 `useCallback` 封裝，消除由於重新整理後非同步加載 banks 導致 App 重新渲染所引起的匿名函數引用改變與重複 useEffect 觸發。 - [x] 在 `useChunkedPractice.ts` 的 `updateChunkDraft` 與 `onBeforeUnload` 中加入防禦性進度保護（Index-Guarding），防止初始化時以預設的 `0` 題或空資料意外覆蓋 localStorage 中更先進的已存進度。 - [x] 修復 `AppContent.tsx` 與 `types.ts` 中的"
+      "text": "- [x] **[Review]** 完成競態與邏輯風險審查報告 `risk-review-2026-05-21` - [x] **[OpenSpec]** 完成 security-and-sync-hardening 變更驗證報告 `security-and-sync-hardening-verify` - [x] **[Hotfix]** 修正 Vercel 部署時 Vite 權限與缺檔錯誤 - [x] 查明 root cause：遠端 `origin/main` 誤追蹤 `node_modules/` 8818 個檔案與 Windows 保留檔名 `nul`，Vercel 因而基於殘缺依賴樹執行 build。 - [x] 確認第一輪 `node ./node_modules/vite/bin/vite.js build` 只繞過 `.bin/vite` 權限症狀；真正修法是讓 Git 不再追蹤 `node_modules/`。 - [x] 準備將 production build script 還原為標準 `vite build`，由 Vercel 乾淨安裝產生正確可執行 shim。 - [x] 執行 TypeScript 與 production build 驗證。 - [x] **[Hotfix]** 修正登入狀態下分階段練習中途刷新續答回到第一題 `chunked-practice-mid-refresh-resume` - [x] 查明 root cause：`CloudStorageRepository.savePracticeSession()` 雲端儲存成功後呼叫本地 `deletePracticeSession()`，連帶清除 `mindspark_chunk_draft:*`，導致 restore 前草稿消失。 - [x] 新增 `removePracticeSessionCache()`，將「移除本地 session cache」與「清除 session + drafts」分離；雲端成功同步只清 cache，不清進行中草稿。 - [x] 補上雲端 repository 回歸測試，確認 cloud save 後本地 draft 仍保留；補上 hook 組合測試，確認答到中途卸載再 restore 會回到原 index。 - [x] **[Hotfix]** 修正分階段練習刷新後進度丟失與競態覆蓋 Bug `chunked-practice-refresh-fix` - [x] 在 `App.tsx` 中將 `onChunkComplete` 與 `onChunkDraftUpdate` 使用 `useCallback` 封裝，消除由於重新整理後非同步加載 banks 導致 App 重新渲染所引起的匿名函數引用改變與重複 useEffe"
     },
     {
       "path": "CHECKLIST.md",
@@ -274,7 +274,7 @@
       "heading": "Auto-Generated Memory Map",
       "category": "memory",
       "scope": "memory",
-      "text": "- Refreshed: `2026-05-16 00:28` - Project root: `C:\\Users\\user\\Desktop\\Quiz-app--main`"
+      "text": "- Refreshed: `2026-05-21 21:26` - Project root: `C:\\Users\\user\\Desktop\\Quiz-app--main`"
     },
     {
       "path": "MEMORY.md",
@@ -295,7 +295,7 @@
       "heading": "OpenSpec Snapshot",
       "category": "memory",
       "scope": "memory",
-      "text": "- Main specs: `openspec/specs/` - Active changes: none detected. - Archived changes: `17` - [OS-ARC-001] `openspec/changes/archive/2026-03-08-knowledge-graph-workspace/` (proposal, design, tasks, specs:5) - [OS-ARC-002] `openspec/changes/archive/2026-05-16-chunked-practice-cloud-sync/` (proposal, design, tasks, specs:3) - [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2) - [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks) - [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)"
+      "text": "- Main specs: `openspec/specs/` - Active changes: none detected. - Archived changes: `18` - [OS-ARC-001] `openspec/changes/archive/2026-05-16-chunked-practice-cloud-sync/` (proposal, design, tasks, specs:3) - [OS-ARC-002] `openspec/changes/archive/2026-05-21-security-and-sync-hardening/` (proposal, design, tasks, specs:5) - [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2) - [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks) - [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)"
     },
     {
       "path": "MEMORY.md",
@@ -316,14 +316,14 @@
       "heading": "Active Decisions",
       "category": "decision",
       "scope": "memory",
-      "text": "- [DEC-001] `AGENTS.md`: 採用 `AGENTS.md` 承載規則、`MEMORY.md` 承載動態事實，repo-local `GEMINI.md` 不再維護。 - [DEC-002] `services/` + `hooks/`: 元件不直接碰 storage / Supabase，I/O 維持集中於 service layer。 - [DEC-003] `.codex/config.toml` + `.project-memory/project_memory_mcp_entry.py`: 本專案改用 project-local MCP wrapper，避免只依賴全域 `project-memory-auto`。 - [DEC-004] `vite.config.ts`: 將 React 核心與 Recharts/Framer-motion 強制打包在同一 `vendor-ui-core` chunk，解決生產環境下因拆分導致的 `forwardRef` undefined 錯誤。 - [DEC-005] `package.json`: 部署 build 入口偏好用 `node` 直接呼叫工具的 JS entry，減少 Windows/Linux shim 權限差異。"
+      "text": "- [DEC-001] `AGENTS.md`: 採用 `AGENTS.md` 承載規則、`MEMORY.md` 承載動態事實，repo-local `GEMINI.md` 不再維護。 - [DEC-002] `services/` + `hooks/`: 元件不直接碰 storage / Supabase，I/O 維持集中於 service layer。 - [DEC-003] `.codex/config.toml` + `.project-memory/project_memory_mcp_entry.py`: 本專案改用 project-local MCP wrapper，避免只依賴全域 `project-memory-auto`。 - [DEC-004] `vite.config.ts`: 將 React 核心與 Recharts/Framer-motion 強制打包在同一 `vendor-ui-core` chunk，解決生產環境下因拆分導致的 `forwardRef` undefined 錯誤。 - [DEC-005] `package.json`: 部署 build 入口維持標準 `vite build`；跨平台 shim 權限問題應從 Git 依賴衛生修正，不能提交 `node_modules/`。 - [DEC-006] Storage 與 Config 安全：全面禁止在 Storage 讀取與 JSON 解析中使用 `any`，必須使用 `unknown` 加上特定的 Type Guard 進行防禦式屬性驗證與合併。"
     },
     {
       "path": "MEMORY.md",
       "heading": "Hotspots",
       "category": "hotspot",
       "scope": "memory",
-      "text": "- [HOT-001] `App.tsx` & `vite.config.ts`: 全域流程、Provider 接線與生產環境打包配置，任何大型 UI 功能更新都需注意 Chunk 拆分相容性。 - [HOT-002] `services/storage.ts` / `services/cloudStorage.ts`: 任何資料模型變更都可能影響相容性與使用者資料完整性。 - [HOT-003] `hooks/useBattleSystem.ts`: 遊戲化狀態複雜且與 UI、持久化、測驗結果交錯。 - [HOT-004] `services/graphStorage.ts` + `components/KnowledgeGraph/`: 新近功能區，仍在演化，改動容易打到測試與資料結構。 - [HOT-005] `utils/questionIdentity.ts` + `components/BankManager.tsx`: 題目匯入、覆蓋與手動修正流程的核心熱區，影響題目穩定識別與學習紀錄是否斷鏈。 - [HOT-006] `hooks/useChunkedPractice.ts` + `hooks/useQuizEngine.ts`: chunked session 與 quiz flow 的交界，容易出現 restore/完成回調與持久化時序問題。 - [HOT-007] `services/cloudStorage.ts` + `services/storage.ts`: practice session 的 LWW/dirty/retry 與 guest retention 都在此，任何變更都要驗證資料完整性。 - [HOT-008] `package.json`: Vercel build script 曾因 `.bin/vite` 權限失敗，修改 scripts 前需在 Windows 與 Linux/Vercel 相容性間取平衡。"
+      "text": "- [HOT-001] `App.tsx` & `vite.config.ts`: 全域流程、Provider 接線與生產環境打包配置，任何大型 UI 功能更新都需注意 Chunk 拆分相容性。 - [HOT-002] `services/storage.ts` / `services/cloudStorage.ts`: 任何資料模型變更都可能影響相容性與使用者資料完整性。 - [HOT-003] `hooks/useBattleSystem.ts`: 遊戲化狀態複雜且與 UI、持久化、測驗結果交錯。 - [HOT-004] `services/graphStorage.ts` + `components/KnowledgeGraph/`: 新近功能區，仍在演化，改動容易打到測試與資料結構。 - [HOT-005] `utils/questionIdentity.ts` + `components/BankManager.tsx`: 題目匯入、覆蓋與手動修正流程的核心熱區，影響題目穩定識別與學習紀錄是否斷鏈。 - [HOT-006] `hooks/useChunkedPractice.ts` + `hooks/useQuizEngine.ts`: chunked session 與 quiz flow 的交界，容易出現 restore/完成回調與持久化時序問題。 - [HOT-007] `services/cloudStorage.ts` + `services/storage.ts`: practice session 的 LWW/dirty/retry 與 guest retention 都在此，任何變更都要驗證資料完整性。 - [HOT-008] `.gitignore` + Git index hygiene: Vercel 曾因遠端追蹤 `node_modules/` 造成 `.bin/vite` 權限失敗與 `vite/dist/node/cli.js` 缺檔；部署修復時先查 `git ls-tree -r origin/main node_modules`。 - [HOT-009] `services/storage.ts` + `services/cloudStorage.ts`: 安全與同步強化引入了嚴格的資料驗證。修改此處的儲存格式需特別注意升級時的資料還原相容性。"
     },
     {
       "path": "MEMORY.md",
@@ -373,6 +373,62 @@
       "category": "source-doc",
       "scope": "source",
       "text": "**Prerequisites:** Node.js 1. Install dependencies: `npm install` 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key 3. Run the app: `npm run dev`"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "✨ Feature Delivery & Safety Hardening",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **AI 設定防護 (M1)**：在 `services/ai.ts` 的 `getAIConfig()` 中加入防禦性的 try-catch 機制與 10KB 大小限制，並建立 JSON Type Guard (`isAIConfig`)，確保損壞之資料能被安全清理並回退為預設值，完全防範惡意 XSS 或惡意篡改引起的崩潰。並在 `index.html` 中加入了嚴格的 CSP。 - **並發同步優化與容錯 (M2 & M3)**：將 `syncLocalToCloud` 的 `Promise.all` 改造為 `Promise.allSettled` 以落實同步故障隔離。新增並發控制上限限制（限制為 3 ），並在 `syncLocalPracticeSessions` 中引進並發同步鎖，防止多分頁同時操作引起的競態條件（Race Conditions）。同步完成後，向呼叫端傳回成功與失敗之摘要報告，實作精確的部分失敗 Toast 與重試引導。 - **雲端 session 回寫與草稿版本守衛 (M4 & M5 & M6)**： - 雲端版本較新時回寫至本機，並在此時清除對應的 chunk drafts 且強制遵守 `PRACTICE_ACTIVE_LIMIT` 限制。 - 將 `saveCloudQuestions` 中的刪除動作包裝，當 delete 失敗時降級為 console.warn 警告，不中斷同步流程，並將 dirty 題庫標記至本地 `mindspark_dirty_banks` 中。 - 在 `saveChunkDraft()` 中加入基於時間戳與版本守衛的寫入限制，預防時鐘漂移與回撥，並妥善處理 `QuotaExceededError`（清除最舊草稿）。 - **依賴項安全升級 (M7)**：升級並鎖定 `vite` (6.4.2)、`dompurify` (3.3.4，實裝 3.4.5) 與 `postcss` (8.5.10)，修補多項 Critical/High CVE 漏洞。 - **追加安全性強化 (S1-S5)**：完成構建產物憑證審計，規劃憑證輪換流程與 Gitleaks CI 密鑰掃描，設計短期 token 鑄造與 Playwright 並發衝突壓力測試架構。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "🧪 Verification",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- 新增 `src/__tests__/dompurify.test.ts` 行為與 regression 快照測試，包含 XSS 過濾與 HTML 標籤保留驗證。 - 新增 `src/__tests__/syncLocalToCloud.test.ts` 覆蓋全部成功、部分失敗、全部失敗與 type guard 測試。 - 新增 `src/__tests__/saveChunkDraft.test.ts` 驗證版本守衛、時鐘漂移與 QuotaExceededError 處理。 - 新增 `e2e/sync-and-settings-hardening.spec.ts` 覆蓋全部同步失敗重試、部分失敗 localStorage 更新與損毀 JSON 容錯。修復了模擬 token 中 user 屬性缺失導致的渲染崩潰，以及 GET questions 路由未攔截導致的 Playwright 請求掛起超時 Bug。 - 完成 OpenSpec 驗證報告 `openspec/changes/security-and-sync-hardening/verification-report.md`，標註雲端-only sessions 回寫本機與規格差異。 - 順利通過 `npx tsc --noEmit` & `npm run build`，且全量 146 項單元測試與 Playwright E2E 測試 100% 通過（包含 3 項同步與設定安全性強化測試）。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "🔄 Verification Round 2 (2026-05-21)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **修復 Cloud-only sessions 回寫問題**：移除 `syncLocalPracticeSessions` 中將雲端獨有 sessions 寫入 localStorage 的邏輯，嚴格符合 spec 規定的「同步方向：本機→雲端」原則。 - **修正日誌等級**：將 `keepIds` 空集合防護（`cloudStorage.ts`）和 AI config oversized 偵測（`ai.ts`）的日誌等級從 `console.error` 改為 `console.warn`，因為這些是預期的防禦性行為，非系統錯誤。 - **消除 `any` 型別違規**：修復 `cloudStorage.ts`（`checkIsTableMissingError` 參數、`retryCleanupDirtyBanks` 回調）和 `storage.ts`（`cleanOldestChunkDraft` 內部、`saveChunkDraft` catch block）中的 `any` 使用，全部改為 `unknown` + type guards。 - **修復 flaky test**：`useChunkedPractice.test.ts` 中的 chunk restore 測試改為斷言總題數減少（確定性），避免因 shuffle 隨機性導致測試間歇性失敗。 - 驗證報告更新至 `openspec/changes/security-and-sync-hardening/verification-report.md`：零 CRITICAL、零 WARNING、零 SUGGESTION。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "📄 Report",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- 已建立 `docs/reports/RISK_REVIEW_REPORT_2026_05_21.md`，整理競態條件、資料一致性與 AI 金鑰風險。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "🔍 主要發現",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- 雲端題庫同步採非原子 upsert + delete，存在幽靈題目與誤刪風險。 - `syncLocalPracticeSessions` 可能清除雲端較新的本機 session，離線時進度消失. - Chunk 草稿多來源寫入仍可能回流，需加強版本/時間戳判斷。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "🔍 Audit Findings",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **雲端同步競態條件 (Race Conditions)**：`syncLocalPracticeSessions` 採用順序 `await` 且缺乏鎖機制，在多分頁或頻繁觸發時可能導致資料覆蓋。 - **本機草稿保存衝突**：`useChunkedPractice` 的 `updateChunkDraft` 與 `beforeunload` 可能發生競爭，導致進度回流（Regression）。 - **敏感憑證洩露風險**：AI API Key 存儲於 `localStorage`，雖有 `sessionStorage` 選項，但在 client-side 架構下仍易受 XSS 威脅。 - **資料完整性風險**：`saveCloudQuestions` 的「先 Upsert 後 Delete」非原子操作，中斷時會導致雲端殘留幽靈題目。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "🛠️ Remediation Plan",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **產出報告**：已建立 `docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md` 詳細記錄問題成因與建議。 - **後續行動**：建議引入同步鎖（Sync Lock）與 Supabase RPC 以強化資料一致性。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "🧪 Verification",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- 已執行 `npm audit` 確認依賴漏洞狀態。 - 已完成手動程式碼走查與並發邏輯分析。 - 專案 TypeScript 型別檢查通過。"
     },
     {
       "path": "docs/DEVELOPMENT_LOG.md",
@@ -750,21 +806,21 @@
       "heading": "🐛 Build Fixes",
       "category": "archive-doc",
       "scope": "archive",
-      "text": "- **Vercel executable-bit compatibility**: - Updated `package.json` production build script from `vite build` to `node ./node_modules/vite/bin/vite.js build`. - This bypasses the Linux `.bin/vite` shim executable-bit failure reported by Vercel (`/vercel/path0/node_modules/.bin/vite: Permission denied`, exit 126)."
+      "text": "- **Vercel dependency hygiene**: - Identified the real deployment root cause: remote `origin/main` tracked `node_modules/` files and a Windows-reserved `nul` path, causing Vercel to build from a corrupted dependency tree. - Kept the production build script on the standard `vite build`; the fix is to remove tracked dependencies from Git and rely on Vercel's fresh install. - Ensured `.gitignore` contains `node_modules` so generated dependencies stay untracked."
     },
     {
       "path": "docs/DEVELOPMENT_LOG.md",
       "heading": "🧪 Verification",
       "category": "archive-doc",
       "scope": "archive",
-      "text": "- `npx tsc --noEmit` passed. - `npm run build` passed with Vite 6.4.1 using the new Node-based build command."
+      "text": "- `npx tsc --noEmit` passed. - `npm run build` passed with Vite 6.4.1."
     },
     {
       "path": "docs/INDEX.md",
       "heading": "Docs Index",
       "category": "archive-index",
       "scope": "archive",
-      "text": "- Updated: `2026-05-18 16:55` - Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs."
+      "text": "- Updated: `2026-05-21 21:26` - Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs."
     },
     {
       "path": "docs/INDEX.md",
@@ -778,14 +834,119 @@
       "heading": "reports",
       "category": "archive-index",
       "scope": "archive",
-      "text": "- `reports/AGENT_SKILLS_DIAGNOSTIC_REPORT.md` - 🕵️‍♂️ MindSpark Agent Skills 深度診斷報告 - `reports/CODE_AUDIT_REPORT_2026_05_07.md` - 📝 MindSpark 全面程式碼審查報告 (Code Audit Report) - `reports/codex_verify_report.md` - codex_verify_report - `reports/codex_verify_report_r2.md` - 第二輪驗證報告（Verifier） - `reports/DEEP_AUDIT_REMEDIATION_IMPLEMENTATION.md` - 深度稽核修復實作報告 (2026-02-16) - `reports/DEEP_CODE_AUDIT_REPORT_2026-02-15.md` - MindSpark Quiz App 深度檢查報告 - `reports/SECURITY_AUDIT_REPORT.md` - Security Audit Report - `reports/安全警告.md` - 安全警告"
+      "text": "- `reports/AGENT_SKILLS_DIAGNOSTIC_REPORT.md` - 🕵️‍♂️ MindSpark Agent Skills 深度診斷報告 - `reports/CODE_AUDIT_REPORT_2026_05_07.md` - 📝 MindSpark 全面程式碼審查報告 (Code Audit Report) - `reports/codex_verify_report.md` - codex_verify_report - `reports/codex_verify_report_r2.md` - 第二輪驗證報告（Verifier） - `reports/DEEP_AUDIT_REMEDIATION_IMPLEMENTATION.md` - 深度稽核修復實作報告 (2026-02-16) - `reports/DEEP_CODE_AUDIT_REPORT_2026-02-15.md` - MindSpark Quiz App 深度檢查報告 - `reports/RISK_REVIEW_REPORT_2026_05_21.md` - MindSpark 程式風險與競態審查報告 - `reports/security-and-sync-hardening-verification.md` - Verification Report: security-and-sync-hardening - `reports/SECURITY_AUDIT_REPORT.md` - Security Audit Report - `reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md` - 🛡️ Quiz App 追加安全性強化報告 (S1-S5) - `reports/安全警告.md` - 安全警告"
     },
     {
       "path": "docs/INDEX.md",
       "heading": "root",
       "category": "archive-index",
       "scope": "archive",
-      "text": "- `battle-state-diagram.md` - Battle System State Diagram - `DEVELOPMENT_LOG.md` - Development Log - `knowledge-graph-exploration-notes-2026-03-08.md` - 知識圖 / 視覺化筆記功能探索整理 - `knowledge-graph-workspace-implementation-report.md` - 知識圖工作區 (Knowledge Graph Workspace) — 實作報告 - `SPECIFICATION.md` - MindSpark System Specification - `SUPABASE_SECURITY_GUIDE.md` - Supabase Security Hardening Configuration Guide"
+      "text": "- `battle-state-diagram.md` - Battle System State Diagram - `DEVELOPMENT_LOG.md` - Development Log - `knowledge-graph-exploration-notes-2026-03-08.md` - 知識圖 / 視覺化筆記功能探索整理 - `knowledge-graph-workspace-implementation-report.md` - 知識圖工作區 (Knowledge Graph Workspace) — 實作報告 - `SECURITY_AND_LOGIC_AUDIT_REPORT.md` - MindSpark 專案安全性與邏輯風險稽核報告 - `SPECIFICATION.md` - MindSpark System Specification - `SUPABASE_SECURITY_GUIDE.md` - Supabase Security Hardening Configuration Guide"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "MindSpark 專案安全性與邏輯風險稽核報告",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "**日期：** 2026-05-21 **稽核對象：** MindSpark Quiz App 程式碼庫 **狀態：** 審查完成"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "1. 摘要",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "本報告針對 MindSpark 專案進行了全面的安全性掃描、邏輯流審查及並發問題分析。雖然專案在大多數 React 最佳實踐上表現良好（如未使用 `dangerouslySetInnerHTML`），但在雲端同步、本機草稿保存及敏感資料管理方面仍存在顯著風險。 ---"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "2.1 雲端同步競態條件 (Race Conditions)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **位置：** `services/cloudStorage.ts` -> `syncLocalPracticeSessions()` - **成因：** 同步邏輯採用迴圈內 `await` 順序執行，且缺乏並發鎖（Lock）或原子化操作。 - **原因：** 當用戶在多個分頁開啟應用，或在同步進行中再次觸發同步（例如快速切換路由導致 Effect 重跑），多個同步程序可能同時存取與寫入相同 ID 的 Session。 - **結果：** `isLocalNewer` 的檢查可能因非同步延遲而失效，導致舊資料覆蓋新資料。 - **影響：** 用戶在不同裝置或分頁間的練習進度出現衝突，甚至導致資料遺失。"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "2.2 本機草稿保存邏輯衝突",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **位置：** `hooks/useChunkedPractice.ts` -> `updateChunkDraft` 與 `beforeunload` 事件 - **成因：** 同時存在手動進度更新與瀏覽器關閉時的強制更新，兩者皆存取相同的 `localStorage` 鍵值。 - **原因：** `beforeunload` 會在組件卸載時觸發，若此時 `latestProgressRef` 尚未更新至最新狀態，或與組件內的 `useState` 更新發生微任務（Microtask）排序衝突。 - **結果：** 進度可能出現「回流」（Regression），即新進度被舊進度覆蓋。 - **影響：** 用戶在練習過程中意外關閉瀏覽器後，重新進入時發現進度停留在數題之前，造成負面體驗。"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "2.3 敏感憑證洩露風險 (Credential Exposure)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **位置：** `services/ai.ts` -> `getAIConfig()` & `saveAIConfig()` - **成因：** AI API 金鑰（API Key）直接存儲於 `localStorage` 或 `sessionStorage`。 - **原因：** 本專案為純前端架構（Client-side only），缺乏後端 Proxy 代理。 - **結果：** 任何發生在同網域下的 XSS (Cross-Site Scripting) 攻擊都能直接讀取這些儲存空間。 - **影響：** 用戶的 Google Gemini 或 OpenAI API Key 可能被惡意腳本盜取，造成經濟損失或帳號被停權。"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "2.4 雲端資料庫完整性風險 (Data Integrity)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **位置：** `services/cloudStorage.ts` -> `saveCloudQuestions()` - **成進：** 採取「先 Upsert 再 Delete」的兩階段策略，且這兩步並非原子交易（Atomic Transaction）。 - **原因：** 受限於 Supabase PostgREST 的 REST API 特性，多表操作或混合操作難以達成真正的 DB Transaction（除非使用 RPC）。 - **結果：** 若 Upsert 成功但後續的 Cleanup Delete 失敗（例如網路中斷），雲端資料庫將殘留已刪除的題目。 - **影響：** 用戶重新從雲端抓取題庫時，會出現「幽靈題目」，導致本地與雲端資料不一致。 ---"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "3.1 第三方套件漏洞",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **發現：** `npm audit` 回報了 10 個漏洞（5 個 Moderate, 5 個 High）。 - **重點：** `dompurify` (Moderate) 與 `vite` (High) 存在已知風險。 - **影響：** 雖然應用程式目前未使用 `dompurify` 處理核心邏輯，但 `vite` 的漏洞可能影響開發環境或預覽模式的安全。"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "3.2 缺乏 CSRF 防護",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **成因：** 雲端操作依賴 Supabase Auth，雖然 Supabase 內建部分防護，但對於跨站請求的防禦仍依賴用戶端的存取權限控管。 - **影響：** 雖然風險較低（因主要為 JSON API），但仍需確保 Supabase 的 RLS (Row Level Security) 政策極度嚴謹。 ---"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "4. 改善建議建議",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "| 類別 | 建議措施 | 優先級 | |------|---------|--------| | **同步** | 在 `syncLocalPracticeSessions` 引入並發控制，使用 `isSyncing` 旗標防止重複觸發。 | **高** | | **資料** | 將 `saveCloudQuestions` 改為使用 Supabase RPC (Database Function) 以實現原子交易。 | **中** | | **安全** | 升級 `vite` 與 `dompurify` 等受災套件至最新版本。 | **高** | | **架構** | 建議建立一個中轉後端（Middleware），將 API Key 儲存在伺服器端而非前端。 | **中** | | **體驗** | 在 `updateChunkDraft` 中加強時間戳檢查，確保只有較新的 `updatedAt` 能覆蓋現有資料。 | **中** |"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "5. 結論",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "MindSpark 專案目前的架構對於單機用戶非常穩定，但在雲端同步與多端操作的情境下存在潛在的資料完整性與競態風險。安全性方面，雖然 React 的預設防護減少了 XSS 的直接危害，但 API Key 的前端儲存仍是最大的安全隱憂。建議優先處理**同步鎖**與**套件升級**，以提升系統的穩定性與安全性。 ---"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "6. 內容安全策略 (Content Security Policy, CSP) 實施建議",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "為防範潛在的 XSS 攻擊讀取 `localStorage` 或 `sessionStorage` 中的敏感 AI API 金鑰，本專案強烈建議實施內容安全策略 (CSP)。以下為建議的實施流程，採取「漸進式部署」以防中斷正常服務。"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "6.1 建議之 CSP 策略配置",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "```http Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://api.openai.com https://integrate.api.nvidia.com; ``` **關鍵策略說明：** - `default-src 'self'`: 預設只允許載入同源資源。 - `connect-src`: 限制只允許前端向 Supabase (`https://*.supabase.co`)、Google Gemini API (`https://generativelanguage.googleapis.com`)、OpenAI/NVIDIA API 發送網路請求，阻斷惡意腳本將竊取的 API 金鑰外傳至攻擊者伺服器。"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "6.2 漸進式實施流程 (Report-Only → Enforce)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "為避免策略配置錯誤導致現有功能中斷（如阻斷合法的第三方 API 請求），建議採取以下兩階段流程："
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "階段 1：啟用 Report-Only 模式 (收集違規報告)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "在測試環境與初期生產環境中，先啟用 `Content-Security-Policy-Report-Only`。此模式下，瀏覽器不會封鎖違規資源的載入，但會將違規事件回報至指定端點。 - **實施方式：** 在 `index.html` 插入 `<meta>` 標記（僅適用於開發期本地調試）或在 HTTP 回應標頭中設定： ```html <meta http-equiv=\"Content-Security-Policy-Report-Only\" content=\"default-src 'self'; connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://api.openai.com https://integrate.api.nvidia.com; report-uri /api/csp-report;\"> ``` - **工作重點：** 監控 `/api/csp-report` 的回報，收集非預期的封鎖事件並修正 CSP 宣告。"
+    },
+    {
+      "path": "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md",
+      "heading": "階段 2：切換至 Enforce 模式 (全面強制封鎖)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "當運作 1~2 週後，確認無合法的服務請求被誤報後，將回應標頭切換為強制模式 `Content-Security-Policy`。 - **實施方式：** 在伺服器端 HTTP 標頭（如 Vercel, Netlify 或 Nginx 設定）中加入： ```http Content-Security-Policy: default-src 'self'; connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://api.openai.com https://integrate.api.nvidia.com; ``` - **效果：** 此時一旦有惡意 XSS 注入並試圖將 API Key 送至外部未授權網域，瀏覽器將強制阻斷請求，確保資料安全。"
     },
     {
       "path": "docs/SPECIFICATION.md",
@@ -2433,6 +2594,76 @@
       "text": "- 測試配置: `vitest.config.ts`, `playwright.config.ts`, `package.json` - Quiz 啟動/狀態: `App.tsx`, `hooks/useQuizEngine.ts`, `hooks/useAppDataLoader.ts`, `reducers/appReducer.ts` - 雲端儲存: `services/cloudStorage.ts`, `services/cloudRepo.ts`, `services/supabase.ts` - 本地儲存: `services/storage.ts`, `services/localRepo.ts` - 社交/分享: `components/Social.tsx`, `components/ShareModal.tsx`, `services/challenges.ts` - DB/RLS: `supabase_schema.sql`, `supabase_*_migration.sql` - CSP: `index.html`"
     },
     {
+      "path": "docs/reports/RISK_REVIEW_REPORT_2026_05_21.md",
+      "heading": "MindSpark 程式風險與競態審查報告",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "**日期：** 2026-05-21 **審查範圍：** `services/cloudStorage.ts`, `services/cloudRepo.ts`, `services/storage.ts`, `hooks/useChunkedPractice.ts`, `hooks/useQuizEngine.ts`, `services/ai.ts`, `components/Settings.tsx` **方法：** 靜態程式碼審查（未執行自動化掃描或依賴漏洞掃描）"
+    },
+    {
+      "path": "docs/reports/RISK_REVIEW_REPORT_2026_05_21.md",
+      "heading": "摘要",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "本次審查聚焦於競態條件、資料一致性與安全性風險。主要風險集中在「雲端同步非原子流程」與「多來源同時寫入本機草稿」兩大類，另包含 AI 金鑰儲存與配置健全性等安全性與穩定性問題。 ---"
+    },
+    {
+      "path": "docs/reports/RISK_REVIEW_REPORT_2026_05_21.md",
+      "heading": "RISK-001：雲端題庫同步為非原子流程，易產生幽靈題目或錯誤刪除",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **位置：** `services/cloudStorage.ts` `saveCloudQuestions()`（約 L134-L193） - **成因：** 同步流程為「先 upsert、後 delete」，兩步驟未包在交易中。 - **原因：** Supabase PostgREST API 無原生交易；若網路中斷、權限錯誤或超時，容易在中途失敗。 - **結果：** 1. Upsert 成功但 Cleanup 失敗 → 雲端殘留已刪除題目。 2. Cleanup 成功但 localQuestions/keepIds 異常為空 → 直接刪除整個 bank 的雲端題目。 - **影響：** 雲端與本地資料不一致，使用者重新載入時出現「幽靈題目」或題庫被清空。 - **建議：** 使用 Supabase RPC 封裝「upsert + cleanup」為單一交易；或改成 server-side diff/merge。"
+    },
+    {
+      "path": "docs/reports/RISK_REVIEW_REPORT_2026_05_21.md",
+      "heading": "RISK-002：同步完成後直接覆蓋本機清單，可能清掉雲端較新 session",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **位置：** `services/cloudStorage.ts` `syncLocalPracticeSessions()`（約 L423-L480） - **成因：** 只將「本地較新」或「同步成功」的 session 放進 `updatedLocalSessions`，最後 `replaceAllPracticeSessions(updatedLocalSessions)`。 - **原因：** 對於「雲端較新」的 session，流程只是 `skipped++`，未把雲端版本寫回本機。 - **結果：** 本機舊 session 直接被移除，且沒有同步成雲端版本的本機快照。 - **影響：** 使用者在離線或雲端不可用時，可能突然失去可繼續的 session（資料表面消失）。 - **建議：** 將「雲端較新」的 session 寫回本機，或至少保留本機版本並打上 `stale` 標記。"
+    },
+    {
+      "path": "docs/reports/RISK_REVIEW_REPORT_2026_05_21.md",
+      "heading": "RISK-003：以 `updatedAt`（客戶端時間）作為 LWW 依據，易被時鐘偏移誤判",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **位置：** `services/cloudStorage.ts` `syncLocalPracticeSessions()`（約 L428-L471） - **成因：** 比較 `localSession.updatedAt > cloudSession.updatedAt` 作為同步判斷。 - **原因：** `updatedAt` 來源為各裝置/分頁的本地時間，跨裝置時鐘偏移無法避免。 - **結果：** 可能把較舊資料當成「最新」上傳，覆蓋雲端正確進度。 - **影響：** 多裝置/多分頁使用者更容易遭遇進度回退或覆蓋。 - **建議：** 改用伺服器時間戳（DB trigger），或在本地增加版本號/遞增序列作為衝突判斷。"
+    },
+    {
+      "path": "docs/reports/RISK_REVIEW_REPORT_2026_05_21.md",
+      "heading": "RISK-004：Chunk 草稿多來源寫入，仍可能發生進度回流",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **位置：** `hooks/useChunkedPractice.ts` `updateChunkDraft()` / `beforeunload`（約 L394-L449），`services/storage.ts` `saveChunkDraft()`（約 L250-L252） - **成因：** 同一份草稿會被「onChunkDraftUpdate」與「beforeunload」分別寫入 localStorage。 - **原因：** 僅在「incoming index=0」時阻擋回寫；缺乏基於 `updatedAt` 的完整版本比較。 - **結果：** 兩個來源的寫入順序若交錯，較舊的草稿仍可能覆蓋較新進度。 - **影響：** 練習進度在重新整理/關閉頁面後可能回退，造成學習中斷與信任下降。 - **建議：** 以 `updatedAt` 進行比較，或加入 version/nonce 機制避免舊寫入覆蓋新寫入。"
+    },
+    {
+      "path": "docs/reports/RISK_REVIEW_REPORT_2026_05_21.md",
+      "heading": "RISK-005：AI API Key 儲存於瀏覽器，XSS 或惡意擴充可直接取用",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **位置：** `services/ai.ts` `getAIConfig()` / `saveAIConfig()`（約 L60-L91），`components/Settings.tsx`（約 L300-L466） - **成因：** 金鑰存放於 `localStorage` / `sessionStorage`。 - **原因：** 純前端架構缺乏後端代理，且瀏覽器儲存區一旦遭 XSS 即可讀取。 - **結果：** 金鑰可被竊取並濫用。 - **影響：** 使用者可能產生經濟損失或帳號被封鎖。 - **建議：** 提供後端 proxy 或短期 token；至少新增 CSP、防止第三方腳本注入。"
+    },
+    {
+      "path": "docs/reports/RISK_REVIEW_REPORT_2026_05_21.md",
+      "heading": "RISK-006：AI 設定 JSON 解析未防護，可能造成功能不可用",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **位置：** `services/ai.ts` `getAIConfig()`（約 L60-L75） - **成因：** `JSON.parse` 未包 try/catch。 - **原因：** 若 storage 內資料被手動破壞、瀏覽器擴充改寫或版本升級導致格式變化，解析會直接拋例外。 - **結果：** AI 功能與設定頁面可能在執行時直接報錯中斷。 - **影響：** 使用者無法修復設定或使用 AI 功能，造成可用性問題。 - **建議：** 以 try/catch 包裝解析，出錯時回退為預設值並清理異常設定。"
+    },
+    {
+      "path": "docs/reports/RISK_REVIEW_REPORT_2026_05_21.md",
+      "heading": "RISK-007：本地到雲端同步採 Promise.all，單一失敗會中斷整批",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **位置：** `services/cloudStorage.ts` `syncLocalToCloud()`（約 L200-L212） - **成因：** 全部 bank 同步以 `Promise.all` 併發，缺乏個別錯誤隔離。 - **原因：** 任一 bank 失敗會導致整批同步 reject。 - **結果：** 可能造成部分 bank 永遠未上雲、使用者誤以為同步完成。 - **影響：** 資料一致性下降，跨裝置體驗不穩定。 - **建議：** 改用 `Promise.allSettled`，並針對失敗的 bank 提示重試。 ---"
+    },
+    {
+      "path": "docs/reports/RISK_REVIEW_REPORT_2026_05_21.md",
+      "heading": "2. 結論",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "目前風險集中在「同步一致性」與「多來源寫入」；其中 `saveCloudQuestions` 的非原子流程與 `syncLocalPracticeSessions` 的本機覆蓋邏輯是最具破壞性的兩項。若要優先處理，建議先強化同步一致性（交易化或 RPC）與本機同步策略（雲端較新時回寫本機）。"
+    },
+    {
       "path": "docs/reports/SECURITY_AUDIT_REPORT.md",
       "heading": "Security Audit Report",
       "category": "archive-doc",
@@ -2510,6 +2741,111 @@
       "text": "- Implement automated SAST scan in CI pipeline. - Periodic manual review of `useEffect` dependencies for memory leaks."
     },
     {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "🛡️ Quiz App 追加安全性強化報告 (S1-S5)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "本報告針對專案中高優先權的追加安全任務 (S1-S5) 進行深度審計、設計與規劃。 ---"
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "📋 任務總覽與指派",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "| 任務編號 | 任務名稱 | 當前狀態 | 負責人 | 說明 | | :--- | :--- | :--- | :--- | :--- | | **S1** | 構建產物審計與憑證輪換計畫 | 已完成審計並規劃輪換 | Security Architect | 確保生產環境 `dist/` 無敏感資訊洩露 | | **S2** | CI 密鑰掃描閘道 (Secret-Scanning) | 規劃與設定完成 | DevSecOps Lead | 防止未來提交敏感密鑰至 GitHub 倉庫 | | **S3** | 短期 Token 鑄造機制 (Token-Minting) | 架構設計完成 | Backend/Cloud Lead | 移除長期 Supabase anon token，改用動態短效 token | | **S4** | CI 並發衝突與斷線重連壓力測試 | 測試架構設計完成 | QA/Performance Engineer | 模擬多客戶端搶鎖與斷線重連 | | **S5** | 依賴漏洞 CVE 對照表與治理指派 | 升級與修復完成 | Security Specialist | 列出 `vite` / `dompurify` CVE 漏洞 | ---"
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "1.1 產物審計結果 (Build Artifacts Audit)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "我們對 `dist/` 目錄下的所有壓縮後代碼進行了靜態代碼與憑證掃描，掃描規則包括常見的 Google API key 格式 (`AIza[0-9A-Za-z-_]{35}`)、JWT 標頭 (`eyJhbGci`) 以及敏感字串。 - **審計結論**：**無敏感私鑰洩露**。 - **發現說明**： - `VITE_SUPABASE_URL` 與 `VITE_SUPABASE_ANON_KEY` 被打包進 `dist/index.BvREnEUB.js` 中。此為正常行為，因為 Supabase client 需要這些變數與伺服器進行通信。由於專案中啟用了 row-level security (RLS) 保護所有關鍵表，因此暴露 anon key 不會帶來直接的越權數據洩露。 - 用戶的個人 AI 金鑰 (`GEMINI_API_KEY` 或 NVIDIA key) 皆是在運行時從 `localStorage` / `sessionStorage` 載入，不存在於靜態構建產物中。"
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "1.2 憑證輪換與撤銷計畫 (Credential Rotation & Revocation)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "如果 Supabase 服務端發現 anon key 或 Service role key 洩露，應執行以下輪換機制： 1. **Supabase Dashboard 輪換**： - 進入 Supabase Dashboard -> **Project Settings** -> **API**。 - 點擊 **JWT Settings** 下方的 **Generate a new JWT Secret**。此動作將會撤銷舊的 JWT 密鑰，導致所有使用舊 `anon` / `service_role` key 的請求失效。 - 點擊 **Roll Keys** 重建全新的 `anon` 公開金鑰與 `service_role` 私有金鑰。 2. **本地環境變數與託管平台同步更新**： - 更新本地 `.env` 檔案中的 `VITE_SUPABASE_ANON_KEY`。 - 前往 Vercel 等託管平台的專案設定，更新環境變數 `VITE_SUPABASE_ANON_KEY`，並重新部署以觸發新靜態產物的編譯。 3. **通知機制**： - 在客戶端捕獲到 API 回傳 401 Unauthorized 時，自動提示用戶刷新頁面或清除快取。 ---"
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "🛡️ S2. CI 密鑰掃描閘道 (Secret-Scanning Gate)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "為防範開發者不慎將 API key 或環境變數直接提交至 GitHub，我們建議在專案中引入 **Gitleaks** 密鑰掃描。"
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "2.1 GitHub Actions 工作流設定",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "在 `.github/workflows/secret-scan.yml` 中新增以下配置： ```yaml name: Secret Scanning on: push: branches: [ main, dev ] pull_request: branches: [ main, dev ] jobs: gitleaks: name: Run Gitleaks Scan runs-on: ubuntu-latest steps: - name: Checkout Source Code uses: actions/checkout@v4 with: fetch-depth: 0 - name: Gitleaks Security Scan uses: gitleaks/gitleaks-action@v2 env: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} with: args: --verbose --redact ```"
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "2.2 本地 Pre-commit 鉤子防止提交",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "推薦開發者使用 `husky` + `gitleaks` 在本地 commit 時即時攔截： ```bash"
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "安裝 gitleaks 並在 .git/hooks/pre-commit 中加入：",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "gitleaks detect --verbose --staged ``` ---"
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "🔑 S3. 短期 Token 鑄造機制 (Token-Minting Architecture)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "現行架構使用 Supabase 長效 `anon` token，雖有 RLS 防護，但面臨防篡改與 API 濫用風險。以下是改用**短效、具體權限範圍限制的 JWT Token 鑄造機制**之設計方案： ```mermaid sequenceDiagram autonumber actor Client as 瀏覽器客戶端 (Quiz App) participant Auth as 自建 OAuth / 認證服務 (Edge Function) participant Supa as Supabase API 閘道 database DB as Supabase PostgreSQL Client->>Auth: 1. 提交登入憑證 (Email/MFA) Auth->>Auth: 2. 驗證身分並決定角色 Auth->>Supa: 3. 簽發 15 分鐘短效 JWT (內含 RLS Role & claims) Supa-->>Client: 4. 回傳短效 Access Token Client->>Supa: 5. 攜帶短效 Token 請求 sync / save Supa->Supa: 6. JWT 簽名驗證與 Claims 解析 Supa->>DB: 7. 執行帶有短效安全上下文的查詢 DB-->>Client: 8. 返回資料 ```"
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "3.1 技術實作要點",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "1. **短效 Token 簽發**： - 認證通過後，後端 (Node.js/Go) 使用 Supabase JWT Secret 簽發 JWT，設置 `exp` (過期時間) 為當前時間加 15 分鐘。 - `claims` 內需注入特定權限 Claims (如 `user_metadata`, `app_metadata` 以及 `role: authenticated`)。 2. **自動 Refresh 機制**： - 客戶端在 Axios / Fetch 攔截器中判斷 Token 是否快過期 (如剩餘 2 分鐘)，若快過期則發送 Refresh Token 請求獲取新 Token，維持無縫體驗。 ---"
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "🧪 S4. CI 可重現之 Multi-Client 壓力測試設計",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "為測試同步並發鎖 (`isSyncingPracticeSessions`) 與網路不穩、斷線重連時的並發衝突 (LWW - Last Write Wins 策略)，我們設計了基於 Playwright 的並發壓力測試方案。"
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "4.1 壓力測試腳本架構 (Multi-Client Test Suite)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "建立 `e2e/concurrency-stress.spec.ts` 模擬多客戶端搶鎖： ```typescript import { test, expect } from '@playwright/test'; test('Multi-client 同步並發鎖與 LWW 衝突解決壓力測試', async ({ browser }) => { // 建立兩個獨立的瀏覽器上下文，模擬兩台不同裝置的用戶 A 與用戶 B const contextA = await browser.newContext(); const contextB = await browser.newContext(); const pageA = await contextA.newPage(); const pageB = await contextB.newPage(); // 1. 同時載入應用程式並注入同一個 user token const tokenPayload = JSON.stringify({ access_token: 'stress-token', user: { id: 'stress-user-id', email: 'stress@example.com' } }); await contextA.addInitScript((token) => { localStorage.setItem('sb-aotvcbfrgsxibemsogoh-auth-token', token); }, tokenPayload); await contextB.addInitScript((token) => { localStorage.setItem('sb-aotvcbfrgsxibemsogoh-auth-token', token); }, tokenPayload); await pageA.goto('/'); await pageB.goto('/'); // 2. 模擬並發同步請求 // 我們可以攔截 API 並延遲回應，模擬並發鎖的狀態 let activeSyncs = 0; let lockAcquiredCount = 0; await pageA.route('**/rest/v1/practice_sessions*', async (route) => { activeSyncs++; if (activeSyncs > 1) { console.log('偵測到並發同步！並發鎖將會攔截第二個請求。'); } await new Promise(resolve => setTimeout(resolve, 1000)); // 故意延遲 1 秒 activeSyncs--; await route.fulfill({ status: "
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "📊 S5. 依賴漏洞 CVE 對照表與治理指派",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "本次升級已將受安全漏洞威脅的關鍵套件升級至安全版本，以下為詳細的 CVE 對照表："
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "5.1 CVE 漏洞與修復狀態對照表",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "| 依賴套件 | 升級前版本 | 升級後版本 | 威脅等级 | 涉及 CVE ID | 漏洞描述 | 修復負責人 | | :--- | :--- | :--- | :--- | :--- | :--- | :--- | | **vite** | `5.x` | `6.4.2` | **High** | **CVE-2024-51744**<br>**CVE-2024-45818** | Vite 開發伺服器 SSR 中存在目錄穿越漏洞，可能導致未授權讀取伺服器敏感檔案。此外 HMR 機制也修復了潛在的 DOM 注入風險。 | Security Lead | | **dompurify** | `3.x` | `3.3.4` (3.4.5) | **High** | **CVE-2024-47875**<br>**CVE-2024-48910** | 部分極端 HTML5 嵌套標籤 (如 `math`/`svg`) 可以繞過 DOMPurify 舊版的過濾規則，導致 client-side XSS。新版補強了 sanitizer 的 token 樹過濾。 | Frontend Lead | | **postcss** | `8.4.x` | `8.5.10` | **Medium** | **CVE-2023-44270** | 舊版本在處理畸形 CSS 時可能導致記憶體洩露或無限遞迴 (DoS 攻擊)。新版增加了 CSS parser 的保護深度。 | DevSecOps |"
+    },
+    {
+      "path": "docs/reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md",
+      "heading": "5.2 安全治理建議 (Governance Recommendations)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "1. **定期自動稽核**： - 每週在 CI 管道中運行 `npm audit`。若發現 High/Critical 級漏洞，工作流應當失敗並阻擋部署。 2. **快速漏洞回應 (SLA)**： - **Critical/High** 漏洞：接獲通知後 **48 小時內** 必須升級或使用 overrides 修補。 - **Medium/Low** 漏洞：納入每雙週 (Sprint) 例行維護中升級。"
+    },
+    {
       "path": "docs/reports/codex_verify_report.md",
       "heading": "Document",
       "category": "archive-doc",
@@ -2557,6 +2893,69 @@
       "category": "archive-doc",
       "scope": "archive",
       "text": "- `1.1` PASS（UUID helper + Social 接收重編 ID） - `1.2` PASS（失敗回滾可觸發，上一輪 CRITICAL 已解除） - `2.1~2.4` PASS（QuizCard dark variants 已補） - `3.1~3.2` PASS（MobileNav 設定入口 + AppContent 傳遞 callback） - `4.1` PASS（`pointer:fine` + `focus-within` 可見性策略） - `5.1~5.5` PASS（`isAbortError` 與各 catch 靜默） - `6.1` PASS（我本輪實跑 `npx tsc --noEmit`，退出碼 0） - `6.2~6.6` 本環境 `blocked by policy`，無法動態重跑；僅能做靜態一致性核對 --- 本輪最重要答案：**你這次對 `cloudStorage.ts` 的修補，確實解掉我上一輪指出的 CRITICAL。**"
+    },
+    {
+      "path": "docs/reports/security-and-sync-hardening-verification.md",
+      "heading": "Summary",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "| Dimension | Status | Details | |--------------|------------------|---------| | Completeness | 62/62 tasks, 5/5 specs | All tasks completed. Specs covered by tests. | | Correctness | All reqs covered | All critical unit tests (26/26) passed. | | Coherence | Followed | Implementation matches design decisions and patterns. | ---"
+    },
+    {
+      "path": "docs/reports/security-and-sync-hardening-verification.md",
+      "heading": "1. AI Config Protection (RISK-006)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **Implementation**: `services/ai.ts` -> `getAIConfig()` now includes a `try-catch` block around `JSON.parse`. - **Validation**: - [x] Config size limit (10KB) enforced. - [x] Automatic cleanup of corrupted storage keys on parse failure. - [x] Type guard `isAIConfig` verifies structure after parsing. - **Verification**: `src/__tests__/ai.config.test.ts` passed (7 tests)."
+    },
+    {
+      "path": "docs/reports/security-and-sync-hardening-verification.md",
+      "heading": "2. Sync Local to Cloud (RISK-007, RISK-003)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **Implementation**: `services/cloudStorage.ts` -> `syncLocalToCloud()` updated to use `Promise.allSettled`. - **Validation**: - [x] Failures are isolated; one bank error doesn't stop others. - [x] Concurrency limit (chunking) of 3 banks at a time. - [x] Returns detailed summary (success/failed) for UI feedback. - **Verification**: `src/__tests__/syncLocalToCloud.test.ts` passed (4 tests)."
+    },
+    {
+      "path": "docs/reports/security-and-sync-hardening-verification.md",
+      "heading": "3. Practice Session Sync & Concurrency (RISK-001, RISK-002, RISK-003)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **Implementation**: `services/cloudStorage.ts` -> `syncLocalPracticeSessions()`. - **Validation**: - [x] Module-level lock `isSyncingPracticeSessions` prevents duplicate calls. - [x] Cloud-newer sessions are written back to local storage instead of being skipped. - [x] Chunk drafts are cleared when a newer cloud session is synced to prevent stale state. - [x] Clock drift protection (1-hour threshold) implemented."
+    },
+    {
+      "path": "docs/reports/security-and-sync-hardening-verification.md",
+      "heading": "4. Cloud Question Integrity (RISK-001)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **Implementation**: `services/cloudStorage.ts` -> `saveCloudQuestions()`. - **Validation**: - [x] Cleanup (delete) failures are now non-fatal (warn only). - [x] Failed cleanups are recorded in `mindspark_dirty_banks` for later retry. - [x] `forceDeleteAll` flag requirement prevents accidental mass deletion. - [x] Batching implemented for large cleanup lists (500 items per batch)."
+    },
+    {
+      "path": "docs/reports/security-and-sync-hardening-verification.md",
+      "heading": "5. Chunk Draft Version Guard (RISK-004)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **Implementation**: `services/storage.ts` -> `saveChunkDraft()`. - **Validation**: - [x] `updatedAt` comparison prevents overwriting with older data. - [x] `QuotaExceededError` triggers automatic eviction of the oldest draft. - **Verification**: `src/__tests__/saveChunkDraft.test.ts` passed (4 tests)."
+    },
+    {
+      "path": "docs/reports/security-and-sync-hardening-verification.md",
+      "heading": "6. Dependency Hardening (RISK-005)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **Implementation**: `package.json` updated. - **Validation**: - [x] `vite` upgraded to `^6.4.2`. - [x] `dompurify` upgraded to `^3.3.4`. - [x] `overrides` section used to enforce secure versions of transitive dependencies. - **Verification**: `src/__tests__/dompurify.test.ts` passed (11 tests). ---"
+    },
+    {
+      "path": "docs/reports/security-and-sync-hardening-verification.md",
+      "heading": "Final Assessment",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "**All checks passed. Ready for archive.** The implementation rigorously follows the OpenSpec plan. Security risks identified in the audit reports have been addressed with defensive programming patterns and comprehensive unit/E2E test coverage."
+    },
+    {
+      "path": "docs/reports/security-and-sync-hardening-verification.md",
+      "heading": "Code References",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- `services/ai.ts:80-117`: AI Config safety. - `services/cloudStorage.ts:186-224`: Question cleanup logic. - `services/cloudStorage.ts:310-362`: Sync concurrency and result mapping. - `services/storage.ts:285-333`: Draft guard and quota management. - `e2e/sync-and-settings-hardening.spec.ts`: E2E verification of failure scenarios. --- *Report generated by Gemini CLI*"
     },
     {
       "path": "docs/reports/安全警告.md",
@@ -10196,6 +10595,1154 @@
       "text": "- [x] 11.1 更新 `AGENTS.md` — 新增 `useChunkedPractice` 到 Domain Hooks 列表、新增 `PRACTICE_SESSIONS` 到 localStorage Key 列表、更新模組索引 - [x] 11.2 更新 `docs/DEVELOPMENT_LOG.md` — 記錄此次變更的設計決策與影響範圍 - [x] 11.3 更新 `MEMORY.md` — 新增 chunked practice 相關的 hotspots 和 search recipes - [x] 11.4 執行 `npm run build` 確認生產打包無錯誤 **驗證**: 文件與最新代碼狀態同步；`npm run build` 成功。"
     },
     {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/benchmark-harness.md",
+      "heading": "Module: AI 設定防護 (M1)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Operation | Input Profile | p50 Latency | p95 Latency | p99 Latency | Memory Limit | Throughput Target | |-----------|--------------|-------------|-------------|-------------|-------------|------------------| | Parse Config | Small (<1KB) | 1ms | 2ms | 5ms | 5MB | 1000 ops/sec | | Parse Config | Malformed (10KB) | 2ms | 5ms | 10ms | 10MB | 500 ops/sec | | Parse Config | Stress (1MB) | 10ms | [ASSUMPTION] 50ms | 100ms | 50MB | 50 ops/sec |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/benchmark-harness.md",
+      "heading": "Module: syncLocalToCloud 改用 Promise.allSettled (M2)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Operation | Input Profile | p50 Latency | p95 Latency | p99 Latency | Memory Limit | Throughput Target | |-----------|--------------|-------------|-------------|-------------|-------------|------------------| | Sync All | Small (1 bank) | 500ms | 1000ms | 2000ms | 10MB | N/A (Network Bound) | | Sync All | Medium (5 banks) | 1000ms | 2000ms | [ASSUMPTION] 4000ms | 30MB | N/A | | Sync All | Stress (50 banks) | 5000ms | 10000ms | 20000ms | 100MB | N/A |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/benchmark-harness.md",
+      "heading": "Module: 同步並發鎖 (M3)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Operation | Input Profile | p50 Latency | p95 Latency | p99 Latency | Memory Limit | Throughput Target | |-----------|--------------|-------------|-------------|-------------|-------------|------------------| | Acquire Lock | Normal | <1ms | <1ms | <1ms | 1MB | 10000 ops/sec | | Reject Lock | High Contention | <1ms | <1ms | <1ms | 1MB | 10000 ops/sec |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/benchmark-harness.md",
+      "heading": "Module: 雲端較新 session 回寫本機 (M4)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Operation | Input Profile | p50 Latency | p95 Latency | p99 Latency | Memory Limit | Throughput Target | |-----------|--------------|-------------|-------------|-------------|-------------|------------------| | Session Write | 1 Session | 2ms | 5ms | 10ms | 5MB | 100 ops/sec | | Session Write | 10 Sessions | 5ms | [ASSUMPTION] 15ms | 30ms | 20MB | 50 ops/sec |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/benchmark-harness.md",
+      "heading": "Module: saveCloudQuestions cleanup 降級 (M5)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Operation | Input Profile | p50 Latency | p95 Latency | p99 Latency | Memory Limit | Throughput Target | |-----------|--------------|-------------|-------------|-------------|-------------|------------------| | Cleanup | 10 Questions | 100ms | 200ms | 500ms | 10MB | N/A | | Cleanup | 1000 Questions | 500ms | [ASSUMPTION] 1500ms | 3000ms | 50MB | N/A |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/benchmark-harness.md",
+      "heading": "Module: saveChunkDraft 版本守衛 (M6)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Operation | Input Profile | p50 Latency | p95 Latency | p99 Latency | Memory Limit | Throughput Target | |-----------|--------------|-------------|-------------|-------------|-------------|------------------| | Write Draft | Standard | 1ms | 3ms | 5ms | 5MB | 500 ops/sec | | Reject Draft | High Contention | <1ms | 1ms | 2ms | 5MB | 1000 ops/sec |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/benchmark-harness.md",
+      "heading": "Module: 依賴項安全升級 (M7)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Operation | Input Profile | p50 Latency | p95 Latency | p99 Latency | Memory Limit | Throughput Target | |-----------|--------------|-------------|-------------|-------------|-------------|------------------| | DOMPurify | Short text | 1ms | 2ms | 5ms | 5MB | 1000 ops/sec | | DOMPurify | Long HTML | 5ms | [ASSUMPTION] 10ms | 20ms | 20MB | 200 ops/sec | | Build Time | Full project | 10s | 15s | [ASSUMPTION] 20s | 1GB | N/A |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/benchmark-harness.md",
+      "heading": "Module: 全面驗證 (M8)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Operation | Input Profile | p50 Latency | p95 Latency | p99 Latency | Memory Limit | Throughput Target | |-----------|--------------|-------------|-------------|-------------|-------------|------------------| | Unit Tests | All suites | 5s | 8s | 10s | 500MB | N/A | ---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/benchmark-harness.md",
+      "heading": "Section 2: Benchmark Test Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Scenario | Duration | Load Pattern | Success Criteria | |----------|----------|-------------|-----------------| | Normal Load | 5 min | Steady state | All p95 < thresholds | | Peak Load | 2 min | 3x normal | No crashes, degradation < 50% | | Sustained Load | 30 min | Steady state | No memory leaks, stable latency | | Spike Test | 1 min | 0 → max → 0 | Recovery < 5 seconds | | Failure Recovery | 5 min | Normal + injected failures | Graceful degradation |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/benchmark-harness.md",
+      "heading": "Section 3: Benchmark Harness Setup",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Tool/Framework**: `k6` (for API/sync mocking) and `Vitest` with performance profiling enabled (for frontend logic bounds). - **Data Seeding**: - Pre-populate `localStorage` with 50 Banks and 1000 ChunkDrafts. - Mock Supabase endpoints to return random latencies between 100ms and 3000ms. - **Environment Isolation**: - Run inside a headless Chromium instance via Playwright with CPU throttling (e.g., 4x slowdown) to simulate mid-tier mobile devices. - **How to run**: ```powershell # Run memory footprint tests npx vitest run --coverage --reporter=html # Run Playwright stress tests (mocked offline & slow networks) npx playwright test --project=chromium --grep \"STRESS\" ``` - **How to interpret results**: - Fail if memory usage exceeds 150MB across any frontend trace. - Fail if UI blocks (Event Loop lag) for more than 50ms during Draft Saves."
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/benchmark-harness.md",
+      "heading": "Section 4: Regression Gate",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Module | Regression Threshold | Rationale | |--------|---------------------|-----------| | AI 設定防護 (M1) | > 5ms processing time | JSON Parsing is synchronous; >5ms causes visible UI stutter. | | syncLocalToCloud (M2) | CPU Spike > 30% | Massive Promise processing could starve the JS engine. | | 同步並發鎖 (M3) | Deadlock occurrences > 0 | A single deadlock requires a page refresh. Unacceptable. | | saveCloudQuestions (M5) | Fail rate > 5% on 3G | Network degradation shouldn't cause permanent data loss. | | saveChunkDraft (M6) | Write latency > 10ms | Runs frequently (on updates/unloads), must be near-instant. | | 依賴項安全升級 (M7) | Bundle size +50KB | Updates should not heavily bloat the client application payload. |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Context",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "MindSpark 是一個純前端 React Quiz App，使用 localStorage 作為主要持久化層，Supabase 作為雲端同步層。兩份獨立審計報告（SECURITY_AND_LOGIC_AUDIT_REPORT 和 RISK_REVIEW_REPORT_2026_05_21）揭示了以下系統性問題： 1. **同步競態條件**：`syncLocalToCloud` 使用 `Promise.all` 導致單一失敗中斷整批；`syncLocalPracticeSessions` 缺乏並發鎖且跳過雲端較新 session 2. **資料完整性風險**：`saveCloudQuestions` 的非原子「upsert + delete」流程在中途失敗時產生幽靈題目或全量刪除 3. **草稿保存衝突**：`updateChunkDraft` 與 `beforeunload` 兩個寫入路徑缺乏完整的版本比較，可能導致進度回流 4. **敏感資料暴露**：AI API Key 儲存在 localStorage，且 `getAIConfig()` 的 JSON 解析缺乏 try-catch 5. **第三方套件漏洞**：vite (High) 和 dompurify (Moderate) 存在已知 CVE"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "已驗證的代碼真實性",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "| 風險 ID | 報告位置 | 代碼驗證結果 | |---------|---------|-------------| | RISK-001 | `saveCloudQuestions` L134-195 | ✅ 已確認：upsert 與 delete 分開執行，非原子 | | RISK-002 | `syncLocalPracticeSessions` L423-480 | ✅ 已確認：雲端較新時 `skipped++` 但未回寫本機 (L432-434) | | RISK-003 | `syncLocalPracticeSessions` L428-471 | ✅ 已確認：使用客戶端 `updatedAt` 時間戳作為 LWW 依據 | | RISK-004 | `useChunkedPractice.ts` L394-449 | ⚠️ 部分修復：已有 index=0 防護，但缺乏 updatedAt 完整比較 | | RISK-005 | `ai.ts` L60-91 | ✅ 已確認：API Key 直接存儲在 localStorage/sessionStorage | | RISK-006 | `ai.ts` L60-75 | ✅ 已確認：`JSON.parse(data)` 在 L66 無 try-catch | | RISK-007 | `syncLocalToCloud` L200-212 | ✅ 已確認：使用 `Promise.all` (L211) |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Goals / Non-Goals",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**Goals:** - 修復所有 7 項已驗證的風險（RISK-001 到 RISK-007） - 所有修復向後相容，不引入 breaking changes - 每項修復都有對應的自動化測試覆蓋 - 升級存在 CVE 的依賴項 - 修復後代碼可被初階開發者理解和維護 **Non-Goals:** - 建立後端 API Proxy（RISK-005 中建議的架構變更）— 此為獨立的架構決策，範圍過大 - 實作伺服器端時間戳（RISK-003 中建議的 DB trigger）— 需要 Supabase schema migration，風險較高 - Supabase RPC 原子交易（RISK-001 中建議的最佳方案）— 需要 DB function 部署權限，且不在純前端範圍內 - CSRF 防護強化 — Supabase RLS 已提供足夠防護，且為 JSON API"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Decision 1: syncLocalToCloud 改用 Promise.allSettled（修復 RISK-007）",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**選擇**: `Promise.allSettled` + 個別結果處理 **替代方案**: - (A) 逐一 `await`：保證順序但效能差 - (B) `Promise.all` + 外層 try-catch：仍無法區分哪些 bank 成功 **理由**: `Promise.allSettled` 保留併發效能，同時能精確追蹤每個 bank 的成功/失敗狀態。失敗的 bank 會被記錄並提示重試，不影響其他 bank 的同步。 ```typescript // Before (RISK-007) await Promise.all(uploadPromises); // After const results = await Promise.allSettled(uploadPromises); const failed = results.filter(r => r.status === 'rejected'); if (failed.length > 0) { console.warn(`${failed.length} bank(s) failed to sync`); // 返回失敗列表供 UI 顯示重試 } ``` **補充**: - 加入並發上限（例如 3~5 個 bank 同步），避免大量題庫觸發 Rate Limit。 - `rejected` 的 `reason` 可能不是 Error，需型別守衛後再記錄錯誤訊息。 - 回傳摘要（成功/失敗 ID 清單）讓 UI 顯示部分失敗與重試入口。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Decision 2: syncLocalPracticeSessions 回寫雲端較新 session（修復 RISK-002）",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**選擇**: 雲端較新時，將雲端版本回寫本機 `updatedLocalSessions` **替代方案**: - (A) 保留本機版本並打 `stale` 標記：增加複雜度，且 stale 狀態難以清理 - (B) 丟棄本機版本：當前行為，已確認會導致資料消失 **理由**: 最簡單且正確的修復。雲端較新表示其他裝置有更新的進度，應以雲端為準。回寫本機確保離線時也能看到最新進度。 ```typescript // Before (RISK-002): skipped 的 session 未加入 updatedLocalSessions if (!isLocalNewer) { skipped += 1; continue; // ← 雲端版本被丟棄！ } // After: 回寫雲端版本到本機 if (!isLocalNewer) { skipped += 1; updatedLocalSessions.push(cloudSession!); // ← 保留雲端版本 continue; } ``` **補充**: - 回寫雲端版本時，若該 session 存在 chunk draft，需清理過期草稿以避免狀態不一致。 - 在寫回本機前需遵守 `PRACTICE_ACTIVE_LIMIT`（保留最新 N 筆，或明確定義裁切策略）。 - 若偵測 `updatedAt` 與本機時間差異過大（clock drift），需採保守策略（例如偏向雲端並記錄警告）。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Decision 3: 引入同步並發鎖（修復 RISK-001/部分 RISK-003）",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**選擇**: 模組層級 `let isSyncing = false` 旗標 **替代方案**: - (A) Web Lock API (`navigator.locks`)：瀏覽器支援不完全，Safari 部分版本不支援 - (B) Mutex class with Promise：過度工程化 - (C) AbortController：已有部分 abort 處理，但不能防止重複觸發 **理由**: 簡單的布林旗標足以防止同一分頁內的並發調用。跨分頁的競態在純前端架構下無法完全解決（需要後端），本次僅提供單分頁 best-effort 防護。旗標方案可維護性最高。 ```typescript let isSyncing = false; export const syncLocalPracticeSessions = async (): Promise<PracticeSyncResult> => { if (isSyncing) { console.warn('[Sync] Already syncing, skipping duplicate call'); return EMPTY_SYNC_RESULT; } isSyncing = true; try { // ... 原有邏輯 } finally { isSyncing = false; } }; ```"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Decision 4: saveCloudQuestions 防禦性非原子流程（修復 RISK-001）",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**選擇**: 階段性容錯 — upsert 失敗時拋出錯誤（阻止後續 cleanup），cleanup 失敗時降級為警告而非拋錯 **替代方案**: - (A) Supabase RPC 原子交易：最佳方案但需 DB function 部署（Non-Goal） - (B) 先 delete 後 insert：比當前方案更危險 - (C) 完全不做 cleanup：會累積幽靈題目 **理由**: 當前代碼已在 upsert 失敗時拋錯（L167-168），但 cleanup 失敗也會拋錯（L192-193）。改為 cleanup 失敗時僅記錄警告，因為 upsert 已成功，資料不會遺失，幽靈題目的影響遠小於拋錯中斷用戶操作。 同時增加 `keepIds` 空值守衛：當 `questions` 陣列為空時，預設**禁止**全量刪除，除非呼叫端明確傳入 `forceDeleteAll`（且 UI 已做二次確認）。若未提供明確授權，僅記錄警告並回傳可處理的錯誤。 **補充**: - cleanup 失敗時需將 bankId 記錄到待清理列表，並在下次同步時重試，以避免幽靈題目永久累積。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Decision 5: saveChunkDraft 加入 updatedAt 時間戳比較（修復 RISK-004）",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**選擇**: 在 `saveChunkDraft` 中比較 `draft.updatedAt` 與現有草稿的 `updatedAt` **替代方案**: - (A) 遞增版本號 (version/nonce)：需要額外狀態管理 - (B) 僅保留 index=0 防護：當前方案，已證明不夠 **理由**: `updatedAt` 已存在於 `ChunkDraftState` 中，只需在 `saveChunkDraft` 中加入比較即可。最小改動，最大防護。 ```typescript export const saveChunkDraft = (draft: ChunkDraftState): void => { const existing = getChunkDraft(draft.sessionId, draft.chunkIndex); if (existing && existing.updatedAt && draft.updatedAt && existing.updatedAt > draft.updatedAt) { console.warn('[ChunkDraft] Prevented overwrite: existing is newer'); return; } localStorage.setItem(getChunkDraftStorageKey(draft.sessionId, draft.chunkIndex), JSON.stringify(draft)); }; ```"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Decision 6: getAIConfig try-catch 防護（修復 RISK-006）",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**選擇**: 以 try-catch 包裝 `JSON.parse`，失敗時回傳 `null` 並清理損壞設定；同時加入尺寸上限與結構驗證 **理由**: 最低成本修復，完全向後相容；尺寸上限與型別守衛可避免過大/不合法 JSON 造成阻塞或後續崩潰。 ```typescript export const getAIConfig = (): AIConfig | null => { const sessionData = sessionStorage.getItem(STORAGE_KEYS.AI_CONFIG); const localData = localStorage.getItem(STORAGE_KEYS.AI_CONFIG); const data = sessionData || localData; if (!data) return null; try { if (data.length > MAX_AI_CONFIG_SIZE) return null; const config = JSON.parse(data); if (!isAIConfig(config)) throw new Error('Invalid AI config'); if (!config.provider) config.provider = 'google'; if (config.persist === undefined) config.persist = true; return config; } catch { console.error('[AI Config] Failed to parse config, clearing corrupted data'); try { sessionStorage.removeItem(STORAGE_KEYS.AI_CONFIG); localStorage.removeItem(STORAGE_KEYS.AI_CONFIG); } catch { console.warn('[AI Config] Failed to clear corrupted storage'); } return null; } }; ```"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Decision 7: 依賴項安全升級",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**選擇**: 升級 `vite` 和 `dompurify` 到最新安全版本 **風險控制**: 升級後執行 `npm run build` + `npm test` 確認無破壞性變更"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Decision 8: AI API Key 儲存安全提示與 sessionStorage-only 模式",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**選擇**: 預設維持現有行為，但在設定頁提示風險並提供「只存 sessionStorage」選項。 **理由**: 在不引入後端代理的前提下，讓使用者自行選擇風險/便利權衡；同時降低長期持久化帶來的曝露風險。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Risks / Trade-offs",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "| 風險 | 影響 | 緩解措施 | |------|------|---------| | Promise.allSettled 改造可能改變 syncLocalToCloud 的返回語義 | 上層調用者可能依賴 Promise.all 的 reject 行為 | 檢查所有 caller，確保返回值語義一致 | | 同步並發上限造成單次同步時間拉長 | 大量 bank 同步可能延遲完成 | UI 顯示同步進度與可中斷/重試機制 | | 回寫雲端 session 到本機可能覆蓋用戶在離線期間的本機操作 | 極端場景下可能遺失離線進度 | 只在雲端 `updatedAt` 嚴格大於本機時才回寫 | | saveChunkDraft 的 updatedAt 比較可能在時鐘回撥時拒絕合法寫入 | 極罕見場景 | 增加 fallback：若 updatedAt 差異 > 30 秒，強制寫入 | | cleanup 失敗降級為警告可能導致幽靈題目累積 | 長期可能增加雲端垃圾資料 | 記錄警告日誌，未來可建立定期清理機制 | | vite 大版本升級可能引入 breaking changes | 開發環境或 build 流程可能受影響 | 僅升級 patch/minor 版本；升級前先查閱 changelog | | 單分頁鎖無法跨分頁排他 | 多分頁仍可能競態 | 文件明確說明限制；未來可採 Web Locks/localStorage TTL |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Migration Plan",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "1. **Phase 1 - 低風險修復**（RISK-006, RISK-007）：AI config try-catch + Promise.allSettled，影響面小 2. **Phase 2 - 同步強化**（RISK-002, RISK-003, partial RISK-001）：session 回寫 + 並發鎖 3. **Phase 3 - 資料完整性**（RISK-001, RISK-004）：cleanup 降級 + draft 版本守衛 4. **Phase 4 - 依賴升級**（CVE 修復）：vite + dompurify 升級 5. **Phase 5 - 驗證**：全量 build + test + E2E **Rollback 策略**: 每個 Phase 為獨立 commit，可個別 revert。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Acceptance & Deployment Gates",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "在合併/釋出此變更前，必須滿足下列門檻（CI / 測試 / 運維）： - Gate A: 所有 CRITICAL 與 WARNING（High）已被關閉或有明確可執行的緩解與可驗證測試。 - Gate B: CI 全量通過（unit + integration），並且 `npx tsc --noEmit` 成功無錯誤。 - Gate C: Stress harness 在可重現的 baseline 場景（multi-client, partition）執行且無資料分叉或資料遺失（zero divergence）— 若出現則 Block。 - Gate D: 秘密掃描 (secret-scan) 無檢出或已完成旋轉/撤銷；所有 client-side 長期 key 已替換為短期 token 並有 token-minting 流程。 - Gate E: 依賴項安全審查（`npm audit`）無未處理的 HIGH/CRITICAL CVE，或有 documented compensating controls 與 upgrade plan。 - Gate F: 明確 rollback / mitigation steps：每個 Phase 的回滾 commit 與操作 Runbook 已記錄於 docs/ 並可執行。 滿足以上門檻後，可標記為可執行（Ready to deploy）。若任一 Gate 未達成，變更應停在 BLOCKED，並在 tasks.md 中追蹤未完成項目。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/design.md",
+      "heading": "Open Questions",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "- **Q1**: `syncLocalToCloud` 改用 `Promise.allSettled` 後，是否需要修改 `App.tsx` 中的調用者以處理部分失敗結果？→ 需檢查 caller - **Q2**: vite 的安全版本是否有 breaking changes？→ 升級前需查閱 changelog"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/proposal.md",
+      "heading": "Why",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "MindSpark 的安全與邏輯審計報告（2026-05-21）揭示了 7 項風險，涵蓋雲端同步競態條件、資料完整性漏洞、API 金鑰洩露風險以及第三方套件漏洞。這些問題在多裝置/多分頁場景下可能導致用戶學習進度遺失、資料不一致甚至經濟損失。專案目前架構在單機場景穩定，但在雲端同步與多端操作的情境下存在系統性風險，必須在功能擴展前解決。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/proposal.md",
+      "heading": "同步可靠性修復",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- 將 `syncLocalToCloud()` 從 `Promise.all` 改為 `Promise.allSettled`，個別 bank 失敗不中斷整批同步 - 為 `syncLocalToCloud` 加入並發上限與失敗摘要回傳（成功/失敗清單），UI 可顯示部分失敗與重試入口 - 在 `syncLocalPracticeSessions()` 中，當雲端 session 較新時回寫本機（而非跳過丟棄），防止本地資料靜默消失 - 為 `syncLocalPracticeSessions` 引入 `isSyncing` 單分頁並發鎖，跨分頁僅提供 best-effort 防護（不保證全域排他）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/proposal.md",
+      "heading": "資料完整性強化",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- 將 `saveCloudQuestions()` 的「先 upsert 後 delete」非原子流程改為防禦性設計：upsert 失敗時跳過 cleanup，cleanup 失敗時不拋例外僅記錄警告並保留雲端 fallback - 增加 `keepIds` 空陣列防護：預設禁止全量刪除，需顯式 `forceDeleteAll` 或 UI 二次確認才允許清空"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/proposal.md",
+      "heading": "草稿保存穩健性",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- 在 `saveChunkDraft()` 中加入 `updatedAt` 時間戳比較，確保只有較新的草稿能覆蓋現有草稿 - 統一 `updateChunkDraft` 與 `beforeunload` 兩個寫入路徑的防回流邏輯"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/proposal.md",
+      "heading": "AI 設定安全強化",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- 為 `getAIConfig()` 的 `JSON.parse` 加入 try-catch 防護，解析失敗時回傳 `null` 並清理損壞設定（清理失敗需容錯） - 新增 AIConfig 结构驗證與大小上限（避免過大/不合法 JSON 造成阻塞或崩潰） - 新增 AI API Key 存儲安全警示 UI 與 sessionStorage-only 模式引導 - 為敏感設定頁面新增 CSP meta tag 建議文件（補進現有安全報告）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/proposal.md",
+      "heading": "依賴項安全更新",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- 升級 `vite` 與 `dompurify` 至安全版本以修復已知 CVE"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/proposal.md",
+      "heading": "New Capabilities",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- `sync-concurrency-control`: 同步並發控制機制，包含 isSyncing 鎖、Promise.allSettled 改造、個別 bank 失敗隔離與重試佇列 - `draft-version-guard`: 草稿版本守衛機制，基於 updatedAt 時間戳比較的防回流寫入保護"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/proposal.md",
+      "heading": "Modified Capabilities",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- `cloud-data-integrity`: 新增 saveCloudQuestions 防禦性非原子流程保護，keepIds 空值守衛，cleanup 失敗降級策略 - `practice-session-storage`: 新增雲端較新 session 回寫本機邏輯，同步時間戳衝突處理策略 - `chunked-practice`: 強化 chunk draft 的 updatedAt 版本比較，統一多來源寫入防護"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/proposal.md",
+      "heading": "受影響的檔案",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "| 檔案 | 影響範圍 | |------|---------| | `services/cloudStorage.ts` | syncLocalToCloud, syncLocalPracticeSessions, saveCloudQuestions 邏輯重構 | | `services/storage.ts` | saveChunkDraft 新增版本比較邏輯 | | `services/ai.ts` | getAIConfig 新增 try-catch 防護 | | `hooks/useChunkedPractice.ts` | updateChunkDraft / beforeunload 統一防回流邏輯 | | `components/Settings.tsx` | AI 設定安全警示與持久化模式引導 | | `package.json` | vite, dompurify 版本升級 | | `index.html` | 可選 CSP meta tag | | `src/__tests__/` | 新增同步/AI 設定/DOMPurify 測試 | | `e2e/` | 新增同步與損壞 storage 的 E2E 驗證 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/proposal.md",
+      "heading": "風險評估",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- **回歸風險**：同步邏輯修改可能影響現有登入後的自動同步流程，需全面 E2E 測試覆蓋 - **Breaking Change**：無 — 所有修改為向後相容的防禦性加強 - **效能影響**：`Promise.allSettled` 可能略慢於 `Promise.all`（需等待所有結果），但提供了更好的容錯性 - **資料安全**：saveChunkDraft 的版本比較新增可能導致極端情況下拒絕合法寫入，需設計 fallback"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/chunked-practice/spec.md",
+      "heading": "Requirement: Mid-chunk restore snapshot",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 為進行中的 Chunk 維護獨立的本地恢復快照，以支援刷新或中斷後的續作；此快照 SHALL NOT 使用 `mindspark_quiz_session` 主鍵，避免與一般 quiz session 混淆。草稿寫入 SHALL 使用 `updatedAt` 時間戳進行版本比較，拒絕以較舊草稿覆蓋較新草稿。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/chunked-practice/spec.md",
+      "heading": "Scenario: Refresh mid-chunk restores current chunk draft",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在 Chunk 進行中重新整理頁面 - **THEN** 系統 SHALL 從 chunk 專屬快照恢復當前 Chunk 的 `questionIds`、`currentQuestionIndex`、`score`、`wrongQuestionIds` 與 `pendingSkill`/battle 需要的最小狀態 - **THEN** 系統 SHALL 保留 Session 的 `active` / `in_progress` 狀態 - **THEN** 系統 SHALL 在 Chunk 完成時清除該 chunk 專屬快照"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/chunked-practice/spec.md",
+      "heading": "Scenario: Closed tab resumes same chunk later",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者關閉頁面後再次回到同一 Session - **THEN** 系統 SHALL 從 chunk 專屬快照恢復到最後一次作答位置，而不是從第一題重新開始 - **THEN** 若 chunk 專屬快照缺失，系統 SHALL 回退到 chunk 的第 1 題重新開始"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/chunked-practice/spec.md",
+      "heading": "Scenario: updateChunkDraft and beforeunload both respect updatedAt",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `updateChunkDraft` 在元件生命週期內被呼叫 - **AND** `beforeunload` 在頁面關閉時被觸發 - **THEN** 兩個寫入路徑 SHALL 都在 `saveChunkDraft` 中經過 `updatedAt` 版本比較 - **AND** 較舊的草稿 SHALL 被拒絕 - **AND** 較新的草稿 SHALL 被正常寫入"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/chunked-practice/spec.md",
+      "heading": "Scenario: beforeunload does not overwrite newer updateChunkDraft",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `updateChunkDraft` 在 `t=1000` 寫入了草稿（`updatedAt: 1000`） - **AND** `beforeunload` 在 `t=500` 的 `latestProgressRef` 狀態觸發寫入（`updatedAt: 500`） - **THEN** `saveChunkDraft` SHALL 拒絕 `beforeunload` 的寫入 - **AND** localStorage 中的草稿 SHALL 維持 `updateChunkDraft` 寫入的版本"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/cloud-data-integrity/spec.md",
+      "heading": "Requirement: Cloud Save Preserves Question IDs",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "The `saveCloudQuestions` function MUST use Supabase `upsert` (with `onConflict: 'id'`) instead of delete-and-reinsert. Question IDs MUST be included in the upsert payload. Furthermore, the storage tables involved MUST be protected by Row Level Security (RLS) to ensure that the process cannot be exploited to overwrite or upsert IDs belonging to other users. When the cleanup (delete) step fails after a successful upsert, the system SHALL log a warning and continue without throwing, to prevent upsert success from being rolled back by cleanup failure. When `keepIds` is empty, the system SHALL NOT perform a full delete unless the caller explicitly provides `forceDeleteAll` (or an equivalent explicit confirmation flag). Otherwise, the operation SHALL return a safe, user-actionable error and log a warning."
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/cloud-data-integrity/spec.md",
+      "heading": "Scenario: Saving questions to cloud preserves IDs with Authorization",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** an authenticated user saves a bank with 5 questions to Supabase - **THEN** each question row SHALL retain its original `id` value - **AND** the database SHALL accept the upsert ONLY if the user owns the resources being overwritten - **AND** the `question_progress` (spaced repetition) records linked to these IDs SHALL remain valid"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/cloud-data-integrity/spec.md",
+      "heading": "Scenario: Deleted questions are cleaned up",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** an authenticated user deletes 2 of 5 questions from a bank and saves - **THEN** the 3 remaining questions SHALL be upserted with their original IDs - **AND** the 2 deleted questions SHALL be removed from the `questions` table - **AND** the operation SHALL NOT use a full delete-then-reinsert strategy - **AND** the database SHALL block deletion commands if the user is not authorized"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/cloud-data-integrity/spec.md",
+      "heading": "Scenario: Cleanup failure after successful upsert degrades gracefully",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `saveCloudQuestions` upsert 成功完成 - **AND** 後續的 cleanup delete 操作失敗（例如網路中斷、超時） - **THEN** 系統 SHALL 記錄 `console.warn` 包含失敗原因 - **AND** 系統 SHALL NOT 拋出 Error - **AND** 已 upsert 的題目 SHALL 保留在雲端 - **AND** 未被刪除的幽靈題目 SHALL 在雲端保留（可接受的降級行為） - **AND** 系統 SHALL 記錄待清理的 bankId 以便下次同步重試"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/cloud-data-integrity/spec.md",
+      "heading": "Scenario: Large keepIds are cleaned up in batches",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `keepIds.length` 超過安全上限（例如 500） - **THEN** 系統 SHALL 以分批方式執行 cleanup - **AND** 任一批次失敗時依「cleanup 失敗降級」策略處理"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/cloud-data-integrity/spec.md",
+      "heading": "Scenario: Upsert failure still throws error",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `saveCloudQuestions` 的 upsert 操作失敗 - **THEN** 系統 SHALL 拋出 Error 包含失敗原因 - **AND** 系統 SHALL NOT 執行 cleanup delete - **AND** 雲端資料 SHALL 維持修改前的狀態"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/cloud-data-integrity/spec.md",
+      "heading": "Scenario: Empty questions array requires explicit confirmation",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `saveCloudQuestions` 被呼叫時 `questions` 為空陣列 - **AND** `keepIds` 因此為空 - **AND** 未提供 `forceDeleteAll` - **THEN** 系統 SHALL **不** 執行全量刪除 - **AND** 系統 SHALL 回傳可處理的錯誤或狀態，提示需要明確確認"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/cloud-data-integrity/spec.md",
+      "heading": "Scenario: Explicit forceDeleteAll allows full cleanup with logging",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `saveCloudQuestions` 被呼叫時 `questions` 為空陣列 - **AND** `keepIds` 因此為空 - **AND** 提供 `forceDeleteAll = true` - **THEN** 系統 SHALL 執行 `delete` 清除該 bank 的所有雲端題目 - **AND** 系統 SHALL 記錄 `console.info` 說明執行了全量清除"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/draft-version-guard/spec.md",
+      "heading": "Requirement: saveChunkDraft performs updatedAt comparison before write",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "`saveChunkDraft` 函式 SHALL 在寫入 localStorage 之前，比較傳入草稿的 `updatedAt` 與現有草稿的 `updatedAt`。若現有草稿的 `updatedAt` 嚴格大於傳入草稿的 `updatedAt`，系統 SHALL 拒絕寫入並記錄警告。 `saveChunkDraft` SHALL 在寫入時處理 `QuotaExceededError`，並以降級策略（清理最舊草稿或回報警告）避免拋出未處理例外。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Newer draft overwrites older draft",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 現有草稿的 `updatedAt` 為 `1000` - **AND** 傳入草稿的 `updatedAt` 為 `2000` - **THEN** 系統 SHALL 正常寫入傳入的草稿 - **AND** localStorage 中的草稿 SHALL 更新為傳入版本"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Older draft is rejected",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 現有草稿的 `updatedAt` 為 `3000` - **AND** 傳入草稿的 `updatedAt` 為 `2000` - **THEN** 系統 SHALL 拒絕寫入 - **AND** 系統 SHALL 記錄 `console.warn` 包含兩個時間戳的值 - **AND** localStorage 中的草稿 SHALL 維持不變"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Clock rollback allows forced overwrite",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 現有草稿的 `updatedAt` 與傳入草稿的 `updatedAt` 差距異常過大（例如 > 1 小時） - **THEN** 系統 SHALL 視為時鐘異常 - **AND** 系統 SHALL 允許較新的業務狀態覆蓋並記錄警告"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: No existing draft allows write",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** localStorage 中不存在對應的草稿 - **AND** 傳入草稿的 `updatedAt` 為任意合法值 - **THEN** 系統 SHALL 正常寫入傳入的草稿"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Existing draft has no updatedAt field (legacy data)",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 現有草稿不包含 `updatedAt` 欄位（或為 `undefined`） - **AND** 傳入草稿的 `updatedAt` 為合法值 - **THEN** 系統 SHALL 允許寫入（legacy 草稿視為最舊版本）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Storage quota exceeded during write",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `localStorage.setItem` 拋出 `QuotaExceededError` - **THEN** 系統 SHALL 不中斷流程 - **AND** 系統 SHALL 嘗試清理最舊草稿或記錄警告"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/draft-version-guard/spec.md",
+      "heading": "Requirement: getAIConfig handles corrupted JSON gracefully",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "`getAIConfig` 函式 SHALL 使用 try-catch 包裝 `JSON.parse` 呼叫，並在解析前檢查資料大小上限。當解析失敗或結構不合法時，系統 SHALL 清理損壞的設定資料並返回 `null`。清理 localStorage/sessionStorage 若失敗，系統 SHALL 記錄警告但不得拋出例外。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Valid JSON parses successfully",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** localStorage 中的 AI config 為合法 JSON - **THEN** 系統 SHALL 正常解析並返回 `AIConfig` 物件 - **AND** 行為 SHALL 與修改前完全一致"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Corrupted JSON is handled gracefully",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** localStorage 中的 AI config 為損壞的 JSON（例如 `\"{invalid\"}`） - **THEN** 系統 SHALL 捕獲 SyntaxError - **AND** 系統 SHALL 清除 localStorage 和 sessionStorage 中的 `mindspark_ai_config` - **AND** 系統 SHALL 記錄 `console.error` 說明解析失敗 - **AND** 系統 SHALL 返回 `null` - **AND** 系統 SHALL NOT 拋出任何 exception 到上層"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Oversized JSON is rejected",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** localStorage 中的 AI config 字串長度超過上限 - **THEN** 系統 SHALL 視為損壞資料並返回 `null` - **AND** 系統 SHALL 記錄警告"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Parsed JSON fails schema validation",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `JSON.parse` 成功但物件不符合 `AIConfig` 結構 - **THEN** 系統 SHALL 視為損壞資料並返回 `null` - **AND** 系統 SHALL 清理 storage 中的設定資料"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Empty storage returns null",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** localStorage 和 sessionStorage 中都沒有 AI config - **THEN** 系統 SHALL 返回 `null` - **AND** 系統 SHALL NOT 嘗試 JSON.parse"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/practice-session-storage/spec.md",
+      "heading": "Requirement: Login triggers practice session sync",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在使用者登入時，將 localStorage 中的 practice sessions 同步到雲端。當雲端 session 較新時，系統 SHALL 將雲端版本回寫到本機 localStorage。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/practice-session-storage/spec.md",
+      "heading": "Scenario: Sync local sessions to cloud on login",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 之前以 Guest 模式創建了 2 個 active practice sessions，然後登入 - **THEN** 系統 SHALL 先讀取雲端 `status = 'active'` sessions，作為合併基準 - **THEN** 系統 SHALL 逐筆比較 local 與 cloud 中相同 `id` 的 `updated_at`，並採用 Last-Write-Wins（保留較新的那份） - 若 local 較新 → SHALL upsert 到雲端 - 若 cloud 較新或相同 → SHALL NOT 以 local 覆蓋雲端 - **THEN** 系統 SHALL 將「需要上傳且 upsert 成功」或「被判定為較舊」的 local 副本自 localStorage 移除 - **THEN** 若 upsert 失敗 → local 副本 SHALL 保留作為 fallback（並標記為待重試），下次登入或 Dashboard 載入時再嘗試同步"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/practice-session-storage/spec.md",
+      "heading": "Scenario: Cloud-newer sessions are written back to local",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 本機 session A 的 `updatedAt` 為 `1000` - **AND** 雲端 session A 的 `updatedAt` 為 `2000` - **THEN** 系統 SHALL 將雲端版本的 session A 加入 `updatedLocalSessions` - **AND** 雲端 session A SHALL 被回寫到本機 localStorage - **AND** 本機版本 SHALL 被取代為雲端版本 - **AND** `skipped` 計數器 SHALL 遞增 - **AND** 系統 SHALL 清理該 session 的 chunk drafts 以避免狀態不一致"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/practice-session-storage/spec.md",
+      "heading": "Scenario: Cloud-only sessions are preserved during sync",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 雲端存在 session B，但本機不存在對應 session - **THEN** session B SHALL NOT 被刪除或覆蓋 - **AND** 系統 SHALL 不主動拉取雲端 only 的 session 到本機（此為同步方向：本機→雲端）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/practice-session-storage/spec.md",
+      "heading": "Scenario: Local-only sessions are uploaded",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 本機存在 session C，但雲端不存在對應 session - **THEN** 系統 SHALL 將 session C upsert 到雲端 - **AND** `uploaded` 計數器 SHALL 遞增"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/practice-session-storage/spec.md",
+      "heading": "Scenario: Active session limit is enforced on writeback",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 回寫雲端版本造成本機 active sessions 超過上限 - **THEN** 系統 SHALL 依既定策略裁切（例如保留最新 N 筆） - **AND** 系統 SHALL 記錄被裁切的 sessionId 以便追蹤"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/practice-session-storage/spec.md",
+      "heading": "Scenario: Clock drift guard for LWW",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 本機與雲端 `updatedAt` 差距超過合理閾值 - **THEN** 系統 SHALL 採保守策略（偏向雲端或要求重試） - **AND** 系統 SHALL 記錄警告以便診斷"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/sync-concurrency-control/spec.md",
+      "heading": "Requirement: Sync concurrency lock prevents duplicate sync execution",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在 `syncLocalPracticeSessions` 執行期間維護模組層級的 `isSyncing` 旗標，阻止並發調用。此旗標 SHALL 在同步開始時設為 `true`，在同步結束（無論成功或失敗）時重設為 `false`。此鎖僅保證**單分頁**排他，跨分頁僅提供 best-effort 行為。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: Duplicate sync call is rejected",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `syncLocalPracticeSessions` 正在執行中 - **AND** 另一個調用者（例如 React Effect 重跑、路由切換）再次呼叫 `syncLocalPracticeSessions` - **THEN** 第二次呼叫 SHALL 立即返回 `EMPTY_SYNC_RESULT` - **AND** 系統 SHALL 記錄 console.warn 說明跳過原因 - **AND** 第一次呼叫 SHALL 不受影響，繼續正常執行"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: Lock is released after sync failure",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `syncLocalPracticeSessions` 在執行過程中拋出未預期錯誤 - **THEN** `isSyncing` 旗標 SHALL 在 `finally` 區塊中被重設為 `false` - **AND** 後續的 sync 呼叫 SHALL 能正常執行"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: Lock is released after sync success",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `syncLocalPracticeSessions` 成功完成所有 session 的同步 - **THEN** `isSyncing` 旗標 SHALL 被重設為 `false` - **AND** 返回的 `PracticeSyncResult` SHALL 反映實際的 uploaded/skipped/dirty 計數"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/sync-concurrency-control/spec.md",
+      "heading": "Requirement: syncLocalToCloud limits concurrent bank uploads",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 對 `syncLocalToCloud` 的 bank 上傳加入並發上限，避免一次性觸發大量請求造成 Rate Limit。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: Concurrency is capped",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者有 50 個 bank 需要同步 - **THEN** 系統 SHALL 以固定並發上限分批處理（例如每批 3~5 個） - **AND** 系統 SHALL 仍回傳完整的成功/失敗摘要"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/sync-concurrency-control/spec.md",
+      "heading": "Requirement: syncLocalToCloud returns failure summary",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 回傳同步摘要（成功/失敗 bank IDs 與錯誤訊息），供 UI 呈現部分失敗與重試入口。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: Partial failure summary is returned",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 同步過程中有部分 bank 失敗 - **THEN** 回傳結果 SHALL 包含失敗 bank 的識別與錯誤訊息"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/sync-concurrency-control/spec.md",
+      "heading": "Requirement: syncLocalToCloud uses Promise.allSettled for fault isolation",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在 `syncLocalToCloud` 中使用 `Promise.allSettled` 替代 `Promise.all`，以確保單一 bank 的同步失敗不會中斷其他 bank 的同步。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: One bank fails while others succeed",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者有 3 個本機 bank 需要同步 - **AND** 第 2 個 bank 的 `createCloudBank` 失敗（例如網路超時） - **THEN** 第 1 個和第 3 個 bank 的同步 SHALL 正常完成 - **AND** 系統 SHALL 記錄第 2 個 bank 的失敗原因至 console.error - **AND** 函式 SHALL NOT 拋出 unhandled rejection"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: All banks fail",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 所有 bank 的同步都失敗（例如 Supabase 完全不可用） - **THEN** 系統 SHALL 記錄所有失敗原因 - **AND** 函式 SHALL 正常返回（不拋錯） - **AND** 本機資料 SHALL 不受影響"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: All banks succeed",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 所有 bank 的同步都成功 - **THEN** 行為 SHALL 與使用 `Promise.all` 時完全一致"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-001] Category: Edge Case",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 1.1 在 `services/ai.ts` 的 `getAIConfig()` 中，將 L66 的 `JSON.parse(data)` 包裝在 try-catch 中 - **Problem**: 如果 `data` 是極大的 JSON 字串（如遭到惡意擴充注入），`JSON.parse` 可能導致主執行緒長時間阻塞甚至 Memory Exhaustion。 - **Risk Level**: LOW - **Suggested Addition**: 在進行 `JSON.parse` 前，先檢查 `data.length`，若超過合理大小（如 10KB）則直接視為損壞並回傳 null。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-002] Category: Logic Gap",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 1.1 在 `services/ai.ts` 的 `getAIConfig()` 中 - **Problem**: 即使 JSON 解析成功，它可能不符合 `AIConfig` 的結構（例如缺少重要欄位），導致後續程式碼在讀取時報錯。 - **Risk Level**: MEDIUM - **Suggested Addition**: 在 try 區塊內新增對解析後物件的結構驗證（Type Guard 或 Schema 檢查），若不符合預期結構則拋出錯誤進入 catch 區塊。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-003] Category: Missing Detail",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 1.1 在 `services/ai.ts` 的 `getAIConfig()` 中 - **Problem**: 任務中提到「清除 sessionStorage 和 localStorage 中的 STORAGE_KEYS.AI_CONFIG」，但未處理若清除動作本身（因權限或其他原因）拋出例外的狀況。 - **Risk Level**: LOW - **Suggested Addition**: 將清除 localStorage 和 sessionStorage 的操作也包裝在 try-catch 中，防止二次報錯。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-004] Category: Assumption Risk",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 2.1 將 `await Promise.all(uploadPromises)` 替換為 `const results = await Promise.allSettled(uploadPromises)` - **Problem**: 假設所有的失敗都會被捕捉並返回帶有 `message` 屬性的 Error 物件，但 `Promise.allSettled` 的 `rejected` 狀態其 `reason` 可能是任意型別（如字串或 undefined）。 - **Risk Level**: MEDIUM - **Suggested Addition**: 任務 2.2 應加入型別防護：`const reason = r.reason instanceof Error ? r.reason.message : String(r.reason);`"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-005] Category: Architecture",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 2.1 將 `await Promise.all(uploadPromises)` 替換為 `const results = await Promise.allSettled(uploadPromises)` - **Problem**: 若 `uploadPromises` 包含大量題庫（例如 50+ 個），無限制的並發可能導致 Supabase API Rate Limit，進而使大量請求被 reject。 - **Risk Level**: HIGH - **Suggested Addition**: 引入並發控制（Concurrency Control，例如 `p-limit` 或 chunking），限制同時執行的上傳請求數量（例如 3~5 個）。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-006] Category: Logic Gap",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 2.2 遍歷 `results` 陣列，對 `status === 'rejected'` 的結果呼叫 `console.error` - **Problem**: 失敗的 bank 僅被記錄到 console，並未回傳給 UI 層。UI 無法得知有部分題庫同步失敗，可能向用戶顯示「全部同步成功」。 - **Risk Level**: HIGH - **Suggested Addition**: 讓 `syncLocalToCloud` 返回同步結果的摘要物件（包含成功和失敗的 IDs），並更新調用者（Tasks 2.3）以在 UI 上顯示部分失敗警告。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-007] Category: Logic Gap",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 3.1 新增 `let isSyncingPracticeSessions = false;` 變數 - **Problem**: 模組級別的變數只能防止單一 Browser Tab 內的並發。若用戶同時開啟多個 Tab，仍可能發生跨 Tab 的同步競態。 - **Risk Level**: MEDIUM - **Suggested Addition**: 改用 `navigator.locks.request` (Web Locks API) 或基於 `localStorage` 事件的跨分頁鎖，以確保真正的全域排他性。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-008] Category: Edge Case",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 3.3 將 `syncLocalPracticeSessions()` 的整個 try-catch 區塊包裝在 `isSyncingPracticeSessions = true; try { ... } finally { isSyncingPracticeSessions = false; }` 結構中 - **Problem**: 若在 `try` 區塊中發生無法捕捉的嚴重錯誤（如主執行緒崩潰），鎖將無法釋放。雖前端重整會重置變數，但若實施 localStorage 鎖則會死鎖。 - **Risk Level**: LOW - **Suggested Addition**: (如果採用 localStorage 鎖) 應為鎖加上 TTL (Time-To-Live) 過期機制。針對當前記憶體鎖，需確保沒有懸掛的非同步操作逃逸出 try 區塊。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-009] Category: Missing Detail",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 3.2 在 `syncLocalPracticeSessions()` 的開頭加入守衛 - **Problem**: `retryDirtyPracticeSessions` 內部也呼叫了 `syncLocalPracticeSessions`，但任務中未明確指出是否需要在 retry 端做狀態反饋。 - **Risk Level**: LOW - **Suggested Addition**: 確認 UI 在呼叫 `retryDirtyPracticeSessions` 時，能正確處理因為鎖定而回傳的 `EMPTY_SYNC_RESULT`（例如顯示「正在同步中」）。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-010] Category: Architecture",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 4.2 將該區塊修改為：`updatedLocalSessions.push(cloudSession!)` - **Problem**: 直接將 `cloudSession` push 進 `updatedLocalSessions` 可能導致總 active sessions 數量超過本機限制（PRACTICE_ACTIVE_LIMIT = 5）。 - **Risk Level**: MEDIUM - **Suggested Addition**: 在 L479 的 `replaceAllPracticeSessions` 之前，或在 push 時，必須明確保證不會破壞 Guest/本機模式下的會話數量限制邏輯。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-011] Category: Edge Case",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 4.2 將雲端版本加入 `updatedLocalSessions` - **Problem**: 當雲端版本回寫覆蓋本機版本時，若該 session 在本機有中途未完成的 Chunk 草稿（`CHUNK_DRAFT_PREFIX`），草稿與新 session 狀態可能發生不同步（如 currentQuestionIndex 超出範圍）。 - **Risk Level**: HIGH - **Suggested Addition**: 當發生雲端版本回寫時，應同時呼叫 `clearChunkDraftsForSession(sessionId)` 以清除過期且可能不相容的本地草稿。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-012] Category: Logic Gap",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 4.1 在 `syncLocalPracticeSessions()` 中判斷 `isLocalNewer` - **Problem**: `updatedAt` 完全依賴客戶端系統時間，跨裝置時鐘偏移（Clock Drift）可能導致雲端較新的資料被誤判為較舊。 - **Risk Level**: MEDIUM - **Suggested Addition**: 雖然架構決策 (Design D2) 不改 DB，但前端應有基本的防護：若本地與雲端 `updatedAt` 差距大於合理閾值（如未來時間），應提出警告或採用不同的合併策略。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-013] Category: Logic Gap",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 5.2 將 `throw new Error(...)` 改為 `console.warn` - **Problem**: 降級為 `console.warn` 後，幽靈題目將永遠殘留在雲端資料庫中，因為沒有後續的自動化清理機制（Garbage Collection）來處理這些 orphans。 - **Risk Level**: MEDIUM - **Suggested Addition**: 在本地記錄這些清理失敗的 Bank ID (例如存入 `mindspark_dirty_banks`)，並在下一次啟動或同步時嘗試重新執行清理。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-014] Category: Edge Case",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 5.1 在 `saveCloudQuestions()` 中處理 cleanup error - **Problem**: PostgREST 的 `in` 運算子有限制。若 `keepIds` 非常龐大（如上萬題），組合出的 `inList` 字串可能會超過 API 的 URL 或 Payload 長度限制，導致 cleanup 永遠失敗。 - **Risk Level**: LOW - **Suggested Addition**: 若 `keepIds.length` 大於 500，應將 cleanup 操作分批 (chunking) 執行。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-015] Category: Missing Detail",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 5.4 新增 `console.info` 說明執行了全量清除 - **Problem**: `keepIds` 為空時直接全量刪除雲端題庫。但若是因為前置步驟的意外錯誤導致 `questions` 陣列被錯誤清空，將造成不可逆的資料遺失。 - **Risk Level**: HIGH - **Suggested Addition**: 新增雙重確認：若 `bankId` 存在且舊的題庫大於 0，但新存入的 questions 為 0，應拋出錯誤或要求顯式設定 `forceDeleteAll` 參數。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-016] Category: Edge Case",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 6.1 在 `saveChunkDraft()` 中加入版本比較邏輯 - **Problem**: 若 `Date.now()` 在同一個毫秒內連續觸發（例如 React 雙重渲染或快速操作），現有草稿與新草稿的 `updatedAt` 將完全相同，可能導致本應寫入的新狀態被錯誤拒絕。 - **Risk Level**: MEDIUM - **Suggested Addition**: 版本比較應為 `existing.updatedAt >= draft.updatedAt` 嗎？不，若是同毫秒，應允許寫入（Last Write Wins）。比較條件應嚴格為 `existing.updatedAt > draft.updatedAt`。並加入 `console.debug` 記錄同毫秒覆蓋。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-017] Category: Assumption Risk",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 6.3 / 6.4 確認已正確設置 `updatedAt: Date.now()` - **Problem**: 使用者若手動修改系統時間（時鐘回撥），`Date.now()` 會產生過去的時間戳，導致後續所有的草稿儲存都被版本守衛拒絕。 - **Risk Level**: LOW - **Suggested Addition**: 加入時鐘回撥防護：如果發現 `draft.updatedAt` 落後於 `existing.updatedAt` 超過合理的巨大值（例如 > 1小時），應視為時鐘異常，允許強制覆蓋。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-018] Category: Missing Detail",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 6.1 在 `localStorage.setItem` 之前加入版本比較邏輯 - **Problem**: `localStorage.setItem` 在超過 5MB 容量限制時會拋出 `QuotaExceededError`，任務未指示如何處理此例外。 - **Risk Level**: MEDIUM - **Suggested Addition**: 將 `localStorage.setItem` 包裝在 try-catch 中，若發生 QuotaExceededError 則清除最舊的草稿或顯示警告通知用戶。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-019] Category: Architecture",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 7.2 執行 `npm update vite` 升級到最新安全版本 - **Problem**: Vite 從 5.x 升級到 6.x 或更高版本可能有 Breaking Changes，包括 Rollup 版本的變更或 plugin 介面的修改，僅依賴 `npm run build` 可能無法捕捉所有 runtime 行為變更。 - **Risk Level**: HIGH - **Suggested Addition**: 升級後必須檢查 `vite.config.ts` 中的 plugin 相容性，並在瀏覽器控制台監控 HMR（Hot Module Replacement）是否正常運作。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-020] Category: Assumption Risk",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 7.3 執行 `npm update dompurify` - **Problem**: 新版本的 `dompurify` 可能收緊了預設的安全策略（例如對特定 iframe 或 data URI 的過濾變嚴格），這可能會破壞現有題庫中依賴這些 HTML 特性的題目。 - **Risk Level**: MEDIUM - **Suggested Addition**: 新增針對 `dompurify` 輸出的快照測試，包含現有題庫中常用的 HTML 標籤與屬性，確保升級後不會誤刪合法內容。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-021] Category: Edge Case",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 7.1 / 7.4 執行 `npm audit` 確認漏洞數量減少 - **Problem**: 有些漏洞可能位於開發依賴（devDependencies）的深層子依賴中，簡單的 `npm update` 可能無法修復，需要使用 `npm overrides` 或 `resolutions`。 - **Risk Level**: LOW - **Suggested Addition**: 在任務 7.4 補充：若漏洞無法透過 `npm update` 消除，必須在 `package.json` 加入 `overrides` 設定。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-022] Category: Missing Detail",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 8.4 在開發伺服器中手動驗證 - **Problem**: 僅依賴「手動驗證」AI 設定頁面與同步操作，對於這類高度並發與邊界情況的變更來說，容易產生人為疏漏且難以回歸測試。 - **Risk Level**: HIGH - **Suggested Addition**: 將此驗證自動化，在 `e2e/` 資料夾下新增 Playwright 測試腳本，專門模擬並發同步與 localStorage 破壞情境。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-023] Category: Logic Gap",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 8.3 執行 `npm test` 確認所有單元測試通過 - **Problem**: `vi.useFakeTimers()` 在非同步與 Promise 操作（如 `Promise.allSettled`）中常會引發微妙的死鎖或時間解析錯誤，這在測試 `saveChunkDraft` 和 `syncLocalPracticeSessions` 時極易發生。 - **Risk Level**: MEDIUM - **Suggested Addition**: 在任務中特別註明：測試時間相關邏輯時，必須正確使用 `vi.runAllTimersAsync()` 以確保 Promise 鏈完全結算。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "[ISSUE-024] Category: Edge Case",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Affected Step**: 8.2 執行 `npm run build` 確認 production build 成功 - **Problem**: 由於並發鎖 `isSyncingPracticeSessions` 位於模組頂層，在 production bundle (經過 tree-shaking 和 minify) 中，如果模組被多次動態 import，可能導致鎖變成多個實例。 - **Risk Level**: LOW - **Suggested Addition**: 確保 `services/cloudStorage.ts` 不會因 code-splitting 被實例化多次，或將狀態移至全域 `window.__MINDSPARK_SYNC_LOCK__` 作為最後防線。 ---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Unit Test Cases (minimum 3)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Test Name | Input | Expected Output | Priority | |---|-----------|-------|----------------|----------| | 1 | Valid JSON parsing | `{\"provider\":\"openai\",\"persist\":true}` in localStorage | Parsed object matching input | P0 | | 2 | Invalid JSON fallback | `{invalid}` in localStorage | Returns `null`, storage is cleared | P0 | | 3 | Empty storage handling | null in localStorage | Returns `null` | P1 | | 4 | Large string JSON | 10MB string in localStorage | Returns `null` (if length guard added) | P2 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Integration Test Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Scenario | Components Involved | Expected Behavior | |---|----------|--------------------|--------------------| | 1 | Config load on mount | `App.tsx`, `ai.ts`, Settings Modal | App mounts normally even if config is corrupted |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Edge Cases",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Edge Case | Why It Matters | Expected Handling | |---|-----------|---------------|-------------------| | 1 | Storage API throws error | Users with restricted storage policies | Catch blocks handle StorageError safely |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Error/Failure Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Failure | Trigger Condition | Expected Recovery | |---|---------|-------------------|-------------------| | 1 | `removeItem` fails | Locked storage | Skip throwing, continue app execution |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Expected Outcomes",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- App never crashes due to malformed `mindspark_ai_config`. - Corrupted configurations are automatically flushed to prevent cyclic crashes. ---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Unit Test Cases (minimum 3)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Test Name | Input | Expected Output | Priority | |---|-----------|-------|----------------|----------| | 1 | All banks sync success | 3 valid banks | Resolves normally, 0 errors logged | P0 | | 2 | Partial sync failure | 2 valid, 1 throws error | Resolves normally, 1 error logged | P0 | | 3 | Total sync failure | All banks throw error | Resolves normally, multiple errors logged | P1 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Integration Test Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Scenario | Components Involved | Expected Behavior | |---|----------|--------------------|--------------------| | 1 | Login trigger sync | `AuthContext`, `cloudStorage` | Partial failure doesn't block login completion |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Edge Cases",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Edge Case | Why It Matters | Expected Handling | |---|-----------|---------------|-------------------| | 1 | Massive bank count | API limits | Handled via concurrency controls (if added) |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Error/Failure Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Failure | Trigger Condition | Expected Recovery | |---|---------|-------------------|-------------------| | 1 | Network drops mid-sync | Timeout during upload | `status: rejected`, handled gracefully |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Expected Outcomes",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- Single bank failure isolates gracefully. - UI continues operation despite partial failure. ---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Unit Test Cases (minimum 3)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Test Name | Input | Expected Output | Priority | |---|-----------|-------|----------------|----------| | 1 | Sequential calls | Call 1 finishes, Call 2 starts | Call 2 executes normally | P0 | | 2 | Concurrent calls | Call 1 starts, Call 2 starts immediately | Call 2 returns EMPTY_SYNC_RESULT | P0 | | 3 | Lock release on throw | Call 1 throws error, Call 2 starts | Call 2 executes normally | P0 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Integration Test Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Scenario | Components Involved | Expected Behavior | |---|----------|--------------------|--------------------| | 1 | Dashboard multi-mount | `Dashboard.tsx` strict mode double render | Only one sync occurs, second aborts |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Edge Cases",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Edge Case | Why It Matters | Expected Handling | |---|-----------|---------------|-------------------| | 1 | Infinite await in try block | Lock starvation | Promise timeout mechanics (if applicable) |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Error/Failure Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Failure | Trigger Condition | Expected Recovery | |---|---------|-------------------|-------------------| | 1 | Uncatchable VM crash | DevTools interaction | Requires page refresh |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Expected Outcomes",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- Exactly one sync runs per tab. - Network requests are strictly serialized. ---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Unit Test Cases (minimum 3)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Test Name | Input | Expected Output | Priority | |---|-----------|-------|----------------|----------| | 1 | Cloud is newer | Local T=1, Cloud T=2 | Cloud session pushed to local | P0 | | 2 | Local is newer | Local T=2, Cloud T=1 | Local session triggers upload | P0 | | 3 | Timestamps match | Local T=1, Cloud T=1 | No overwrite, skipped++ | P1 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Integration Test Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Scenario | Components Involved | Expected Behavior | |---|----------|--------------------|--------------------| | 1 | Cross-device resume | `Dashboard`, `cloudStorage` | Device B sees Device A's progress |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Edge Cases",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Edge Case | Why It Matters | Expected Handling | |---|-----------|---------------|-------------------| | 1 | Overwriting active local draft | Local has unsaved chunk progress | Drafts are cleared to prevent state mismatch |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Error/Failure Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Failure | Trigger Condition | Expected Recovery | |---|---------|-------------------|-------------------| | 1 | `replaceAll` fails | LocalStorage full | Caught by top-level storage handler |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Expected Outcomes",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- Local state accurately reflects the most advanced cloud state. ---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Unit Test Cases (minimum 3)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Test Name | Input | Expected Output | Priority | |---|-----------|-------|----------------|----------| | 1 | Upsert success, cleanup success | Normal data | Both operations succeed | P0 | | 2 | Upsert success, cleanup fails | Normal data, DB mock throws on delete | Warns in console, resolves normally | P0 | | 3 | Upsert fails | Malformed data, DB mock throws on upsert | Throws Error, cleanup not called | P0 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Integration Test Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Scenario | Components Involved | Expected Behavior | |---|----------|--------------------|--------------------| | 1 | Save bank from Manager | `BankManager`, `cloudStorage` | UI shows success even if cleanup fails |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Edge Cases",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Edge Case | Why It Matters | Expected Handling | |---|-----------|---------------|-------------------| | 1 | Empty `keepIds` | Potential accidental delete-all | Logs info, executes delete |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Error/Failure Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Failure | Trigger Condition | Expected Recovery | |---|---------|-------------------|-------------------| | 1 | Massive keepIds string | PostgREST limits | Request fails, degrades to warning |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Expected Outcomes",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- Bank saves never fail due to cleanup errors. - Data retention (upsert) is prioritized over data deletion (cleanup). ---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Unit Test Cases (minimum 3)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Test Name | Input | Expected Output | Priority | |---|-----------|-------|----------------|----------| | 1 | Newer draft write | Existing T=1, Draft T=2 | Writes to storage | P0 | | 2 | Older draft write | Existing T=2, Draft T=1 | Rejected, warns in console | P0 | | 3 | Equal timestamp write | Existing T=1, Draft T=1 | Writes to storage | P1 | | 4 | Legacy draft overwrite | Existing no timestamp, Draft T=1 | Writes to storage | P1 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Integration Test Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Scenario | Components Involved | Expected Behavior | |---|----------|--------------------|--------------------| | 1 | Unload vs React effect | `useChunkedPractice` | Older `beforeunload` is rejected |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Edge Cases",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Edge Case | Why It Matters | Expected Handling | |---|-----------|---------------|-------------------| | 1 | Huge clock rollback | Existing T=9999, Draft T=1 | Blocked (or accepted if rollback mitigation added) |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Error/Failure Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Failure | Trigger Condition | Expected Recovery | |---|---------|-------------------|-------------------| | 1 | Storage full | `localStorage.setItem` throws | Try-catch handles QuotaExceededError |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Expected Outcomes",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- Progress regressions caused by delayed callbacks or unload events are eliminated. ---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Unit Test Cases (minimum 3)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Test Name | Input | Expected Output | Priority | |---|-----------|-------|----------------|----------| | 1 | DOMPurify output | `<script>alert(1)</script>` | Script tag removed completely | P0 | | 2 | DOMPurify safe output | `<b>Hello</b>` | Retains HTML tags | P0 | | 3 | Build process test | Standard build command | Exits with code 0 | P0 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Integration Test Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Scenario | Components Involved | Expected Behavior | |---|----------|--------------------|--------------------| | 1 | Rendering complex explanation | `QuizCard`, DOMPurify | UI renders without breaking layout |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Edge Cases",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Edge Case | Why It Matters | Expected Handling | |---|-----------|---------------|-------------------| | 1 | MathML or SVG in questions | Purify might strip them | Verify configuration preserves needed tags |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Error/Failure Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Failure | Trigger Condition | Expected Recovery | |---|---------|-------------------|-------------------| | 1 | Build failure | Vite plugin incompatibility | Manual intervention required to fix config |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Expected Outcomes",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- Zero vulnerabilities reported by `npm audit`. - Core application functionality remains visually and functionally identical. ---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Unit Test Cases (minimum 3)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Test Name | Input | Expected Output | Priority | |---|-----------|-------|----------------|----------| | 1 | Typescript compiler check | `tsc --noEmit` | Returns 0 exit code | P0 | | 2 | Vitest execution | `npm test` | All tests pass | P0 | | 3 | Playwright execution | `npx playwright test` | All E2E flows pass | P0 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Integration Test Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Scenario | Components Involved | Expected Behavior | |---|----------|--------------------|--------------------| | 1 | Full application boot | Vite preview | App loads without console errors |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Edge Cases",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Edge Case | Why It Matters | Expected Handling | |---|-----------|---------------|-------------------| | 1 | False positive tests | Flaky async tests | Use proper `waitFor` or `runAllTimersAsync` |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Error/Failure Scenarios",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Failure | Trigger Condition | Expected Recovery | |---|---------|-------------------|-------------------| | 1 | CI pipeline failure | Missing dependencies | Fix package-lock.json |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/stress-test-report.md",
+      "heading": "Expected Outcomes",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- 100% confidence in the stability of the release candidate."
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/tasks.md",
+      "heading": "1. AI 設定防護（RISK-006）— 低風險修復",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 1.1 在 `services/ai.ts` 的 `getAIConfig()` 中，將 L66 的 `JSON.parse(data)` 包裝在 try-catch 中。catch 區塊中：(1) 呼叫 `console.error('[AI Config] Failed to parse config, clearing corrupted data')` (2) 清除 `sessionStorage` 和 `localStorage` 中的 `STORAGE_KEYS.AI_CONFIG` (3) 返回 `null` - [x] 1.2 建立單元測試 `src/__tests__/ai.config.test.ts`，覆蓋三個場景：(1) 合法 JSON 正常解析 (2) 損壞 JSON 返回 null 且清除 storage (3) 空 storage 返回 null - [x] 1.3 新增 AIConfig 尺寸上限與結構驗證：`data.length` 超過上限直接視為損壞並返回 `null`；解析後用 type guard 驗證結構，不合法則進入 catch - [x] 1.4 清除 storage 的操作包裝 try-catch，若清除失敗改為 `console.warn` 並不中斷流程 - [x] 1.5 在 `components/Settings.tsx` 增加 AI API Key 安全警示與 `sessionStorage-only` 模式切換（若使用者選擇不持久化，禁止寫入 localStorage） - [x] 1.6 擴充測試：新增「過大字串拒絕」、「結構不合法拒絕」、「清除 storage 失敗不拋錯」三個用例 - [x] 1.7 在 `docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md` 補上 CSP 建議章節（含 report-only → enforce 的建議流程） - [x] 1.8 若採用 report-only CSP，於 `index.html` 新增對應的 meta tag（並在文件中標註僅用於報告期） **驗證方式**：執行 `npm test -- --run src/__tests__/ai.config.test.ts`，確認所有測試通過"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/tasks.md",
+      "heading": "2. syncLocalToCloud 改用 Promise.allSettled（RISK-007）",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 2.1 在 `services/cloudStorage.ts` 的 `syncLocalToCloud()` (L200-212) 中，將 `await Promise.all(uploadPromises)` 替換為 `const results = await Promise.allSettled(uploadPromises)` - [x] 2.2 遍歷 `results` 陣列，對 `status === 'rejected'` 的結果呼叫 `console.error`，錯誤原因需做型別守衛：`reason instanceof Error ? reason.message : String(reason)` - [x] 2.3 加入並發上限（chunking 或 queue），限制同時同步的 bank 數量（例如 3~5） - [x] 2.4 讓 `syncLocalToCloud` 回傳摘要（成功/失敗 IDs 與錯誤訊息），更新 caller 以顯示「部分失敗」與重試入口 - [x] 2.5 確認 `syncLocalToCloud` 的所有 caller（搜尋整個專案中的 `syncLocalToCloud` 呼叫），確保它們不依賴 Promise rejection 的行為 - [x] 2.6 建立單元測試 `src/__tests__/syncLocalToCloud.test.ts`，覆蓋三個場景：(1) 全部成功 (2) 部分失敗 (3) 全部失敗；並包含 reason 非 Error 的 case **驗證方式**：執行 `npm test -- --run src/__tests__/syncLocalToCloud.test.ts`，確認所有測試通過"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/tasks.md",
+      "heading": "3. 同步並發鎖（RISK-001 部分 + RISK-003 部分）",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 3.1 在 `services/cloudStorage.ts` 的模組頂層（約 L14 附近），新增 `let isSyncingPracticeSessions = false;` 變數 - [x] 3.2 在 `syncLocalPracticeSessions()` (L380) 的開頭加入守衛：`if (isSyncingPracticeSessions) { console.warn('[Sync] Already syncing practice sessions, skipping'); return EMPTY_SYNC_RESULT; }` - [x] 3.3 將 `syncLocalPracticeSessions()` 的整個 try-catch 區塊包裝在 `isSyncingPracticeSessions = true; try { ... } finally { isSyncingPracticeSessions = false; }` 結構中 - [x] 3.4 建立單元測試，驗證：(1) 併發呼叫第二次返回 EMPTY_SYNC_RESULT (2) 失敗後鎖被釋放 (3) 成功後鎖被釋放 - [x] 3.5 在 UI/呼叫端明確處理 `EMPTY_SYNC_RESULT`（例如顯示「正在同步中」），避免 retry 端誤判成功 **驗證方式**：執行對應測試，確認並發鎖行為正確"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/tasks.md",
+      "heading": "4. 雲端較新 session回寫本機（RISK-002）",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 4.1 在 `services/cloudStorage.ts` 的 `syncLocalPracticeSessions()` 中，找到 L432-434 的 `if (!isLocalNewer) { skipped += 1; continue; }` 區塊 - [x] 4.2 將該區塊修改為：`if (!isLocalNewer) { skipped += 1; updatedLocalSessions.push(cloudSession!); continue; }` — 將雲端版本加入 `updatedLocalSessions`，使其在 L479 的 `replaceAllPracticeSessions` 中被寫入本機 - [x] 4.3 建立單元測試，覆蓋場景：(1) 雲端較新時 session 被回寫到本機 (2) 本機較新時正常上傳 (3) 兩者相同時保留雲端版本 - [x] 4.4 回寫雲端版本時，清理該 session 的 chunk drafts（避免狀態不一致） - [x] 4.5 在回寫本機前強制遵守 `PRACTICE_ACTIVE_LIMIT`（保留最新 N 筆或定義裁切策略） - [x] 4.6 加入 `updatedAt` 異常漂移防護（差距過大時偏向雲端並記錄警告） **驗證方式**：執行測試，確認雲端較新的 session 不再被靜默丟棄"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/tasks.md",
+      "heading": "5. saveCloudQuestions cleanup 降級（RISK-001）",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 5.1 在 `services/cloudStorage.ts` 的 `saveCloudQuestions()` 中，找到 L191-194 的 cleanup error 處理區塊 - [x] 5.2 將 `throw new Error(...)` 改為 `console.warn('Cloud question cleanup failed (non-fatal):', cleanupError.message)` — 保留日誌但不拋錯 - [x] 5.3 同樣處理 L176-179 的 `deleteAllError`：將 throw 改為 console.warn，因為空 questions 的全量刪除失敗也應該降級而非中斷 - [x] 5.4 在 L174 的 `if (keepIds.length === 0)` 區塊前，新增 `console.info('[CloudStorage] saveCloudQuestions: keepIds is empty, will delete all questions for bank:', bankId)` - [x] 5.5 建立單元測試：(1) upsert 成功 + cleanup 失敗 → 不拋錯 (2) upsert 失敗 → 拋錯且不執行 cleanup - [x] 5.6 `keepIds` 為空時需顯式 `forceDeleteAll` 或 UI 二次確認；若未授權則直接拒絕全量刪除並回傳可處理錯誤 - [x] 5.7 cleanup 失敗時記錄待清理 bankId（例如 `mindspark_dirty_banks`），下次同步或啟動時重試 - [x] 5.8 `keepIds` 過大時分批執行 cleanup（避免 `in` 條件過長） - [x] 5.9 驗證 Supabase RLS/Policy 已保護 `questions`/`banks` 表（不足則補 migration 或文件化要求） **驗證方式**：執行測試，確認 cleanup 失敗不再中斷用戶操作"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/tasks.md",
+      "heading": "6. saveChunkDraft 版本守衛（RISK-004）",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 6.1 在 `services/storage.ts` 的 `saveChunkDraft()` (L250-252) 中，在 `localStorage.setItem` 之前加入版本比較邏輯：讀取現有草稿，比較 `updatedAt`，若現有草稿**嚴格較新**（`>`）則拒絕寫入並記錄 `console.warn` - [x] 6.2 確認 `hooks/useChunkedPractice.ts` 中 `updateChunkDraft` (L394-421) 和 `beforeunload` (L423-449) 兩個路徑都經過 `saveChunkDraft`，確保版本守衛對兩者都生效 - [x] 6.3 確認 `updateChunkDraft` 在 L419 已正確設置 `updatedAt: Date.now()` - [x] 6.4 確認 `beforeunload` 在 L444 已正確設置 `updatedAt: Date.now()` - [x] 6.5 建立單元測試 `src/__tests__/saveChunkDraft.test.ts`，覆蓋四個場景：(1) 較新草稿覆蓋較舊草稿 (2) 較舊草稿被拒絕 (3) 無現有草稿允許寫入 (4) legacy 草稿（無 updatedAt）允許覆蓋 - [x] 6.6 `localStorage.setItem` 需捕捉 `QuotaExceededError`，並採取清理最舊草稿或回報警告的降級策略 - [x] 6.7 若偵測 `updatedAt` 回撥過大（例如 > 1 小時），允許強制覆蓋並記錄警告 **驗證方式**：執行 `npm test -- --run src/__tests__/saveChunkDraft.test.ts`，確認所有測試通過"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/tasks.md",
+      "heading": "7. 依賴項安全升級",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 7.1 執行 `npm audit` 記錄當前漏洞清單 - [x] 7.2 執行 `npm update vite` 升級到最新安全版本（patch/minor 升級優先，若需 major 升級則先查閱 changelog） - [x] 7.3 執行 `npm update dompurify` 升級到最新版本 - [x] 7.4 執行 `npm audit` 確認漏洞數量減少 - [x] 7.5 執行 `npm run build` 確認 build 不受影響 - [x] 7.6 執行 `npm test` 確認所有測試通過 - [x] 7.7 若漏洞無法透過 `npm update` 消除，於 `package.json` 加入 `overrides`（必要時） - [x] 7.8 檢查 `vite.config.ts` 中的 plugin 相容性與 HMR 行為（避免升級破壞開發流程） - [x] 7.9 新增 DOMPurify 輸出回歸測試（涵蓋常見 HTML 標籤/屬性） **驗證方式**：`npm audit` 漏洞減少 + `npm run build` 成功 + `npm test` 全部通過"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/tasks.md",
+      "heading": "Traceability: Risk → Tasks → Tests",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "下表將 proposal 中已識別的 RISK 與 tasks.md 中的具體任務以及 benchmark/stress 測試對應起來，便於審查與驗證。 | Risk ID | Short description | Mapped Task(s) in tasks.md | Mapped Test/Benchmark | |---------|-------------------|----------------------------|-----------------------| | RISK-001 | saveCloudQuestions 非原子/cleanup 風險 | 5.1 - 5.9 (saveCloudQuestions cleanup 降級、keepIds 處理、記錄待清理 bankId) | M5 (saveCloudQuestions cleanup) + Unit tests (tasks 5.x) | | RISK-002 | syncLocalPracticeSessions 被靜默丟棄 | 4.1 - 4.6 (雲端回寫到本機、清理 chunk drafts) | M4 (session write) + integration tests (tasks 4.x) | | RISK-003 | syncLocalToCloud Promise.all 導致中斷 | 2.1 - 2.6 (Promise.allSettled、並發上限、返回摘要) | M2 (sync all) + syncLocalToCloud.unit tests (tasks 2.x) | | RISK-004 | saveChunkDraft 版本回流/比較不完整 | 6.1 - 6.7 (版本守衛、QuotaExceeded 處理) | M6 (saveChunkDraft) + unit tests (tasks 6.x) | | RISK-005 | 第三方套件 CVE（vite, dompurify） | 7.1 - 7.9 (依賴升級、audit、回歸測試) | M7 (dependency benchmarks) + CI `npm audit` gates (tasks 7.x) | | RISK-006 | AI config JSON.parse 缺少容錯 | 1.1 - 1.6 (getAIConfig try-catch、尺寸上限、settings UI) | M1 (AI config parsing) + unit tests (tasks 1.x) | | RISK-007 | syncLocalToCloud 全部失敗導致中斷 | 2.1 - 2.6 (Promise.allSettled 與結果摘要) | M2 (s"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/tasks.md",
+      "heading": "Immediate high-priority tasks",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] S1: Audit build artifacts for embedded credentials; revoke/rotate any found keys and record rotated key IDs in CHANGELOG. - [x] S2: Add CI secret-scanning gate (fail on detected secrets) and run on PRs and main branch commits. - [x] S3: Implement backend token-minting endpoint (short-lived tokens) and update clients to use scoped tokens instead of long-lived API keys. - [x] S4: Add CI job that runs reproducible multi-client stress tests (subset of benchmark harness) and fail PRs if divergence/data-loss observed. - [x] S5: Add dependency CVE enumeration task: list CVEs for vite/dompurify and assign upgrade/migration owners."
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/tasks.md",
+      "heading": "8. 全面驗證",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 8.1 執行 `npx tsc --noEmit` 確認無型別錯誤 - [x] 8.2 執行 `npm run build` 確認 production build 成功 - [x] 8.3 執行 `npm test` 確認所有單元測試通過（包含新增的測試） - [x] 8.4 新增 Playwright E2E：模擬同步部分失敗、重試、以及損壞 localStorage 的 AI 設定 - [x] 8.5 測試時間相關邏輯時使用 `vi.runAllTimersAsync()`，避免 fake timers 導致 Promise 無法結算 - [x] 8.6 在開發伺服器中手動驗證：(1) AI 設定頁面在損壞 config 後能正常載入 (2) 同步操作不會因部分失敗而完全中斷 - [x] 8.7 更新 `docs/DEVELOPMENT_LOG.md` 記錄此次安全修復的變更摘要"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/verification-report.md",
+      "heading": "Summary",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Dimension | Status | |---|---| | Completeness | 62/62 tasks ✅, 9 requirements checked | | Correctness | 9/9 scenarios aligned ✅ | | Coherence | Design fully followed ✅ |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/verification-report.md",
+      "heading": "Round 1 Issues — All Resolved",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Round 1 Issue | Status | Resolution | |---|---|---|---| | W1 | Cloud-only sessions 被回寫本機（違反 spec L27：不主動拉取雲端-only session） | ✅ FIXED | 移除了 `cloudStorage.ts:676-684` 中將 cloud-only sessions push 到 `updatedLocalSessions` 的邏輯。Cloud-only sessions 現在保留在雲端，不寫入 localStorage | | S1 | `keepIds` 空集合使用 `console.error`（應為 `console.warn`，因為是預期的防禦性拒絕） | ✅ FIXED | `cloudStorage.ts:264` 已改為 `console.warn` | | S2 | AI config oversized 使用 `console.error`（應為 `console.warn`） | ✅ FIXED | `ai.ts:79` 已改為 `console.warn` |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/verification-report.md",
+      "heading": "Round 2: Additional Issues Found & Fixed",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Issue | Status | Resolution | |---|---|---|---| | A1 | `cloudStorage.ts:18` — `(error: any)` 違反 NO_ANY 規則 | ✅ FIXED | 改為 `(error: unknown)` + `Record<string, unknown>` type guard | | A2 | `cloudStorage.ts:165` — `(q: any)` 違反 NO_ANY 規則 | ✅ FIXED | 改為 `(q: unknown)` | | A3 | `storage.ts:265` — `(parsed as any).updatedAt` 違反 NO_ANY 規則 | ✅ FIXED | 使用 `Record<string, unknown>` 中間變數 | | A4 | `storage.ts:314` — `catch (e: any)` 違反 NO_ANY 規則 | ✅ FIXED | 改為 `catch (e: unknown)` + `Record<string, unknown>` type guard | | A5 | `useChunkedPractice.test.ts:193` — Flaky test 因 shuffle 隨機性 | ✅ FIXED | 改為斷言總題數減少（確定性），而非特定 chunk 題數 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/verification-report.md",
+      "heading": "CRITICAL",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- 無"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/verification-report.md",
+      "heading": "WARNING",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- 無"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/verification-report.md",
+      "heading": "SUGGESTION",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- 無"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/verification-report.md",
+      "heading": "Evidence",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- `saveCloudQuestions` 使用 upsert + cleanup 分批與失敗降級：`services/cloudStorage.ts:222-308` - Banks/Questions RLS 政策已在 schema 定義：`docs/migrations/supabase_schema.sql:26-85` - `syncLocalToCloud` 使用 `Promise.allSettled` + 並發上限 + failure summary：`services/cloudStorage.ts:314-363` - `saveChunkDraft` updatedAt 守衛與 QuotaExceededError 降級：`services/storage.ts:290-342` - `syncLocalPracticeSessions` 鎖機制 + 時鐘漂移防護 + 雲端較新回寫：`services/cloudStorage.ts:531-702` - Cloud-only sessions 不再被拉回本機（符合 spec）：`services/cloudStorage.ts:677-686` - 所有 `any` 已消除，改用 `unknown` + type guards - 測試覆蓋：`src/__tests__/ai.config.test.ts`, `src/__tests__/syncLocalToCloud.test.ts`, `src/__tests__/saveChunkDraft.test.ts`, `src/__tests__/cloudStorage.test.ts`, `src/__tests__/practiceSessionStorage.test.ts`, `e2e/sync-and-settings-hardening.spec.ts`"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/verification-report.md",
+      "heading": "Verification Gates",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- ✅ `npx tsc --noEmit` — 零錯誤 - ✅ `npm run build` — production build 成功 - ✅ `npm test -- --run` — 24 files, 146 tests 全部通過 - ✅ 無 `any` 型別違規"
+    },
+    {
+      "path": "openspec/changes/archive/2026-05-21-security-and-sync-hardening/verification-report.md",
+      "heading": "Final Assessment",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "所有問題已修復。零 CRITICAL、零 WARNING、零 SUGGESTION。Ready for archive."
+    },
+    {
       "path": "openspec/changes/archive/enhance-quiz-experience/design.md",
       "heading": "1. Quiz Size Selection",
       "category": "openspec-design",
@@ -10820,6 +12367,13 @@
     },
     {
       "path": "openspec/specs/chunked-practice/spec.md",
+      "heading": "Purpose",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "提供分階段練習 (Chunked Practice) 核心邏輯、Session 建立與進行中進度恢復與存儲的規格要求。"
+    },
+    {
+      "path": "openspec/specs/chunked-practice/spec.md",
       "heading": "Requirement: User can create a chunked practice session",
       "category": "openspec-spec",
       "scope": "openspec",
@@ -10935,7 +12489,7 @@
       "heading": "Requirement: Mid-chunk restore snapshot",
       "category": "openspec-spec",
       "scope": "openspec",
-      "text": "系統 SHALL 為進行中的 Chunk 維護獨立的本地恢復快照，以支援刷新或中斷後的續作；此快照 SHALL NOT 使用 `mindspark_quiz_session` 主鍵，避免與一般 quiz session 混淆。"
+      "text": "系統 SHALL 為進行中的 Chunk 維護獨立的本地恢復快照，以支援刷新或中斷後的續作；此快照 SHALL NOT 使用 `mindspark_quiz_session` 主鍵，避免與一般 quiz session 混淆。草稿寫入 SHALL 使用 `updatedAt` 時間戳進行版本比較，拒絕以較舊草稿覆蓋較新草稿。"
     },
     {
       "path": "openspec/specs/chunked-practice/spec.md",
@@ -10950,6 +12504,20 @@
       "category": "openspec-spec",
       "scope": "openspec",
       "text": "- **WHEN** 使用者關閉頁面後再次回到同一 Session - **THEN** 系統 SHALL 從 chunk 專屬快照恢復到最後一次作答位置，而不是從第一題重新開始 - **THEN** 若 chunk 專屬快照缺失，系統 SHALL 回退到 chunk 的第 1 題重新開始"
+    },
+    {
+      "path": "openspec/specs/chunked-practice/spec.md",
+      "heading": "Scenario: updateChunkDraft and beforeunload both respect updatedAt",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `updateChunkDraft` 在元件生命週期內被呼叫 - **AND** `beforeunload` 在頁面關閉時被觸發 - **THEN** 兩個寫入路徑 SHALL 都在 `saveChunkDraft` 中經過 `updatedAt` 版本比較 - **AND** 較舊的草稿 SHALL 被拒絕 - **AND** 較新的草稿 SHALL 被正常寫入"
+    },
+    {
+      "path": "openspec/specs/chunked-practice/spec.md",
+      "heading": "Scenario: beforeunload does not overwrite newer updateChunkDraft",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `updateChunkDraft` 在 `t=1000` 寫入了草稿（`updatedAt: 1000`） - **AND** `beforeunload` 在 `t=500` 的 `latestProgressRef` 狀態觸發寫入（`updatedAt: 500`） - **THEN** `saveChunkDraft` SHALL 拒絕 `beforeunload` 的寫入 - **AND** localStorage 中的草稿 SHALL 維持 `updateChunkDraft` 寫入的版本"
     },
     {
       "path": "openspec/specs/chunked-practice/spec.md",
@@ -11061,7 +12629,7 @@
       "heading": "Requirement: Cloud Save Preserves Question IDs",
       "category": "openspec-spec",
       "scope": "openspec",
-      "text": "The `saveCloudQuestions` function MUST use Supabase `upsert` (with `onConflict: 'id'`) instead of delete-and-reinsert. Question IDs MUST be included in the upsert payload. Furthermore, the storage tables involved MUST be protected by Row Level Security (RLS) to ensure that the process cannot be exploited to overwrite or upsert IDs belonging to other users."
+      "text": "The `saveCloudQuestions` function MUST use Supabase `upsert` (with `onConflict: 'id'`) instead of delete-and-reinsert. Question IDs MUST be included in the upsert payload. Furthermore, the storage tables involved MUST be protected by Row Level Security (RLS) to ensure that the process cannot be exploited to overwrite or upsert IDs belonging to other users. When the cleanup (delete) step fails after a successful upsert, the system SHALL log a warning and continue without throwing, to prevent upsert success from being rolled back by cleanup failure. When `keepIds` is empty, the system SHALL NOT perform a full delete unless the caller explicitly provides `forceDeleteAll` (or an equivalent explicit confirmation flag). Otherwise, the operation SHALL return a safe, user-actionable error and log a warning."
     },
     {
       "path": "openspec/specs/cloud-data-integrity/spec.md",
@@ -11079,6 +12647,41 @@
     },
     {
       "path": "openspec/specs/cloud-data-integrity/spec.md",
+      "heading": "Scenario: Cleanup failure after successful upsert degrades gracefully",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `saveCloudQuestions` upsert 成功完成 - **AND** 後續的 cleanup delete 操作失敗（例如網路中斷、超時） - **THEN** 系統 SHALL 記錄 `console.warn` 包含失敗原因 - **AND** 系統 SHALL NOT 拋出 Error - **AND** 已 upsert 的題目 SHALL 保留在雲端 - **AND** 未被刪除的幽靈題目 SHALL 在雲端保留（可接受的降級行為） - **AND** 系統 SHALL 記錄待清理的 bankId 以便下次同步重試"
+    },
+    {
+      "path": "openspec/specs/cloud-data-integrity/spec.md",
+      "heading": "Scenario: Large keepIds are cleaned up in batches",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `keepIds.length` 超過安全上限（例如 500） - **THEN** 系統 SHALL 以分批方式執行 cleanup - **AND** 任一批次失敗時依「cleanup 失敗降級」策略處理"
+    },
+    {
+      "path": "openspec/specs/cloud-data-integrity/spec.md",
+      "heading": "Scenario: Upsert failure still throws error",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `saveCloudQuestions` 的 upsert 操作失敗 - **THEN** 系統 SHALL 拋出 Error 包含失敗原因 - **AND** 系統 SHALL NOT 執行 cleanup delete - **AND** 雲端資料 SHALL 維持修改前的狀態"
+    },
+    {
+      "path": "openspec/specs/cloud-data-integrity/spec.md",
+      "heading": "Scenario: Empty questions array requires explicit confirmation",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `saveCloudQuestions` 被呼叫時 `questions` 為空陣列 - **AND** `keepIds` 因此為空 - **AND** 未提供 `forceDeleteAll` - **THEN** 系統 SHALL **不** 執行全量刪除 - **AND** 系統 SHALL 回傳可處理的錯誤或狀態，提示需要明確確認"
+    },
+    {
+      "path": "openspec/specs/cloud-data-integrity/spec.md",
+      "heading": "Scenario: Explicit forceDeleteAll allows full cleanup with logging",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `saveCloudQuestions` 被呼叫時 `questions` 為空陣列 - **AND** `keepIds` 因此為空 - **AND** 提供 `forceDeleteAll = true` - **THEN** 系統 SHALL 執行 `delete` 清除該 bank 的所有雲端題目 - **AND** 系統 SHALL 記錄 `console.info` 說明執行了全量清除"
+    },
+    {
+      "path": "openspec/specs/cloud-data-integrity/spec.md",
       "heading": "Requirement: Cloud createBank Error Handling",
       "category": "openspec-spec",
       "scope": "openspec",
@@ -11090,6 +12693,104 @@
       "category": "openspec-spec",
       "scope": "openspec",
       "text": "- **WHEN** `createCloudBank` returns `null` (Supabase error) - **THEN** `CloudStorageRepository.createBank` SHALL throw an `Error` - **AND** the calling code SHALL catch and display a user-friendly error message"
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Purpose",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "TBD - created by archiving change security-and-sync-hardening. Update Purpose after archive."
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Requirement: saveChunkDraft performs updatedAt comparison before write",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "`saveChunkDraft` 函式 SHALL 在寫入 localStorage 之前，比較傳入草稿的 `updatedAt` 與現有草稿的 `updatedAt`。若現有草稿的 `updatedAt` 嚴格大於傳入草稿的 `updatedAt`，系統 SHALL 拒絕寫入並記錄警告。 `saveChunkDraft` SHALL 在寫入時處理 `QuotaExceededError`，並以降級策略（清理最舊草稿或回報警告）避免拋出未處理例外。"
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Newer draft overwrites older draft",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 現有草稿的 `updatedAt` 為 `1000` - **AND** 傳入草稿的 `updatedAt` 為 `2000` - **THEN** 系統 SHALL 正常寫入傳入的草稿 - **AND** localStorage 中的草稿 SHALL 更新為傳入版本"
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Older draft is rejected",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 現有草稿的 `updatedAt` 為 `3000` - **AND** 傳入草稿的 `updatedAt` 為 `2000` - **THEN** 系統 SHALL 拒絕寫入 - **AND** 系統 SHALL 記錄 `console.warn` 包含兩個時間戳的值 - **AND** localStorage 中的草稿 SHALL 維持不變"
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Clock rollback allows forced overwrite",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 現有草稿的 `updatedAt` 與傳入草稿的 `updatedAt` 差距異常過大（例如 > 1 小時） - **THEN** 系統 SHALL 視為時鐘異常 - **AND** 系統 SHALL 允許較新的業務狀態覆蓋並記錄警告"
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: No existing draft allows write",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** localStorage 中不存在對應的草稿 - **AND** 傳入草稿的 `updatedAt` 為任意合法值 - **THEN** 系統 SHALL 正常寫入傳入的草稿"
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Existing draft has no updatedAt field (legacy data)",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 現有草稿不包含 `updatedAt` 欄位（或為 `undefined`） - **AND** 傳入草稿的 `updatedAt` 為合法值 - **THEN** 系統 SHALL 允許寫入（legacy 草稿視為最舊版本）"
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Storage quota exceeded during write",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `localStorage.setItem` 拋出 `QuotaExceededError` - **THEN** 系統 SHALL 不中斷流程 - **AND** 系統 SHALL 嘗試清理最舊草稿或記錄警告"
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Requirement: getAIConfig handles corrupted JSON gracefully",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "`getAIConfig` 函式 SHALL 使用 try-catch 包裝 `JSON.parse` 呼叫，並在解析前檢查資料大小上限。當解析失敗或結構不合法時，系統 SHALL 清理損壞的設定資料並返回 `null`。清理 localStorage/sessionStorage 若失敗，系統 SHALL 記錄警告但不得拋出例外。"
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Valid JSON parses successfully",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** localStorage 中的 AI config 為合法 JSON - **THEN** 系統 SHALL 正常解析並返回 `AIConfig` 物件 - **AND** 行為 SHALL 與修改前完全一致"
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Corrupted JSON is handled gracefully",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** localStorage 中的 AI config 為損壞的 JSON（例如 `\"{invalid\"}`） - **THEN** 系統 SHALL 捕獲 SyntaxError - **AND** 系統 SHALL 清除 localStorage 和 sessionStorage 中的 `mindspark_ai_config` - **AND** 系統 SHALL 記錄 `console.error` 說明解析失敗 - **AND** 系統 SHALL 返回 `null` - **AND** 系統 SHALL NOT 拋出任何 exception 到上層"
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Oversized JSON is rejected",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** localStorage 中的 AI config 字串長度超過上限 - **THEN** 系統 SHALL 視為損壞資料並返回 `null` - **AND** 系統 SHALL 記錄警告"
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Parsed JSON fails schema validation",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `JSON.parse` 成功但物件不符合 `AIConfig` 結構 - **THEN** 系統 SHALL 視為損壞資料並返回 `null` - **AND** 系統 SHALL 清理 storage 中的設定資料"
+    },
+    {
+      "path": "openspec/specs/draft-version-guard/spec.md",
+      "heading": "Scenario: Empty storage returns null",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** localStorage 和 sessionStorage 中都沒有 AI config - **THEN** 系統 SHALL 返回 `null` - **AND** 系統 SHALL NOT 嘗試 JSON.parse"
     },
     {
       "path": "openspec/specs/knowledge-graph-data/spec.md",
@@ -11891,6 +13592,13 @@
     },
     {
       "path": "openspec/specs/practice-session-storage/spec.md",
+      "heading": "Purpose",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "定義練習進度（Practice Session）在 localStorage 及 Supabase 中的存儲規格、安全 RLS 及登入同步與衝突解決策略。"
+    },
+    {
+      "path": "openspec/specs/practice-session-storage/spec.md",
       "heading": "Requirement: Supabase practice_sessions table",
       "category": "openspec-spec",
       "scope": "openspec",
@@ -12006,7 +13714,7 @@
       "heading": "Requirement: Login triggers practice session sync",
       "category": "openspec-spec",
       "scope": "openspec",
-      "text": "系統 SHALL 在使用者登入時，將 localStorage 中的 practice sessions 同步到雲端。"
+      "text": "系統 SHALL 在使用者登入時，將 localStorage 中的 practice sessions 同步到雲端。當雲端 session 較新時，系統 SHALL 將雲端版本回寫到本機 localStorage。"
     },
     {
       "path": "openspec/specs/practice-session-storage/spec.md",
@@ -12014,6 +13722,41 @@
       "category": "openspec-spec",
       "scope": "openspec",
       "text": "- **WHEN** 之前以 Guest 模式創建了 2 個 active practice sessions，然後登入 - **THEN** 系統 SHALL 先讀取雲端 `status = 'active'` sessions，作為合併基準 - **THEN** 系統 SHALL 逐筆比較 local 與 cloud 中相同 `id` 的 `updated_at`，並採用 Last-Write-Wins（保留較新的那份） - 若 local 較新 → SHALL upsert 到雲端 - 若 cloud 較新或相同 → SHALL NOT 以 local 覆蓋雲端 - **THEN** 系統 SHALL 將「需要上傳且 upsert 成功」或「被判定為較舊」的 local 副本自 localStorage 移除 - **THEN** 若 upsert 失敗 → local 副本 SHALL 保留作為 fallback（並標記為待重試），下次登入或 Dashboard 載入時再嘗試同步"
+    },
+    {
+      "path": "openspec/specs/practice-session-storage/spec.md",
+      "heading": "Scenario: Cloud-newer sessions are written back to local",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 本機 session A 的 `updatedAt` 為 `1000` - **AND** 雲端 session A 的 `updatedAt` 為 `2000` - **THEN** 系統 SHALL 將雲端版本的 session A 加入 `updatedLocalSessions` - **AND** 雲端 session A SHALL 被回寫到本機 localStorage - **AND** 本機版本 SHALL 被取代為雲端版本 - **AND** `skipped` 計數器 SHALL 遞增 - **AND** 系統 SHALL 清理該 session 的 chunk drafts 以避免狀態不一致"
+    },
+    {
+      "path": "openspec/specs/practice-session-storage/spec.md",
+      "heading": "Scenario: Cloud-only sessions are preserved during sync",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 雲端存在 session B，但本機不存在對應 session - **THEN** session B SHALL NOT 被刪除或覆蓋 - **AND** 系統 SHALL 不主動拉取雲端 only 的 session 到本機（此為同步方向：本機→雲端）"
+    },
+    {
+      "path": "openspec/specs/practice-session-storage/spec.md",
+      "heading": "Scenario: Local-only sessions are uploaded",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 本機存在 session C，但雲端不存在對應 session - **THEN** 系統 SHALL 將 session C upsert 到雲端 - **AND** `uploaded` 計數器 SHALL 遞增"
+    },
+    {
+      "path": "openspec/specs/practice-session-storage/spec.md",
+      "heading": "Scenario: Active session limit is enforced on writeback",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 回寫雲端版本造成本機 active sessions 超過上限 - **THEN** 系統 SHALL 依既定策略裁切（例如保留最新 N 筆） - **AND** 系統 SHALL 記錄被裁切的 sessionId 以便追蹤"
+    },
+    {
+      "path": "openspec/specs/practice-session-storage/spec.md",
+      "heading": "Scenario: Clock drift guard for LWW",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 本機與雲端 `updatedAt` 差距超過合理閾值 - **THEN** 系統 SHALL 採保守策略（偏向雲端或要求重試） - **AND** 系統 SHALL 記錄警告以便診斷"
     },
     {
       "path": "openspec/specs/practice-session-storage/spec.md",
@@ -12301,6 +14044,97 @@
       "category": "openspec-spec",
       "scope": "openspec",
       "text": "- **WHEN** a user attempts to sign up or change their password using a known compromised password (e.g. found on HaveIBeenPwned) - **THEN** the Supabase Auth system MUST reject the request - **AND** the Frontend SHOULD display an error instructing the user to pick a more secure password - **AND** the database linter SHALL NOT report leaked password protection as disabled"
+    },
+    {
+      "path": "openspec/specs/sync-concurrency-control/spec.md",
+      "heading": "Purpose",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "TBD - created by archiving change security-and-sync-hardening. Update Purpose after archive."
+    },
+    {
+      "path": "openspec/specs/sync-concurrency-control/spec.md",
+      "heading": "Requirement: Sync concurrency lock prevents duplicate sync execution",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在 `syncLocalPracticeSessions` 執行期間維護模組層級的 `isSyncing` 旗標，阻止並發調用。此旗標 SHALL 在同步開始時設為 `true`，在同步結束（無論成功或失敗）時重設為 `false`。此鎖僅保證**單分頁**排他，跨分頁僅提供 best-effort 行為。"
+    },
+    {
+      "path": "openspec/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: Duplicate sync call is rejected",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `syncLocalPracticeSessions` 正在執行中 - **AND** 另一個調用者（例如 React Effect 重跑、路由切換）再次呼叫 `syncLocalPracticeSessions` - **THEN** 第二次呼叫 SHALL 立即返回 `EMPTY_SYNC_RESULT` - **AND** 系統 SHALL 記錄 console.warn 說明跳過原因 - **AND** 第一次呼叫 SHALL 不受影響，繼續正常執行"
+    },
+    {
+      "path": "openspec/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: Lock is released after sync failure",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `syncLocalPracticeSessions` 在執行過程中拋出未預期錯誤 - **THEN** `isSyncing` 旗標 SHALL 在 `finally` 區塊中被重設為 `false` - **AND** 後續的 sync 呼叫 SHALL 能正常執行"
+    },
+    {
+      "path": "openspec/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: Lock is released after sync success",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `syncLocalPracticeSessions` 成功完成所有 session 的同步 - **THEN** `isSyncing` 旗標 SHALL 被重設為 `false` - **AND** 返回的 `PracticeSyncResult` SHALL 反映實際的 uploaded/skipped/dirty 計數"
+    },
+    {
+      "path": "openspec/specs/sync-concurrency-control/spec.md",
+      "heading": "Requirement: syncLocalToCloud limits concurrent bank uploads",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 對 `syncLocalToCloud` 的 bank 上傳加入並發上限，避免一次性觸發大量請求造成 Rate Limit。"
+    },
+    {
+      "path": "openspec/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: Concurrency is capped",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者有 50 個 bank 需要同步 - **THEN** 系統 SHALL 以固定並發上限分批處理（例如每批 3~5 個） - **AND** 系統 SHALL 仍回傳完整的成功/失敗摘要"
+    },
+    {
+      "path": "openspec/specs/sync-concurrency-control/spec.md",
+      "heading": "Requirement: syncLocalToCloud returns failure summary",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 回傳同步摘要（成功/失敗 bank IDs 與錯誤訊息），供 UI 呈現部分失敗與重試入口。"
+    },
+    {
+      "path": "openspec/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: Partial failure summary is returned",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 同步過程中有部分 bank 失敗 - **THEN** 回傳結果 SHALL 包含失敗 bank 的識別與錯誤訊息"
+    },
+    {
+      "path": "openspec/specs/sync-concurrency-control/spec.md",
+      "heading": "Requirement: syncLocalToCloud uses Promise.allSettled for fault isolation",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在 `syncLocalToCloud` 中使用 `Promise.allSettled` 替代 `Promise.all`，以確保單一 bank 的同步失敗不會中斷其他 bank 的同步。"
+    },
+    {
+      "path": "openspec/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: One bank fails while others succeed",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者有 3 個本機 bank 需要同步 - **AND** 第 2 個 bank 的 `createCloudBank` 失敗（例如網路超時） - **THEN** 第 1 個和第 3 個 bank 的同步 SHALL 正常完成 - **AND** 系統 SHALL 記錄第 2 個 bank 的失敗原因至 console.error - **AND** 函式 SHALL NOT 拋出 unhandled rejection"
+    },
+    {
+      "path": "openspec/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: All banks fail",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 所有 bank 的同步都失敗（例如 Supabase 完全不可用） - **THEN** 系統 SHALL 記錄所有失敗原因 - **AND** 函式 SHALL 正常返回（不拋錯） - **AND** 本機資料 SHALL 不受影響"
+    },
+    {
+      "path": "openspec/specs/sync-concurrency-control/spec.md",
+      "heading": "Scenario: All banks succeed",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 所有 bank 的同步都成功 - **THEN** 行為 SHALL 與使用 `Promise.all` 時完全一致"
     },
     {
       "path": "openspec/specs/test-infrastructure/spec.md",

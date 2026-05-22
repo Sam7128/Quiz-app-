@@ -1,6 +1,6 @@
 # Docs Index
 
-- Updated: `2026-05-18 18:39`
+- Updated: `2026-05-21 21:26`
 - Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs.
 
 ## archive
@@ -15,7 +15,10 @@
 - `reports/codex_verify_report_r2.md` - 第二輪驗證報告（Verifier）
 - `reports/DEEP_AUDIT_REMEDIATION_IMPLEMENTATION.md` - 深度稽核修復實作報告 (2026-02-16)
 - `reports/DEEP_CODE_AUDIT_REPORT_2026-02-15.md` - MindSpark Quiz App 深度檢查報告
+- `reports/RISK_REVIEW_REPORT_2026_05_21.md` - MindSpark 程式風險與競態審查報告
+- `reports/security-and-sync-hardening-verification.md` - Verification Report: security-and-sync-hardening
 - `reports/SECURITY_AUDIT_REPORT.md` - Security Audit Report
+- `reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md` - 🛡️ Quiz App 追加安全性強化報告 (S1-S5)
 - `reports/安全警告.md` - 安全警告
 
 ## root
@@ -23,5 +26,6 @@
 - `DEVELOPMENT_LOG.md` - Development Log
 - `knowledge-graph-exploration-notes-2026-03-08.md` - 知識圖 / 視覺化筆記功能探索整理
 - `knowledge-graph-workspace-implementation-report.md` - 知識圖工作區 (Knowledge Graph Workspace) — 實作報告
+- `SECURITY_AND_LOGIC_AUDIT_REPORT.md` - MindSpark 專案安全性與邏輯風險稽核報告
 - `SPECIFICATION.md` - MindSpark System Specification
 - `SUPABASE_SECURITY_GUIDE.md` - Supabase Security Hardening Configuration Guide

@@ -1,7 +1,8 @@
 # 核心規格 - 分階段練習 (Chunked Practice)
 
+## Purpose
+提供分階段練習 (Chunked Practice) 核心邏輯、Session 建立與進行中進度恢復與存儲的規格要求。
 ## Requirements
-
 ### Requirement: User can create a chunked practice session
 系統 SHALL 允許已登入或 Guest 使用者從任何包含 ≥1 題的題庫中創建分階段練習 Session。創建時使用者 SHALL 能夠選擇每階段的題目數量（Chunk Size），可選值為 `10 | 15 | 20 | 25 | 30`，預設值為 `20`。
 
@@ -84,7 +85,7 @@
 - **THEN** 系統 SHALL NOT 顯示階段完成摘要模態
 
 ### Requirement: Mid-chunk restore snapshot
-系統 SHALL 為進行中的 Chunk 維護獨立的本地恢復快照，以支援刷新或中斷後的續作；此快照 SHALL NOT 使用 `mindspark_quiz_session` 主鍵，避免與一般 quiz session 混淆。
+系統 SHALL 為進行中的 Chunk 維護獨立的本地恢復快照，以支援刷新或中斷後的續作；此快照 SHALL NOT 使用 `mindspark_quiz_session` 主鍵，避免與一般 quiz session 混淆。草稿寫入 SHALL 使用 `updatedAt` 時間戳進行版本比較，拒絕以較舊草稿覆蓋較新草稿。
 
 #### Scenario: Refresh mid-chunk restores current chunk draft
 - **WHEN** 使用者在 Chunk 進行中重新整理頁面
@@ -96,6 +97,19 @@
 - **WHEN** 使用者關閉頁面後再次回到同一 Session
 - **THEN** 系統 SHALL 從 chunk 專屬快照恢復到最後一次作答位置，而不是從第一題重新開始
 - **THEN** 若 chunk 專屬快照缺失，系統 SHALL 回退到 chunk 的第 1 題重新開始
+
+#### Scenario: updateChunkDraft and beforeunload both respect updatedAt
+- **WHEN** `updateChunkDraft` 在元件生命週期內被呼叫
+- **AND** `beforeunload` 在頁面關閉時被觸發
+- **THEN** 兩個寫入路徑 SHALL 都在 `saveChunkDraft` 中經過 `updatedAt` 版本比較
+- **AND** 較舊的草稿 SHALL 被拒絕
+- **AND** 較新的草稿 SHALL 被正常寫入
+
+#### Scenario: beforeunload does not overwrite newer updateChunkDraft
+- **WHEN** `updateChunkDraft` 在 `t=1000` 寫入了草稿（`updatedAt: 1000`）
+- **AND** `beforeunload` 在 `t=500` 的 `latestProgressRef` 狀態觸發寫入（`updatedAt: 500`）
+- **THEN** `saveChunkDraft` SHALL 拒絕 `beforeunload` 的寫入
+- **AND** localStorage 中的草稿 SHALL 維持 `updateChunkDraft` 寫入的版本
 
 ### Requirement: User can abandon a session
 系統 SHALL 允許使用者手動放棄一個 active 的 Practice Session。
@@ -148,3 +162,4 @@
 - **THEN** 創建 3 個 Chunk，每個 20 題
 - **THEN** Session 的 `bankIds` SHALL 包含 Bank A 和 Bank B 的 ID
 - **THEN** Session SHALL 保留 bank→question 的映射快照（用於刪除/恢復判定）
+

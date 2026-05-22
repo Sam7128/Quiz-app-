@@ -333,6 +333,12 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, o
               placeholder={config.provider === 'google' ? "AIza..." : "nvapi-..."}
               className="w-full p-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all font-mono text-sm text-slate-900 dark:text-slate-100"
             />
+            {config.persist !== false && config.apiKey && (
+              <p className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 mt-1 animate-in fade-in duration-200">
+                <AlertTriangle size={12} className="text-amber-500" />
+                建議：金鑰正以長期保存模式儲存在 localStorage 中，可能面臨被惡意腳本讀取的風險。為求安全，建議關閉下方「記住金鑰」。
+              </p>
+            )}
             <div className="flex items-center justify-between p-3 bg-slate-50/60 dark:bg-black/20 border border-slate-200/60 dark:border-white/10 rounded-xl">
               <div className="text-xs">
                 <div className="font-bold text-slate-700 dark:text-slate-200">記住金鑰</div>

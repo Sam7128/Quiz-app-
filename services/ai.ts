@@ -57,21 +57,58 @@ export const cleanJsonResponse = (raw: string): string => {
   return clean;
 };
 
+export const isAIConfig = (obj: unknown): obj is AIConfig => {
+  if (!obj || typeof obj !== 'object') return false;
+  const config = obj as Record<string, unknown>;
+  if (config.provider !== 'google' && config.provider !== 'nvidia') return false;
+  if (typeof config.apiKey !== 'string') return false;
+  if (typeof config.model !== 'string') return false;
+  if (config.baseUrl !== undefined && typeof config.baseUrl !== 'string') return false;
+  if (config.persist !== undefined && typeof config.persist !== 'boolean') return false;
+  return true;
+};
+
 export const getAIConfig = (): AIConfig | null => {
   const sessionData = sessionStorage.getItem(STORAGE_KEYS.AI_CONFIG);
   const localData = localStorage.getItem(STORAGE_KEYS.AI_CONFIG);
   const data = sessionData || localData;
   if (!data) return null;
 
-  const config = JSON.parse(data);
-  // Migration for old config without provider
-  if (!config.provider) {
-    config.provider = 'google';
+  const MAX_AI_CONFIG_SIZE = 10 * 1024; // 10KB
+  if (data.length > MAX_AI_CONFIG_SIZE) {
+    console.warn('[AI Config] Config size exceeds 10KB, clearing corrupted data');
+    try {
+      sessionStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
+      localStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
+    } catch {
+      console.warn('[AI Config] Failed to clear corrupted storage');
+    }
+    return null;
   }
-  if (config.persist === undefined) {
-    config.persist = true;
+
+  try {
+    const config = JSON.parse(data);
+    // Migration for old config without provider
+    if (!config.provider) {
+      config.provider = 'google';
+    }
+    if (config.persist === undefined) {
+      config.persist = true;
+    }
+    if (!isAIConfig(config)) {
+      throw new Error('Invalid AI config structure');
+    }
+    return config;
+  } catch (err: unknown) {
+    console.error('[AI Config] Failed to parse config, clearing corrupted data', err);
+    try {
+      sessionStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
+      localStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
+    } catch {
+      console.warn('[AI Config] Failed to clear corrupted storage');
+    }
+    return null;
   }
-  return config;
 };
 
 export const saveAIConfig = (config: AIConfig) => {

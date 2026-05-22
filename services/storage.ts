@@ -243,12 +243,103 @@ const isChunkDraftState = (value: unknown): value is ChunkDraftState => {
     typeof draft.chunkIndex === 'number' &&
     typeof draft.currentQuestionIndex === 'number' &&
     typeof draft.score === 'number' &&
-    Array.isArray(draft.wrongQuestionIds)
+    Array.isArray(draft.wrongQuestionIds) &&
+    typeof draft.updatedAt === 'number'
   );
 };
 
+const cleanOldestChunkDraft = (): boolean => {
+  try {
+    const prefix = `${STORAGE_KEYS.CHUNK_DRAFT_PREFIX}:`;
+    let oldestKey: string | null = null;
+    let oldestTime = Infinity;
+
+    for (let index = 0; index < localStorage.length; index++) {
+      const key = localStorage.key(index);
+      if (key && key.startsWith(prefix)) {
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          try {
+            const parsed: unknown = JSON.parse(raw);
+            if (parsed && typeof parsed === 'object') {
+              const record = parsed as Record<string, unknown>;
+              const time = typeof record.updatedAt === 'number' ? record.updatedAt : 0;
+              if (time < oldestTime) {
+                oldestTime = time;
+                oldestKey = key;
+              }
+            }
+          } catch (e) {
+            oldestKey = key;
+            break;
+          }
+        }
+      }
+    }
+
+    if (oldestKey) {
+      console.warn(`[Storage] Storage quota exceeded. Cleaning up oldest draft: ${oldestKey}`);
+      localStorage.removeItem(oldestKey);
+      return true;
+    }
+  } catch (e) {
+    console.warn('Failed to find and clean oldest draft:', e);
+  }
+  return false;
+};
+
 export const saveChunkDraft = (draft: ChunkDraftState): void => {
-  localStorage.setItem(getChunkDraftStorageKey(draft.sessionId, draft.chunkIndex), JSON.stringify(draft));
+  const key = getChunkDraftStorageKey(draft.sessionId, draft.chunkIndex);
+
+  try {
+    const existing = getChunkDraft(draft.sessionId, draft.chunkIndex);
+    if (existing && typeof existing.updatedAt === 'number' && typeof draft.updatedAt === 'number') {
+      const driftThreshold = 60 * 60 * 1000; // 1 小時
+      const isRewind = existing.updatedAt - draft.updatedAt > driftThreshold;
+      if (existing.updatedAt > draft.updatedAt && !isRewind) {
+        console.warn(
+          `[Storage] saveChunkDraft: Blocked overwrite. Existing is newer (${new Date(
+            existing.updatedAt
+          ).toISOString()}) than incoming (${new Date(draft.updatedAt).toISOString()}).`
+        );
+        return;
+      }
+    }
+  } catch (e) {
+    console.warn('Error reading existing draft for version guard:', e);
+  }
+
+  const serialized = JSON.stringify(draft);
+  try {
+    localStorage.setItem(key, serialized);
+  } catch (e: unknown) {
+    const errObj = (e && typeof e === 'object') ? e as Record<string, unknown> : {} as Record<string, unknown>;
+    const errName = typeof errObj.name === 'string' ? errObj.name : '';
+    const errCode = typeof errObj.code === 'number' ? errObj.code : 0;
+    const errMessage = typeof errObj.message === 'string' ? errObj.message : '';
+    
+    const isQuotaError =
+      errName === 'QuotaExceededError' ||
+      errName === 'NS_ERROR_DOM_QUOTA_REACHED' ||
+      errCode === 22 ||
+      errCode === 1014 ||
+      errMessage.includes('QuotaExceededError') ||
+      errMessage.includes('quota exceeded');
+
+    if (isQuotaError) {
+      console.warn('[Storage] QuotaExceededError encountered, attempting to clean oldest draft');
+      const cleaned = cleanOldestChunkDraft();
+      if (cleaned) {
+        try {
+          localStorage.setItem(key, serialized);
+          return;
+        } catch (retryErr) {
+          console.error('[Storage] Retry saving chunk draft failed after cleanup:', retryErr);
+        }
+      }
+    }
+    console.warn('[Storage] Failed to save chunk draft (non-fatal):', e);
+  }
 };
 
 export const getChunkDraft = (sessionId: string, chunkIndex: number): ChunkDraftState | null => {

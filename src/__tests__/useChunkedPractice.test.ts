@@ -24,7 +24,7 @@ const createRepository = (questionMap: Record<string, Question[]>) => {
     createBank: async () => ({ id: 'bank', name: 'bank', createdAt: 0, questionCount: 0 }),
     deleteBank: async () => {},
     updateBankFolder: async () => {},
-    syncLocalToCloud: async () => {},
+    syncLocalToCloud: async () => ({ successIds: [], failed: [] }),
     getQuestions: async (bankId: string) => questionMap[bankId] ?? [],
     saveQuestions: async () => {},
     deleteQuestionArtifacts: async () => {},
@@ -190,7 +190,13 @@ describe('useChunkedPractice', () => {
     });
 
     const restored = getSessions().find((session) => session.id === sessionId);
-    expect(restored?.chunks[1].totalQuestions).toBeLessThan(5);
+    // 由於 shuffle 是隨機的，被刪除的 2 題可能分布在任意 chunk
+    // 因此改為斷言：所有 chunks 的 totalQuestions 加總少於原始 10 題
+    const totalQuestionsAfterRestore = restored?.chunks.reduce(
+      (sum, chunk) => sum + chunk.totalQuestions, 0
+    ) ?? 0;
+    expect(totalQuestionsAfterRestore).toBeLessThan(10);
+    expect(totalQuestionsAfterRestore).toBe(8);
     expect(onStartChunkQuiz).toHaveBeenCalled();
     expect(toast.warning).toHaveBeenCalled();
   });

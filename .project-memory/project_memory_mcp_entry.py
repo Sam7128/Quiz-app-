@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 LOCAL_SKILL_SCRIPTS = ROOT / ".agents" / "skills" / "project-memory-refresh" / "scripts"
 CANONICAL_GLOBAL_SKILL_SCRIPTS = Path.home() / ".agents" / "skills" / "project-memory-refresh" / "scripts"
-GENERATED_FROM_SKILL_SCRIPTS = Path(r"C:\Users\user\skill manager\.agents\skills\project-memory-refresh\scripts")
+GENERATED_FROM_SKILL_SCRIPTS = Path(r"C:\Users\user\Desktop\Quiz-app--main\.agents\skills\project-memory-refresh\scripts")
 
 for candidate in (LOCAL_SKILL_SCRIPTS, CANONICAL_GLOBAL_SKILL_SCRIPTS, GENERATED_FROM_SKILL_SCRIPTS):
     if (candidate / "project_memory_mcp_server.py").exists():

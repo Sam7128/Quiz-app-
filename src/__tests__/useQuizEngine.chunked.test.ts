@@ -12,7 +12,7 @@ const createRepository = (questions: Question[]): IStorageRepository => {
     createBank: async () => ({ id: 'bank-1', name: 'B1', createdAt: 0, questionCount: 0 }),
     deleteBank: async () => {},
     updateBankFolder: async () => {},
-    syncLocalToCloud: async () => {},
+    syncLocalToCloud: async () => ({ successIds: [], failed: [] }),
     getQuestions: async () => questions,
     saveQuestions: async () => {},
     deleteQuestionArtifacts: async () => {},

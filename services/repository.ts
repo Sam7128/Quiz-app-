@@ -1,4 +1,4 @@
-import { BankMetadata, Question, MistakeLog, SpacedRepetitionItem } from '../types';
+import { BankMetadata, Question, MistakeLog, SpacedRepetitionItem, SyncLocalToCloudResult } from '../types';
 import { RecentMistakeSession } from '../types/battleTypes';
 import { ChunkedPracticeSession } from '../types/battleTypes';
 import { StudyStats as AnalyticsStudyStats } from './analytics';
@@ -27,7 +27,7 @@ export interface IStorageRepository {
   createBank(name: string, folderId?: string): Promise<BankMetadata>;
   deleteBank(bankId: string): Promise<void>;
   updateBankFolder(bankId: string, folderId: string | undefined): Promise<void>;
-  syncLocalToCloud(localBanks: BankMetadata[]): Promise<void>;
+  syncLocalToCloud(localBanks: BankMetadata[]): Promise<SyncLocalToCloudResult>;
 
   // Questions
   getQuestions(bankId: string): Promise<Question[]>;

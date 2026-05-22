@@ -36,7 +36,7 @@
 
 <!-- BEGIN AUTO-GENERATED: MEMORY MAP -->
 ## Auto-Generated Memory Map
-- Refreshed: `2026-05-16 00:28`
+- Refreshed: `2026-05-21 21:26`
 - Project root: `C:\Users\user\Desktop\Quiz-app--main`
 
 ### Key Files
@@ -70,9 +70,9 @@
 ### OpenSpec Snapshot
 - Main specs: `openspec/specs/`
 - Active changes: none detected.
-- Archived changes: `17`
-- [OS-ARC-001] `openspec/changes/archive/2026-03-08-knowledge-graph-workspace/` (proposal, design, tasks, specs:5)
-- [OS-ARC-002] `openspec/changes/archive/2026-05-16-chunked-practice-cloud-sync/` (proposal, design, tasks, specs:3)
+- Archived changes: `18`
+- [OS-ARC-001] `openspec/changes/archive/2026-05-16-chunked-practice-cloud-sync/` (proposal, design, tasks, specs:3)
+- [OS-ARC-002] `openspec/changes/archive/2026-05-21-security-and-sync-hardening/` (proposal, design, tasks, specs:5)
 - [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2)
 - [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks)
 - [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)
@@ -102,6 +102,8 @@
 - [FACT-020] `App.tsx` + `useQuizEngine.ts`: 回調函數（如 `onChunkDraftUpdate`、`onChunkComplete`）必須使用 `useCallback` 封裝，避免在 React 渲染時因為引用變更引發與 `useQuizEngine` 異步載入題庫之間的競態條件，此規則已被 hotfix 完美證實。
 - [FACT-021] `CloudStorageRepository.savePracticeSession` 雲端保存成功後只能移除本地 session cache，不能清除 `mindspark_chunk_draft:*`；使用 `removePracticeSessionCache()`，避免登入狀態下刷新後續答回到第一題。
 - [FACT-022] Vercel build 的真正風險是遠端 Git 若追蹤 `node_modules/` 或 Windows 保留檔名（如 `nul`），會造成 Linux 部署依賴樹殘缺或 shim 權限錯誤；`package.json` 應維持標準 `vite build`，並確保依賴由 Vercel fresh install 產生。
+- [FACT-023] `services/storage.ts`: 引入了防禦性 AI Config 驗證與 Zustand 狀態防禦，確保從 `localStorage` 載入設定時，通過 Type Guards 與 schema 檢查防止惡意 payload 注入。
+- [FACT-024] `services/cloudStorage.ts`: 練習階段 (Practice Sessions) 同步中，修正了 Cloud-only sessions 寫回邏輯。登入後當本地無資料但雲端有紀錄時，會安全地將雲端 session 寫回本地，避免被空資料覆蓋。
 
 ## Active Decisions
 - [DEC-001] `AGENTS.md`: 採用 `AGENTS.md` 承載規則、`MEMORY.md` 承載動態事實，repo-local `GEMINI.md` 不再維護。
@@ -109,6 +111,7 @@
 - [DEC-003] `.codex/config.toml` + `.project-memory/project_memory_mcp_entry.py`: 本專案改用 project-local MCP wrapper，避免只依賴全域 `project-memory-auto`。
 - [DEC-004] `vite.config.ts`: 將 React 核心與 Recharts/Framer-motion 強制打包在同一 `vendor-ui-core` chunk，解決生產環境下因拆分導致的 `forwardRef` undefined 錯誤。
 - [DEC-005] `package.json`: 部署 build 入口維持標準 `vite build`；跨平台 shim 權限問題應從 Git 依賴衛生修正，不能提交 `node_modules/`。
+- [DEC-006] Storage 與 Config 安全：全面禁止在 Storage 讀取與 JSON 解析中使用 `any`，必須使用 `unknown` 加上特定的 Type Guard 進行防禦式屬性驗證與合併。
 
 ## Hotspots
 - [HOT-001] `App.tsx` & `vite.config.ts`: 全域流程、Provider 接線與生產環境打包配置，任何大型 UI 功能更新都需注意 Chunk 拆分相容性。
@@ -119,6 +122,8 @@
 - [HOT-006] `hooks/useChunkedPractice.ts` + `hooks/useQuizEngine.ts`: chunked session 與 quiz flow 的交界，容易出現 restore/完成回調與持久化時序問題。
 - [HOT-007] `services/cloudStorage.ts` + `services/storage.ts`: practice session 的 LWW/dirty/retry 與 guest retention 都在此，任何變更都要驗證資料完整性。
 - [HOT-008] `.gitignore` + Git index hygiene: Vercel 曾因遠端追蹤 `node_modules/` 造成 `.bin/vite` 權限失敗與 `vite/dist/node/cli.js` 缺檔；部署修復時先查 `git ls-tree -r origin/main node_modules`。
+- [HOT-009] `services/storage.ts` + `services/cloudStorage.ts`: 安全與同步強化引入了嚴格的資料驗證。修改此處的儲存格式需特別注意升級時的資料還原相容性。
+
 
 ## Search Recipes
 - [RG-001] `rg -n "mindspark_" services hooks components`: 找所有持久化 key 與資料流入口。

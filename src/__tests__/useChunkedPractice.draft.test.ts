@@ -27,7 +27,7 @@ const createRepository = (questions: Question[]) => {
     createBank: async () => ({ id: 'bank-a', name: 'Bank A', createdAt: 0, questionCount: 0 }),
     deleteBank: async () => {},
     updateBankFolder: async () => {},
-    syncLocalToCloud: async () => {},
+    syncLocalToCloud: async () => ({ successIds: [], failed: [] }),
     getQuestions: async () => questions,
     saveQuestions: async () => {},
     deleteQuestionArtifacts: async () => {},

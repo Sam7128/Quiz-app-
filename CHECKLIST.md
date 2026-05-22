@@ -26,6 +26,12 @@
 - [x] **[UX]** 實作 Quiz UX 優化 (動畫/音效/錯誤解析) `quiz-ux-enhancement`
 - [x] **[Backend]** 實作 Supabase 雲端遷移 `supabase-cloud-sync`
 - [x] **[Feature]** 實作遊戲化模式 (Game Mode)
+- [x] **[Security]** 專案安全性與邏輯風險稽核 (Security & Logic Audit) `security-logic-audit`
+    - [x] 執行 `npm audit` 掃描依賴漏洞
+    - [x] 審查雲端同步競態條件與資料完整性風險
+    - [x] 分析本機草稿保存邏輯衝突
+    - [x] 評估 API Key 儲存安全性與 XSS 風險
+    - [x] 產出詳細稽核報告 `docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md`
 - [x] **[Security]** 專案安全審計與防護強化 (Security Audit & Hardening)
 - [x] **[Refactor]** 遷移至 Tailwind CSS v4 與模組化配置
 - [x] **[Refactor]** 技能導向優化計畫 (Skills-Based Optimization Plan) `skills-based-optimization`
@@ -60,6 +66,8 @@
 - [x] **[Hotfix]** 修正分階段練習中途刷新後續答回到第一題 `chunked-practice-mid-refresh-resume`
 
 ## 🟢 本次完成 (Completed This Round)
+- [x] **[Review]** 完成競態與邏輯風險審查報告 `risk-review-2026-05-21`
+- [x] **[OpenSpec]** 完成 security-and-sync-hardening 變更驗證報告 `security-and-sync-hardening-verify`
 - [x] **[Hotfix]** 修正 Vercel 部署時 Vite 權限與缺檔錯誤
     - [x] 查明 root cause：遠端 `origin/main` 誤追蹤 `node_modules/` 8818 個檔案與 Windows 保留檔名 `nul`，Vercel 因而基於殘缺依賴樹執行 build。
     - [x] 確認第一輪 `node ./node_modules/vite/bin/vite.js build` 只繞過 `.bin/vite` 權限症狀；真正修法是讓 Git 不再追蹤 `node_modules/`。

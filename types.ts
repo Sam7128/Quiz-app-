@@ -94,6 +94,11 @@ export interface AIConfig {
   persist?: boolean;
 }
 
+export interface SyncLocalToCloudResult {
+  successIds: string[];
+  failed: { id: string; name: string; error: string }[];
+}
+
 export interface UserProfile {
   id: string;
   username: string;

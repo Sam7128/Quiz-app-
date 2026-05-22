@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DOMPurify Sanitization Regression & Snapshot Tests > HTML Sanitization Snapshots > should match the regression snapshot for a complex benign document 1`] = `
+"
+        <div class="quiz-explanation">
+          <h2>解答說明 (Explanation)</h2>
+          <p>關於本題，我們可以使用以下程式碼來驗證：</p>
+          <pre><code>function test() {
+            return "Hello, World!";
+          }</code></pre>
+          <p>以下是一些關鍵步驟：</p>
+          <ul>
+            <li><strong>步驟 1</strong>: 呼叫 <code>test()</code>。</li>
+            <li><strong>步驟 2</strong>: 回傳包含 <em>Hello</em> 欄位的字串。</li>
+          </ul>
+          <p>更多資訊可以參考 <a href="https://developer.mozilla.org">MDN 網站</a>。</p>
+        </div>
+      "
+`;
