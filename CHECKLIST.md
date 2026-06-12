@@ -3,6 +3,8 @@
 此文件用於追蹤專案開發進度、待辦事項與已完成項目。
 
 ## 🟢 已完成 (Done)
+- [x] **[Cleanup]** 死碼清理與重構 (Dead Code Cleanup & Refactoring) `dead-code-cleanup`
+    - [x] Milestone 0 - Milestone 6: 基準建立、型別與介面清理、作用域收窄、物理刪除廢棄函式、元件重構與 React.memo 優化、依賴項與範例檔案清理、最終三連驗證及文檔更新。
 - [x] **[Refactor]** 架構品質全面優化 (Architecture Quality Overhaul) `architecture-quality-overhaul`
     - [x] 重構 `App.tsx` 抽離 `AppContent.tsx` (行數從 309 降至 149)
     - [x] 修正 `startQuiz`、`handleAnswer`、`restoreSession` 等型別不匹配
@@ -66,6 +68,20 @@
 - [x] **[Hotfix]** 修正分階段練習中途刷新後續答回到第一題 `chunked-practice-mid-refresh-resume`
 
 ## 🟢 本次完成 (Completed This Round)
+- [x] **[OpenSpec]** 歸檔 `dead-code-cleanup` 變更計畫並將規格同步至主規格
+- [x] **[Review]** 完成 2026-06-10 dead-code report refresh
+    - [x] 以 `npx -y knip --reporter compact --no-progress` 重跑死碼掃描
+    - [x] 將 [docs/reports/DEAD_CODE_REPORT_2026_06_10.md](docs/reports/DEAD_CODE_REPORT_2026_06_10.md) 更新為 live scan 結果
+    - [x] 深度分析 knip 冗餘項目，提供「Inquisitor 判定與架構重構建議」並完成繁體中文報告更新
+    - [x] 補充 [docs/DEVELOPMENT_LOG.md](docs/DEVELOPMENT_LOG.md) 與專案記憶
+- [x] **[Security]** 安全審計修補變更 (security-audit-remediation)
+    - [x] Milestone 2: BOLA / IDOR 越權防護與 RPC 強制後端判定
+    - [x] Milestone 3: AI 消毒與 API Key 本地 Salt 加密儲存
+    - [x] Milestone 4: LocalStorage 防篡改簽名與競態條件防範
+    - [x] Milestone 5: 健全性、異常控制流與型別安全優化
+    - [x] Milestone 6: 自動化測試與代碼審計
+    - [x] Milestone 7: 交付與收尾
+- [x] **[Review]** 完成 `security-audit-remediation` 安全審計與防護強化的 OpenSpec 變更計畫審查（經 3 輪子代理迭代審查，2 個 Review Sub-agents 均給予 PASS）
 - [x] **[Review]** 完成競態與邏輯風險審查報告 `risk-review-2026-05-21`
 - [x] **[OpenSpec]** 完成 security-and-sync-hardening 變更驗證報告 `security-and-sync-hardening-verify`
 - [x] **[Hotfix]** 修正 Vercel 部署時 Vite 權限與缺檔錯誤

@@ -38,12 +38,11 @@ test('MindSpark 核心流程: 匯入題庫 -> 首頁選取 -> 開始測驗', asy
     ]);
     await page.locator('textarea').fill(json);
 
-    // 匯入 (處理 Alert)
-    page.on('dialog', d => {
-        console.log('Dialog:', d.message());
-        d.accept();
-    });
+    // 匯入 (在自製 ConfirmDialog 點擊繼續匯入)
     await page.locator('button:has-text("匯入文字內容")').click();
+    const confirmBtn = page.locator('[data-confirm-dialog]').getByRole('button', { name: '繼續匯入' });
+    await expect(confirmBtn).toBeVisible({ timeout: 5000 });
+    await confirmBtn.click();
     console.log('Imported JSON');
 
     // 驗證題數顯示
@@ -58,7 +57,7 @@ test('MindSpark 核心流程: 匯入題庫 -> 首頁選取 -> 開始測驗', asy
     // 選取題庫 (點擊項目會切換選取狀態)
     await bankItem.click();
     // 等待選取樣式出現 (確保已選中)
-    await expect(bankItem).toHaveClass(/border-brand-500/, { timeout: 5000 });
+    await expect(bankItem).toHaveClass(/text-brand-900/, { timeout: 5000 });
     console.log('Selected bank in Dashboard');
 
     // 點擊開始
@@ -69,7 +68,16 @@ test('MindSpark 核心流程: 匯入題庫 -> 首頁選取 -> 開始測驗', asy
 
     // 4. 進行測驗
     await expect(page.locator('text=題目 1 / 1')).toBeVisible({ timeout: 10000 });
-    await page.locator('button:has-text("2")').click();
+    await page.evaluate(() => {
+        const buttons = document.querySelectorAll('.space-y-1 button');
+        for (const btn of Array.from(buttons)) {
+            const text = btn.textContent || '';
+            if (text.trim().endsWith('2')) {
+                (btn as HTMLButtonElement).click();
+                break;
+            }
+        }
+    });
     console.log('Answered Q1');
 
     // 5. 檢查解析

@@ -61,7 +61,12 @@ test('分階段練習：放棄流程會移除 active session', async ({ page }) 
 
   await page.getByRole('button', { name: '分階段練習' }).click();
   await page.getByRole('button', { name: '開始分階段練習' }).click();
+
+  // 確保題目已載入且鍵盤事件已綁定
+  await expect(page.getByText(/題目 \d+ \/ 8/)).toBeVisible();
   await page.keyboard.press('Escape');
+  // 等待測驗退出與卸載動畫完成，讓 DOM 穩定不再重繪
+  await page.waitForTimeout(1000);
 
   await expect(page.getByText('分階段練習接力')).toBeVisible();
   await page.getByRole('button', { name: '放棄' }).first().click();

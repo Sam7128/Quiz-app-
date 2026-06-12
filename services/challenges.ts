@@ -111,68 +111,14 @@ export const submitChallengeScore = async (
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return false;
 
-  // Get current challenge
-  const { data: challenge, error: fetchError } = await supabase
-    .from('challenges')
-    .select('*')
-    .eq('id', challengeId)
-    .single();
-
-  if (fetchError || !challenge) {
-    console.error('Error fetching challenge:', fetchError);
-    return false;
-  }
-
-  // Determine which score to update
-  const isChallenger = challenge.challenger_id === user.id;
-  const isOpponent = challenge.opponent_id === user.id;
-
-  if (!isChallenger && !isOpponent) {
-    console.error('User is not part of this challenge');
-    return false;
-  }
-
-  // Build update object
-  const updateData: {
-    updated_at: string;
-    challenger_score?: number;
-    opponent_score?: number;
-    current_turn?: string;
-    status?: 'completed';
-    winner_id?: string;
-  } = {
-    updated_at: new Date().toISOString()
-  };
-
-  if (isChallenger) {
-    updateData.challenger_score = score;
-    updateData.current_turn = challenge.opponent_id;
-  } else {
-    updateData.opponent_score = score;
-    updateData.current_turn = challenge.challenger_id;
-  }
-
-  // Check if both scores are submitted
-  const otherScore = isChallenger ? challenge.opponent_score : challenge.challenger_score;
-  if (otherScore !== null && otherScore !== undefined) {
-    // Both scores submitted - determine winner
-    updateData.status = 'completed';
-    if (score > otherScore) {
-      updateData.winner_id = user.id;
-    } else if (otherScore > score) {
-      updateData.winner_id = isChallenger ? challenge.opponent_id : challenge.challenger_id;
-    }
-    // If tie, winner_id remains null
-  }
-
-  const { error } = await supabase
-    .from('challenges')
-    .update(updateData)
-    .eq('id', challengeId);
+  const { error } = await supabase.rpc('submit_challenge_score', {
+    p_challenge_id: challengeId,
+    p_score: score
+  });
 
   if (error) {
-    console.error('Error submitting score:', error);
-    return false;
+    console.error('Error submitting score via RPC:', error);
+    throw new Error(`[Challenge] Score submission failed: RPC unavailable. ${error.message}`);
   }
 
   return true;
@@ -243,23 +189,4 @@ export const getMyChallenges = async (): Promise<ChallengeWithDetails[]> => {
   }));
 };
 
-/**
- * Get pending challenges count
- */
-export const getPendingChallengesCount = async (): Promise<number> => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return 0;
 
-  const { count, error } = await supabase
-    .from('challenges')
-    .select('*', { count: 'exact', head: true })
-    .eq('opponent_id', user.id)
-    .eq('status', 'pending');
-
-  if (error) {
-    console.error('Error counting challenges:', error);
-    return 0;
-  }
-
-  return count || 0;
-};

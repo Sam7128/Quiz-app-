@@ -111,7 +111,7 @@ export const acceptFriendRequest = async (friendshipId: string): Promise<void> =
     .from('friendships')
     .update({ status: 'accepted' })
     .eq('id', friendshipId)
-    .or(`user_id.eq.${userId},friend_id.eq.${userId}`);
+    .eq('friend_id', userId);
 
   if (error) throw error;
 };

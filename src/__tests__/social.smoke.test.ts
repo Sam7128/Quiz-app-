@@ -60,7 +60,32 @@ const mock = vi.hoisted(() => {
     error: null,
   }));
 
-  const rpc = vi.fn(async () => ({ error: null }));
+  const rpc = vi.fn(async (name: string, params?: Record<string, any>) => {
+    if (name === 'submit_challenge_score' && params) {
+      const { p_challenge_id, p_score } = params;
+      const challenge = state.challenges.find((c) => c.id === p_challenge_id);
+      if (challenge) {
+        if (state.currentUserId === challenge.challenger_id) {
+          challenge.challenger_score = p_score;
+        } else if (state.currentUserId === challenge.opponent_id) {
+          challenge.opponent_score = p_score;
+        }
+
+        // 如果雙方都交了分數，更新為 completed
+        if (challenge.challenger_score !== null && challenge.opponent_score !== null) {
+          challenge.status = 'completed';
+          if (challenge.challenger_score > challenge.opponent_score) {
+            challenge.winner_id = challenge.challenger_id;
+          } else if (challenge.opponent_score > challenge.challenger_score) {
+            challenge.winner_id = challenge.opponent_id;
+          } else {
+            challenge.winner_id = null;
+          }
+        }
+      }
+    }
+    return { error: null };
+  });
 
   const from = vi.fn((table: string) => {
     if (table === 'profiles') {
@@ -115,18 +140,32 @@ const mock = vi.hoisted(() => {
           return { error: null };
         },
         update: (values: Partial<FriendshipRow>) => {
-          let idFilter = '';
+          const filters: Record<string, string> = {};
           const builder = {
             eq: (field: string, value: string) => {
-              if (field === 'id') idFilter = value;
+              filters[field] = value;
               return builder;
             },
             or: async () => {
-              const row = state.friendships.find((f) => f.id === idFilter);
+              const id = filters.id;
+              const row = state.friendships.find((f) => f.id === id);
               if (row && (row.user_id === state.currentUserId || row.friend_id === state.currentUserId)) {
                 Object.assign(row, values);
               }
               return { error: null };
+            },
+            then: (resolve: (value: { error: null }) => void) => {
+              const id = filters.id;
+              const friendId = filters.friend_id;
+              const row = state.friendships.find((f) => f.id === id);
+              if (row) {
+                const passesFriendId = !friendId || row.friend_id === friendId;
+                const passesUserOrFriend = row.user_id === state.currentUserId || row.friend_id === state.currentUserId;
+                if (passesFriendId && passesUserOrFriend) {
+                  Object.assign(row, values);
+                }
+              }
+              resolve({ error: null });
             },
           };
           return builder;

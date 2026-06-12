@@ -36,9 +36,13 @@ const checkIsTableMissingError = (error: unknown): boolean => {
 
 export const getCloudBanks = async (): Promise<BankMetadata[]> => {
   try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
     const { data, error } = await supabase
       .from('banks')
-      .select('*, questions(count)');
+      .select('*, questions(count)')
+      .eq('user_id', user.id);
 
     if (error) {
       const isAbort = error.message?.includes('aborted') || error.message?.includes('AbortError');
@@ -92,10 +96,17 @@ export const createCloudBank = async (title: string, description: string = '', f
 };
 
 export const deleteCloudBank = async (bankId: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    console.warn('[CloudStorage] deleteCloudBank called without authenticated user.');
+    return;
+  }
+
   const { error } = await supabase
     .from('banks')
     .delete()
-    .eq('id', bankId);
+    .eq('id', bankId)
+    .eq('user_id', user.id);
 
   if (error) console.error('Error deleting cloud bank:', error);
 };
@@ -533,14 +544,14 @@ export const syncLocalPracticeSessions = async (): Promise<PracticeSyncResult> =
   if (!isCloudPracticeAvailable) return EMPTY_SYNC_RESULT;
 
   // 1. 同步並發鎖防護
-  if (isSyncingPracticeSessions || (typeof window !== 'undefined' && (window as any).__MINDSPARK_SYNC_LOCK__)) {
+  if (isSyncingPracticeSessions || (typeof window !== 'undefined' && window.__MINDSPARK_SYNC_LOCK__)) {
     console.warn('[Sync] Already syncing practice sessions, skipping');
     return EMPTY_SYNC_RESULT;
   }
 
   isSyncingPracticeSessions = true;
   if (typeof window !== 'undefined') {
-    (window as any).__MINDSPARK_SYNC_LOCK__ = true;
+    window.__MINDSPARK_SYNC_LOCK__ = true;
   }
 
   try {
@@ -698,7 +709,7 @@ export const syncLocalPracticeSessions = async (): Promise<PracticeSyncResult> =
   } finally {
     isSyncingPracticeSessions = false;
     if (typeof window !== 'undefined') {
-      (window as any).__MINDSPARK_SYNC_LOCK__ = false;
+      window.__MINDSPARK_SYNC_LOCK__ = false;
     }
   }
 };

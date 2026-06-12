@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Copy, Check, Settings2, Globe, FileText, CheckCircle2, Sparkles } from 'lucide-react';
 
-export const AIPromptGuide: React.FC = () => {
+const AIPromptGuideComponent: React.FC = () => {
   const [copied, setCopied] = useState(false);
 
   // Prompt Configuration State
@@ -239,4 +239,4 @@ export const AIPromptGuide: React.FC = () => {
   );
 };
 
-export default React.memo(AIPromptGuide);
+export const AIPromptGuide = React.memo(AIPromptGuideComponent);

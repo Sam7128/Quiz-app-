@@ -1,5 +1,148 @@
 # Development Log
 
+## 2026-06-12 [OpenSpec] "Dead Code Cleanup - Spec Sync & Archive"
+### 📦 規格同步與變更歸檔 (Specification Sync & Archive)
+- **規格同步完成**：依據使用者選取，將 `dead-code-cleanup` 的 Delta Specs 同步至主規格（Main Specs）中。
+  - 新增主規格檔案：[code-hygiene](file:///c:/Users/user/Desktop/Quiz-app--main/openspec/specs/code-hygiene/spec.md)。
+- **變更封存**：將變更 proposal 目錄移至歸檔資料夾 `openspec/changes/archive/2026-06-12-dead-code-cleanup/`。
+
+## 2026-06-12 [Cleanup] "M3 - M6 Dead Code Cleanup & Optimization"
+### 🧹 廢棄函式刪除、元件重構與依賴清理 (Dead Code Cleanup & Optimization)
+- **廢棄函式物理刪除 (M3)**：物理刪除 5 個無外部引用的廢棄函式：`getMonsterByProgress` (於 `constants/monstersData.ts` 中)、`clearAIConfig` (於 `services/ai.ts` 中)、`getPendingChallengesCount` (於 `services/challenges.ts` 中)、`isQuestionIdUuid` (於 `utils/questionIdentity.ts` 中)、`isSingleAnswer` (於 `utils/typeGuards.ts` 中)，進一步精簡程式庫。
+- **元件具名匯出與效能 Memo 封裝 (M4)**：
+  - 重構 `AIPromptGuide`、`BankManager`、`QuizCard` 與 `Settings` 元件，改為具名匯出 (Named Exports) 並直接使用 `React.memo` 進行效能包裝。
+  - 移除了 `BattleArena`、`Dashboard`、`DialogueBubble`、`SkillAnimation`、`SkeletonLoader` 元件以及 `useBattleSystem` hook 的重複 `export default`。
+  - 修改 `AppContent.tsx` 與 `useBattleSystem.test.ts` 以 named import 取代 default import，確保元件加載與解析順暢。
+- **依賴項與範例檔案清理 (M5 & M6)**：
+  - 移除 `package.json` 中的 5 個未使用依賴（`classnames`、`@tailwindcss/postcss`、`autoprefixer`、`postcss`、`@testing-library/jest-dom`），並確實保留 postcss 的安全版本 overrides 定義。
+  - 物理刪除了 `.agents/`、`.claude/`、`.continue/` 底下的 3 個 `condition-based-waiting-example.ts` 範例檔案。
+- **三連全量綠燈驗證**：在完成所有物理清理後，執行型別檢查 (`npx tsc --noEmit`)、生產建置 (`npm run build`) 與 Vitest 所有單元測試 (`npm test -- --run`)，皆 100% 🟢 成功通過（170 個測試案例全數成功），確認無任何回歸缺陷。
+
+## 2026-06-12 [Cleanup] "M2 Export Scope Narrowing & Encapsulation Hardening"
+### 🧹 匯出作用域收窄與封裝加固 (Export Scope Narrowing)
+- **移除非必要常數與函式匯出**：
+  - **怪物資料** (`constants/monstersData.ts`)：移除 `NORMAL_MONSTERS`、`ELITE_MONSTERS`、`BOSS_MONSTERS` 與 `ALL_MONSTERS` 的 `export` 關鍵字，維持 `NORMAL_MONSTER_IDS` 等外部引用常數的匯出。
+  - **技能資料** (`constants/skillsData.ts`)：移除 `BASIC_SKILLS`、`INTERMEDIATE_SKILLS`、`ADVANCED_SKILLS`、`ULTIMATE_SKILLS`、`EPIC_SKILLS`、`LEGENDARY_SKILLS`、`ALL_SKILLS` 常數及 `getSkillsByTier` 函式的 `export` 關鍵字。
+  - **AI 服務** (`services/ai.ts`)：將 `cleanJsonResponse` 改為內部私有，移除 `export`。
+  - **分析服務** (`services/analytics.ts`)：將 `getLocalStudySessions` 改為內部私有，移除 `export`。
+  - **Supabase 服務** (`services/supabase.ts`)：將 `isCloudEnabled` 改為內部私有，移除 `export`。
+  - **儲存服務** (`services/storage.ts`)：移除 `removeQuestionFromQuizSession`、`removeQuestionFromRecentMistakeSessions` 與 `deleteSpacedRepetitionItem` 三個輔助型函式的 `export` 關鍵字。
+- **全量測試與編譯校驗**：經 `npx tsc --noEmit` 驗證，專案無任何型別或編譯錯誤；執行 `npm test`，全數 170 項單元測試均 🟢 100% 通過（包含 `storage.questionArtifacts.test.ts`、`spacedRepetition.test.ts` 與 `useBattleSystem.test.ts`），確保作用域收窄後，無任何未預期的外部破壞性影響。
+
+## 2026-06-12 [Cleanup] "M1 Type & Interface Cleanup"
+### 🧹 型別與介面清理 (Type & Interface Cleanup)
+- **取消內部型別導出**：移除專案中僅在內部使用且無外部 import 的型別與常量的 `export` 關鍵字，包括 `MistakeLogEntry` (在 `types.ts` 中)、`SkillAnimationType`、`SkillThreshold`、`SKILL_THRESHOLDS`、`PracticeChunkStatus` (在 `types/battleTypes.ts` 中) 以及 `Toast` (在 `contexts/ToastContext.tsx` 中)，強化封裝性並收斂型別作用域。
+- **物理刪除冗餘死代碼**：物理刪除專案中完全無任何引用的 `Hero` 介面、`BattleEvent` 型別 (於 `types/battleTypes.ts` 中)、`StudySession` 介面 (於 `services/analytics.ts` 中) 以及 `UseChunkedPracticeReturn` 型別 (於 `hooks/useChunkedPractice.ts` 中)，徹底潔淨代碼結構。
+- **全量測試與打包驗證**：完成修改後，經 `npx tsc --noEmit` 型別檢查 100% 通過、`npx vitest run` 單元測試全數通過（170 個測試案例）、以及 `npm run build` 生產環境打包建置成功，確保變更無任何副作用。
+
+## 2026-06-12 [OpenSpec] "Dead Code Cleanup - Spec & Plan Audit Check"
+### 🔍 死碼清理變更計畫審查與修復優化 (OpenSpec Audit & Refinement)
+- **多代理對抗審查通過**：利用兩位內部審查子代理 (Reviewer Alpha & Reviewer Beta) 進行 3 輪深度對抗性審查，確保 `dead-code-cleanup` 計畫 100% 通過品質查核。
+- **React 效能保護優化 (React.memo)**：針對四大關鍵元件 (`QuizCard`, `BankManager`, `Settings`, `AIPromptGuide`) 的冗餘 `export default` 清理決定，修正為在移除 default 導出前，主動將 Named Export 直接包裝為 `React.memo` 元件，以完全鎖定效能優化，防堵 UI 重新渲染退化。
+- **主動移轉呼叫端 Import 語句**：在 Phase 4 中新增主動將引用端（如 `AppContent.tsx` 與 `useBattleSystem.test.ts`）由 default import 轉為 named import 的任務，確保重構的原子性與 CI 建置管線的順暢。
+- **依賴漏洞防範與規格對齊**：
+  - 保留 `package.json` 中的 `postcss` overrides 限制 (`^8.5.10`)，防堵 transitive 依賴回退並堵塞安全漏洞 (CVE-2023-44270)。
+  - 更新規格驗證文件 `spec.md` 條文以契合此項保留決策。
+  - 新增比對 `package-lock.json` Git Diff 任務，限制依賴鏈無意升級。
+  - 將 `types/battleTypes.ts` 中的 `Hero` 和 `BattleEvent` 兩個完全未使用的型別從「取消導出」改為「物理刪除」，徹底潔淨代碼。
+
+## 2026-06-10 [Review] "Dead Code Report Refresh & Deep Audit"
+### 🔍 專案冗餘代碼掃描報告更新與深度審計
+- **重跑死碼掃描與分析**：執行 `npx -y knip --reporter compact --no-progress` 重跑 live scan。經人工核對，確診當前死碼多屬歷史重構殘餘（如 `classnames` 被模板字串取代、`postcss` 等被 Tailwind v4 的 `@tailwindcss/vite` 取代、部分組件/Hook 的 default 匯出因專案統一使用具名匯出而閒置、以及舊戰鬥算法與儲存層過時的 ID 清除 API 等）。
+- **深耕報告**：將 [docs/reports/DEAD_CODE_REPORT_2026_06_10.md](file:///c:/Users/user/Desktop/Quiz-app--main/docs/reports/DEAD_CODE_REPORT_2026_06_10.md) 升級為包含「Inquisitor 判定與架構重構建議」之繁體中文版深度審計報告，針對每項贅餘代碼給出深入的背景與架構解析。
+- **進度與日誌追蹤**：同步更新 [CHECKLIST.md](file:///c:/Users/user/Desktop/Quiz-app--main/CHECKLIST.md) 與本開發日誌，讓後續分析可直接復用這次掃描入口。
+
+## 2026-06-09 [OpenSpec] "Security Audit Remediation - Specification Sync & Archive"
+### 🔍 安全審計修補變更主規格同步與封存
+- **規格同步完成**：依據使用者選取，執行並完成 `security-audit-remediation` 變更的 7 個 Delta Specs 同步至主規格（Main Specs）中。
+  - 新增規格：[api-key-protection](file:///c:/Users/user/Desktop/Quiz-app--main/openspec/specs/api-key-protection/spec.md), [client-data-integrity](file:///c:/Users/user/Desktop/Quiz-app--main/openspec/specs/client-data-integrity/spec.md)。
+  - 合併修改：[battle-mode](file:///c:/Users/user/Desktop/Quiz-app--main/openspec/specs/battle-mode/spec.md), [nvidia-api](file:///c:/Users/user/Desktop/Quiz-app--main/openspec/specs/nvidia-api/spec.md), [social-service-layer](file:///c:/Users/user/Desktop/Quiz-app--main/openspec/specs/social-service-layer/spec.md), [supabase-security-hardening](file:///c:/Users/user/Desktop/Quiz-app--main/openspec/specs/supabase-security-hardening/spec.md), [sync-concurrency-control](file:///c:/Users/user/Desktop/Quiz-app--main/openspec/specs/sync-concurrency-control/spec.md)。
+- **變更封存**：成功將 `openspec/changes/security-audit-remediation` 目錄封存移至 `openspec/changes/archive/2026-06-09-security-audit-remediation/`。
+- **進度追蹤同步**：更新 [CHECKLIST.md](file:///c:/Users/user/Desktop/Quiz-app--main/CHECKLIST.md)，將安全審計修補的所有 pending items 與里程碑 (Milestones 2-7) 移動至 Completed This Round 標記為完成。
+
+## 2026-06-09 [Verification] "E2E Flaky Fixes & 100% Green Light Delivery"
+### 🔍 E2E 測試 Flaky 問題修復與全量綠燈驗證
+- **修復 Strict Mode Violation**：修正 `e2e/mindspark.spec.ts` 與 `e2e/json-import.spec.ts` 中多處 `button` 與 `text` 定位器的 strict mode violation 衝突，將 `E2E Test Bank` 選取限定於 `main` 元素，並使用確切文字與走查來匹配選項。
+- **解決鍵盤事件與動畫競態**：在 `e2e/chunked-practice.spec.ts` 中，按下 `Escape` 前加入題目載入完成之斷言，確保 `QuizCard` 已綁定事件，徹底防範鍵盤事件丟失的 flaky timeout 錯誤。
+- **驗證報告落實**：完成全量 170 項單元測試與 15 項 E2E 壓測通過，產出最終繁體中文驗證報告 [verification_report.md](file:///c:/Users/user/Desktop/Quiz-app--main/verification_report.md)。
+- **鐵規同步**：本開發日誌與專案安全稽核狀態保持同步。
+
+## 2026-06-09 [Verification] "Final Security Audit Verification & Report Update"
+### 🔍 安全審計計畫最終驗證與報告更新
+- **更新驗證報告**：對 `security-audit-remediation` 進行全面稽核，重新整理並更新 [verification_report.md](file:///c:/Users/user/Desktop/Quiz-app--main/verification_report.md)。
+- **確認歷史缺陷修復**：經靜態程式碼走查與測試，確認上一輪發現的 5 個 Critical 程式碼缺失（isBattleState 守衛、getNextMonster 防禦、night_owl 重疊、測試缺失與 RPC 勝者判定）均已 100% 得到完全修補。
+- **指出新單元測試缺失**：指出目前專案在 BOLA 測試 (任務 1.3)、AI 消毒測試 (任務 4.2) 與 Achievements 簽名防篡改測試 (任務 6.3) 等單元測試層面存在的缺失，列為 Critical 發現阻擋封存。
+- **修復 E2E 壓測 flaky 問題**：修正了 `e2e/security_hardening.spec.ts` 測試 3 選項打亂造成的 flaky test 問題，以 endsWith 精確匹配點擊答案。
+
+## 2026-06-09 [Audit & Remediation] "Security Audit Double-Check & Test Alignment"
+### 🔍 安全審計對抗性二次審查與測試對齊 (Double-Check Audit & Fix)
+- **對抗性審查通過**：二次審查完美確認 9 個關鍵點修補狀態。包含 `isBattleState` 安全守衛在 `useBattleSystem` 的整合、`getNextMonster` 空難度 pool 防護與 `'normal'` fallback、`night_owl` 成就判定時間段硬化 (hour >= 22)、SQL RPC 挑戰 winner_id 自動計算、ConfirmDialog 點擊行為修正 (非 dialog 事件攔截)、三段 Mock JWT 與動態派生 HMAC-SHA256 金鑰 (不依賴本地 salt 殘留) 等安全重構。
+- **修復測試導入路徑與編譯**：修正 `src/__tests__/useAchievementTracker.test.ts` 中的導入路徑（`../` -> `../../`），使 `npx tsc --noEmit` 型別檢查 100% 通過。
+- **對齊 HMAC 完整性測試與新無狀態金鑰設計**：修補 `src/__tests__/integrityCheck.test.ts` 中已過時的 salt 變更失效測試（原先假定 salt 存於 localStorage），改為「驗證不依賴 localStorage 中的 salt 且不受其變更影響」，以符合無狀態動態派生金鑰的新型防禦架構，最終確保 `npm test` 中 28 個測試檔案 170 項測試全部 🟢 PASS。
+
+## 2026-06-09 [Audit] "Security Remediation Plan Verification & Report Update"
+### 🔍 安全審計修補計畫驗證與報告更新 (Verification & Audit)
+- **更新驗證報告**：針對 `security-audit-remediation` 計畫，將驗證與稽核發現彙整寫入 [verification_report.md](file:///c:/Users/user/Desktop/Quiz-app--main/verification_report.md)。
+- **新增三項核心發現**：
+  - **SQL RPC 缺 winner_id 自動判定**：指出 `submit_challenge_score.sql` 僅完賽更新但未判定獲勝者。
+  - **HMAC 鹽值儲存策略偏差**：指出 `integrityCheck.ts` 使用本地 localStorage 儲存隨機鹽，與設計文件定義的應用版本拼接策略不符，且有本地暴露風險。
+  - **加密工具函數命名不一致**：指出 `crypto.ts` 中 `encrypt`/`decrypt` 與任務書規定的 `encryptString`/`decryptString` 命名有落差。
+
+## 2026-06-09 [Hotfix] "FocusTimer useRef Fix & Test Suite Alignment"
+### 🐛 專專注計時器執行期錯誤修正與測試套件修復 (Hotfix)
+- **修復 FocusTimer 執行期錯誤**：在 [components/FocusTimer.tsx](file:///c:/Users/user/Desktop/Quiz-app--main/components/FocusTimer.tsx) 中補齊缺失的 `useRef` 匯入，徹底解決 `ReferenceError: useRef is not defined` 導致的專注計時器載入崩潰。
+- **修復 Playwright E2E 語法錯誤**：修正 [e2e/security_hardening.spec.ts](file:///c:/Users/user/Desktop/Quiz-app--main/e2e/security_hardening.spec.ts) 中正規表示式逸出語法錯誤，防止 `/題目 \d+ \///` 中的連斜線被 JS 當作單行註解忽略而引起 `Expression expected` 編譯錯誤。
+- **修復 AI Nvidia 測試斷言**：修正 [src/__tests__/ai.nvidia.test.ts](file:///c:/Users/user/Desktop/Quiz-app--main/src/__tests__/ai.nvidia.test.ts) 使其適應新的 NVIDIA baseUrl 生產環境 proxy 自動降級行為，移除已廢除的 throw 錯誤斷言。
+- **修復社交功能冒煙測試**：重構 [src/__tests__/social.smoke.test.ts](file:///c:/Users/user/Desktop/Quiz-app--main/src/__tests__/social.smoke.test.ts) 中的 `friendships` update mock，實作 `then` 回調支援，使其能正確對應去 fallback 強制 RLS 認證後的新非同步 `.eq('friend_id', userId)` 連鎖 `await` 呼叫。
+- **修復戰鬥系統時序測試**：調整 [src/__tests__/useBattleSystem.test.ts](file:///c:/Users/user/Desktop/Quiz-app--main/src/__tests__/useBattleSystem.test.ts) 中的快速連續答題測試，改用 `async loop` 結合 `act` 與 15ms 延遲，以消除 React 狀態批次合併 (state batching) 與過時閉包 (stale closure) 導致的 streak 未能正確累加之測試假陰性。
+
+## 2026-06-09 [Security] "Security Audit Remediation - Iteration 2 (Refactoring & Verification)"
+### ✨ 第二輪安全審計修補重構與驗證 (Remediation & Refactoring)
+- **實體 HMAC-SHA256 簽名校驗整合**：重構 `hooks/useBattleSystem.ts` 與 `services/achievements.ts`/`useAchievements.ts`，在讀寫 LocalStorage 時引入並調用 `utils/integrityCheck.ts` 的 HMAC-SHA256 簽名校驗。校驗失敗時，清除當前受篡改的 LocalStorage 狀態，回退為預設值，且不誤刪 global LocalStorage 的其他無關 key。
+- **Promise 序列化寫入隊列與初始化阻斷**：於 `useBattleSystem.ts` 中實作 Promise 序列化寫入隊列 (`writeQueueRef`) 排隊寫入，解決非同步簽名與 LocalStorage 寫入的競態與順序錯亂問題。並導入 `isInitialized` 狀態，在初始化完成前阻斷一切 `startBattle` / `triggerAnswer` 操作，且在卸載時徹底清理 `animationTimerRef`、`dialogueTimerRef` 等所有裸露 `setTimeout`。
+- **雙重提交鎖與 try-catch-finally 異常防死鎖**：於 `components/QuizCard.tsx` 的答題提交中引入 `isSubmittingRef` 同步鎖與 state 鎖，防止高頻連點；且將整個提交邏輯包裹在 `try...catch...finally` 內，當 API/RPC 發生 runtime 錯誤時於 `catch` 重置答題狀態，並在 `finally` 釋放鎖，徹底防範 UI 卡死。
+- **新增三大安全單元測試與既有測試重構**：
+  - 新建 `src/__tests__/crypto.test.ts`：測試 AES-GCM 金鑰派生、加解密與 AEAD 篡改防護。
+  - 新建 `src/__tests__/integrityCheck.test.ts`：測試真實的 HMAC-SHA256 簽名生成與驗證防篡改。
+  - 新建 `src/__tests__/socialService.test.ts`：測試 BOLA 防禦下 Alice 不能加 Alice、重複請求、防 Receiver 越權等。
+  - 改造 `src/__tests__/useBattleSystem.test.ts` 為異步初始化等待，保證測試正常執行。
+- **審計 Verdict 綠燈通過**：專案順利通過了第二次 Forensic Audit，取得 **🟢 CLEAN** 認證。
+
+## 2026-06-09 [Security] "Security Audit Remediation"
+### ✨ 核心安全防禦與資源管理加固 (Remediation)
+- **AI 金鑰加密硬化**：利用 Web Crypto API 的 AES-GCM-256 對儲存於 `localStorage` 的 AI 設定 API 金鑰進行端對端加密與解密。在 `getAIConfig` 與 `saveAIConfig` 中整合安全加解密管道；若解密失敗，自動安全清除受損的金鑰配置以防範 XSS 金鑰竊取與惡意偽造。
+- **戰鬥平衡性與數值防弊**：於 `hooks/useBattleSystem.ts` 內將暴擊倍率固定為 1.5 倍，並將連擊加成限制上限為 50，在前端切斷透過控制台修改參數所導致的戰鬥數值作弊。
+- **成就系統 RPC 硬化**：重構 `services/achievements.ts` 中的 `unlockCloudAchievement`，將客戶端直接 upsert 寫入資料庫的漏洞設計重構為強制透過 Supabase RPC `unlock_achievement` 呼叫，並由資料庫端以 `auth.uid()` 進行主體校驗，消除越權解鎖威脅。
+- **非同步生命週期優化**：於 `services/localRepo.ts` 中修正非同步處理瑕疵，在 `unlockAchievement` 中補齊 `await`。
+- **答題防刷與 UI 骨架屏**：
+  - `components/Settings.tsx` 中導入 API 金鑰載入/保存 `isLoading` 狀態與 Skeleton 骨架屏，解決非同步加解密期間 UI 渲染阻塞引起的白屏。
+  - `components/QuizCard.tsx` 中引入 `isSubmitting` 原子鎖，徹底防止使用者雙擊或 Enter 連續敲擊所產生的重複答題提交與戰鬥系統競態條件。
+- **資源生命週期管理與洩漏防範**：
+  - `hooks/useBattleSystem.ts` 中的 4 個裸露 `setTimeout` 調用均改為 Ref 追蹤，並在 `useEffect` 卸載清理函數中徹底 clearTimeout 清理，解決記憶體洩漏與 React 元件銷毀後狀態更新的 runtime 錯誤。
+  - `components/FocusTimer.tsx` 中播放音效後引進 600ms 延遲以關閉 `AudioContext`，並使用 `audioTimersRef` 進行計時器追蹤與卸載清理，杜絕 SPA 長期運行產生的硬體解碼通道資源洩漏。
+- **資料庫安全防禦 SQL 落地**：
+  - 建立 `docs/sql/submit_challenge_score.sql`：定義 `submit_challenge_score` 安全 RPC 函數，在後端使用 `auth.uid()` 驗證挑戰雙方身份（防範 BOLA 越權）並校驗分數合理區間（0 - 10000）。
+  - 建立 `docs/sql/supabase_rls_policies.sql`：定義成就解鎖 `unlock_achievement` 安全 RPC 函數與 `friendships` 的 RLS 加固策略，嚴格限定只有被邀請者 (friend_id) 才能接受好友請求，從根本上杜絕了發送者自我核准的邏輯漏洞。
+
+## 2026-06-08 [Review] "20維度深度安全與系統架構稽核"
+### 📄 Report
+- 已建立 [comprehensive_security_audit_report.md](file:///c:/Users/user/Desktop/Quiz-app--main/docs/reports/comprehensive_security_audit_report.md)，整合四位子代理（資安與滲透、邏輯與架構、代碼品質、對抗性與邊界）的調查，完成涵蓋注入、授權越權、狀態同步、依賴供應鏈、資源洩漏等 20 個維度的深度系統稽核與加固設計。
+- 已建立 [LOGIC_AND_ARCH_AUDIT_REPORT_2026_06_08.md](file:///c:/Users/user/Desktop/Quiz-app--main/docs/reports/LOGIC_AND_ARCH_AUDIT_REPORT_2026_06_08.md)，完成商業邏輯與生命週期渲染優化。
+
+### 🔍 主要發現
+- **資安與授權**：個人題庫與挑戰分數未於 Supabase 綁定 `user_id` 或進行後端原子結算，存在 IDOR/BOLA 越權威脅；好友請求發起人可單方面自我接受。
+- **對抗性防作弊**：本地 `localStorage` 遊戲狀態及成就明文儲存且缺乏 HMAC/SHA-256 簽名校驗，容易被前端腳本或 Console 直接修改篡改數值。
+- **狀態與同步**：雲端同步成功後實體刪除本地 `practice_sessions` 快照，離線或網路波動時進度面臨完全丟失；並發同步存在標籤頁間的覆蓋競態。
+- **記憶體與型別**：`useBattleSystem.ts` 內多個 setTimeout 裸露未清理；AudioContext 未 close 釋放；違反鐵規使用 `any` 擴展 window 屬性。
+- **架構與依賴**：元件越級讀寫 `localStorage`；`package.json` 中的 `@supabase/supabase-js` 寫入了非官方發行的非法版本號 `^2.93.2`。
+
+
+## 2026-05-28 [Utility] "Project Memory Refresh"
+### ✨ Infrastructure & Memory
+- **執行專案記憶刷新與安裝**：在專案根目錄成功執行 `refresh_project_memory_bundle.py`，完成專案記憶 (Project Memory) 的全面更新與安裝。
+- **更新索引與地圖**：重新整理 `MEMORY.md` 記憶地圖，並重新建立 `.memory-index/index.json` 索引，確保本地所有 Markdown 及開發檔案被正確雜湊與索引。
+- **MCP 配置與驗證**：更新並驗證包含 Gemini、Cursor、Codex 與 Antigravity CLI 的專案 MCP 配置文件（如 `.gemini/settings.json`、`mcp_config.json` 等）。執行健康度與搜尋驗證皆回傳正常 (Verify OK)，且無任何 health warnings。
+
 ## 2026-05-21 [OpenSpec] "Security and Sync Hardening"
 ### ✨ Feature Delivery & Safety Hardening
 - **AI 設定防護 (M1)**：在 `services/ai.ts` 的 `getAIConfig()` 中加入防禦性的 try-catch 機制與 10KB 大小限制，並建立 JSON Type Guard (`isAIConfig`)，確保損壞之資料能被安全清理並回退為預設值，完全防範惡意 XSS 或惡意篡改引起的崩潰。並在 `index.html` 中加入了嚴格的 CSP。

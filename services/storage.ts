@@ -370,7 +370,7 @@ export const clearChunkDraftsForSession = (sessionId: string): void => {
   keys.forEach((key) => localStorage.removeItem(key));
 };
 
-export const removeQuestionFromQuizSession = (questionId: string): void => {
+const removeQuestionFromQuizSession = (questionId: string): void => {
   const session = getQuizSession();
   if (!session) return;
 
@@ -652,7 +652,7 @@ export const clearRecentMistakeSession = (sessionId: string) => {
   localStorage.setItem(STORAGE_KEYS.RECENT_MISTAKES, JSON.stringify(list));
 };
 
-export const removeQuestionFromRecentMistakeSessions = (questionId: string): void => {
+const removeQuestionFromRecentMistakeSessions = (questionId: string): void => {
   try {
     const list = getRecentMistakeSessions()
       .map((session) => ({
@@ -698,7 +698,7 @@ export const getSpacedRepetitionItem = (questionId: string): SpacedRepetitionIte
   return data[questionId] || null;
 };
 
-export const deleteSpacedRepetitionItem = (questionId: string): void => {
+const deleteSpacedRepetitionItem = (questionId: string): void => {
   try {
     const data = getSpacedRepetition();
     if (data[questionId]) {

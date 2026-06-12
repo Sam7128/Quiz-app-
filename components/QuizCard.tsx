@@ -41,7 +41,7 @@ const QUIZ_CARD_ANIM = {
   shake: (feedback: 'none' | 'correct' | 'incorrect') => ({ rotateZ: feedback === 'incorrect' ? [0, -1, 1, -1, 1, 0] : 0 })
 };
 
-export const QuizCard: React.FC<QuizCardProps> = ({
+const QuizCardComponent: React.FC<QuizCardProps> = ({
   question,
   currentIndex,
   totalQuestions,
@@ -55,6 +55,7 @@ export const QuizCard: React.FC<QuizCardProps> = ({
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [showHint, setShowHint] = useState(false);
   const [isAnswered, setIsAnswered] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   const [feedback, setFeedback] = useState<'none' | 'correct' | 'incorrect'>('none');
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -68,6 +69,7 @@ export const QuizCard: React.FC<QuizCardProps> = ({
   const [showAchievements, setShowAchievements] = useState(false);
   const restModalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const explanationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isSubmittingRef = useRef(false);
 
   const { unlockedIds } = useAchievements();
 
@@ -143,6 +145,8 @@ export const QuizCard: React.FC<QuizCardProps> = ({
     setSelectedOptions([]);
     setShowHint(false);
     setIsAnswered(false);
+    setIsSubmitting(false);
+    isSubmittingRef.current = false;
     setShowExplanation(false);
     setFeedback('none');
   }, [question]);
@@ -187,45 +191,63 @@ export const QuizCard: React.FC<QuizCardProps> = ({
   };
 
   const submitAnswer = (selection: string[]) => {
-    // 防護：如果沒有選擇任何選項，不提交答案
-    if (selection.length === 0) {
-      console.warn('[QuizCard] submitAnswer called with empty selection, ignoring.');
-      return;
+    // 加上同步 useRef 鎖與 React state 鎖，防止快速雙擊/重複提交答案
+    if (isSubmittingRef.current || isAnswered) return;
+    isSubmittingRef.current = true;
+    setIsSubmitting(true);
+
+    try {
+      // 防護：如果沒有選擇任何選項，不提交答案
+      if (selection.length === 0) {
+        console.warn('[QuizCard] submitAnswer called with empty selection, ignoring.');
+        isSubmittingRef.current = false;
+        setIsSubmitting(false);
+        return;
+      }
+
+      const isCorrect = selection.length === correctAnswers.length &&
+        selection.every(s => correctAnswers.includes(s));
+
+      setIsAnswered(true);
+      setFeedback(isCorrect ? 'correct' : 'incorrect');
+
+      if (isCorrect) {
+        playCorrect();
+      } else {
+        playWrong();
+      }
+
+      // 觸發戰鬥動畫
+      if (gameMode) {
+        triggerAnswer(isCorrect);
+      }
+
+      const answerToPass = isMultiple ? selection : selection[0];
+      onAnswer(isCorrect, answerToPass);
+
+      // Update Rest Count
+      const newCount = questionsSinceBreak + 1;
+      setQuestionsSinceBreak(newCount);
+
+      // Check Rest Break
+      const settings = getUserSettings();
+      if (restModalTimerRef.current) clearTimeout(restModalTimerRef.current);
+      if (explanationTimerRef.current) clearTimeout(explanationTimerRef.current);
+      if (!suppressRestModal && settings.restBreakInterval > 0 && newCount >= settings.restBreakInterval) {
+        restModalTimerRef.current = setTimeout(() => setShowRestModal(true), 1500); // Show after feedback
+      }
+
+      explanationTimerRef.current = setTimeout(() => setShowExplanation(true), 400);
+    } catch (error) {
+      console.error('[QuizCard] submitAnswer caught runtime exception, releasing lock and allowing retry:', error);
+      // 出錯時將狀態恢復，允許用戶重新作答/點擊
+      setIsAnswered(false);
+      setFeedback('none');
+    } finally {
+      // 確保不論成功與否，在 finally 中釋放提交鎖，徹底消除永久死鎖隱患
+      isSubmittingRef.current = false;
+      setIsSubmitting(false);
     }
-
-    const isCorrect = selection.length === correctAnswers.length &&
-      selection.every(s => correctAnswers.includes(s));
-
-    setIsAnswered(true);
-    setFeedback(isCorrect ? 'correct' : 'incorrect');
-
-    if (isCorrect) {
-      playCorrect();
-    } else {
-      playWrong();
-    }
-
-    // 觸發戰鬥動畫
-    if (gameMode) {
-      triggerAnswer(isCorrect);
-    }
-
-    const answerToPass = isMultiple ? selection : selection[0];
-    onAnswer(isCorrect, answerToPass);
-
-    // Update Rest Count
-    const newCount = questionsSinceBreak + 1;
-    setQuestionsSinceBreak(newCount);
-
-    // Check Rest Break
-    const settings = getUserSettings();
-    if (restModalTimerRef.current) clearTimeout(restModalTimerRef.current);
-    if (explanationTimerRef.current) clearTimeout(explanationTimerRef.current);
-    if (!suppressRestModal && settings.restBreakInterval > 0 && newCount >= settings.restBreakInterval) {
-      restModalTimerRef.current = setTimeout(() => setShowRestModal(true), 1500); // Show after feedback
-    }
-
-    explanationTimerRef.current = setTimeout(() => setShowExplanation(true), 400);
   };
 
   const getOptionClass = (option: string) => {
@@ -535,4 +557,4 @@ export const QuizCard: React.FC<QuizCardProps> = ({
   );
 };
 
-export default React.memo(QuizCard);
+export const QuizCard = React.memo(QuizCardComponent);

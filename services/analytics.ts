@@ -1,14 +1,6 @@
 import { supabase } from './supabase';
 import { STORAGE_KEYS } from './storage';
 
-export interface StudySession {
-  id?: string;
-  userId: string;
-  sessionDate: string;
-  questionsAnswered: number;
-  correctCount: number;
-  sessionDuration: number; // in seconds
-}
 
 export interface StudyStats {
   studyDays: number;
@@ -194,7 +186,7 @@ export const recordLocalStudySession = (
 /**
  * Get local study sessions
  */
-export const getLocalStudySessions = (): LocalStudySession[] => {
+const getLocalStudySessions = (): LocalStudySession[] => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.STUDY_SESSIONS);
     return data ? JSON.parse(data) : [];

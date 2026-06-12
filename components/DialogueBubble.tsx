@@ -54,4 +54,4 @@ export const DialogueBubble: React.FC<DialogueBubbleProps> = ({ text, position }
     );
 };
 
-export default DialogueBubble;
+

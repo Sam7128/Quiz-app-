@@ -14,7 +14,7 @@ export interface Question {
   tags?: string[];
 }
 
-export interface MistakeLogEntry {
+interface MistakeLogEntry {
   count: number;
   lastWrongAnswer: string;
   timestamp: number;

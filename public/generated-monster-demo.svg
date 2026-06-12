@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">MindSpark Monster Demo</title>
+  <desc id="desc">A cute fantasy quiz monster with horns, glowing eyes, and a crystal tail.</desc>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="70%">
+      <stop offset="0%" stop-color="#fff7cc"/>
+      <stop offset="50%" stop-color="#9be7ff"/>
+      <stop offset="100%" stop-color="#3757a6"/>
+    </radialGradient>
+    <linearGradient id="body" x1="120" y1="110" x2="398" y2="430">
+      <stop offset="0%" stop-color="#74f2a7"/>
+      <stop offset="52%" stop-color="#27b979"/>
+      <stop offset="100%" stop-color="#176a68"/>
+    </linearGradient>
+    <linearGradient id="belly" x1="200" y1="230" x2="322" y2="420">
+      <stop offset="0%" stop-color="#ffeaa8"/>
+      <stop offset="100%" stop-color="#f79e65"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#1b2452" flood-opacity=".35"/>
+    </filter>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="36" fill="url(#bg)"/>
+  <circle cx="104" cy="86" r="22" fill="#fff7cc" opacity=".9"/>
+  <circle cx="436" cy="150" r="10" fill="#fff7cc" opacity=".75"/>
+  <circle cx="66" cy="358" r="13" fill="#fff7cc" opacity=".65"/>
+
+  <g filter="url(#softShadow)">
+    <path d="M165 155c-46 36-72 91-61 151 17 96 91 148 165 143 77-5 138-68 143-150 4-68-29-119-80-148-49-28-120-30-167 4z" fill="url(#body)"/>
+    <path d="M146 204c-34 9-60 33-67 67-5 23 8 34 31 24 19-8 35-24 47-44z" fill="#1e9270"/>
+    <path d="M365 203c37 7 64 30 72 64 6 25-8 37-33 26-20-9-37-26-49-47z" fill="#1e9270"/>
+
+    <path d="M181 171c-20-45-11-85 18-106 8 39 23 72 53 98z" fill="#f7d06d"/>
+    <path d="M322 171c23-43 16-84-11-108-11 38-29 70-61 97z" fill="#f7d06d"/>
+    <path d="M198 74c4 27 16 54 39 78-29-13-46-38-52-66z" fill="#9b5b5e" opacity=".35"/>
+    <path d="M305 74c-6 27-21 53-46 77 30-11 49-35 57-63z" fill="#9b5b5e" opacity=".35"/>
+
+    <ellipse cx="254" cy="328" rx="78" ry="98" fill="url(#belly)" opacity=".92"/>
+    <path d="M210 304c28 12 58 12 89 0" fill="none" stroke="#db744f" stroke-width="8" stroke-linecap="round" opacity=".65"/>
+    <path d="M204 342c34 13 69 13 103 0" fill="none" stroke="#db744f" stroke-width="8" stroke-linecap="round" opacity=".55"/>
+    <path d="M220 379c24 8 48 8 72 0" fill="none" stroke="#db744f" stroke-width="7" stroke-linecap="round" opacity=".5"/>
+
+    <g filter="url(#glow)">
+      <ellipse cx="209" cy="231" rx="31" ry="36" fill="#15333a"/>
+      <ellipse cx="302" cy="231" rx="31" ry="36" fill="#15333a"/>
+      <circle cx="219" cy="222" r="10" fill="#d8ff6b"/>
+      <circle cx="292" cy="222" r="10" fill="#d8ff6b"/>
+    </g>
+
+    <path d="M226 277c18 17 42 17 59 0" fill="none" stroke="#15333a" stroke-width="9" stroke-linecap="round"/>
+    <path d="M238 287l10 25 11-22 12 22 10-25" fill="#fff4dd" stroke="#15333a" stroke-width="5" stroke-linejoin="round"/>
+
+    <path d="M174 380c-22 14-44 27-68 38 35 14 68 4 96-20z" fill="#176a68"/>
+    <path d="M342 382c24 15 47 26 72 35-35 16-70 8-100-17z" fill="#176a68"/>
+
+    <path d="M358 342c52 1 91 27 111 74-39-17-75-19-108-2 17-23 16-47-3-72z" fill="#1a776e"/>
+    <path d="M414 374l33-11-11 35 36 8-31 18 17 32-38-11-18 31-10-39-38 2 29-27z" fill="#9df7ff" stroke="#1c5678" stroke-width="6" stroke-linejoin="round"/>
+
+    <circle cx="166" cy="170" r="10" fill="#b7ffce" opacity=".85"/>
+    <circle cx="341" cy="181" r="8" fill="#b7ffce" opacity=".8"/>
+    <circle cx="153" cy="269" r="12" fill="#156d63" opacity=".35"/>
+    <circle cx="357" cy="281" r="15" fill="#156d63" opacity=".3"/>
+  </g>
+</svg>

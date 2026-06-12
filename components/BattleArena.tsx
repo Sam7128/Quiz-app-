@@ -491,4 +491,4 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
     );
 };
 
-export default BattleArena;
+

@@ -40,5 +40,3 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
     </div>
   );
 };
-
-export default SkeletonLoader;

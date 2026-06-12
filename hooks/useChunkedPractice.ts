@@ -469,5 +469,3 @@ export const useChunkedPractice = ({
     dismissChunkSummary,
   };
 };
-
-export type UseChunkedPracticeReturn = ReturnType<typeof useChunkedPractice>;

@@ -356,4 +356,4 @@ export const SkillAnimation: React.FC<SkillAnimationProps> = ({ skill, onComplet
     );
 };
 
-export default SkillAnimation;
+

@@ -7,7 +7,7 @@ import { Skill, SkillTier, SkillElement } from '../types/battleTypes';
 
 // ==================== 初級技能 (5連) ====================
 
-export const BASIC_SKILLS: Skill[] = [
+const BASIC_SKILLS: Skill[] = [
     {
         id: 'fireball',
         name: '火球術',
@@ -42,7 +42,7 @@ export const BASIC_SKILLS: Skill[] = [
 
 // ==================== 中級技能 (10連) ====================
 
-export const INTERMEDIATE_SKILLS: Skill[] = [
+const INTERMEDIATE_SKILLS: Skill[] = [
     {
         id: 'flame_storm',
         name: '烈焰風暴',
@@ -77,7 +77,7 @@ export const INTERMEDIATE_SKILLS: Skill[] = [
 
 // ==================== 高級技能 (20連) ====================
 
-export const ADVANCED_SKILLS: Skill[] = [
+const ADVANCED_SKILLS: Skill[] = [
     {
         id: 'meteor_strike',
         name: '隕石衝擊',
@@ -112,7 +112,7 @@ export const ADVANCED_SKILLS: Skill[] = [
 
 // ==================== 終極技能 (30連) ====================
 
-export const ULTIMATE_SKILLS: Skill[] = [
+const ULTIMATE_SKILLS: Skill[] = [
     {
         id: 'void_rift',
         name: '時空裂隙',
@@ -127,7 +127,7 @@ export const ULTIMATE_SKILLS: Skill[] = [
 
 // ==================== 史詩技能 (40連) ====================
 
-export const EPIC_SKILLS: Skill[] = [
+const EPIC_SKILLS: Skill[] = [
     {
         id: 'final_judgment',
         name: '終焉審判',
@@ -142,7 +142,7 @@ export const EPIC_SKILLS: Skill[] = [
 
 // ==================== 傳說技能 (50連) ====================
 
-export const LEGENDARY_SKILLS: Skill[] = [
+const LEGENDARY_SKILLS: Skill[] = [
     {
         id: 'apocalypse',
         name: '創世破滅',
@@ -158,7 +158,7 @@ export const LEGENDARY_SKILLS: Skill[] = [
 // ==================== 技能查詢工具 ====================
 
 /** 所有技能合集 */
-export const ALL_SKILLS: Skill[] = [
+const ALL_SKILLS: Skill[] = [
     ...BASIC_SKILLS,
     ...INTERMEDIATE_SKILLS,
     ...ADVANCED_SKILLS,
@@ -168,7 +168,7 @@ export const ALL_SKILLS: Skill[] = [
 ];
 
 /** 根據等級獲取技能池 */
-export function getSkillsByTier(tier: SkillTier): Skill[] {
+function getSkillsByTier(tier: SkillTier): Skill[] {
     switch (tier) {
         case 'basic':
             return BASIC_SKILLS;

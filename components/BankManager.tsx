@@ -178,7 +178,7 @@ const PDFImportSection: React.FC<{ onImport: (q: Question[]) => void }> = ({ onI
   );
 };
 
-export const BankManager: React.FC<BankManagerProps> = ({
+const BankManagerComponent: React.FC<BankManagerProps> = ({
   currentQuestions,
   currentBankId,
   onBankChange,
@@ -917,4 +917,4 @@ export const BankManager: React.FC<BankManagerProps> = ({
   );
 };
 
-export default React.memo(BankManager);
+export const BankManager = React.memo(BankManagerComponent);

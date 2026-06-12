@@ -1,9 +1,11 @@
 import { GoogleGenerativeAI, Part } from "@google/generative-ai";
 import OpenAI from "openai";
+import DOMPurify from "dompurify";
 import { Question, AIConfig } from "../types";
 import { generateUUID } from "../utils/uuid";
 import { STORAGE_KEYS } from "./storage";
 import { createQuestionFingerprint, normalizeSourceQuestionKey } from "../utils/questionIdentity";
+import { encryptString, decryptString, isEncryptedPayload } from "../utils/crypto";
 
 const QUESTION_JSON_SCHEMA = `{
   "type": "array",
@@ -43,7 +45,7 @@ const FEW_SHOT_EXAMPLES = `
 ]
 `;
 
-export const cleanJsonResponse = (raw: string): string => {
+const cleanJsonResponse = (raw: string): string => {
   // Remove markdown code blocks
   let clean = raw.replace(/```json\n?|\n?```/g, "").trim();
   // Remove potential leading/trailing non-JSON characters like comments or text
@@ -68,7 +70,7 @@ export const isAIConfig = (obj: unknown): obj is AIConfig => {
   return true;
 };
 
-export const getAIConfig = (): AIConfig | null => {
+export const getAIConfig = async (): Promise<AIConfig | null> => {
   const sessionData = sessionStorage.getItem(STORAGE_KEYS.AI_CONFIG);
   const localData = localStorage.getItem(STORAGE_KEYS.AI_CONFIG);
   const data = sessionData || localData;
@@ -95,6 +97,21 @@ export const getAIConfig = (): AIConfig | null => {
     if (config.persist === undefined) {
       config.persist = true;
     }
+
+    // 解密 apiKey，若為 EncryptedPayload 格式
+    if (config.apiKey && typeof config.apiKey === 'object') {
+      if (isEncryptedPayload(config.apiKey)) {
+        try {
+          config.apiKey = await decryptString(config.apiKey);
+        } catch (decryptErr) {
+          console.error('[AI Config] Failed to decrypt apiKey, clearing AI config ONLY.', decryptErr);
+          localStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
+          sessionStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
+          return null;
+        }
+      }
+    }
+
     if (!isAIConfig(config)) {
       throw new Error('Invalid AI config structure');
     }
@@ -111,10 +128,24 @@ export const getAIConfig = (): AIConfig | null => {
   }
 };
 
-export const saveAIConfig = (config: AIConfig) => {
+export const saveAIConfig = async (config: AIConfig): Promise<void> => {
   const persist = config.persist !== false;
   if (persist) {
-    localStorage.setItem(STORAGE_KEYS.AI_CONFIG, JSON.stringify({ ...config, persist: true }));
+    let encryptedApiKey: unknown = config.apiKey;
+    if (config.apiKey && typeof config.apiKey === 'string') {
+      try {
+        encryptedApiKey = await encryptString(config.apiKey);
+      } catch (encryptErr) {
+        console.error('[AI Config] Encryption failed', encryptErr);
+        throw new Error('加密 API 金鑰失敗');
+      }
+    }
+
+    localStorage.setItem(STORAGE_KEYS.AI_CONFIG, JSON.stringify({ 
+      ...config, 
+      apiKey: encryptedApiKey,
+      persist: true 
+    }));
     sessionStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
     return;
   }
@@ -123,10 +154,7 @@ export const saveAIConfig = (config: AIConfig) => {
   localStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
 };
 
-export const clearAIConfig = () => {
-  localStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
-  sessionStorage.removeItem(STORAGE_KEYS.AI_CONFIG);
-};
+
 
 const NVIDIA_DEFAULT_BASE_URL = "https://integrate.api.nvidia.com/v1";
 
@@ -136,10 +164,6 @@ export const resolveNvidiaBaseUrl = (
   origin: string = window.location.origin
 ): string => {
   const isDefaultUrl = !baseUrl || baseUrl === NVIDIA_DEFAULT_BASE_URL;
-  if (isProd && isDefaultUrl) {
-    throw new Error('NVIDIA 供應商在正式環境需設定自訂 baseUrl（或部署後端 proxy）。請到設定中填入 baseUrl 後再試。');
-  }
-
   return isDefaultUrl ? `${origin}/api/nvidia` : baseUrl;
 };
 
@@ -148,7 +172,7 @@ export const askAI = async (
   userQuery: string,
   userAnswer?: string | string[]
 ): Promise<string> => {
-  const config = getAIConfig();
+  const config = await getAIConfig();
   if (!config || !config.apiKey) {
     throw new Error("請先配置 API 金鑰");
   }
@@ -215,7 +239,7 @@ export const generateQuestionsFromPDF = async (
     langExplanation: string;
   } = { langOutput: 'zh-TW', questionType: 'mixed', langExplanation: 'zh-TW' }
 ): Promise<Question[]> => {
-  const config = getAIConfig();
+  const config = await getAIConfig();
   if (!config || !config.apiKey) throw new Error("請先配置 API 金鑰");
 
   if (config.provider !== 'google') {
@@ -250,7 +274,7 @@ export const generateQuestionsFromPDF = async (
       2. 參考範例 (Few-Shot Examples)：
       ${FEW_SHOT_EXAMPLES}
 
-      3. 不要包含任何 Markdown 標記 (如 \`\`\`json ... \`\`\`)。
+      3. 不要包含 any 標記，也不要包含任何 Markdown 標記 (如 \`\`\`json ... \`\`\`)。
       4. 題目語言：${outputLang}
     `;
 
@@ -279,29 +303,34 @@ export const generateQuestionsFromPDF = async (
       const q = (item && typeof item === 'object') ? (item as Record<string, unknown>) : ({} as Record<string, unknown>);
 
       const optionsRaw = Array.isArray(q.options) ? q.options : [];
-      const options = optionsRaw.filter((v): v is string => typeof v === 'string');
+      const cleanOptions = optionsRaw
+        .filter((v): v is string => typeof v === 'string')
+        .map(opt => DOMPurify.sanitize(opt));
 
       const answerRaw = q.answer;
-      const answer = Array.isArray(answerRaw)
-        ? answerRaw.filter((v): v is string => typeof v === 'string')
-        : (typeof answerRaw === 'string' ? answerRaw : '');
+      const cleanAnswer = Array.isArray(answerRaw)
+        ? answerRaw.filter((v): v is string => typeof v === 'string').map(ans => DOMPurify.sanitize(ans))
+        : (typeof answerRaw === 'string' ? DOMPurify.sanitize(answerRaw) : '');
 
       const type = q.type === 'single' || q.type === 'multiple' ? q.type : 'single';
+      const cleanQuestion = typeof q.question === 'string' ? DOMPurify.sanitize(q.question) : '';
+      const cleanHint = typeof q.hint === 'string' ? DOMPurify.sanitize(q.hint) : undefined;
+      const cleanExplanation = typeof q.explanation === 'string' ? DOMPurify.sanitize(q.explanation) : undefined;
 
       return {
         id: generateUUID(),
         original_question_id: normalizeSourceQuestionKey(q.id),
         sourceQuestionKey: normalizeSourceQuestionKey(q.id),
-        question: typeof q.question === 'string' ? q.question : '',
-        options,
-        answer,
+        question: cleanQuestion,
+        options: cleanOptions,
+        answer: cleanAnswer,
         type,
-        hint: typeof q.hint === 'string' ? q.hint : undefined,
-        explanation: typeof q.explanation === 'string' ? q.explanation : undefined,
+        hint: cleanHint,
+        explanation: cleanExplanation,
         sourceFingerprint: createQuestionFingerprint({
-          question: typeof q.question === 'string' ? q.question : '',
-          options,
-          answer,
+          question: cleanQuestion,
+          options: cleanOptions,
+          answer: cleanAnswer,
           type,
         }),
       } satisfies Question;

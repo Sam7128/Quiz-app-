@@ -36,7 +36,7 @@
 
 <!-- BEGIN AUTO-GENERATED: MEMORY MAP -->
 ## Auto-Generated Memory Map
-- Refreshed: `2026-05-21 21:26`
+- Refreshed: `2026-06-12 16:17`
 - Project root: `C:\Users\user\Desktop\Quiz-app--main`
 
 ### Key Files
@@ -48,8 +48,8 @@
 - [PATH-006] `tsconfig.json`
 - [PATH-007] `docs/INDEX.md`
 - [PATH-008] `App.tsx`
-- [PATH-009] `constants.ts`
-- [PATH-010] `dashboard.png`
+- [PATH-009] `dashboard.png`
+- [PATH-010] `eslint.config.js`
 
 ### Module Index
 | ID | Path | Local AGENTS | Purpose | Tags |
@@ -70,9 +70,9 @@
 ### OpenSpec Snapshot
 - Main specs: `openspec/specs/`
 - Active changes: none detected.
-- Archived changes: `18`
-- [OS-ARC-001] `openspec/changes/archive/2026-05-16-chunked-practice-cloud-sync/` (proposal, design, tasks, specs:3)
-- [OS-ARC-002] `openspec/changes/archive/2026-05-21-security-and-sync-hardening/` (proposal, design, tasks, specs:5)
+- Archived changes: `20`
+- [OS-ARC-001] `openspec/changes/archive/2026-06-09-security-audit-remediation/` (proposal, design, tasks, specs:7)
+- [OS-ARC-002] `openspec/changes/archive/2026-06-12-dead-code-cleanup/` (proposal, design, tasks, specs:1)
 - [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2)
 - [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks)
 - [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)
@@ -104,6 +104,11 @@
 - [FACT-022] Vercel build 的真正風險是遠端 Git 若追蹤 `node_modules/` 或 Windows 保留檔名（如 `nul`），會造成 Linux 部署依賴樹殘缺或 shim 權限錯誤；`package.json` 應維持標準 `vite build`，並確保依賴由 Vercel fresh install 產生。
 - [FACT-023] `services/storage.ts`: 引入了防禦性 AI Config 驗證與 Zustand 狀態防禦，確保從 `localStorage` 載入設定時，通過 Type Guards 與 schema 檢查防止惡意 payload 注入。
 - [FACT-024] `services/cloudStorage.ts`: 練習階段 (Practice Sessions) 同步中，修正了 Cloud-only sessions 寫回邏輯。登入後當本地無資料但雲端有紀錄時，會安全地將雲端 session 寫回本地，避免被空資料覆蓋。
+- [FACT-025] `utils/integrityCheck.ts`: HMAC-SHA256 簽名改為無狀態動態派生，不依賴 localStorage 中的明文 salt，杜絕金鑰洩露威脅。
+- [FACT-026] `hooks/useBattleSystem.ts`: 載入存檔時已整合 `isBattleState` 安全與範圍守衛，若格式或數值不符即重置，防範注入惡意數據或作弊。
+- [FACT-027] `docs/sql/submit_challenge_score.sql`: 聯賽分數提交 SQL RPC 強制於資料庫端結算完賽狀態，且雙方皆有分數時自動判定並記錄 `winner_id`。
+- [FACT-028] `dead-code` 分析在本 repo 可直接改用 `npx -y knip --reporter compact --no-progress`；目前環境沒有 `tldr` 指令可用。
+- [FACT-029] `openspec/specs/code-hygiene/spec.md`: 定義了專案的代碼潔淨度 (Code Hygiene) 規範，包含死碼物理刪除、導出作用域收窄、依賴清理與重複導出 (export default) 的清理標準。
 
 ## Active Decisions
 - [DEC-001] `AGENTS.md`: 採用 `AGENTS.md` 承載規則、`MEMORY.md` 承載動態事實，repo-local `GEMINI.md` 不再維護。
@@ -112,6 +117,7 @@
 - [DEC-004] `vite.config.ts`: 將 React 核心與 Recharts/Framer-motion 強制打包在同一 `vendor-ui-core` chunk，解決生產環境下因拆分導致的 `forwardRef` undefined 錯誤。
 - [DEC-005] `package.json`: 部署 build 入口維持標準 `vite build`；跨平台 shim 權限問題應從 Git 依賴衛生修正，不能提交 `node_modules/`。
 - [DEC-006] Storage 與 Config 安全：全面禁止在 Storage 讀取與 JSON 解析中使用 `any`，必須使用 `unknown` 加上特定的 Type Guard 進行防禦式屬性驗證與合併。
+- [DEC-007] E2E 測試對齊：由於自製 React `ConfirmDialog` 取代了原生對話框，所有 E2E 測試皆改用點擊 Confirm 鈕而非 `page.on('dialog')`，以防範黑紗遮罩阻擋所致的超時死鎖。
 
 ## Hotspots
 - [HOT-001] `App.tsx` & `vite.config.ts`: 全域流程、Provider 接線與生產環境打包配置，任何大型 UI 功能更新都需注意 Chunk 拆分相容性。
@@ -134,6 +140,7 @@
 - [RG-006] `rg -n "planQuestionImport|importMode|匯入前檢查" components utils src/__tests__`: 找匯入模式、摘要提示與測試。
 - [RG-007] `rg -n "useChunkedPractice|chunkMeta|mindspark_practice_sessions|syncLocalPracticeSessions" App.tsx hooks services components src/__tests__`: 找分階段練習主流程與同步點。
 - [RG-008] `rg -n "\"build\"|vite|Vercel|Permission denied" package.json vercel.json docs CHECKLIST.md MEMORY.md`: 找部署 build 腳本與 Vercel 權限問題紀錄。
+- [RG-009] `npx -y knip --reporter compact --no-progress`: 重跑 dead-code / unused export / unused dependency 掃描。
 
 ## Archive Index
 - [DOC-001] `docs/INDEX.md`: 已整理 reports、archive、migrations 與 root docs 索引，查歷史輸出先看這裡。

@@ -15,6 +15,7 @@ import {
     DamageResult,
     CritResult,
     Monster,
+    isBattleState,
 } from '../types/battleTypes';
 import {
     getRandomSkill,
@@ -37,6 +38,7 @@ import {
     MONSTER_SHIELD_DIALOGUES,
 } from '../constants/battleDialogues';
 import { STORAGE_KEYS } from '../services/storage';
+import { signData, verifyData } from '../utils/integrityCheck';
 
 // 基礎傷害設定
 const BASE_MONSTER_DAMAGE = 12;
@@ -59,29 +61,75 @@ const HURT_ANIMATION_DURATION = 600;
 const DIALOGUE_DISPLAY_DURATION = 2000;
 
 export function useBattleSystem(): UseBattleSystemReturn {
-    // 狀態初始化 (嘗試從 LocalStorage 讀取)
-    const [battleState, setBattleState] = useState<BattleState>(() => {
-        try {
-            const saved = localStorage.getItem(STORAGE_KEYS.BATTLE_STATE);
-            if (saved) return JSON.parse(saved);
-        } catch (e) {
-            console.error('Failed to load battle state', e);
+    const [isInitialized, setIsInitialized] = useState(false);
+    const [battleState, setBattleState] = useState<BattleState>(INITIAL_BATTLE_STATE);
+    const writeQueueRef = useRef<Promise<void>>(Promise.resolve());
+
+    // 異步載入與校驗 Effect
+    useEffect(() => {
+        let isMounted = true;
+        async function loadAndVerify() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEYS.BATTLE_STATE);
+                if (saved) {
+                    const signature = localStorage.getItem(STORAGE_KEYS.BATTLE_STATE + '_sig') || '';
+                    const isValid = await verifyData(saved, signature);
+                    if (isValid) {
+                        const parsed = JSON.parse(saved);
+                        if (isBattleState(parsed)) {
+                            if (isMounted) setBattleState(parsed);
+                        } else {
+                            console.warn('[Security] Invalid BattleState format. Resetting to initial state.');
+                            localStorage.removeItem(STORAGE_KEYS.BATTLE_STATE);
+                            localStorage.removeItem(STORAGE_KEYS.BATTLE_STATE + '_sig');
+                            if (isMounted) setBattleState(INITIAL_BATTLE_STATE);
+                        }
+                    } else {
+                        console.warn('[Security] Battle state integrity check failed! Resetting to initial state.');
+                        localStorage.removeItem(STORAGE_KEYS.BATTLE_STATE);
+                        localStorage.removeItem(STORAGE_KEYS.BATTLE_STATE + '_sig');
+                        if (isMounted) setBattleState(INITIAL_BATTLE_STATE);
+                    }
+                } else {
+                    if (isMounted) setBattleState(INITIAL_BATTLE_STATE);
+                }
+            } catch (e) {
+                console.error('[BattleSystem] Load failed, falling back to initial state', e);
+                if (isMounted) setBattleState(INITIAL_BATTLE_STATE);
+            } finally {
+                if (isMounted) setIsInitialized(true);
+            }
         }
-        return INITIAL_BATTLE_STATE;
-    });
+        loadAndVerify();
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     // Persistence Effect
     useEffect(() => {
-        // Only save if battle is active or there's some progress (HP loss, streak)
-        if (battleState.isActive || battleState.heroHp < INITIAL_BATTLE_STATE.heroHp || battleState.monsterHp < INITIAL_BATTLE_STATE.monsterHp || battleState.streak > 0) {
-            localStorage.setItem(STORAGE_KEYS.BATTLE_STATE, JSON.stringify(battleState));
-        } else {
-            const isInitialState = JSON.stringify(battleState) === JSON.stringify(INITIAL_BATTLE_STATE);
-            if (isInitialState) {
-                localStorage.removeItem(STORAGE_KEYS.BATTLE_STATE);
+        if (!isInitialized) return; // 狀態加載完成前，禁止寫入
+
+        const stateStr = JSON.stringify(battleState);
+
+        writeQueueRef.current = writeQueueRef.current.then(async () => {
+            try {
+                if (battleState.isActive || battleState.heroHp < INITIAL_BATTLE_STATE.heroHp || battleState.monsterHp < INITIAL_BATTLE_STATE.monsterHp || battleState.streak > 0) {
+                    const signature = await signData(stateStr);
+                    localStorage.setItem(STORAGE_KEYS.BATTLE_STATE, stateStr);
+                    localStorage.setItem(STORAGE_KEYS.BATTLE_STATE + '_sig', signature);
+                } else {
+                    const isInitialState = stateStr === JSON.stringify(INITIAL_BATTLE_STATE);
+                    if (isInitialState) {
+                        localStorage.removeItem(STORAGE_KEYS.BATTLE_STATE);
+                        localStorage.removeItem(STORAGE_KEYS.BATTLE_STATE + '_sig');
+                    }
+                }
+            } catch (e) {
+                console.error('[BattleSystem] Persistence write queue error:', e);
             }
-        }
-    }, [battleState]);
+        });
+    }, [battleState, isInitialized]);
 
     // Debug Logging (DEV only)
     const prevBattleStateRef = useRef(battleState);
@@ -112,19 +160,29 @@ export function useBattleSystem(): UseBattleSystemReturn {
 
     // Clear state helper (exported or internal used by endBattle)
     const clearBattleState = useCallback(() => {
+        if (!isInitialized) return;
         localStorage.removeItem(STORAGE_KEYS.BATTLE_STATE);
+        localStorage.removeItem(STORAGE_KEYS.BATTLE_STATE + '_sig');
         setBattleState(INITIAL_BATTLE_STATE);
-    }, []);
+    }, [isInitialized]);
 
     const lastDialogueRef = useRef<string>('');
     const animationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const dialogueTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const spawnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const shieldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const transitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const defeatTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // 清理計時器
     useEffect(() => {
         return () => {
             if (animationTimerRef.current) clearTimeout(animationTimerRef.current);
             if (dialogueTimerRef.current) clearTimeout(dialogueTimerRef.current);
+            if (spawnTimerRef.current) clearTimeout(spawnTimerRef.current);
+            if (shieldTimerRef.current) clearTimeout(shieldTimerRef.current);
+            if (transitionTimerRef.current) clearTimeout(transitionTimerRef.current);
+            if (defeatTimerRef.current) clearTimeout(defeatTimerRef.current);
         };
     }, []);
 
@@ -219,9 +277,15 @@ export function useBattleSystem(): UseBattleSystemReturn {
 
         const nextId = availableIds[Math.floor(Math.random() * availableIds.length)];
 
-        // 查找 Monster 物件 (需優化：這裡直接用 getRandomMonster 因其實作會重新 filter，有點多餘但可接受)
-        // 為了效能與正確性，我們依賴 getMonstersByDifficulty 撈所有資料再來 find
         const allMonsters = getMonstersByDifficulty(isBoss ? 'boss' : isElite ? 'elite' : 'normal');
+        if (allMonsters.length === 0) {
+            // Fallback: try normal difficulty
+            const fallbackMonsters = getMonstersByDifficulty('normal');
+            if (fallbackMonsters.length === 0) {
+                throw new Error('[BattleSystem] No monsters available in any difficulty pool');
+            }
+            return { monster: fallbackMonsters[0], newPool: [], newSeen: seen };
+        }
         const monster = allMonsters.find(m => m.id === nextId) || allMonsters[0];
 
         // 更新 pool 與 seen
@@ -237,6 +301,7 @@ export function useBattleSystem(): UseBattleSystemReturn {
 
     // 開始戰鬥
     const startBattle = useCallback(() => {
+        if (!isInitialized) return;
         const monster = getRandomMonster('normal'); // 初始怪物
 
         setBattleState({
@@ -248,26 +313,27 @@ export function useBattleSystem(): UseBattleSystemReturn {
             // 重置 seen，但保留 pool 邏輯如果需要持久化 (這裡先簡單重置)
             seenMonsters: [monster.id],
         });
-    }, []);
+    }, [isInitialized]);
 
     // 結束戰鬥
     const endBattle = useCallback(() => {
+        if (!isInitialized) return;
         setBattleState(prev => ({
             ...prev,
             isActive: false,
         }));
-    }, []);
+    }, [isInitialized]);
 
     const resetForNewChunk = useCallback(() => {
+        if (!isInitialized) return;
         startBattle();
-    }, [startBattle]);
+    }, [startBattle, isInitialized]);
 
     // 計算暴擊
     const rollCrit = useCallback((): CritResult => {
         const isCrit = Math.random() < CRIT_CHANCE;
-        const multiplier = isCrit
-            ? CRIT_MULTIPLIER_RANGE[0] + Math.random() * (CRIT_MULTIPLIER_RANGE[1] - CRIT_MULTIPLIER_RANGE[0])
-            : 1.0;
+        // 暴擊倍率固定為 1.5 倍，收斂前端可操控之隨機參數
+        const multiplier = isCrit ? 1.5 : 1.0;
         return { isCrit, multiplier };
     }, []);
 
@@ -275,8 +341,9 @@ export function useBattleSystem(): UseBattleSystemReturn {
     const calculateDamage = useCallback((monster: Monster, streak: number, skillTier: SkillTier | null): DamageResult => {
         // 動畫/遊戲性平衡：
         // 基礎傷害 = 怪物血量 15% (保證約 7 刀打死)
-        // 連擊加成 = 每連擊 + 2 點
-        const base = Math.floor(monster.maxHp * 0.15) + (streak * 2);
+        // 連擊加成 = 每連擊 + 2 點，限制最高 50 連擊以防範前端數值修改作弊
+        const cappedStreak = Math.min(streak, 50);
+        const base = Math.floor(monster.maxHp * 0.15) + (cappedStreak * 2);
 
         // 技能加成
         let multiplier = 1.0;
@@ -451,6 +518,7 @@ export function useBattleSystem(): UseBattleSystemReturn {
     // 但因為要發送對話，我們需要知道發生的事。
     // 我們將盡量在此函數內完成計算，然後一次更新 state。
     const triggerAnswer = useCallback((isCorrect: boolean) => {
+        if (!isInitialized) return;
         if (!battleState.isActive) {
             startBattle();
             // 如果剛開始，無法馬上答題 (邏輯上)
@@ -498,7 +566,8 @@ export function useBattleSystem(): UseBattleSystemReturn {
                 setAnimation('skill_cast', triggerSkill, () => {
                     if (isMonsterDefeated) {
                         setDialogue('hero', HERO_VICTORY_DIALOGUES);
-                        setTimeout(spawnNewMonster, 1500);
+                        if (spawnTimerRef.current) clearTimeout(spawnTimerRef.current);
+                        spawnTimerRef.current = setTimeout(spawnNewMonster, 1500);
                     }
                 });
             } else {
@@ -507,7 +576,8 @@ export function useBattleSystem(): UseBattleSystemReturn {
 
                 // 護盾對話優先於受傷對話
                 if ((shieldAbsorbed ?? 0) > 0) {
-                    setTimeout(() => setDialogue('monster', MONSTER_SHIELD_DIALOGUES), 500);
+                    if (shieldTimerRef.current) clearTimeout(shieldTimerRef.current);
+                    shieldTimerRef.current = setTimeout(() => setDialogue('monster', MONSTER_SHIELD_DIALOGUES), 500);
                 }
 
                 setAnimation('hero_attack', undefined, () => {
@@ -520,7 +590,8 @@ export function useBattleSystem(): UseBattleSystemReturn {
                         setAnimation('monster_hurt', undefined, () => {
                             if (isMonsterDefeated) {
                                 setDialogue('monster', monster.defeatDialogues);
-                                setTimeout(() => {
+                                if (transitionTimerRef.current) clearTimeout(transitionTimerRef.current);
+                                transitionTimerRef.current = setTimeout(() => {
                                     setAnimation('stage_transition', undefined, spawnNewMonster);
                                 }, 1000);
                             }
@@ -559,7 +630,8 @@ export function useBattleSystem(): UseBattleSystemReturn {
                 setDialogue('hero', HERO_HURT_DIALOGUES);
                 setAnimation('hero_hurt', undefined, () => {
                     if (battleState.heroHp - BASE_MONSTER_DAMAGE <= 0) {
-                        setTimeout(startBattle, 2000);
+                        if (defeatTimerRef.current) clearTimeout(defeatTimerRef.current);
+                        defeatTimerRef.current = setTimeout(startBattle, 2000);
                     }
                 });
             });
@@ -568,22 +640,24 @@ export function useBattleSystem(): UseBattleSystemReturn {
                 detail: { damage: BASE_MONSTER_DAMAGE, isCrit: false, position: 'hero' }
             }));
         }
-    }, [battleState, calculateDamage, getSkillTierByStreak, setAnimation, setDialogue, spawnNewMonster, startBattle]);
+    }, [battleState, calculateDamage, getSkillTierByStreak, setAnimation, setDialogue, spawnNewMonster, startBattle, isInitialized]);
 
     // 動畫完成回調
     const onAnimationComplete = useCallback(() => {
+        if (!isInitialized) return;
         setBattleState(prev => ({
             ...prev,
             currentAnimation: null,
             pendingSkill: null,
         }));
-    }, []);
+    }, [isInitialized]);
 
     const currentSkillTier = getSkillTierByStreak(battleState.streak);
     const hasPendingSkill = battleState.pendingSkill !== null;
 
     return {
         battleState,
+        isInitialized,
         triggerAnswer,
         startBattle,
         endBattle,
@@ -594,4 +668,4 @@ export function useBattleSystem(): UseBattleSystemReturn {
     };
 }
 
-export default useBattleSystem;
+

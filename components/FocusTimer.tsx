@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Play, Pause, RotateCcw, Settings, Volume2, VolumeX } from 'lucide-react';
 
 interface FocusTimerProps {
@@ -14,6 +14,15 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({ onSessionComplete }) => 
   const [showSettings, setShowSettings] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [completedSessions, setCompletedSessions] = useState(0);
+  const audioTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  // Cleanup audio timers on unmount
+  useEffect(() => {
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      audioTimersRef.current.forEach(timer => clearTimeout(timer));
+    };
+  }, []);
 
   // Timer logic
   useEffect(() => {
@@ -65,8 +74,20 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({ onSessionComplete }) => 
       
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.5);
+
+      // 在音效停止後 0.6 秒 (0.5秒音效時間 + 0.1秒緩衝時間) 釋放 AudioContext 資源
+      const timer = setTimeout(() => {
+        try {
+          audioContext.close();
+        } catch (closeErr) {
+          console.error('[FocusTimer] Failed to close AudioContext:', closeErr);
+        }
+      }, 600);
+
+      // 追蹤此計時器，組件銷毀時可一併釋放
+      audioTimersRef.current.push(timer);
     } catch (e) {
-      console.log('Audio not supported');
+      console.log('Audio not supported', e);
     }
   };
 

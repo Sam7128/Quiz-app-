@@ -16,7 +16,7 @@ interface SettingsProps {
 
 import { useTheme } from '../contexts/ThemeContext';
 
-export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, onToggleGameMode, onSystemNuke }) => {
+const SettingsComponent: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, onToggleGameMode, onSystemNuke }) => {
   const { theme, setTheme } = useTheme();
   const { isBgmEnabled, isSfxEnabled, toggleBgm, toggleSfx } = useSoundEffects();
   const [config, setConfig] = useState<AIConfig>({
@@ -30,28 +30,77 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, o
     restBreakInterval: 20
   });
   const [saved, setSaved] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    let active = true;
     if (isOpen) {
-      const existing = getAIConfig();
-      if (existing) setConfig({ ...existing, persist: existing.persist !== false });
+      const loadData = async () => {
+        setIsLoading(true);
+        try {
+          const existing = await getAIConfig();
+          if (active && existing) {
+            setConfig({ ...existing, persist: existing.persist !== false });
+          }
+        } catch (err) {
+          console.error('[Settings] Failed to load AI config:', err);
+        } finally {
+          if (active) setIsLoading(false);
+        }
+      };
 
+      loadData();
       const settings = getUserSettings();
       setUserSettings(settings);
     }
+    return () => {
+      active = false;
+    };
   }, [isOpen]);
 
-  const handleSave = () => {
-    saveAIConfig(config);
-    saveUserSettings(userSettings);
-    setSaved(true);
-    setTimeout(() => {
-      setSaved(false);
-      onClose();
-    }, 1000);
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      await saveAIConfig(config);
+      saveUserSettings(userSettings);
+      setSaved(true);
+      setTimeout(() => {
+        setSaved(false);
+        onClose();
+      }, 1000);
+    } catch (err) {
+      console.error('[Settings] Failed to save AI config:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (!isOpen) return null;
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+        <div className="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden p-6 space-y-6 flex flex-col max-h-[90vh]">
+          {/* Skeleton Header */}
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-700 animate-pulse">
+            <div className="h-6 w-32 bg-slate-200 dark:bg-slate-700 rounded" />
+            <div className="h-8 w-8 bg-slate-200 dark:bg-slate-700 rounded-full" />
+          </div>
+          {/* Skeleton Body */}
+          <div className="flex-1 space-y-4 animate-pulse">
+            <div className="h-16 bg-slate-200 dark:bg-slate-700 rounded-2xl" />
+            <div className="h-10 bg-slate-200 dark:bg-slate-700 rounded-xl" />
+            <div className="h-20 bg-slate-200 dark:bg-slate-700 rounded-xl" />
+            <div className="h-10 bg-slate-200 dark:bg-slate-700 rounded-xl" />
+          </div>
+          {/* Skeleton Footer */}
+          <div className="pt-4 border-t border-slate-100 dark:border-slate-700 animate-pulse">
+            <div className="h-12 bg-slate-200 dark:bg-slate-700 rounded-xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -514,4 +563,4 @@ export const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode, o
   );
 };
 
-export default React.memo(Settings);
+export const Settings = React.memo(SettingsComponent);

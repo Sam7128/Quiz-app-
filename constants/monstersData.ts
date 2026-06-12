@@ -12,7 +12,7 @@ import {
 
 // ==================== 普通怪物 ====================
 
-export const NORMAL_MONSTERS: Monster[] = [
+const NORMAL_MONSTERS: Monster[] = [
     {
         id: 'slime_blue',
         name: '藍色史萊姆',
@@ -98,7 +98,7 @@ export const NORMAL_MONSTERS: Monster[] = [
 
 // ==================== 精英怪物 ====================
 
-export const ELITE_MONSTERS: Monster[] = [
+const ELITE_MONSTERS: Monster[] = [
     {
         id: 'skeleton_warrior',
         name: '骷髏戰士',
@@ -161,7 +161,7 @@ export const ELITE_MONSTERS: Monster[] = [
 
 // ==================== Boss 怪物 ====================
 
-export const BOSS_MONSTERS: Monster[] = [
+const BOSS_MONSTERS: Monster[] = [
     {
         id: 'dragon_fire',
         name: '炎龍・伊格尼斯',
@@ -227,7 +227,7 @@ export const BOSS_MONSTERS: Monster[] = [
 // ==================== 怪物查詢工具 ====================
 
 /** 所有怪物合集 */
-export const ALL_MONSTERS: Monster[] = [
+const ALL_MONSTERS: Monster[] = [
     ...NORMAL_MONSTERS,
     ...ELITE_MONSTERS,
     ...BOSS_MONSTERS,
@@ -254,17 +254,7 @@ export function getRandomMonster(difficulty?: MonsterDifficulty): Monster {
     return pool[index];
 }
 
-/** 根據已擊敗數量選擇適當難度的怪物 */
-export function getMonsterByProgress(defeatedCount: number): Monster {
-    // 每5隻出現一個精英，每10隻出現一個Boss
-    if (defeatedCount > 0 && defeatedCount % 10 === 0) {
-        return getRandomMonster('boss');
-    }
-    if (defeatedCount > 0 && defeatedCount % 5 === 0) {
-        return getRandomMonster('elite');
-    }
-    return getRandomMonster('normal');
-}
+
 
 // 匯出怪物 ID 列表供隨機與輪替使用
 export const NORMAL_MONSTER_IDS = NORMAL_MONSTERS.map(m => m.id);

@@ -28,7 +28,7 @@ export const useAchievementTracker = (): UseAchievementTrackerReturn => {
       }
 
       const hour = new Date().getHours();
-      if ((hour >= 22 || hour < 6) && !unlockedIds.includes('night_owl')) {
+      if (hour >= 22 && !unlockedIds.includes('night_owl')) {
         achievementsToUnlock.push('night_owl');
       }
 

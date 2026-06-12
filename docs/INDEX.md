@@ -1,6 +1,6 @@
 # Docs Index
 
-- Updated: `2026-05-21 21:26`
+- Updated: `2026-06-12 16:17`
 - Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs.
 
 ## archive
@@ -13,12 +13,17 @@
 - `reports/CODE_AUDIT_REPORT_2026_05_07.md` - 📝 MindSpark 全面程式碼審查報告 (Code Audit Report)
 - `reports/codex_verify_report.md` - codex_verify_report
 - `reports/codex_verify_report_r2.md` - 第二輪驗證報告（Verifier）
+- `reports/comprehensive_security_audit_report.md` - 🛡️ MindSpark 專案深度安全性與系統架構審計報告
+- `reports/DEAD_CODE_REPORT_2026_06_10.md` - 專案冗餘代碼深度審計報告 (Dead Code Audit Report)
 - `reports/DEEP_AUDIT_REMEDIATION_IMPLEMENTATION.md` - 深度稽核修復實作報告 (2026-02-16)
 - `reports/DEEP_CODE_AUDIT_REPORT_2026-02-15.md` - MindSpark Quiz App 深度檢查報告
+- `reports/LOGIC_AND_ARCH_AUDIT_REPORT_2026_06_08.md` - 邏輯與架構審查報告 (Logic & Architecture Audit Report)
 - `reports/RISK_REVIEW_REPORT_2026_05_21.md` - MindSpark 程式風險與競態審查報告
 - `reports/security-and-sync-hardening-verification.md` - Verification Report: security-and-sync-hardening
+- `reports/security_audit_investigation.md` - 安全審計報告調查結果 (2026-06-08)
 - `reports/SECURITY_AUDIT_REPORT.md` - Security Audit Report
 - `reports/SECURITY_HARDENING_ADDITIONAL_REPORT.md` - 🛡️ Quiz App 追加安全性強化報告 (S1-S5)
+- `reports/verification_report.md` - Security Audit Remediation 驗證報告
 - `reports/安全警告.md` - 安全警告
 
 ## root

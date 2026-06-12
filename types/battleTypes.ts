@@ -9,7 +9,7 @@
 export type SkillTier = 'basic' | 'intermediate' | 'advanced' | 'ultimate' | 'epic' | 'legendary';
 
 /** 技能動畫類型 */
-export type SkillAnimationType = 'css' | 'lottie' | 'sequence' | 'video';
+type SkillAnimationType = 'css' | 'lottie' | 'sequence' | 'video';
 
 /** 技能動畫元素類型 */
 export type SkillElement = 'fire' | 'ice' | 'lightning' | 'void' | 'holy' | 'cosmic';
@@ -27,13 +27,13 @@ export interface Skill {
 }
 
 /** 技能觸發閾值配置 */
-export interface SkillThreshold {
+interface SkillThreshold {
   tier: SkillTier;
   requiredStreak: number;
 }
 
 /** 預設技能觸發閾值 */
-export const SKILL_THRESHOLDS: SkillThreshold[] = [
+const SKILL_THRESHOLDS: SkillThreshold[] = [
   { tier: 'basic', requiredStreak: 5 },
   { tier: 'intermediate', requiredStreak: 10 },
   { tier: 'advanced', requiredStreak: 20 },
@@ -64,20 +64,6 @@ export interface Monster {
 }
 
 // ==================== 主角系統 ====================
-
-/** 主角狀態 */
-export interface Hero {
-  name: string;
-  imagePath: string;
-  attackImagePath: string;
-  hurtImagePath: string;
-  maxHp: number;
-  currentHp: number;
-  attackDialogues: string[];
-  hurtDialogues: string[];
-  victoryDialogues: string[];
-  skillDialogues: Record<SkillTier, string[]>;
-}
 
 // ==================== 戰鬥狀態 ====================
 
@@ -181,19 +167,27 @@ export const INITIAL_BATTLE_STATE: BattleState = {
   isLastHitCrit: false,
 };
 
-// ==================== 戰鬥事件 ====================
+/**
+ * 驗證未知值是否為合法的 BattleState (安全防禦守衛)
+ */
+export function isBattleState(value: unknown): value is BattleState {
+  if (typeof value !== 'object' || value === null) return false;
+  const s = value as Record<string, unknown>;
+  return (
+    typeof s.streak === 'number' && s.streak >= 0 &&
+    typeof s.maxStreak === 'number' && s.maxStreak >= 0 &&
+    typeof s.heroHp === 'number' && s.heroHp <= 200 &&
+    typeof s.heroMaxHp === 'number' &&
+    typeof s.monsterHp === 'number' &&
+    typeof s.monsterMaxHp === 'number' &&
+    typeof s.monstersDefeated === 'number' && s.monstersDefeated >= 0 &&
+    typeof s.questionsAnswered === 'number' && s.questionsAnswered >= 0 &&
+    Array.isArray(s.seenMonsters) &&
+    typeof s.isActive === 'boolean'
+  );
+}
 
-/** 戰鬥事件類型 */
-export type BattleEvent =
-  | { type: 'START_BATTLE'; monster: Monster }
-  | { type: 'ANSWER_CORRECT' }
-  | { type: 'ANSWER_WRONG' }
-  | { type: 'TRIGGER_SKILL'; skill: Skill }
-  | { type: 'ANIMATION_COMPLETE' }
-  | { type: 'MONSTER_DEFEATED' }
-  | { type: 'HERO_DEFEATED' }
-  | { type: 'SPAWN_NEW_MONSTER' }
-  | { type: 'END_BATTLE' };
+// ==================== 戰鬥事件 ====================
 
 // ==================== Hook 回傳類型 ====================
 
@@ -201,6 +195,8 @@ export type BattleEvent =
 export interface UseBattleSystemReturn {
   /** 當前戰鬥狀態 */
   battleState: BattleState;
+  /** 戰鬥系統狀態是否已初始化完成 (防篡改驗證完畢) */
+  isInitialized: boolean;
   /** 觸發答題動作 */
   triggerAnswer: (isCorrect: boolean) => void;
   /** 開始戰鬥 */
@@ -228,7 +224,7 @@ export interface SavedQuizProgress {
   savedAt: number;
 }
 
-export type PracticeChunkStatus = 'pending' | 'in_progress' | 'completed';
+type PracticeChunkStatus = 'pending' | 'in_progress' | 'completed';
 
 export interface PracticeChunk {
   index: number;

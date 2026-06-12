@@ -521,4 +521,4 @@ const DashboardBase: React.FC<DashboardProps> = ({
 };
 
 export const Dashboard = React.memo(DashboardBase);
-export default Dashboard;
+

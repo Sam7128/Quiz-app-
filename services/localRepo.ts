@@ -109,11 +109,11 @@ export class LocalStorageRepository implements IStorageRepository {
   }
 
   async getAchievements(): Promise<string[]> {
-    return getLocalAchievements();
+    return await getLocalAchievements();
   }
 
   async unlockAchievement(achievementId: string): Promise<void> {
-    unlockLocalAchievement(achievementId);
+    await unlockLocalAchievement(achievementId);
   }
 
   async getStreak(): Promise<StreakData> {

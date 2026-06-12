@@ -14,7 +14,7 @@ import { GlobalModals } from './GlobalModals';
 import { ErrorBoundary } from './ErrorBoundary';
 import { AppHeader } from './AppHeader';
 import { MobileNav } from './MobileNav';
-import SkeletonLoader from './SkeletonLoader';
+import { SkeletonLoader } from './SkeletonLoader';
 import { QuizProvider } from '../contexts/QuizContext';
 import { IStorageRepository } from '../services/repository';
 import { ChunkCompleteSummary } from './ChunkCompleteSummary';

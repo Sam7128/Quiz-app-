@@ -259,6 +259,4 @@ export const ensureStableQuestionId = (question: Question): Question => {
   });
 };
 
-export const isQuestionIdUuid = (questionId: string | number): boolean => {
-  return typeof questionId === 'string' && isUuid(questionId);
-};
+

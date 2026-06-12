@@ -38,20 +38,19 @@ test('JSON 文字貼上匯入測試', async ({ page }) => {
     await page.locator('textarea').fill(sampleJson);
     console.log('Filled JSON');
 
-    // 5. 點擊匯入
-    page.on('dialog', dialog => {
-        console.log('Dialog:', dialog.message());
-        dialog.accept();
-    });
+    // 5. 點擊匯入，並在彈出的自製 ConfirmDialog 中點擊「繼續匯入」
     await page.getByRole('button', { name: '匯入文字內容' }).click();
+    const confirmBtn = page.locator('[data-confirm-dialog]').getByRole('button', { name: '繼續匯入' });
+    await expect(confirmBtn).toBeVisible({ timeout: 5000 });
+    await confirmBtn.click();
     console.log('Imported JSON');
 
     // 6. 檢查題庫列表顯示題數
-    await expect(page.getByText('1 題')).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('.group >> text=1 題').first()).toBeVisible({ timeout: 15000 });
     console.log('Verified count');
 
     // 7. 回到首頁檢查是否可選
     await page.getByRole('button', { name: '首頁' }).click();
-    await expect(page.getByText('E2E Test Bank')).toBeVisible();
+    await expect(page.locator('main').getByText('E2E Test Bank')).toBeVisible();
     console.log('Verified bank in Dashboard');
 });

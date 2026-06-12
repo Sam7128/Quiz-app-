@@ -9,7 +9,7 @@ describe('AI Config Protection', () => {
     vi.restoreAllMocks();
   });
 
-  it('should parse valid AI config correctly', () => {
+  it('should parse valid AI config correctly', async () => {
     const validConfig = {
       provider: 'google',
       apiKey: 'test-api-key',
@@ -18,30 +18,30 @@ describe('AI Config Protection', () => {
     };
     localStorage.setItem(STORAGE_KEYS.AI_CONFIG, JSON.stringify(validConfig));
 
-    const config = getAIConfig();
+    const config = await getAIConfig();
     expect(config).not.toBeNull();
     expect(config?.apiKey).toBe('test-api-key');
     expect(config?.provider).toBe('google');
   });
 
-  it('should handle invalid JSON by returning null and clearing storage', () => {
+  it('should handle invalid JSON by returning null and clearing storage', async () => {
     localStorage.setItem(STORAGE_KEYS.AI_CONFIG, '{invalid-json}');
 
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     
-    const config = getAIConfig();
+    const config = await getAIConfig();
     expect(config).toBeNull();
     expect(localStorage.getItem(STORAGE_KEYS.AI_CONFIG)).toBeNull();
     expect(sessionStorage.getItem(STORAGE_KEYS.AI_CONFIG)).toBeNull();
     expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
-  it('should return null when storage is empty', () => {
-    const config = getAIConfig();
+  it('should return null when storage is empty', async () => {
+    const config = await getAIConfig();
     expect(config).toBeNull();
   });
 
-  it('should reject config strings larger than 10KB', () => {
+  it('should reject config strings larger than 10KB', async () => {
     const largeApiKey = 'a'.repeat(10 * 1024 + 1);
     const largeConfig = {
       provider: 'google',
@@ -54,13 +54,13 @@ describe('AI Config Protection', () => {
 
     const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    const config = getAIConfig();
+    const config = await getAIConfig();
     expect(config).toBeNull();
     expect(localStorage.getItem(STORAGE_KEYS.AI_CONFIG)).toBeNull();
     expect(consoleWarnSpy).toHaveBeenCalled();
   });
 
-  it('should reject config with invalid schema structures', () => {
+  it('should reject config with invalid schema structures', async () => {
     const invalidSchemaConfig = {
       provider: 'unknown-provider', // invalid provider
       apiKey: 12345, // should be string
@@ -70,13 +70,13 @@ describe('AI Config Protection', () => {
 
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    const config = getAIConfig();
+    const config = await getAIConfig();
     expect(config).toBeNull();
     expect(localStorage.getItem(STORAGE_KEYS.AI_CONFIG)).toBeNull();
     expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
-  it('should degrade gracefully without throwing if storage clear fails', () => {
+  it('should degrade gracefully without throwing if storage clear fails', async () => {
     localStorage.setItem(STORAGE_KEYS.AI_CONFIG, '{invalid-json}');
 
     const removeItemSpy = vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
@@ -85,7 +85,7 @@ describe('AI Config Protection', () => {
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    const config = getAIConfig();
+    const config = await getAIConfig();
     expect(config).toBeNull();
     expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('Failed to clear corrupted storage'));
     expect(removeItemSpy).toHaveBeenCalled();
