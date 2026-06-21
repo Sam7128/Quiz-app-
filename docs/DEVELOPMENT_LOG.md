@@ -1,5 +1,14 @@
 # Development Log
 
+## 2026-06-12 [Utility] "Project Memory Refresh & MCP Optimization"
+### ✨ Infrastructure & Memory
+- **執行專案記憶刷新與安裝**：在專案根目錄成功執行 `refresh_project_memory_bundle.py`，完成專案記憶 (Project Memory) 的全面更新與安裝。
+- **優化並修復路徑**：重新整理 `MEMORY.md` 記憶地圖，並重新建立 `.memory-index/index.json` 索引，確保本地所有 Markdown 及開發檔案被正確雜湊與索引。
+- **自動化配置與健康度校驗**：
+  - 更新並驗證包含 Gemini、Cursor、Codex 與 Antigravity CLI 的專案 MCP 配置文件。
+  - 生成動態路徑解析的 `.project-memory/project_memory_mcp_entry.py`，移除任何 `%USERPROFILE%` 等硬編碼路徑，防止多環境執行時權限與路徑失效。
+  - 自動執行健康度與搜尋驗證，確認查無任何 health warnings。
+
 ## 2026-06-12 [OpenSpec] "Dead Code Cleanup - Spec Sync & Archive"
 ### 📦 規格同步與變更歸檔 (Specification Sync & Archive)
 - **規格同步完成**：依據使用者選取，將 `dead-code-cleanup` 的 Delta Specs 同步至主規格（Main Specs）中。

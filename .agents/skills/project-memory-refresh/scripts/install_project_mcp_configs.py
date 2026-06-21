@@ -15,7 +15,11 @@ CODEX_DIR = ".codex"
 CODEX_CONFIG = "config.toml"
 CODEX_BEGIN = "# >>> project-memory mcp >>>"
 CODEX_END = "# <<< project-memory mcp <<<"
-ANTIGRAVITY_CONFIG = Path.home() / ".gemini" / "antigravity" / "mcp_config.json"
+ANTIGRAVITY_CONFIGS = [
+    Path.home() / ".gemini" / "antigravity" / "mcp_config.json",
+    Path.home() / ".gemini" / "antigravity-ide" / "mcp_config.json",
+]
+ANTIGRAVITY_CONFIG = ANTIGRAVITY_CONFIGS[0]
 ANTIGRAVITY_RULES_DIR = ".antigravity"
 ANTIGRAVITY_RULES_FILE = "rules.md"
 ANTIGRAVITY_RULES_BEGIN = "<!-- >>> project-memory antigravity rules >>> -->"
@@ -60,9 +64,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 LOCAL_SKILL_SCRIPTS = ROOT / ".agents" / "skills" / "project-memory-refresh" / "scripts"
 CANONICAL_GLOBAL_SKILL_SCRIPTS = Path.home() / ".agents" / "skills" / "project-memory-refresh" / "scripts"
-GENERATED_FROM_SKILL_SCRIPTS = Path(r"{SKILL_SCRIPTS}")
 
-for candidate in (LOCAL_SKILL_SCRIPTS, CANONICAL_GLOBAL_SKILL_SCRIPTS, GENERATED_FROM_SKILL_SCRIPTS):
+for candidate in (LOCAL_SKILL_SCRIPTS, CANONICAL_GLOBAL_SKILL_SCRIPTS):
     if (candidate / "project_memory_mcp_server.py").exists():
         if str(candidate) not in sys.path:
             sys.path.insert(0, str(candidate))
@@ -109,8 +112,9 @@ def install_wrapper(root: Path) -> Path:
 
 
 def mcp_server_block(wrapper_path: Path) -> dict:
+    import sys
     return {
-        "command": "python",
+        "command": sys.executable,
         "args": [str(wrapper_path)],
     }
 
@@ -125,7 +129,8 @@ def json_project_memory_matches(payload: dict, wrapper_path: Path, *, require_cu
     server = payload.get("mcpServers", {}).get("project-memory")
     if not isinstance(server, dict):
         return False
-    if str(server.get("command") or "").strip().lower() != "python":
+    cmd = str(server.get("command") or "").strip().lower()
+    if cmd != "python" and not cmd.endswith("python.exe") and not cmd.endswith("python"):
         return False
     args = normalize_args(server.get("args"))
     if args != [str(wrapper_path)]:
@@ -168,11 +173,13 @@ def antigravity_server_name(root: Path) -> str:
 def antigravity_entry_matches_target(server: dict, root: Path, wrapper_path: Path) -> bool:
     if not isinstance(server, dict):
         return False
-    command = str(server.get("command") or "").strip().lower()
+    cmd = str(server.get("command") or "").strip().lower()
+    import sys
+    expected_cmd = sys.executable.lower()
     args = normalize_args(server.get("args"))
     env = server.get("env")
     return (
-        command == "python"
+        cmd == expected_cmd
         and args == [str(wrapper_path)]
         and isinstance(env, dict)
         and env.get("PROJECT_ROOT") == str(root)
@@ -223,23 +230,28 @@ def install_generic(root: Path, wrapper_path: Path) -> Path:
 
 
 def install_antigravity(root: Path, wrapper_path: Path) -> tuple[Path, str]:
-    settings_path = ANTIGRAVITY_CONFIG
-    payload = load_json(settings_path)
-    payload.setdefault("mcpServers", {})
-    existing_servers = payload["mcpServers"]
-    for name in list(existing_servers.keys()):
-        if is_same_antigravity_project(existing_servers.get(name), root, wrapper_path):
-            existing_servers.pop(name, None)
+    import sys
+    last_path = ANTIGRAVITY_CONFIG
     server_name = antigravity_server_name(root)
-    existing_servers[server_name] = {
-        "command": "python",
-        "args": [str(wrapper_path)],
-        "env": {
-            "PROJECT_ROOT": str(root),
-        },
-    }
-    write_json(settings_path, payload)
-    return settings_path, server_name
+    for settings_path in ANTIGRAVITY_CONFIGS:
+        if not settings_path.parent.exists():
+            continue
+        payload = load_json(settings_path)
+        payload.setdefault("mcpServers", {})
+        existing_servers = payload["mcpServers"]
+        for name in list(existing_servers.keys()):
+            if is_same_antigravity_project(existing_servers.get(name), root, wrapper_path):
+                existing_servers.pop(name, None)
+        existing_servers[server_name] = {
+            "command": sys.executable,
+            "args": [str(wrapper_path)],
+            "env": {
+                "PROJECT_ROOT": str(root),
+            },
+        }
+        write_json(settings_path, payload)
+        last_path = settings_path
+    return last_path, server_name
 
 
 def antigravity_rules_block(root: Path, server_name: str) -> str:
@@ -274,11 +286,12 @@ def toml_literal(value: str) -> str:
 
 
 def codex_block(root: Path, wrapper_path: Path) -> str:
+    import sys
     return "\n".join(
         [
             CODEX_BEGIN,
             "[mcp_servers.project-memory]",
-            f"command = {toml_literal('python')}",
+            f"command = {toml_literal(sys.executable)}",
             f"args = [{toml_literal(str(wrapper_path))}]",
             f"cwd = {toml_literal(str(root))}",
             "enabled = true",

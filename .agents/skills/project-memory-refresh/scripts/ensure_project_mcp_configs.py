@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from install_project_mcp_configs import (
+    ANTIGRAVITY_CONFIGS,
     ANTIGRAVITY_CONFIG,
     CODEX_CONFIG,
     CODEX_DIR,
@@ -138,9 +139,12 @@ def main() -> int:
 
         if "antigravity" in tools:
             try:
-                if has_antigravity_project_memory_entry(ANTIGRAVITY_CONFIG, root, wrapper_path):
-                    print(f"Antigravity MCP already present: {ANTIGRAVITY_CONFIG}")
-                else:
+                already_present = False
+                for config_path in ANTIGRAVITY_CONFIGS:
+                    if config_path.parent.exists() and has_antigravity_project_memory_entry(config_path, root, wrapper_path):
+                        print(f"Antigravity MCP already present: {config_path}")
+                        already_present = True
+                if not already_present:
                     config_path, server_name = install_antigravity(root, wrapper_path)
                     print(f"Installed Antigravity MCP: {config_path} ({server_name})")
                 print(f"Antigravity rules ready: {install_antigravity_rules(root)}")

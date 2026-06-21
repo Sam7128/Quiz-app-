@@ -130,7 +130,7 @@ class QueryProfile:
 
 
 def tokenize(text: str) -> list[str]:
-    raw_tokens = re.findall(r"[a-zA-Z0-9_.:\\/-]+", text.lower())
+    raw_tokens = re.findall(r"[a-zA-Z0-9_.:\\/-]+|[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3000-\u303f\uff00-\uffef]+", text.lower())
     return [token.strip("._:-/\\") for token in raw_tokens if token.strip("._:-/\\")]
 
 
@@ -283,7 +283,8 @@ def score_entry(entry: dict, profile: QueryProfile, entry_scope: str) -> tuple[i
     text = str(entry.get("text") or "").lower()
     category = str(entry.get("category") or "unknown")
 
-    score = CATEGORY_BOOST.get(category, 0)
+    score = 0
+    has_match = False
     matched_terms: list[str] = []
     reasons: list[str] = []
 
@@ -293,18 +294,16 @@ def score_entry(entry: dict, profile: QueryProfile, entry_scope: str) -> tuple[i
         if category_bonus:
             score += category_bonus
             reasons.append(f"intent:{intent}->category")
+            has_match = True
         if scope_bonus:
             score += scope_bonus
             reasons.append(f"intent:{intent}->scope")
-
-    if profile.explicit_scope and entry_scope == profile.explicit_scope:
-        score += 2
-    if profile.explicit_category and category == profile.explicit_category:
-        score += 2
+            has_match = True
 
     if profile.phrase_query and profile.normalized_query in " ".join(part for part in (path, heading, text) if part):
         score += 5
         reasons.append("phrase")
+        has_match = True
 
     for term in profile.terms:
         term_score, matched = score_term(term, path, heading, text, profile)
@@ -312,7 +311,17 @@ def score_entry(entry: dict, profile: QueryProfile, entry_scope: str) -> tuple[i
             score += term_score
             if matched:
                 matched_terms.append(term)
+                has_match = True
             reasons.extend(_term_reasons(term, path, heading, text, profile))
+
+    if has_match:
+        score += CATEGORY_BOOST.get(category, 0)
+        if profile.explicit_scope and entry_scope == profile.explicit_scope:
+            score += 2
+        if profile.explicit_category and category == profile.explicit_category:
+            score += 2
+    else:
+        score = 0
 
     matched_terms = _dedupe(matched_terms)
     reasons = _dedupe(reasons)
@@ -322,24 +331,31 @@ def score_entry(entry: dict, profile: QueryProfile, entry_scope: str) -> tuple[i
 def score_term(term: str, path: str, heading: str, text: str, profile: QueryProfile) -> tuple[int, bool]:
     score = 0
     matched = False
+
+    is_cjk = bool(re.search(r"[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3000-\u303f\uff00-\uffef]", term))
+    if is_cjk:
+        term_pat = re.compile(re.escape(term), re.IGNORECASE)
+    else:
+        term_pat = re.compile(rf"\b{re.escape(term)}\b", re.IGNORECASE)
+
     if term == path or path.endswith("/" + term):
         score += 12
         matched = True
-    elif term in path:
+    elif term_pat.search(path):
         score += 7 if profile.path_query else 5
         matched = True
 
     if term == heading:
         score += 10
         matched = True
-    elif term in heading:
+    elif term_pat.search(heading):
         score += 6
         matched = True
 
-    if profile.id_query and ID_PATTERN.match(term) and term in text:
+    if profile.id_query and ID_PATTERN.match(term) and term_pat.search(text):
         score += 12
         matched = True
-    elif term in text:
+    elif term_pat.search(text):
         score += 3
         matched = True
 
@@ -348,17 +364,24 @@ def score_term(term: str, path: str, heading: str, text: str, profile: QueryProf
 
 def _term_reasons(term: str, path: str, heading: str, text: str, profile: QueryProfile) -> list[str]:
     reasons: list[str] = []
+
+    is_cjk = bool(re.search(r"[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff\u3000-\u303f\uff00-\uffef]", term))
+    if is_cjk:
+        term_pat = re.compile(re.escape(term), re.IGNORECASE)
+    else:
+        term_pat = re.compile(rf"\b{re.escape(term)}\b", re.IGNORECASE)
+
     if term == path or path.endswith("/" + term):
         reasons.append(f"exact-path:{term}")
-    elif term in path:
+    elif term_pat.search(path):
         reasons.append(f"path:{term}")
     if term == heading:
         reasons.append(f"exact-heading:{term}")
-    elif term in heading:
+    elif term_pat.search(heading):
         reasons.append(f"heading:{term}")
-    if profile.id_query and ID_PATTERN.match(term) and term in text:
+    if profile.id_query and ID_PATTERN.match(term) and term_pat.search(text):
         reasons.append(f"memory-id:{term}")
-    elif term in text:
+    elif term_pat.search(text):
         reasons.append(f"text:{term}")
     return reasons
 

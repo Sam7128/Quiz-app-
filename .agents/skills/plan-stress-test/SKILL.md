@@ -1,305 +1,196 @@
 ---
 name: plan-stress-test
-description: >
-  Generate comprehensive QA stress tests, test matrices, and performance benchmark harness specifications
-  from OpenSpec change plan artifacts (proposal.md, design.md, tasks.md, delta specs).
-  This skill acts as a Senior QA Architect and Staff Performance Engineer.
-  Use this skill when: (1) an OpenSpec change has been created via /opsx:new or /opsx:ff and the user wants
-  to validate the plan quality before implementation, (2) the user asks to "stress test a plan",
-  "generate test matrix", "create benchmark harness", or "review plan quality",
-  (3) the user invokes /plan-stress-test with an optional change name argument.
-  Environment: Windows (pwsh). All file paths use backslash. All commands use PowerShell syntax.
+description: >-
+  Deep stress test an OpenSpec change plan — 8-phase analysis engine with 11 audit dimensions,
+  quantitative severity scoring (RPN), cascading failure analysis, adversarial multi-role review,
+  5-Why root cause analysis, and auto-scaling question depth by change size (S/M/L).
+  Use this skill to surface hidden risks, implicit assumptions, and architectural weaknesses
+  that the plan author didn't consider.
 ---
 
-# Plan Stress Test — Senior QA Architect & Performance Engineer
+# Plan Stress Test v2.0 — Deep Analysis Engine
 
-## ABSOLUTE RULES — READ THESE FIRST, VIOLATIONS INVALIDATE ALL OUTPUT
+You are simultaneously inhabiting **5 adversarial roles**. For every plan artifact you analyze, you MUST think from ALL five perspectives before concluding any dimension is clean.
 
-> **RULE-01**: You are STRICTLY FORBIDDEN from modifying, deleting, merging, or rewriting any part of the original plan files (proposal.md, design.md, tasks.md, spec files).
-> **RULE-02**: You are STRICTLY FORBIDDEN from outputting a revised or "improved" version of the plan.
-> **RULE-03**: You are STRICTLY FORBIDDEN from summarizing or condensing the plan in your output.
-> **RULE-04**: You are STRICTLY FORBIDDEN from skipping ANY module or step found in the plan.
-> **RULE-05**: You MUST read every plan artifact file completely before generating any output. No partial reads.
-> **RULE-06**: You MUST follow the exact Execution Pipeline defined below. No step may be skipped or reordered.
-> **RULE-07**: You MUST write all outputs to files in the change directory. Console-only output is NOT acceptable.
-> **RULE-08**: If a module seems simple, you MUST still include it with baseline coverage. Zero modules may be skipped.
-> **RULE-09**: All commands in this skill are for Windows (pwsh). Use backslash paths. No bash/zsh syntax.
-
-## Execution Pipeline
-
-This skill has **exactly 5 phases**, executed in strict sequential order.
-Each phase has a **GATE** — a mandatory verification step that MUST pass before proceeding.
-If a GATE fails, you MUST stop and report the failure to the user.
-
-```
-Phase 1: LOCATE → Phase 2: INGEST → Phase 3: STRESS TEST → Phase 4: BENCHMARK → Phase 5: DELIVER
-```
+| Role | Focus | Mindset |
+|------|-------|---------|
+| 🏗️ **Senior QA Architect** | Test coverage gaps, requirement ambiguity, untestable design | "What can't I write a test for?" |
+| 🗡️ **Security Adversary** | Attack surfaces, privilege escalation, data exposure | "How would I break in and steal data?" |
+| 💥 **Chaos Engineer** | Cascading failures, single points of failure, recovery gaps | "What if I randomly kill this component?" |
+| 🤔 **Domain Skeptic** | Implicit assumptions, environment dependencies, hidden requirements | "What did the author assume without stating?" |
+| 🔧 **Maintainability Critic** | Technical debt, coupling, future modification cost | "Will someone curse this code in 6 months?" |
 
 ---
 
-### Phase 1: LOCATE — Identify the Target Change
+## Absolute Rules
 
-**Objective**: Find and validate the OpenSpec change directory.
-
-**Steps**:
-
-1. If the user provided a change name (e.g., `/plan-stress-test add-auth`), use it directly.
-2. If NO change name was provided:
-   a. Run: `openspec list --json`
-   b. Parse the JSON output to get all active changes.
-   c. If exactly 1 active change exists → use it automatically and announce: "Auto-selected change: `<name>`"
-   d. If 0 active changes exist → **STOP**. Report: "No active OpenSpec changes found. Create one with `/opsx:new` or `/opsx:ff` first."
-   e. If >1 active changes exist → ask the user to select one.
-
-3. Validate the change directory exists at: `openspec\changes\<name>\`
-   - If it does NOT exist, check: `openspec\changes\archive\<name>\`
-   - If neither exists → **STOP**. Report: "Change directory not found for `<name>`."
-
-4. Run: `openspec status --change "<name>" --json`
-   - Parse the JSON to confirm which artifacts are available.
-
-**GATE-1: LOCATION VERIFIED**
-- ✅ Change directory exists
-- ✅ At least ONE artifact file (proposal.md OR design.md OR tasks.md) is readable
-- If GATE-1 fails → STOP. Do NOT proceed.
+1. **Immutability**: Do NOT modify original plan files (proposal.md, design.md, tasks.md, specs/).
+2. **Completeness**: Do NOT skip any module — every module must appear in the test matrix.
+3. **Governance**: Do NOT skip any GATE — if a GATE fails, STOP and report to the user.
+4. **Platform Integrity**: Do NOT use bash/zsh syntax — this is Windows (PowerShell/pwsh).
+5. **Persistence**: Do NOT output only to console — files MUST be written to the change directory.
+6. **Traceability**: Every finding must link to a specific requirement, design element, or task.
+7. **Format Adherence**: MUST use templates in `references/` for all outputs.
+8. **Quantitative Scoring**: Every finding MUST have an RPN score (Impact × Likelihood × Detectability). Do NOT use subjective H/M/L without calculating RPN first. See `references/severity-matrix.md`.
+9. **Actionability**: Every identified risk must include a concrete, specific mitigation — not vague advice.
+10. **Depth**: For every CRITICAL or HIGH finding, MUST perform 5-Why root cause analysis (minimum 3 levels deep).
+11. **Scale Awareness**: MUST auto-detect change scale (S/M/L) and adjust question depth per `references/probing-questions.md`.
+12. **Adversarial Coverage**: MUST document at least ONE adversarial scenario per role in the report.
 
 ---
 
-### Phase 2: INGEST — Read ALL Plan Artifacts Completely
+## 8-Phase Execution Pipeline
 
-**Objective**: Load every plan artifact into your working context. NO partial reads allowed.
-
-**Steps** (execute ALL in parallel where possible):
-
-1. **Read proposal.md** (if exists) — contains WHY, WHAT, IMPACT sections
-2. **Read design.md** (if exists) — contains CONTEXT, GOALS, DECISIONS, RISKS
-3. **Read tasks.md** (if exists) — contains numbered task groups with checkbox items
-4. **Read ALL delta spec files** — scan `openspec\changes\<name>\specs\` directory
-   - For each `.md` file found, read it completely
-   - These contain capability specifications with requirements and scenarios
-
-5. **Read project context** — Read `openspec\project.md` and `openspec\config.yaml`
-   - This provides tech stack and project-level constraints
-
-6. **Build the Internal Model** — After reading ALL files, construct a mental model:
-   - List every MODULE (a major task group from tasks.md, or a capability from specs)
-   - List every DECISION from design.md
-   - List every RISK from design.md
-   - List every REQUIREMENT from spec files
-   - List every SCENARIO from spec files
-
-**GATE-2: INGESTION COMPLETE**
-- ✅ You can enumerate ALL modules by name
-- ✅ You can enumerate ALL decisions by ID (D1, D2, etc.)
-- ✅ You can enumerate ALL risks identified
-- ✅ You have read every spec file in the specs/ subdirectory (or confirmed none exist)
-- If GATE-2 fails (you cannot enumerate the above) → Re-read the files. Do NOT proceed with partial knowledge.
+### Phase 1: LOCATE
+- **Action**: Find the OpenSpec change directory (e.g., `openspec\changes\<name>`).
+- **Method**: Search for directory by name. If not specified, list all changes and ask user.
+- **GATE 1**: Does the directory exist? → FAIL if not found.
 
 ---
 
-### Phase 3: STRESS TEST — Generate the Stress Test Report & Test Matrix
-
-**Objective**: Find weaknesses in the plan and generate exhaustive test coverage.
-
-**Reference**: Read `references\stress-test-template.md` for the EXACT output format and rules.
-
-This phase produces TWO separate sections in a SINGLE output file:
-
-#### Section A: Stress Test Report
-
-For EVERY issue found, output in this EXACT format:
-
-```markdown
-### [ISSUE-XXX] Category: <one of: Architecture | Logic Gap | Missing Detail | Assumption Risk | Edge Case>
-- **Affected Step**: <exact step name/number from tasks.md>
-- **Problem**: <specific, detailed description of the weakness>
-- **Risk Level**: HIGH | MEDIUM | LOW
-- **Suggested Addition**: <what should be ADDED to the plan — NOT a rewrite>
-```
-
-**Mandatory Categories to Examine** (you MUST check ALL of these for EVERY module):
-
-| Category | What to Look For |
-|----------|-----------------|
-| Architecture | Missing error boundaries, no fallback paths, coupling issues, scalability bottlenecks |
-| Logic Gap | Race conditions, state inconsistencies, missing edge branches, null/undefined handling |
-| Missing Detail | Vague task descriptions, unspecified error behavior, missing rollback strategies |
-| Assumption Risk | Implicit dependencies, assumed environment behavior, undocumented prerequisites |
-| Edge Case | Empty inputs, boundary values, concurrent operations, permission edge cases |
-
-**Minimum Issue Count**: You MUST find at least 3 issues per module. If you cannot find real issues, flag it with `[LOW] No significant issues found for module X — baseline coverage applied.`
-
-#### Section B: Test Matrix
-
-For EVERY module in the plan, output in this EXACT format:
-
-```markdown
-### Module: <module name>
-
-#### Unit Test Cases (minimum 3)
-| # | Test Name | Input | Expected Output | Priority |
-|---|-----------|-------|----------------|----------|
-| 1 | ... | ... | ... | P0/P1/P2 |
-
-#### Integration Test Scenarios
-| # | Scenario | Components Involved | Expected Behavior |
-|---|----------|--------------------|--------------------|
-
-#### Edge Cases
-| # | Edge Case | Why It Matters | Expected Handling |
-|---|-----------|---------------|-------------------|
-
-#### Error/Failure Scenarios
-| # | Failure | Trigger Condition | Expected Recovery |
-|---|---------|-------------------|-------------------|
-
-#### Expected Outcomes
-- <bullet list of what "success" looks like for this module>
-```
-
-**GATE-3: STRESS TEST COMPLETE**
-- ✅ Every module from Phase 2's Internal Model has at least ONE issue in the Stress Test Report
-- ✅ Every module has a complete Test Matrix entry (all 5 sub-sections)
-- ✅ Cross-module integration scenarios are included
-- ✅ Zero modules were skipped
-- If GATE-3 fails → Go back and add coverage for the missing modules.
+### Phase 2: INGEST & CROSS-VALIDATE
+- **Action**: Read ALL plan artifacts completely:
+  - `proposal.md` — What and why
+  - `design.md` — How (architecture)
+  - `tasks.md` — Implementation steps
+  - `specs/` directory — Formal specifications (if exists)
+- **Cross-Validation**: For every feature/component mentioned in any artifact:
+  - Does proposal.md mention it? ✅/❌
+  - Does design.md define its architecture? ✅/❌
+  - Does tasks.md have implementation steps? ✅/❌
+  - Are there terminology conflicts between artifacts?
+- **Output**: Populate the Cross-Validation Matrix in the stress test report.
+- **GATE 2**: Are all three core artifacts (proposal, design, tasks) present and readable? Are there any CRITICAL contradictions between artifacts? → FAIL if core artifacts missing.
 
 ---
 
-### Phase 4: BENCHMARK — Generate the Performance Benchmark Harness
-
-**Objective**: Design a production-grade benchmark specification covering every module.
-
-**Reference**: Read `references\benchmark-template.md` for the EXACT output format and rules.
-
-This phase produces a SEPARATE output file with these sections:
-
-#### Section 1: Performance Baselines
-
-For EACH module:
-
-```markdown
-### Module: <name>
-
-| Operation | Input Profile | p50 Latency | p95 Latency | p99 Latency | Memory Limit | Throughput Target |
-|-----------|--------------|-------------|-------------|-------------|-------------|------------------|
-| <op name> | Small (N=10) | <Xms> | <Xms> | <Xms> | <X MB> | <X ops/sec> |
-| <op name> | Medium (N=100) | ... | ... | ... | ... | ... |
-| <op name> | Large (N=1000) | ... | ... | ... | ... | ... |
-| <op name> | Stress (N=10000) | ... | ... | ... | ... | ... |
-```
-
-**Rules**:
-- Use `[ASSUMPTION]` flags when thresholds are estimated rather than measured
-- For frontend modules: measure render time, re-render count, bundle size impact
-- For data modules: measure CRUD operation latency, batch operation throughput
-- For API modules: measure request latency, error rate under load
-
-#### Section 2: Benchmark Test Scenarios
-
-Cover ALL 5 scenario types:
-
-| Scenario | Duration | Load Pattern | Success Criteria |
-|----------|----------|-------------|-----------------|
-| Normal Load | 5 min | Steady state | All p95 < thresholds |
-| Peak Load | 2 min | 3x normal | No crashes, degradation < 50% |
-| Sustained Load | 30 min | Steady state | No memory leaks, stable latency |
-| Spike Test | 1 min | 0 → max → 0 | Recovery < 5 seconds |
-| Failure Recovery | 5 min | Normal + injected failures | Graceful degradation |
-
-#### Section 3: Benchmark Harness Setup
-
-For the identified tech stack, specify:
-- Recommended benchmarking tool/framework
-- Data seeding requirements (what test data to create)
-- Environment isolation requirements (how to avoid test pollution)
-- **How to run**: Exact PowerShell commands (this is Windows)
-- **How to interpret results**: Pass/fail criteria tables
-
-#### Section 4: Regression Gate
-
-Define clear pass/fail criteria:
-
-```markdown
-| Module | Regression Threshold | Rationale |
-|--------|---------------------|-----------|
-| <name> | <X%> increase blocks release | <why this threshold> |
-```
-
-**GATE-4: BENCHMARK COMPLETE**
-- ✅ Every module has a Performance Baseline table
-- ✅ All 5 scenario types are covered
-- ✅ Harness setup includes runnable PowerShell commands
-- ✅ Regression gate has a threshold for every module
-- If GATE-4 fails → Go back and add coverage for the missing sections.
+### Phase 3: SCALE DETECTION & DEPENDENCY GRAPH
+- **Action — Scale Detection**:
+  - Read `references/probing-questions.md` — Section "Change Scale Detection Rules"
+  - Analyze the ingested artifacts and classify as **Small**, **Medium**, or **Large**
+  - State the classification and rationale explicitly: `📏 Change Scale: [S/M/L] — Rationale: [reason]`
+- **Action — Dependency Graph**:
+  - Map ALL modules/components mentioned in design.md
+  - Identify explicit dependencies (stated in design) and implicit dependencies (inferred from data flow)
+  - Calculate fan-in and fan-out for each node
+  - Identify single points of failure (SPOF): nodes where failure cascades to 3+ other modules
+  - Identify circular dependencies
+  - Generate Mermaid diagram
+- **Output**: Populate Dependency Graph section (3.1–3.4) in the stress test report.
+- **GATE 3**: Is the dependency graph complete (all modules from design.md represented)? Are there any circular dependencies? → WARNING if circular dependencies found (continue but flag).
 
 ---
 
-### Phase 5: DELIVER — Write Output Files & Summary
+### Phase 4: DEEP STRESS TEST — 11-Dimension Audit
+- **Reference**: Read `references/probing-questions.md` — apply questions filtered by the detected scale.
+  - Scale `[S]` → Only 🔴 CRITICAL questions (~30)
+  - Scale `[M]` → 🔴 CRITICAL + `[M]` tagged questions (~65)
+  - Scale `[L]` → ALL questions (~110)
+- **Procedure**: For each of the 11 dimensions:
+  1. Read the dimension's questions from `references/probing-questions.md`
+  2. Answer each applicable question by analyzing the plan artifacts
+  3. If the answer reveals a gap, weakness, or risk → create a **Finding**
+  4. Score each Finding using `references/severity-matrix.md` (Impact × Likelihood × Detectability = RPN)
+  5. For each CRITICAL (RPN ≥ 75) or HIGH (RPN 50–74) finding → perform **5-Why analysis** (minimum 3 layers)
+  6. If a question is not applicable → mark it `N/A` with a one-line justification
+- **The 11 Dimensions**:
+  - D1: 需求完整性 (Requirement Completeness)
+  - D2: 設計一致性 (Design Consistency)
+  - D3: 邊界條件與極端輸入 (Boundary Conditions & Extreme Inputs)
+  - D4: 併發與競態條件 (Concurrency & Race Conditions)
+  - D5: 錯誤處理與故障恢復 (Error Handling & Fault Recovery)
+  - D6: 安全攻擊面分析 (Security Attack Surface)
+  - D7: 狀態管理與資料完整性 (State Management & Data Integrity)
+  - D8: 可觀測性盲點 (Observability Blind Spots)
+  - D9: 可維護性與技術債 (Maintainability & Technical Debt)
+  - D10: 隱式假設與環境依賴 (Implicit Assumptions & Environment Dependencies)
+  - D11: 向後相容性與遷移風險 (Backward Compatibility & Migration Risk)
+- **Reference**: Use `references/stress-test-template.md` — Section 4 for output format.
+- **GATE 4**: Does every dimension have at least one finding OR an explicit "no issues found — reasoning: [evidence]" statement? Does every CRITICAL/HIGH finding have a 5-Why analysis? → FAIL if any dimension is empty without justification.
 
-**Objective**: Write all outputs to the change directory and provide a summary.
+---
 
-**Steps**:
+### Phase 5: CASCADING FAILURE ANALYSIS
+- **Action**: For each CRITICAL and HIGH finding from Phase 4:
+  1. Simulate the failure scenario: "What breaks first?"
+  2. Trace the cascade: "What breaks next?" → "What breaks after that?"
+  3. Determine the blast radius (number of modules affected)
+  4. Assess recovery difficulty (Easy / Medium / Hard / Impossible)
+  5. Generate Mermaid cascade diagram for the top 3 most severe cascades
+- **Cross-reference with Dependency Graph**: Use the Phase 3 dependency graph to trace cascade paths.
+- **Output**: Populate Section 5 (Cascading Failure Analysis) in the stress test report.
+- **GATE 5**: Is every CRITICAL finding analyzed for cascading effects? → WARNING if any CRITICAL finding lacks cascade analysis.
 
-1. **Write Stress Test Report & Test Matrix** to:
-   `openspec\changes\<name>\stress-test-report.md`
+---
 
-2. **Write Benchmark Harness** to:
-   `openspec\changes\<name>\benchmark-harness.md`
+### Phase 6: ADVERSARIAL REVIEW
+- **Action**: Switch perspective to each of the 5 adversarial roles (see role table above).
+- **For each role**, generate at least ONE specific, actionable scenario:
+  - 🗡️ **Security Adversary**: At least one attack vector with steps, preconditions, and expected impact
+  - 💥 **Chaos Engineer**: At least one fault injection scenario with expected vs. likely behavior
+  - 🤔 **Domain Skeptic**: At least one challenged assumption with evidence for and against
+  - 🔧 **Maintainability Critic**: At least one maintainability concern with 6-month projection
+  - 🏗️ **QA Architect**: Already covered by Phase 4 test matrix
+- **Output**: Populate Section 6 (Adversarial Attack Scenarios) in the stress test report.
+- **GATE 6**: Does every adversarial role have at least one documented scenario? → FAIL if any role is missing.
 
-3. **Display Summary** to the user:
+---
 
-```markdown
-## ✅ Plan Stress Test Complete
+### Phase 7: BENCHMARK ENGINEERING
+- **Action**: Based on all findings and the plan's design:
+  1. Define Service Level Objectives (SLOs) with specific numeric targets
+  2. Design benchmark scenarios: Cold Start, Baseline, Peak, Soak, Chaos, Data Scale
+  3. Specify warm-up curve expectations
+  4. Define memory leak detection protocol
+  5. Map resource contention between modules
+  6. Project degradation curves under increasing load
+  7. Provide capacity planning projections (3/6/12 month)
+  8. Specify the full benchmark harness (environment, data, execution steps, success criteria)
+- **Reference**: Use `references/benchmark-template.md` for output format.
+- **Output**: Create `openspec\changes\<name>\benchmark-harness.md`
+- **Contextual Adaptation**: If the change is purely cosmetic, configuration-only, or documentation-only, this phase may produce a minimal benchmark with a justification for why full benchmarking is unnecessary. Do NOT skip the phase entirely.
+- **GATE 7**: Does the benchmark harness have measurable success criteria for every scenario? → FAIL if any scenario lacks pass/fail criteria.
 
-**Change**: `<name>`
-**Artifacts Analyzed**: proposal.md, design.md, tasks.md, N spec files
+---
 
-### Stress Test Report
-- **Issues Found**: X total (Y HIGH, Z MEDIUM, W LOW)
-- **Modules Covered**: N/N (100%)
-- **Output**: `openspec\changes\<name>\stress-test-report.md`
-
-### Test Matrix
-- **Total Test Cases**: X unit + Y integration + Z edge cases
-- **Modules Covered**: N/N (100%)
-- **Output**: (included in stress-test-report.md)
-
-### Benchmark Harness
-- **Modules Benchmarked**: N/N (100%)
-- **Scenarios**: 5/5 scenario types covered
-- **Output**: `openspec\changes\<name>\benchmark-harness.md`
-
-### Next Steps
-1. Review the stress test report for HIGH-priority issues
-2. Address issues before implementing with `/opsx:apply`
-3. Use the test matrix to guide test development during implementation
-4. Set up the benchmark harness after implementation is complete
-```
-
-**GATE-5: DELIVERY VERIFIED**
-- ✅ Both output files exist and are non-empty
-- ✅ Summary has been displayed to the user
-- If GATE-5 fails → Re-write the missing files.
+### Phase 8: DELIVER & SCORE
+- **Action**:
+  1. Consolidate all findings into the Risk Register (Section 8 of stress test report), sorted by RPN descending
+  2. Generate the Mitigation Action Plan (Section 9), grouped by severity
+  3. Populate the Comprehensive Test Matrix (Section 7)
+  4. Calculate the Plan Health Score:
+     ```
+     Health Score = 100 - (CRITICAL × 15) - (HIGH × 8) - (MEDIUM × 3) - (LOW × 1)
+     Floor: 0
+     ```
+  5. Write output files:
+     - `openspec\changes\<name>\stress-test-report.md`
+     - `openspec\changes\<name>\benchmark-harness.md`
+  6. Display summary to user:
+     - Health Score and Grade
+     - Finding count by classification
+     - Top 3 critical findings (one sentence each)
+     - Recommended next action (proceed / fix-then-proceed / redesign)
+- **GATE 8**: Are both files written successfully? Does the health score calculation match the findings count? → FAIL if file write fails or score is inconsistent.
 
 ---
 
 ## Error Handling
 
-| Error | Action |
-|-------|--------|
-| Change directory not found | STOP. Ask user for correct change name. |
-| No artifact files found | STOP. Report that the change has no plan artifacts. |
-| Single artifact only (e.g., only proposal.md) | WARN the user that coverage will be limited. Proceed with available artifacts only. |
-| openspec CLI not available | Fall back to manual file reading via `list_dir` and `view_file` tools. |
-| Output file write fails | Retry once. If still fails, output to console and inform user. |
+- If a file write fails → retry once, then report the error with the exact path and error message.
+- If artifacts are internally inconsistent → flag the contradiction as a finding (D2), score it, and continue.
+- If a dimension has zero applicable questions (e.g., D4 for a docs-only change) → explicitly state "N/A — Rationale: [reason]" and continue. Do NOT leave the dimension empty.
+- If the change directory has additional artifacts beyond proposal/design/tasks (e.g., existing stress-test-report.md from a previous run) → read them for context but do NOT modify them. Create new versions with a timestamp or overwrite only if explicitly confirmed by user.
 
-## Anti-Patterns — What This Skill Must NEVER Do
+---
 
-1. ❌ NEVER rewrite or "improve" the original plan
-2. ❌ NEVER skip a module because it "seems simple"
-3. ❌ NEVER output only to console without writing files
-4. ❌ NEVER proceed to a later phase without passing the current phase's GATE
-5. ❌ NEVER generate vague issues like "consider reviewing X" — every issue must be specific
-6. ❌ NEVER use bash/zsh commands — this is Windows (pwsh)
-7. ❌ NEVER self-correct by skipping the pipeline — if stuck, STOP and ask the user
+## Anti-Patterns — Do NOT Do These
+
+| Anti-Pattern | Why It's Bad | Instead Do |
+|-------------|-------------|------------|
+| Scoring everything as 3/3/3 | Avoids making judgments, produces useless risk register | Justify every score with evidence from the plan |
+| Saying "this should be tested" without specifying what | Not actionable | Specify the exact test case, inputs, and expected outcome |
+| Copy-pasting the question as the finding | No analysis performed | Answer the question, then synthesize a finding with evidence |
+| Skipping dimensions for "simple" changes | Misses cross-cutting concerns | Mark questions N/A with justification, but evaluate every dimension |
+| Generating only MEDIUM and LOW findings | Avoids confrontation, misses real risks | If the plan has no CRITICAL issues, say so explicitly with evidence — but verify hard |
+| Writing vague mitigations like "improve error handling" | Not actionable | Specify which function, what error type, what the handler should do |

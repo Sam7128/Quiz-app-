@@ -1,378 +1,138 @@
 ---
 name: project-memory-refresh
-description: Refresh and normalize project-scoped agent memory. Use when Codex needs to create or repair a project's `MEMORY.md`, retire repo-local `GEMINI.md` sidecars into `AGENTS.md`/`MEMORY.md`, sync `AGENTS.md` with a memory-refresh protocol, improve target locking with aliases/entry points/search recipes, rebuild or upgrade the project-local memory MCP server and wrapper for this or older projects, manually refresh stale memory after codebase changes, or archive scattered task-completion and report-style Markdown files into a cleaner `docs/` structure without disturbing `openspec/` or scaffolded `/init` guidance.
+description: >
+  為 Coding Agent 提供專案內部的局部記憶 MCP 服務。支援三種使用場景：
+  (1) 在全新專案中一鍵建立記憶 MCP；
+  (2) 在既有舊專案中升級至最新版（移除硬編碼路徑、修復搜尋評分、支援 CJK）；
+  (3) 日常刷新——當 MEMORY.md 或專案結構變更後重建搜尋索引。
 ---
 
 # Project Memory Refresh
 
-Create a lean, searchable project memory system centered on one `MEMORY.md` file and one project `AGENTS.md` protocol. Keep memory project-scoped. Do not create extra `GEMINI.md`, daily log sprawl, or duplicate note files unless the project explicitly requires them.
+此技能為 Coding Agent 提供專案內部的局部記憶檢索與同步功能，透過本地 MCP 伺服器暴露
+`search_memory`、`get_entry_points`、`get_hotspots`、`get_aliases`、`get_memory_health`
+等工具，讓 Agent 在任務開始時能快速定位專案脈絡，而不需要遞迴掃描整個目錄樹。
 
-## Core Rules
+---
 
-- Separate static rules from dynamic memory.
-- Keep `AGENTS.md` for instructions, protocols, and directory-level routing.
-- Keep `MEMORY.md` for current facts, decisions, hotspots, and searchable file targets.
-- Treat user-global files such as `%USERPROFILE%\\.gemini\\GEMINI.md` as global preferences only, not as project memory.
-- Treat `/init`-generated content as the existing authority for style, design language, and project conventions.
-- Never overwrite or reframe `/init` sections just to add memory maintenance.
-- Prefer stable anchors and IDs over long prose.
-- Update one canonical `MEMORY.md` instead of creating many dated memory files.
-- Keep entries short, path-first, and easy to grep.
-- Add a small alias map and search recipes so agents can translate user language into file targets quickly.
-- If the root is cluttered with report-like Markdown outputs, archive them into predictable `docs/` subfolders instead of leaving them mixed with source-of-truth files.
-- Never build a global cross-project memory index by default. Keep all indexing and search local to the active project root.
-- Keep `openspec/` in place. Do not reorganize it, but do index its active changes, proposals, designs, tasks, and specs so future search can find ongoing and archived change context.
-- Distinguish project-local cleanup from global cleanup: project files can be migrated into `AGENTS.md`/`MEMORY.md`; global Gemini files should only be trimmed to cross-project preferences when the user explicitly asks.
+## 📋 使用場景
 
-## Workflow
+### 場景 A — 全新專案：一鍵安裝記憶 MCP
 
-### Preferred command
-
-For the standard end-to-end workflow, prefer the bundle script:
+在一個**從未設定過**記憶 MCP 的專案根目錄執行：
 
 ```powershell
-python .agents/skills/project-memory-refresh/scripts/refresh_project_memory_bundle.py --root <project-root>
+# 在專案根目錄
+python .agents\skills\project-memory-refresh\scripts\refresh_project_memory_bundle.py --root .
 ```
 
-This will:
+這個指令會依序完成：
+1. 整理根目錄散落的報告檔案至 `docs/`
+2. 建立或更新 `MEMORY.md` 的 Auto-Generated Memory Map
+3. 在 `AGENTS.md` 中注入記憶協定區塊（Memory Refresh Protocol）
+4. **建立 `.project-memory/project_memory_mcp_entry.py` wrapper**（不含任何硬編碼路徑）
+5. **寫入 MCP 設定**至 `.gemini/settings.json`、`.cursor/mcp.json`、`.mcp.json`、`.codex/config.toml`、全域 Antigravity `mcp_config.json`
+6. 建立 `.memory-index/index.json` 搜尋索引（含 `file_hashes` 與 UTC `built_at`）
+7. 驗證 MCP 查詢正常運作
 
-- organize scattered report markdown when needed
-- summarize discovered `*.sarif` or `*.sarif.json` security reports into compact Markdown unless opted out
-- refresh `MEMORY.md`
-- ensure `AGENTS.md` has a memory refresh protocol block when missing
-- rebuild `docs/INDEX.md` when `docs/` exists
-- ensure project-local MCP wiring exists
-- rebuild the project-local `.memory-index/`
-- verify the repo-local MCP server can actually start and answer `search_memory`
+> **新專案注意**：需先有 `MEMORY.md` 或至少一個 `AGENTS.md` 讓索引有內容可建。
+> 若專案完全空白，可先手動建立一個最簡版 `MEMORY.md`，再執行上述指令。
 
-### 1. Inspect the project
+---
 
-- Read the project root `AGENTS.md` if present.
-- Read `MEMORY.md` if present.
-- Identify major top-level directories, nested `AGENTS.md` files, and source-of-truth documents.
-- Check whether the current memory is stale because of renamed paths, new modules, removed modules, or changed architecture.
-- If `GEMINI.md` or other legacy sidecar memory files exist, inspect them before any cleanup so durable rules and decisions are not lost.
-- If the user points at `%USERPROFILE%\\.gemini\\GEMINI.md`, audit it separately from the repository: keep only cross-project preferences there and never migrate project history into it.
+### 場景 B — 舊專案升級：重建 Wrapper 並修復 MCP 品質
 
-### 2. Normalize the structure
+若您的專案已有舊版記憶 MCP，但：
+- Wrapper（`.project-memory/project_memory_mcp_entry.py`）含有硬編碼的本機路徑
+- 搜尋結果有評分污染（隨機查詢回傳假結果）
+- 不支援中文搜尋
+- `get_memory_health` 沒有 `quality_checks` 欄位
 
-- If `MEMORY.md` is missing, create it from [references/memory-template.md](references/memory-template.md).
-- If `AGENTS.md` is missing the refresh protocol, add the block from [references/agents-snippet.md](references/agents-snippet.md).
-- Preserve project-specific rules already present in `AGENTS.md`; do not replace them with generic wording.
-- If `AGENTS.md` was generated by `/init` or another scaffold, append a clearly isolated memory section instead of editing existing style, UI, or architecture guidance.
-- Migrate scattered memory notes into `MEMORY.md` instead of creating more note files.
-- Keep core root docs in place: typically `README.md`, `AGENTS.md`, `MEMORY.md`, `CHANGELOG.md`, `CHECKLIST.md`, and contribution docs. Do not keep a repo-local `GEMINI.md` unless the user explicitly asks for a tool-specific sidecar file.
-- For Gemini CLI projects, migrate away from repo-local `GEMINI.md` by default: move rules/protocols into `AGENTS.md`, move facts/hotspots/search targets into `MEMORY.md`, keep longer chronology in `DEVELOPMENT_LOG.md` or `docs/`, then retire `GEMINI.md`.
-
-### 2a. Retire legacy `GEMINI.md` usage by default
-
-When a repo-local `GEMINI.md` exists, retire it by default. Only keep it when the user explicitly asks for a tool-specific sidecar file or the repository has a hard dependency on it:
-
-- Update `.gemini/settings.json` so Gemini reads `AGENTS.md` via `context.fileName`.
-- Preserve existing `mcpServers` and other valid project-local settings while editing `.gemini/settings.json`.
-- Remove or rewrite stale references to `GEMINI.md` in `AGENTS.md`, `MEMORY.md`, and related docs.
-- Delete `GEMINI.md` only after the replacement sources of truth are in place.
-- Do not recreate `GEMINI.md` during later refreshes unless the user explicitly asks for a tool-specific sidecar file.
-- Do not delete or repurpose `%USERPROFILE%\\.gemini\\GEMINI.md` during a project migration unless the user explicitly asks for global cleanup too.
-
-### 2b. Archive scattered report Markdown
-
-When the root contains many task-result Markdown files, move only the non-core report files into a simple docs layout:
-
-- `docs/reports/` for `*REPORT*.md`, `CHANGE-REPORT*.md`, optimization reports, exploration reports, audit reports, safety reports, and similar deliverable writeups
-- `docs/checkpoints/` for `CHECKPOINT*.md`, `*followup*.md`, `*progress*.md`, `*status*.md`, and milestone status notes
-- `docs/handoffs/` for `SESSION_HANDOFF*.md`, `SESSION-SUMMARY*.md`, and similar transfer notes
-
-Do not move:
-
-- `openspec/` contents
-- `README.md`
-- `AGENTS.md`
-- `MEMORY.md`
-- repo-local `GEMINI.md` unless the user explicitly opts to keep it as a tool-specific sidecar
-- `CHANGELOG.md`
-- `CHECKLIST.md`
-- `CONTRIBUTING.md`
-- primary product or spec docs that still act as entry points
-
-Use the helper script for deterministic organization:
+**只需在舊專案根目錄重跑相同指令**（冪等，安全重跑）：
 
 ```powershell
-python .agents/skills/project-memory-refresh/scripts/organize_project_reports.py --root <project-root> --write
+# 切換至目標舊專案的根目錄，或直接指定路徑
+python <skill-scripts-path>\refresh_project_memory_bundle.py --root <舊專案路徑>
 ```
 
-### 3. Refresh the generated map
-
-Use the helper script to update only the generated map block:
-
+例如，若 skill 已安裝在 `C:\Users\user\skill manager`：
 ```powershell
-python .agents/skills/project-memory-refresh/scripts/refresh_memory_map.py --root <project-root> --memory-file <project-root>\MEMORY.md --write
+python "C:\Users\user\skill manager\.agents\skills\project-memory-refresh\scripts\refresh_project_memory_bundle.py" --root "C:\Users\user\my-old-project"
 ```
 
-- The script creates `MEMORY.md` when missing.
-- The script only owns the block between `BEGIN/END AUTO-GENERATED: MEMORY MAP`.
-- The script does not overwrite manual sections such as decisions, risks, and hotspots.
+`ensure_project_mcp_configs.py` 會自動：
+- 偵測 wrapper 是否過時並寫入新版（不含硬編碼路徑）
+- 更新所有 MCP 工具設定（若已是最新則跳過）
+- 重建 `.memory-index/index.json`（修復評分與 CJK）
 
-### 4. Refresh the docs archive index
-
-When the project has a `docs/` archive, build `docs/INDEX.md` so archived materials stay searchable:
-
+若只需升級 wrapper 與 MCP 設定，不需完整重建索引：
 ```powershell
-python .agents/skills/project-memory-refresh/scripts/build_docs_index.py --root <project-root> --write
+python <skill-scripts-path>\ensure_project_mcp_configs.py --root <舊專案路徑>
 ```
 
-If you used `organize_project_reports.py --write`, the docs index is updated automatically.
+---
 
-### 4a. Summarize CodeQL or SARIF outputs when present
+### 場景 C — 日常刷新：MEMORY.md 變更後更新索引
 
-If the project already has CodeQL output or another SARIF artifact, summarize it into compact Markdown before indexing it:
+當 `MEMORY.md` 或被索引的 Markdown 檔案內容變更時，MCP 伺服器會在下次搜尋前
+**自動偵測並重建索引**（透過 SHA-256 file_hashes 比對）。
 
+若需要**手動強制重建**：
 ```powershell
-python .agents/skills/project-memory-refresh/scripts/summarize_codeql_sarif.py --root <project-root> --sarif <path-to-sarif>
+python .agents\skills\project-memory-refresh\scripts\build_project_memory_index.py --root . --write
 ```
 
-Guidance:
-
-- Prefer summarizing SARIF into `docs/reports/codeql/` rather than indexing the raw JSON directly.
-- Keep the original SARIF file for security tooling, but let agents read the Markdown summary first.
-- Add only durable findings, recurring patterns, or security hotspots to `MEMORY.md`.
-- Do not treat CodeQL as the primary project map. It is a useful sidecar for security and data-flow hotspots, not a replacement for `AGENTS.md`, `MEMORY.md`, or entry-point curation.
-
-### 4b. Ensure AGENTS.md protocol
-
-Use the helper script when the project is missing the memory protocol:
-
+若需要完整刷新（整理報告、更新 Memory Map、重建索引）：
 ```powershell
-python .agents/skills/project-memory-refresh/scripts/ensure_agents_memory_protocol.py --root <project-root>
+python .agents\skills\project-memory-refresh\scripts\refresh_project_memory_bundle.py --root .
 ```
 
-Behavior:
-
-- If `AGENTS.md` is missing, create a minimal one and add the protocol block.
-- If `AGENTS.md` already has an unmanaged `## Memory Refresh Protocol` section, leave it in place to avoid duplicate guidance.
-- If the managed block already exists, refresh it in place.
-
-### 5. Curate the manual sections
-
-After running the script, read the changed files and update these sections manually:
-
-- `Aliases & Vocabulary`
-- `Entry Points`
-- `Stable Facts`
-- `Active Decisions`
-- `Hotspots`
-- `Search Recipes`
-- `Archive Index`
-- `Open Risks`
-- `Next Refresh Triggers`
-
-Keep each entry compact. Prefer this pattern:
-
-```markdown
-- [DEC-001] `services/ai.ts`: Output schema must stay JSON-only. Breakage risk: provider fallback parsing.
-```
-
-### 5. Make the memory searchable
-
-- Use IDs like `FACT-001`, `DEC-002`, `RISK-003`, `PATH-004`.
-- Put the main file path near the start of each bullet.
-- Add short keyword tails when useful, such as `Tags: auth, cache, sync`.
-- Avoid paragraphs that mix multiple concerns.
-- Remove stale or duplicate entries instead of appending contradictions.
-- Use `Aliases & Vocabulary` to map user-facing terms to actual files or modules.
-- Use `Search Recipes` to record a few high-value `rg` patterns for recurring tasks.
-- Keep section headings stable so the index can classify entries into durable retrieval scopes such as `memory`, `rules`, `openspec`, `archive`, and `source`.
-- Prefer grep-friendly wording over narrative prose so deterministic lexical retrieval stays strong even when smarter query routing is added.
-
-### 6. Build the local memory index
-
-For projects that need faster target locking, build a local-only index under the current project:
-
-```powershell
-python .agents/skills/project-memory-refresh/scripts/build_project_memory_index.py --root <project-root> --write
-```
-
-Search it with:
-
-```powershell
-python .agents/skills/project-memory-refresh/scripts/search_project_memory_index.py --root <project-root> --query "quota baseline websocket"
-```
-
-Optional filters:
-
-```powershell
-python .agents/skills/project-memory-refresh/scripts/search_project_memory_index.py --root <project-root> --query "read first" --scope memory
-python .agents/skills/project-memory-refresh/scripts/search_project_memory_index.py --root <project-root> --query "protocol instructions" --scope rules
-python .agents/skills/project-memory-refresh/scripts/search_project_memory_index.py --root <project-root> --query "DEC-004" --category decision
-```
-
-Safety rules:
-
-- The index must live under `<project-root>/.memory-index/`.
-- The index must never aggregate multiple projects.
-- Ignore symlinks or junction targets that resolve outside the active project root.
-- Treat the index as a cache; rebuild it instead of hand-editing it.
-- When `openspec/` exists, include its markdown artifacts in the project-local index so change names, proposals, tasks, and specs remain searchable without moving them.
-- Keep retrieval deterministic by default. Do not replace the lexical project-local index with a semantic/vector stack unless the user explicitly wants the extra complexity and runtime cost.
-- Improve retrieval quality with scoped classification, intent-aware boosts, and noise filtering before considering vector infrastructure.
-
-### 7. Ensure project-local MCP setup
-
-After refreshing project memory, ensure the project-local MCP wiring exists:
-
-```powershell
-python .agents/skills/project-memory-refresh/scripts/ensure_project_mcp_configs.py --root <project-root>
-```
-
-Behavior:
-
-- If `.project-memory/project_memory_mcp_entry.py` is missing, install it.
-- If `.project-memory/project_memory_mcp_entry.py` is present but stale, refresh it to the latest generated wrapper.
-- If project-local MCP config is missing in `.gemini/settings.json`, `.cursor/mcp.json`, `.mcp.json`, or `.codex/config.toml`, install it.
-- For Gemini CLI, ensure `.gemini/settings.json` also points `context.fileName` at `AGENTS.md`; keep existing `mcpServers` entries intact.
-- By default, install project-local targets plus Antigravity: `gemini,cursor,generic,codex,antigravity`.
-- Antigravity setup is best-effort by default: if a global config write is blocked by permissions, emit a clear warning but continue so repo-local MCP setup and MCP verification still complete.
-- If Antigravity support must succeed, run `ensure_project_mcp_configs.py --root <project-root> --require-antigravity`.
-- When Antigravity setup is allowed, ensure the global Antigravity config includes a namespaced entry that points at this project's local wrapper by absolute path.
-- When Antigravity setup is allowed, also ensure `.antigravity/rules.md` contains a managed block that tells the agent to use only the matching project memory server for this repository.
-- If the project already has a valid `project-memory` entry, leave it unchanged.
-- Keep the setup project-local; never switch to a parent-directory root automatically.
-
-### 7a. Verify the MCP server immediately
-
-After wiring the project-local MCP setup, verify that the server can actually start and serve tools:
-
-```powershell
-python .agents/skills/project-memory-refresh/scripts/verify_project_memory_mcp.py --root <project-root>
-```
-
-Verification rules:
-
-- Start the repo-local wrapper at `.project-memory/project_memory_mcp_entry.py`.
-- Confirm the expected tools are exposed.
-- Call `search_memory` with a stable verification query such as `AGENTS.md`.
-- When retrieval behavior changes, also verify one scoped query such as `search_memory(query="protocol", scope="rules")` or `search_memory(query="DEC-001", category="decision")`.
-- Call `get_memory_health` and treat warnings as maintenance signals, not hard failures.
-- Fail fast if the MCP server starts but cannot answer tool calls.
-- If the local sandbox blocks stdio subprocess pipes on Windows, rerun the verification command with the tool's normal escalation path rather than silently skipping the check.
-
-### 7b. Prefer repo-local server code with global fallback
-
-The generated project-local wrapper should prefer this repository's `.agents/skills/project-memory-refresh/scripts/` when present, then fall back to the global Codex skill install. This keeps project-managed improvements active without breaking older setups that still depend on the global copy.
-
-### 7c. Use memory health before broad refactors
-
-Before redesigning the memory system, call `get_memory_health` first. Use it to identify missing manual sections, stale indexes, or missing docs indexes. Prefer fixing coverage and freshness gaps before adding new search complexity.
-
-For fast target locking with low token use, prefer this order before broad file reads:
-
-1. `get_source_of_truth`
-2. `get_entry_points`
-3. `get_hotspots`
-4. `get_search_recipes`
-5. `search_memory`
-
-Retrieval guidance:
-
-- Prefer `scope="memory"` for entry points, hotspots, decisions, and risks.
-- Prefer `scope="rules"` when the question is about agent behavior, workflow, or protocol.
-- Prefer `scope="openspec"` when the user is asking about change artifacts.
-- Prefer `scope="archive"` when you are looking for reports, checkpoints, or handoffs.
-- Let the server's intent routing help, but still pass `scope` or `category` when the task is high-stakes and the boundary is obvious.
-
-### 7d. Refresh old projects explicitly
-
-Running this skill against another older project should refresh the project-local wrapper and MCP config wiring for that target root. In practice, use:
-
-```powershell
-python .agents/skills/project-memory-refresh/scripts/ensure_project_mcp_configs.py --root <project-root>
-```
-
-Notes:
-
-- This should now refresh the managed `.project-memory/project_memory_mcp_entry.py` wrapper when the generated content changes.
-- This should also upgrade the target project's MCP runtime behavior because the refreshed wrapper points at the latest repo-local or global `project-memory-refresh` server code.
-- If an older project depends on the global Codex skill install instead of a repo-local copy, update the global skill too if you want every project to inherit the latest runtime without copying files.
-- Keep the wrapper project-local so each repository still resolves its own root safely.
-
-## Automation Boundary
-
-When you invoke this skill for a project refresh task, the expected behavior is to run the standard workflow end-to-end, not stop after analysis. In normal use that means:
-
-- refresh or create `MEMORY.md`
-- refresh the managed `AGENTS.md` memory protocol
-- refresh the project-local MCP wrapper and config wiring
-- rebuild indexes
-- summarize SARIF findings when present
-- verify the project-local MCP server
-
-Limits:
-
-- It does not update unrelated sibling repositories unless you target them explicitly.
-- It does not silently rewrite the global Codex skill install unless you choose to update that copy too.
-- It should not overwrite manual project decisions or rewrite `/init` style guidance.
-
-## Preferred Memory Shape
-
-Read [references/memory-template.md](references/memory-template.md) before creating or rewriting a file. The preferred structure is:
-
-1. Purpose Snapshot
-2. Source of Truth
-3. Aliases & Vocabulary
-4. Entry Points
-5. Auto-Generated Memory Map
-6. Stable Facts
-7. Active Decisions
-8. Hotspots
-9. Search Recipes
-10. Archive Index
-11. Open Risks
-12. Next Refresh Triggers
-
-## AGENTS.md Integration
-
-Read [references/agents-snippet.md](references/agents-snippet.md) when the project should self-maintain memory. Add the snippet to the project root `AGENTS.md`.
-
-Important distinction:
-
-- Codex can explicitly invoke `$project-memory-refresh`.
-- Other agent tools may not support Codex skill syntax, so the `AGENTS.md` snippet also includes a tool-agnostic fallback workflow.
-- If you enable the local memory index, keep it project-local and never point searches at sibling project roots unless the user explicitly requests cross-project work.
-- If project-local MCP wiring is missing, install it as part of the refresh workflow unless the user explicitly opts out.
-
-## Optional Native Automation
-
-Read [references/native-automation.md](references/native-automation.md) when the project uses native agent tooling that supports project instructions, hooks, or memory refresh commands.
-Read [references\mcp-installation.md](references/mcp-installation.md) when the user wants to connect this project-local memory system to Claude Code, Gemini CLI, Cursor, or another MCP-capable tool.
-
-Use this only as an adapter layer. The canonical project memory still lives in `AGENTS.md`, `MEMORY.md`, and `docs/INDEX.md`.
-
-## Project Bootstrap
-
-If the user wants the setup to stay isolated per project without hand-editing config files, use the installer:
-
-```powershell
-python .agents/skills/project-memory-refresh/scripts/install_project_mcp_configs.py --root <project-root>
-```
-
-For multiple projects:
-
-```powershell
-python .agents/skills/project-memory-refresh/scripts/install_project_mcp_configs.py --root <project-a> --root <project-b> --root <project-c>
-```
-
-This creates a project-local wrapper under `.project-memory/`, writes project-local MCP config files where supported, can register a safe Antigravity global entry that still points back to the project-local wrapper, and can add `.antigravity/rules.md` routing guidance without overwriting existing project rules.
-
-## Output Standard
-
-When this skill is used, produce:
-
-- An updated or created project `MEMORY.md`
-- A minimal project `AGENTS.md` section that instructs future agents to refresh memory without conflicting with `/init` content
-- When retiring legacy repo-local Gemini sidecar memory, an updated `.gemini/settings.json` that points Gemini CLI at `AGENTS.md`
-- When needed, a cleaner `docs/` archive structure for scattered report Markdown files
-- When `docs/` exists, an updated `docs/INDEX.md` with archived report pointers
-- Optionally, a local-only `.memory-index/` cache for faster project-scoped search
-- A successful post-refresh MCP verification run, or a clear failure that identifies why the MCP server is not usable yet
-- No extra memory side files unless the user explicitly requests them
-- If `GEMINI.md` was migrated away from, remove it only after its durable contents have been redistributed
+---
+
+## ✅ 本版技能保證（v2 — fix-project-memory-mcp-quality）
+
+| 能力 | 狀態 |
+|------|------|
+| 隨機查詢返回 0 筆結果（無評分污染） | ✅ 修復 |
+| 中文（CJK）字元可搜尋 | ✅ 支援 |
+| 英文單詞邊界匹配（`git` 不匹配 `digital`） | ✅ 修復 |
+| Markdown code block 內的 `# comment` 不誤判為標題 | ✅ 修復 |
+| Wrapper 不含硬編碼本機路徑（環境可攜） | ✅ 修復 |
+| 索引寫入使用原子替換（防止中斷損壞） | ✅ 修復 |
+| 索引含 `file_hashes` + UTC `built_at` | ✅ 新增 |
+| 自動偵測檔案變更並重建索引 | ✅ 新增 |
+| `get_memory_health` 含 5 項 `quality_checks` | ✅ 新增 |
+
+---
+
+## 前提條件
+
+- Python 3.8+
+- 已安裝 `mcp` / `fastmcp` 套件：
+  ```powershell
+  pip install mcp fastmcp
+  ```
+
+---
+
+## MCP 伺服器工具清單
+
+| 工具 | 說明 |
+|------|------|
+| `search_memory` | 全文搜尋索引（支援中英文、評分排序） |
+| `get_entry_points` | 取得專案入口模組列表 |
+| `get_hotspots` | 取得高頻修改的熱點檔案 |
+| `get_aliases` | 取得詞彙對照表（Aliases & Vocabulary） |
+| `get_source_of_truth` | 取得關鍵資料來源說明 |
+| `get_search_recipes` | 取得搜尋配方與常見查詢路徑 |
+| `get_memory_health` | 健康檢查，含 `quality_checks` 與 `warnings` |
+| `rebuild_project_memory_cache` | 強制重建索引 |
+
+---
+
+## 注意事項
+
+- 在 **同一 Volume** 的 Windows 環境下，索引寫入使用 `os.replace()` 原子替換，防止中斷留下損壞的 `index.json`。
+- 動態 UUID smoke test 防止技能文件本身被索引後造成健康檢查自我命中。
+- `ensure_project_mcp_configs.py` 是**冪等**的：重跑不會破壞已正確設定的 MCP，只會更新過時的 wrapper 或缺少的工具設定。
+- 多個專案可各自有獨立的記憶 MCP 伺服器，Antigravity 的命名規則為 `pm-<slug>-<hash8>`，確保 Agent 只使用對應專案的伺服器。

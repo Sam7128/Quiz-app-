@@ -36,8 +36,8 @@
 
 <!-- BEGIN AUTO-GENERATED: MEMORY MAP -->
 ## Auto-Generated Memory Map
-- Refreshed: `2026-06-12 16:17`
-- Project root: `C:\Users\user\Desktop\Quiz-app--main`
+- Refreshed: `2026-06-12 16:38`
+- Project root: `C:\Users\user\Desktop\Quiz-app-`
 
 ### Key Files
 - [PATH-001] `AGENTS.md`
@@ -48,8 +48,8 @@
 - [PATH-006] `tsconfig.json`
 - [PATH-007] `docs/INDEX.md`
 - [PATH-008] `App.tsx`
-- [PATH-009] `dashboard.png`
-- [PATH-010] `eslint.config.js`
+- [PATH-009] `constants.ts`
+- [PATH-010] `dashboard.png`
 
 ### Module Index
 | ID | Path | Local AGENTS | Purpose | Tags |
@@ -62,10 +62,10 @@
 | MOD-006 | `hooks/` | yes | feature hooks and orchestration | hooks |
 | MOD-007 | `openspec/` | yes | change planning and specs | openspec |
 | MOD-008 | `public/` | no | static assets | public |
-| MOD-009 | `reducers/` | no | important project module | reducers |
-| MOD-010 | `services/` | yes | service and integration logic | services |
-| MOD-011 | `src/` | no | primary source implementation | src |
-| MOD-012 | `types/` | no | shared type definitions | types |
+| MOD-009 | `Quiz-app-/` | no | important project module | quiz-app- |
+| MOD-010 | `reducers/` | no | important project module | reducers |
+| MOD-011 | `services/` | yes | service and integration logic | services |
+| MOD-012 | `src/` | no | primary source implementation | src |
 
 ### OpenSpec Snapshot
 - Main specs: `openspec/specs/`
