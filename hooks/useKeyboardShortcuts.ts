@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface KeyboardShortcutsProps {
   onSelectOption: (index: number) => void;
@@ -8,6 +8,12 @@ interface KeyboardShortcutsProps {
 }
 
 export const useKeyboardShortcuts = ({ onSelectOption, onSubmitOrNext, onToggleHint, onExit }: KeyboardShortcutsProps) => {
+  const handlersRef = useRef({ onSelectOption, onSubmitOrNext, onToggleHint, onExit });
+
+  useEffect(() => {
+    handlersRef.current = { onSelectOption, onSubmitOrNext, onToggleHint, onExit };
+  });
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
@@ -15,7 +21,7 @@ export const useKeyboardShortcuts = ({ onSelectOption, onSubmitOrNext, onToggleH
         !!target &&
         (target.isContentEditable ||
           ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) ||
-          target.getAttribute('role') === 'textbox');
+          target.getAttribute?.('role') === 'textbox');
 
       // When the user is typing in an input (e.g., AI helper), do not hijack keystrokes.
       if (isEditableTarget) return;
@@ -27,25 +33,25 @@ export const useKeyboardShortcuts = ({ onSelectOption, onSubmitOrNext, onToggleH
 
       if (event.key >= '1' && event.key <= '4') {
         const index = parseInt(event.key) - 1;
-        onSelectOption(index);
+        handlersRef.current.onSelectOption(index);
         return;
       }
 
       switch (event.key) {
         case 'Enter':
-          onSubmitOrNext();
+          handlersRef.current.onSubmitOrNext();
           break;
         case 'h':
         case 'H':
-          onToggleHint();
+          handlersRef.current.onToggleHint();
           break;
         case 'Escape':
-          onExit();
+          handlersRef.current.onExit();
           break;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onSelectOption, onSubmitOrNext, onToggleHint, onExit]);
+  }, []);
 };

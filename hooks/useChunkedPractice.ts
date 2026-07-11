@@ -391,12 +391,9 @@ export const useChunkedPractice = ({
     return startChunk(sessionId, validated.nextChunkIndex);
   }, [loadActiveSessions, repository, startChunk, toast, validateSessionQuestions]);
 
-  const updateChunkDraft = useCallback((progress: ChunkRuntimeProgress) => {
-    latestProgressRef.current = progress;
-    if (!currentChunkMeta) return;
-
+  const saveChunkDraftSafely = useCallback((sessionId: string, chunkIndex: number, progress: ChunkRuntimeProgress) => {
     // 防禦性進度保護：避免以初始狀態 (0 題且無錯誤) 覆蓋已存在的更先進草稿
-    const existingDraft = getChunkDraft(currentChunkMeta.sessionId, currentChunkMeta.chunkIndex);
+    const existingDraft = getChunkDraft(sessionId, chunkIndex);
     if (
       existingDraft &&
       existingDraft.currentQuestionIndex > progress.currentQuestionIndex &&
@@ -410,43 +407,30 @@ export const useChunkedPractice = ({
     }
 
     saveChunkDraft({
-      sessionId: currentChunkMeta.sessionId,
-      chunkIndex: currentChunkMeta.chunkIndex,
+      sessionId,
+      chunkIndex,
       currentQuestionIndex: progress.currentQuestionIndex,
       score: progress.score,
       wrongQuestionIds: progress.wrongQuestionIds,
       pendingSkill: progress.pendingSkill,
       updatedAt: Date.now(),
     });
-  }, [currentChunkMeta]);
+  }, []);
+
+  const updateChunkDraft = useCallback((progress: ChunkRuntimeProgress) => {
+    latestProgressRef.current = progress;
+    if (!currentChunkMeta) return;
+    saveChunkDraftSafely(currentChunkMeta.sessionId, currentChunkMeta.chunkIndex, progress);
+  }, [currentChunkMeta, saveChunkDraftSafely]);
 
   useEffect(() => {
     const onBeforeUnload = () => {
       if (!currentChunkMeta || !latestProgressRef.current) return;
-
-      const existingDraft = getChunkDraft(currentChunkMeta.sessionId, currentChunkMeta.chunkIndex);
-      if (
-        existingDraft &&
-        existingDraft.currentQuestionIndex > latestProgressRef.current.currentQuestionIndex &&
-        latestProgressRef.current.currentQuestionIndex === 0 &&
-        latestProgressRef.current.wrongQuestionIds.length === 0
-      ) {
-        return;
-      }
-
-      saveChunkDraft({
-        sessionId: currentChunkMeta.sessionId,
-        chunkIndex: currentChunkMeta.chunkIndex,
-        currentQuestionIndex: latestProgressRef.current.currentQuestionIndex,
-        score: latestProgressRef.current.score,
-        wrongQuestionIds: latestProgressRef.current.wrongQuestionIds,
-        pendingSkill: latestProgressRef.current.pendingSkill,
-        updatedAt: Date.now(),
-      });
+      saveChunkDraftSafely(currentChunkMeta.sessionId, currentChunkMeta.chunkIndex, latestProgressRef.current);
     };
     window.addEventListener('beforeunload', onBeforeUnload);
     return () => window.removeEventListener('beforeunload', onBeforeUnload);
-  }, [currentChunkMeta]);
+  }, [currentChunkMeta, saveChunkDraftSafely]);
 
   const dismissChunkSummary = useCallback(() => {
     setChunkSummary(null);

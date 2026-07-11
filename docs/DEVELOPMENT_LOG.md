@@ -1,5 +1,30 @@
 # Development Log
 
+## 2026-07-11 [Log Hygiene] "Graceful AbortError Filtering in Services"
+### 🧹 服務層 AbortError 警告過濾與控制台噪音消除 (Log Hygiene)
+- **過濾 Supabase 請求中止錯誤**：在 `services/streak.ts` 與 `services/analytics.ts` 中，使用 `isAbortError()` 過濾 Supabase 在獲取 `streak` 和 `study stats` 被 aborted 時的錯誤，改為 `console.info` 優雅記錄，防止因 React 重新渲染或 unmount 時的主動中止請求在主控台噴出紅色 `console.error` 警告，保持控制台乾淨。
+- **全量測試與打包驗證**：經 `npx tsc --noEmit` 型別檢查與 `npm run build` 生產環境打包測試，100% 成功通過，確認無任何副作用。
+
+## 2026-07-11 [Security & Architecture] "Security Architecture Hardening v2"
+### ✨ 安全架構硬化與資源釋放 (Security Architecture Hardening v2)
+- **跨分頁與同步併發鎖 (N2)**：在 `services/cloudStorage.ts` 中實作了 `runWithSyncLock` (主用 Web Locks `navigator.locks`，備用 localStorage 30s 鎖)，將 `syncLocalToCloud` 與 `syncLocalPracticeSessions` 包裹，防止跨分頁同步時資料被競態覆蓋。並將 `syncLocalToCloud` 與 `syncLocalPracticeSessions` 的鎖名稱與 fallback key 進行完全解耦（`mindspark_banks_sync` 與 `mindspark_practice_sync`），徹底排除同頁面併發時的鎖競爭衝突。
+- **E2E 同步與重新渲染競態修復**：在 `useBankManager` 引入 `isRefreshingRef.current` 鎖，防堵 `useAppDataLoader` 在 React 重新渲染與 HMR 載入期間重複重疊呼叫 `refreshBanksData`，確保 Dialog Promise resolve 回調不被覆蓋，徹底修復 Playwright E2E 同步容錯容災測試案例。
+- **FocusTimer 記憶體洩漏修復 (N5)**：在 `FocusTimer.tsx` 引入了 `activeAudioContextsRef` 來追蹤活動的 AudioContext 實例，在音效播放完畢後及組件卸載 (unmount) 時強制釋放 AudioContext 資源，解決多執行緒背景資源洩漏問題。
+- **鍵盤監聽 Ref 穩定化 (N6)**：重構 `hooks/useKeyboardShortcuts.ts` 採 `handlersRef` 模式將 callbacks 與監聽器解耦，避免 callbacks 引用更新造成 window event listener 重複卸載與綁定。
+- **題庫安全合併 (N4)**：擴充 `BankMetadata.cloudSyncedAt` 標記同步狀態，在 `refreshBanksData` 依據其安全合併未同步題庫，消除破壞性覆蓋。
+- **dirty-bank 預寫防丟失機制 (N7)**：在 `saveCloudQuestions` 執行 upsert 前先寫入 `addDirtyBank`，當 upsert 與刪除 cleanup皆成功時才調用 `removeDirtyBank` 移除，保障斷網或突然關閉瀏覽器時的資料一致性。
+- **Howler 生命週期與死導出清理 (X1)**：移除 `playCorrectSfx` 與 `playWrongSfx` 的死碼，提供 `unloadSfx` 並在 `components/BattleArena.tsx` 卸載時清理 `sfxAttackInstance`。
+- **全量測試與打包驗證**：新增五大測試模組 `focusTimer.audio.test.tsx`、`useKeyboardShortcuts.test.tsx`、`useSoundEffects.test.ts`、`useBankManager.test.ts` 以及 `cloudStorage.test.ts` 新案例，更新 `sync-and-settings-hardening.spec.ts` 斷言使其完全與非破壞性同步新規格對齊，所有單元測試、E2E 測試與 `tsc --noEmit` 全數 100% 🟢 通過。
+- **獨立審計缺陷修復與技術債清理**：
+  1. 新增 [SECURITY_LIMITATIONS.md](file:///c:/Users/user/Desktop/Quiz-app-/docs/SECURITY_LIMITATIONS.md) 安全限制與邊界指南文件。
+  2. 在 `components/Settings.tsx` API 金鑰與端點配置區塊，為配置了非官方 NVIDIA 網域的用戶新增 CSP 限制連線阻擋提示，並引導至指南文件。
+  3. 清理 `hooks/useSoundEffects.ts` 中殘留的 `sfxCorrectInstance` 與 `sfxWrongInstance` 孤兒實例、音效路徑及初始化代碼。
+  4. 物理刪除 `services/cloudStorage.ts` 中的 `retryDirtyPracticeSessions` 死代碼。
+  5. 修正 `removeDirtyBank` 使得 remaining banks 長度為 0 時，能完整從 localStorage 移除該項目（避免空陣列 `[]` 殘留）。
+  6. 更新 `openspec/changes/security-architecture-hardening-v2/design.md` 設計文檔以匹配鎖名稱解耦分離實作。
+  7. 在 `index.html` 的 CSP metaFallback 中補齊 `object-src 'none';`，實現本地與 Vercel 安全等級對齊。
+
+
 ## 2026-06-12 [Utility] "Project Memory Refresh & MCP Optimization"
 ### ✨ Infrastructure & Memory
 - **執行專案記憶刷新與安裝**：在專案根目錄成功執行 `refresh_project_memory_bundle.py`，完成專案記憶 (Project Memory) 的全面更新與安裝。
@@ -572,3 +597,16 @@ CREATE TABLE IF NOT EXISTS public.practice_sessions (
 ### 🧪 Verification
 - `npx tsc --noEmit` passed.
 - `npm run build` passed with Vite 6.4.1.
+
+## 2026-06-26 [v0.4.3] "Comprehensive Security & Architecture Audit Report V2 (Final)"
+### 🛡️ Security & Architecture Audit
+- **Vercel HTTP Security Headers**: Designed a comprehensive server-side HTTP headers configuration in `vercel.json` covering CSP, X-Frame-Options (DENY), X-Content-Type-Options (nosniff), Referrer-Policy, and Permissions-Policy to harden the client-side app against XSS-based localStorage credential leakage.
+- **Race Condition Analysis**: Discovered potential localStorage draft regression in `hooks/useChunkedPractice.ts` where unmount-triggered `beforeunload` saves might overwrite newer drafts with initial states. Outlined a consolidated `saveChunkDraftSafely` helper.
+- **Guest-Auth Sync Conflict**: Identified a high-severity sync bypass in `hooks/useBankManager.ts` where Guest-created banks are hidden/lost upon login if the cloud repository already contains pre-existing banks. Proposed a diff calculation based on bank IDs instead of cloud-empty status.
+- **Web Audio Context Leak**: Addressed a resource leak in `components/FocusTimer.tsx` where unmounts clearing the audio timer prevent `audioContext.close()` from ever executing. Designed a ref-based active tracker to close contexts on unmount.
+- **Cryptographic & DB Transaction Deep Dive**:
+  - Uncovered a high-severity vulnerability where Client-side AES-GCM encryption in `utils/crypto.ts` fails to protect API keys against XSS script access because both Salt (localStorage) and Seed (hardcoded in JS) share the same origin security boundary.
+  - Exposed a non-atomic data integrity risk in `saveCloudQuestions()` (Upsert -> Delete) where hard-kill / power interrupts between upsert and localStorage dirty bank tag state persistence cause permanent "orphan ghost questions" on cloud. Proposed PostgreSQL RPC function routing.
+  - Identified persistent memory consumption by global `Howl` singleton audio cache objects initialized in `useSoundEffects.ts`.
+- **Audit Report V2**: Documented all findings, severities, replication paths, and side-by-side code diffs in `docs/SECURITY_AND_ARCHITECTURE_AUDIT_REPORT_V2.md`.
+- **Note**: Per user instructions, no actual source code modifications were committed to the repository. All original source files remain unaltered.

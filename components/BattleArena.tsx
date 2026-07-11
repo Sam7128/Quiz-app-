@@ -241,7 +241,7 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
         pendingSkill,
     } = battleState;
 
-    const { playBgm, playAttackSfx, stopBgm } = useSoundEffects();
+    const { playBgm, playAttackSfx, stopBgm, unloadSfx } = useSoundEffects();
 
     // 用於火球定位
     const heroRef = useRef<HTMLDivElement>(null);
@@ -251,7 +251,10 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
     // BGM 控制
     useEffect(() => {
         playBgm();
-        return () => stopBgm();
+        return () => {
+            stopBgm();
+            unloadSfx();
+        };
         // 依賴項不放 playBgm/stopBgm 以免重複觸發，僅在組件掛載/卸載時執行
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

@@ -6,7 +6,9 @@ import {
   getAllPracticeSessions,
   replaceAllPracticeSessions,
   savePracticeSession as saveLocalPracticeSession,
-  clearChunkDraftsForSession
+  clearChunkDraftsForSession,
+  getBanksMeta,
+  saveBanksMeta
 } from './storage';
 import { ensureStableQuestionId, normalizeQuestionForPersistence } from '../utils/questionIdentity';
 import { ChunkedPracticeSession } from '../types/battleTypes';
@@ -14,6 +16,58 @@ import { ChunkedPracticeSession } from '../types/battleTypes';
 // Circuit breaker for practice_sessions table missing (graceful degradation)
 let isCloudPracticeAvailable = true;
 let isSyncingPracticeSessions = false;
+
+const SYNC_LOCK_NAME = 'mindspark_practice_sync';
+const SYNC_LOCK_TIMEOUT_MS = 30_000;
+const FALLBACK_LOCK_KEY = 'mindspark_sync_lock_ts';
+
+const BANKS_SYNC_LOCK_NAME = 'mindspark_banks_sync';
+const BANKS_FALLBACK_LOCK_KEY = 'mindspark_banks_sync_lock_ts';
+
+const runWithSyncLock = async <T>(
+  cb: () => Promise<T>,
+  lockName: string = SYNC_LOCK_NAME,
+  fallbackKey: string = FALLBACK_LOCK_KEY
+): Promise<T> => {
+  const locks = typeof navigator !== 'undefined' ? navigator.locks : undefined;
+  if (locks) {
+    return new Promise<T>((resolve, reject) => {
+      locks.request(lockName, { mode: 'exclusive', ifAvailable: true }, async (lock) => {
+        if (lock === null) {
+          reject(new Error('Sync lock held'));
+          return;
+        }
+        try {
+          const result = await cb();
+          resolve(result);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
+  } else {
+    const raw = localStorage.getItem(fallbackKey);
+    const now = Date.now();
+    if (raw) {
+      const ts = parseInt(raw, 10);
+      if (!isNaN(ts) && now - ts < SYNC_LOCK_TIMEOUT_MS) {
+        throw new Error('Sync lock held');
+      }
+    }
+    
+    const token = now.toString();
+    localStorage.setItem(fallbackKey, token);
+    
+    try {
+      return await cb();
+    } finally {
+      const current = localStorage.getItem(fallbackKey);
+      if (current === token) {
+        localStorage.removeItem(fallbackKey);
+      }
+    }
+  }
+};
 
 const checkIsTableMissingError = (error: unknown): boolean => {
   if (!error || typeof error !== 'object') return false;
@@ -158,6 +212,24 @@ const addDirtyBank = (bankId: string) => {
   }
 };
 
+const removeDirtyBank = (bankId: string) => {
+  try {
+    const raw = localStorage.getItem('mindspark_dirty_banks');
+    if (!raw) return;
+    const list = JSON.parse(raw);
+    if (Array.isArray(list)) {
+      const filtered = list.filter(id => id !== bankId);
+      if (filtered.length === 0) {
+        localStorage.removeItem('mindspark_dirty_banks');
+      } else {
+        localStorage.setItem('mindspark_dirty_banks', JSON.stringify(filtered));
+      }
+    }
+  } catch (e) {
+    console.warn('Failed to remove dirty bank from local storage:', e);
+  }
+};
+
 export const retryCleanupDirtyBanks = async (): Promise<void> => {
   try {
     const raw = localStorage.getItem('mindspark_dirty_banks');
@@ -232,6 +304,8 @@ export const retryCleanupDirtyBanks = async (): Promise<void> => {
 };
 
 export const saveCloudQuestions = async (bankId: string, questions: Question[], forceDeleteAll: boolean = false) => {
+  addDirtyBank(bankId);
+
   const dedupedById = new Map<string, Question>();
 
   questions
@@ -281,6 +355,8 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[], 
     if (deleteAllError) {
       console.warn('Error cleaning up cloud questions (delete all, non-fatal):', deleteAllError.message);
       addDirtyBank(bankId);
+    } else {
+      removeDirtyBank(bankId);
     }
     return;
   }
@@ -304,6 +380,7 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[], 
   if (toDeleteIds.length > 0) {
     console.info(`[CloudStorage] Cleaning up ${toDeleteIds.length} orphan questions from bank ${bankId}`);
     const batchSize = 500;
+    let hasDeleteError = false;
     for (let i = 0; i < toDeleteIds.length; i += batchSize) {
       const chunk = toDeleteIds.slice(i, i + batchSize);
       const { error: deleteError } = await supabase
@@ -314,9 +391,15 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[], 
       if (deleteError) {
         console.warn('Cloud question cleanup failed (non-fatal):', deleteError.message);
         addDirtyBank(bankId);
+        hasDeleteError = true;
         break; // 出錯時中斷，剩餘留待 retry
       }
     }
+    if (!hasDeleteError) {
+      removeDirtyBank(bankId);
+    }
+  } else {
+    removeDirtyBank(bankId);
   }
 };
 
@@ -324,54 +407,62 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[], 
  * Migration: Local -> Cloud
  */
 export const syncLocalToCloud = async (localBanks: BankMetadata[]): Promise<SyncLocalToCloudResult> => {
-  // 重試髒題庫清理
-  await retryCleanupDirtyBanks().catch(e => console.warn('Retry cleanup dirty banks failed:', e));
+  return runWithSyncLock(async () => {
+    // 重試髒題庫清理
+    await retryCleanupDirtyBanks().catch(e => console.warn('Retry cleanup dirty banks failed:', e));
 
-  const successIds: string[] = [];
-  const failed: { id: string; name: string; error: string }[] = [];
+    const successIds: string[] = [];
+    const failed: { id: string; name: string; error: string }[] = [];
 
-  if (localBanks.length === 0) {
+    if (localBanks.length === 0) {
+      return { successIds, failed };
+    }
+
+    // 限制同時同步的 bank 數量為 3
+    const concurrencyLimit = 3;
+
+    for (let i = 0; i < localBanks.length; i += concurrencyLimit) {
+      const chunk = localBanks.slice(i, i + concurrencyLimit);
+
+      const chunkPromises = chunk.map(async (bank) => {
+        // 1. Create bank in cloud
+        const cloudBankId = await createCloudBank(bank.name, bank.description || 'From local storage');
+        if (!cloudBankId) {
+          throw new Error('Failed to create bank in cloud');
+        }
+        // 2. Get local questions
+        const localQuestions = JSON.parse(localStorage.getItem(STORAGE_KEYS.BANK_PREFIX + bank.id) || '[]');
+        // 3. Save to cloud
+        await saveCloudQuestions(cloudBankId, localQuestions);
+        return { id: bank.id, cloudBankId };
+      });
+
+      const results = await Promise.allSettled(chunkPromises);
+
+      const currentBanks = getBanksMeta();
+      results.forEach((r, idx) => {
+        const bank = chunk[idx];
+        if (r.status === 'fulfilled') {
+          successIds.push(bank.id);
+          const target = currentBanks.find(b => b.id === bank.id);
+          if (target) {
+            target.cloudSyncedAt = Date.now();
+          }
+        } else {
+          const reason = r.reason instanceof Error ? r.reason.message : String(r.reason);
+          console.error(`Error syncing bank ${bank.name} (${bank.id}):`, reason);
+          failed.push({
+            id: bank.id,
+            name: bank.name,
+            error: reason
+          });
+        }
+      });
+      saveBanksMeta(currentBanks);
+    }
+
     return { successIds, failed };
-  }
-
-  // 限制同時同步的 bank 數量為 3
-  const concurrencyLimit = 3;
-
-  for (let i = 0; i < localBanks.length; i += concurrencyLimit) {
-    const chunk = localBanks.slice(i, i + concurrencyLimit);
-
-    const chunkPromises = chunk.map(async (bank) => {
-      // 1. Create bank in cloud
-      const cloudBankId = await createCloudBank(bank.name, bank.description || 'From local storage');
-      if (!cloudBankId) {
-        throw new Error('Failed to create bank in cloud');
-      }
-      // 2. Get local questions
-      const localQuestions = JSON.parse(localStorage.getItem(STORAGE_KEYS.BANK_PREFIX + bank.id) || '[]');
-      // 3. Save to cloud
-      await saveCloudQuestions(cloudBankId, localQuestions);
-      return { id: bank.id, cloudBankId };
-    });
-
-    const results = await Promise.allSettled(chunkPromises);
-
-    results.forEach((r, idx) => {
-      const bank = chunk[idx];
-      if (r.status === 'fulfilled') {
-        successIds.push(bank.id);
-      } else {
-        const reason = r.reason instanceof Error ? r.reason.message : String(r.reason);
-        console.error(`Error syncing bank ${bank.name} (${bank.id}):`, reason);
-        failed.push({
-          id: bank.id,
-          name: bank.name,
-          error: reason
-        });
-      }
-    });
-  }
-
-  return { successIds, failed };
+  }, BANKS_SYNC_LOCK_NAME, BANKS_FALLBACK_LOCK_KEY);
 };
 
 type PracticeSessionStatus = 'active' | 'completed' | 'abandoned';
@@ -544,162 +635,165 @@ export const syncLocalPracticeSessions = async (): Promise<PracticeSyncResult> =
   if (!isCloudPracticeAvailable) return EMPTY_SYNC_RESULT;
 
   // 1. 同步並發鎖防護
-  if (isSyncingPracticeSessions || (typeof window !== 'undefined' && window.__MINDSPARK_SYNC_LOCK__)) {
+  if (isSyncingPracticeSessions) {
     console.warn('[Sync] Already syncing practice sessions, skipping');
     return EMPTY_SYNC_RESULT;
   }
 
   isSyncingPracticeSessions = true;
-  if (typeof window !== 'undefined') {
-    window.__MINDSPARK_SYNC_LOCK__ = true;
-  }
 
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return EMPTY_SYNC_RESULT;
+    return await runWithSyncLock(async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return EMPTY_SYNC_RESULT;
 
-    const localSessions = getAllPracticeSessions();
+      const localSessions = getAllPracticeSessions();
 
-    const { data: cloudRows, error } = await supabase
-      .from('practice_sessions')
-      .select('*')
-      .eq('user_id', user.id);
+      const { data: cloudRows, error } = await supabase
+        .from('practice_sessions')
+        .select('*')
+        .eq('user_id', user.id);
 
-    if (error) {
-      // Gracefully handle abort errors
-      const isAbort = error.message?.includes('aborted') || error.message?.includes('AbortError');
-      if (isAbort) {
-        console.info('Fetch cloud practice sessions aborted gracefully.');
-        return EMPTY_SYNC_RESULT;
-      }
-
-      console.error('Failed to fetch cloud practice sessions before sync:', error);
-      if (checkIsTableMissingError(error)) {
-        isCloudPracticeAvailable = false;
-        console.warn('Supabase practice_sessions table is missing. Gracefully degrading local sync.');
-        return EMPTY_SYNC_RESULT;
-      }
-      const dirtySessions = localSessions.map((session) => ({
-        ...session,
-        dirty: true,
-        retryCount: (session.retryCount ?? 0) + 1,
-        lastSyncError: error.message,
-      }));
-      replaceAllPracticeSessions(dirtySessions);
-      return { uploaded: 0, skipped: 0, dirty: dirtySessions.length };
-    }
-
-    if (localSessions.length === 0 && (!cloudRows || cloudRows.length === 0)) {
-      return EMPTY_SYNC_RESULT;
-    }
-
-    const cloudMap = new Map<string, ChunkedPracticeSession>(
-      ((cloudRows ?? []) as PracticeSessionRow[]).map((row) => [row.id, fromPracticeSessionRow(row)])
-    );
-
-    const updatedLocalSessions: ChunkedPracticeSession[] = [];
-    const dirtySessions: ChunkedPracticeSession[] = [];
-    let uploaded = 0;
-    let skipped = 0;
-
-    // 處理本地的 sessions，並跟雲端做對比
-    for (const localSession of localSessions) {
-      const cloudSession = cloudMap.get(localSession.id);
-      
-      const now = Date.now();
-      const driftThreshold = 60 * 60 * 1000; // 1 小時
-      let isLocalNewer = false;
-
-      if (!cloudSession) {
-        isLocalNewer = true;
-      } else {
-        // 時鐘漂移與異常防護
-        const isLocalFuture = localSession.updatedAt > now + 5 * 60 * 1000;
-        const isLocalDriftedAhead = localSession.updatedAt - cloudSession.updatedAt > driftThreshold;
-        
-        if (isLocalFuture || isLocalDriftedAhead) {
-          console.warn(
-            `[Sync] Detected potential clock drift for session ${localSession.id}. ` +
-            `Local: ${new Date(localSession.updatedAt).toISOString()}, ` +
-            `Cloud: ${new Date(cloudSession.updatedAt).toISOString()}. Overriding with cloud version.`
-          );
-          isLocalNewer = false;
-        } else {
-          isLocalNewer = localSession.updatedAt > cloudSession.updatedAt;
-        }
-      }
-
-      if (!isLocalNewer) {
-        skipped += 1;
-        if (cloudSession) {
-          if (cloudSession.updatedAt > localSession.updatedAt) {
-            console.info(`[Sync] Cloud session is newer for ${localSession.id}. Overwriting local and clearing chunk drafts.`);
-            clearChunkDraftsForSession(cloudSession.id);
-          }
-          updatedLocalSessions.push(cloudSession);
-        } else {
-          updatedLocalSessions.push(localSession);
-        }
-        continue;
-      }
-
-      try {
-        await saveCloudPracticeSession({ ...localSession, userId: user.id, dirty: false, retryCount: 0, lastSyncError: undefined });
-        uploaded += 1;
-        // 同步成功，在本地存檔為 dirty = false
-        updatedLocalSessions.push({
-          ...localSession,
-          userId: user.id,
-          dirty: false,
-          retryCount: 0,
-          lastSyncError: undefined
-        });
-      } catch (syncError) {
-        const message = syncError instanceof Error ? syncError.message : 'unknown sync error';
-        const isAbort = message.includes('aborted') || message.includes('AbortError');
-        
+      if (error) {
+        // Gracefully handle abort errors
+        const isAbort = error.message?.includes('aborted') || error.message?.includes('AbortError');
         if (isAbort) {
-          console.info('Save cloud practice session aborted gracefully during sync.');
-          // 中斷時保留本地為 dirty 以供下次重試
+          console.info('Fetch cloud practice sessions aborted gracefully.');
+          return EMPTY_SYNC_RESULT;
+        }
+
+        console.error('Failed to fetch cloud practice sessions before sync:', error);
+        if (checkIsTableMissingError(error)) {
+          isCloudPracticeAvailable = false;
+          console.warn('Supabase practice_sessions table is missing. Gracefully degrading local sync.');
+          return EMPTY_SYNC_RESULT;
+        }
+        const dirtySessions = localSessions.map((session) => ({
+          ...session,
+          dirty: true,
+          retryCount: (session.retryCount ?? 0) + 1,
+          lastSyncError: error.message,
+        }));
+        replaceAllPracticeSessions(dirtySessions);
+        return { uploaded: 0, skipped: 0, dirty: dirtySessions.length };
+      }
+
+      if (localSessions.length === 0 && (!cloudRows || cloudRows.length === 0)) {
+        return EMPTY_SYNC_RESULT;
+      }
+
+      const cloudMap = new Map<string, ChunkedPracticeSession>(
+        ((cloudRows ?? []) as PracticeSessionRow[]).map((row) => [row.id, fromPracticeSessionRow(row)])
+      );
+
+      const updatedLocalSessions: ChunkedPracticeSession[] = [];
+      const dirtySessions: ChunkedPracticeSession[] = [];
+      let uploaded = 0;
+      let skipped = 0;
+
+      // 處理本地的 sessions，並跟雲端做對比
+      for (const localSession of localSessions) {
+        const cloudSession = cloudMap.get(localSession.id);
+        
+        const now = Date.now();
+        const driftThreshold = 60 * 60 * 1000; // 1 小時
+        let isLocalNewer = false;
+
+        if (!cloudSession) {
+          isLocalNewer = true;
+        } else {
+          // 時鐘漂移與異常防護
+          const isLocalFuture = localSession.updatedAt > now + 5 * 60 * 1000;
+          const isLocalDriftedAhead = localSession.updatedAt - cloudSession.updatedAt > driftThreshold;
+          
+          if (isLocalFuture || isLocalDriftedAhead) {
+            console.warn(
+              `[Sync] Detected potential clock drift for session ${localSession.id}. ` +
+              `Local: ${new Date(localSession.updatedAt).toISOString()}, ` +
+              `Cloud: ${new Date(cloudSession.updatedAt).toISOString()}. Overriding with cloud version.`
+            );
+            isLocalNewer = false;
+          } else {
+            isLocalNewer = localSession.updatedAt > cloudSession.updatedAt;
+          }
+        }
+
+        if (!isLocalNewer) {
+          skipped += 1;
+          if (cloudSession) {
+            if (cloudSession.updatedAt > localSession.updatedAt) {
+              console.info(`[Sync] Cloud session is newer for ${localSession.id}. Overwriting local and clearing chunk drafts.`);
+              clearChunkDraftsForSession(cloudSession.id);
+            }
+            updatedLocalSessions.push(cloudSession);
+          } else {
+            updatedLocalSessions.push(localSession);
+          }
+          continue;
+        }
+
+        try {
+          await saveCloudPracticeSession({ ...localSession, userId: user.id, dirty: false, retryCount: 0, lastSyncError: undefined });
+          uploaded += 1;
+          // 同步成功，在本地存檔為 dirty = false
+          updatedLocalSessions.push({
+            ...localSession,
+            userId: user.id,
+            dirty: false,
+            retryCount: 0,
+            lastSyncError: undefined
+          });
+        } catch (syncError) {
+          const message = syncError instanceof Error ? syncError.message : 'unknown sync error';
+          const isAbort = message.includes('aborted') || message.includes('AbortError');
+          
+          if (isAbort) {
+            console.info('Save cloud practice session aborted gracefully during sync.');
+            // 中斷時保留本地為 dirty 以供下次重試
+            const dirtySession: ChunkedPracticeSession = {
+              ...localSession,
+              userId: user.id,
+              dirty: true,
+              retryCount: localSession.retryCount ?? 0,
+              lastSyncError: 'Aborted',
+            };
+            updatedLocalSessions.push(dirtySession);
+            dirtySessions.push(dirtySession);
+            continue;
+          }
+
           const dirtySession: ChunkedPracticeSession = {
             ...localSession,
             userId: user.id,
             dirty: true,
-            retryCount: localSession.retryCount ?? 0,
-            lastSyncError: 'Aborted',
+            retryCount: (localSession.retryCount ?? 0) + 1,
+            lastSyncError: message,
           };
-          updatedLocalSessions.push(dirtySession);
           dirtySessions.push(dirtySession);
-          continue;
+          updatedLocalSessions.push(dirtySession);
         }
-
-        const dirtySession: ChunkedPracticeSession = {
-          ...localSession,
-          userId: user.id,
-          dirty: true,
-          retryCount: (localSession.retryCount ?? 0) + 1,
-          lastSyncError: message,
-        };
-        dirtySessions.push(dirtySession);
-        updatedLocalSessions.push(dirtySession);
       }
-    }
 
-    // 處理「本地沒有但雲端有」的 sessions
-    // 規格定義同步方向為 本機→雲端，因此 cloud-only sessions 不拉回本機
-    // Cloud-only sessions 會保留在雲端不被刪除，但不會寫入 localStorage
-    const localSessionIds = new Set(localSessions.map((s) => s.id));
-    for (const [cloudId] of cloudMap.entries()) {
-      if (!localSessionIds.has(cloudId)) {
-        console.info(`[Sync] Cloud-only session ${cloudId} preserved on cloud (not pulled to local per spec).`);
-        skipped += 1;
+      // 處理「本地沒有但雲端有」的 sessions
+      // 規格定義同步方向為 本機→雲端，因此 cloud-only sessions 不拉回本機
+      // Cloud-only sessions 會保留在雲端不被刪除，但不會寫入 localStorage
+      const localSessionIds = new Set(localSessions.map((s) => s.id));
+      for (const [cloudId] of cloudMap.entries()) {
+        if (!localSessionIds.has(cloudId)) {
+          console.info(`[Sync] Cloud-only session ${cloudId} preserved on cloud (not pulled to local per spec).`);
+          skipped += 1;
+        }
       }
-    }
 
-    replaceAllPracticeSessions(updatedLocalSessions);
-    return { uploaded, skipped, dirty: dirtySessions.length };
+      replaceAllPracticeSessions(updatedLocalSessions);
+      return { uploaded, skipped, dirty: dirtySessions.length };
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'unknown';
+    if (message === 'Sync lock held') {
+      console.warn('[Sync] Sync lock held, skipping syncLocalPracticeSessions');
+      return EMPTY_SYNC_RESULT;
+    }
     if (message.includes('aborted') || message.includes('AbortError')) {
       console.info('Sync local practice sessions aborted gracefully.');
     } else {
@@ -708,16 +802,7 @@ export const syncLocalPracticeSessions = async (): Promise<PracticeSyncResult> =
     return EMPTY_SYNC_RESULT;
   } finally {
     isSyncingPracticeSessions = false;
-    if (typeof window !== 'undefined') {
-      window.__MINDSPARK_SYNC_LOCK__ = false;
-    }
   }
-};
-
-export const retryDirtyPracticeSessions = async (): Promise<PracticeSyncResult> => {
-  const dirtySessions = getAllPracticeSessions().filter((session) => session.dirty === true);
-  if (dirtySessions.length === 0) return EMPTY_SYNC_RESULT;
-  return syncLocalPracticeSessions();
 };
 
 /**

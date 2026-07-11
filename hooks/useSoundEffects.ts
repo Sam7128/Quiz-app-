@@ -6,16 +6,13 @@ import { STORAGE_KEYS } from '../services/storage';
 const SOUND_PATHS = {
     BGM_DUNGEON: '/sounds/bgm_dungeon.mp3',
     SFX_ATTACK_FIREBALL: '/sounds/attack_fireball.mp3',
-    SFX_CORRECT: '/sounds/correct.mp3',
-    SFX_WRONG: '/sounds/wrong.mp3',
 };
 
 interface UseSoundEffectsReturn {
     playBgm: () => void;
     stopBgm: () => void;
     playAttackSfx: () => void;
-    playCorrectSfx: () => void;
-    playWrongSfx: () => void;
+    unloadSfx: () => void;
     isBgmEnabled: boolean;
     isSfxEnabled: boolean;
     toggleBgm: () => void;
@@ -28,8 +25,6 @@ interface UseSoundEffectsReturn {
 // 建立全域單例，避免多次實例化導致記憶體洩漏或重複播放
 let bgmInstance: Howl | null = null;
 let sfxAttackInstance: Howl | null = null;
-let sfxCorrectInstance: Howl | null = null;
-let sfxWrongInstance: Howl | null = null;
 
 const initSounds = () => {
     if (!bgmInstance) {
@@ -45,18 +40,6 @@ const initSounds = () => {
         sfxAttackInstance = new Howl({
             src: [SOUND_PATHS.SFX_ATTACK_FIREBALL],
             volume: 0.6,
-        });
-    }
-    if (!sfxCorrectInstance) {
-        sfxCorrectInstance = new Howl({
-            src: [SOUND_PATHS.SFX_CORRECT],
-            volume: 0.5,
-        });
-    }
-    if (!sfxWrongInstance) {
-        sfxWrongInstance = new Howl({
-            src: [SOUND_PATHS.SFX_WRONG],
-            volume: 0.5,
         });
     }
 };
@@ -124,17 +107,12 @@ export function useSoundEffects(): UseSoundEffectsReturn {
         }
     }, [isSfxEnabled]);
 
-    const playCorrectSfx = useCallback(() => {
-        if (isSfxEnabled && sfxCorrectInstance) {
-            sfxCorrectInstance.play();
+    const unloadSfx = useCallback(() => {
+        if (sfxAttackInstance) {
+            sfxAttackInstance.unload();
+            sfxAttackInstance = null;
         }
-    }, [isSfxEnabled]);
-
-    const playWrongSfx = useCallback(() => {
-        if (isSfxEnabled && sfxWrongInstance) {
-            sfxWrongInstance.play();
-        }
-    }, [isSfxEnabled]);
+    }, []);
 
     const toggleBgm = () => setIsBgmEnabled(prev => !prev);
     const toggleSfx = () => setIsSfxEnabled(prev => !prev);
@@ -143,8 +121,7 @@ export function useSoundEffects(): UseSoundEffectsReturn {
         playBgm,
         stopBgm,
         playAttackSfx,
-        playCorrectSfx,
-        playWrongSfx,
+        unloadSfx,
         isBgmEnabled,
         isSfxEnabled,
         toggleBgm,

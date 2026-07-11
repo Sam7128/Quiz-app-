@@ -1,0 +1,60 @@
+## MODIFIED Requirements
+
+### Requirement: saveChunkDraft performs updatedAt comparison before write
+`saveChunkDraft` 函式 SHALL 在寫入 localStorage 之前，比較傳入草稿的 `updatedAt` 與現有草稿的 `updatedAt`。若現有草稿的 `updatedAt` 嚴格大於傳入草稿的 `updatedAt`，系統 SHALL 拒絕寫入並記錄警告。
+`saveChunkDraft` SHALL 在寫入時處理 `QuotaExceededError`，並以降級策略（清理最舊草稿或回報警告）避免拋出未處理例外。
+
+此外，`useChunkedPractice` hook 內的草稿寫入 SHALL 透過統一的 `saveChunkDraftSafely(sessionId, chunkIndex, progress)` 函式進行。此函式 SHALL 封裝「防退步保護 + saveChunkDraft 呼叫」邏輯，並由 `updateChunkDraft` 與 `beforeunload` 兩處呼叫。`updateChunkDraft` 與 `beforeunload` effect SHALL NOT 各自存在重複的防退步檢查邏輯（DRY 原則，防止兩處邏輯不同步導致競態）。
+
+#### Scenario: Newer draft overwrites older draft
+- **WHEN** 現有草稿的 `updatedAt` 為 `1000`
+- **AND** 傳入草稿的 `updatedAt` 為 `2000`
+- **THEN** 系統 SHALL 正常寫入傳入的草稿
+- **AND** localStorage 中的草稿 SHALL 更新為傳入版本
+
+#### Scenario: Older draft is rejected
+- **WHEN** 現有草稿的 `updatedAt` 為 `3000`
+- **AND** 傳入草稿的 `updatedAt` 為 `2000`
+- **THEN** 系統 SHALL 拒絕寫入
+- **AND** 系統 SHALL 記錄 `console.warn` 包含兩個時間戳的值
+- **AND** localStorage 中的草稿 SHALL 維持不變
+
+#### Scenario: Clock rollback allows forced overwrite
+- **WHEN** 現有草稿的 `updatedAt` 與傳入草稿的 `updatedAt` 差距異常過大（例如 > 1 小時）
+- **THEN** 系統 SHALL 視為時鐘異常
+- **AND** 系統 SHALL 允許較新的業務狀態覆蓋並記錄警告
+
+#### Scenario: No existing draft allows write
+- **WHEN** localStorage 中不存在對應的草稿
+- **AND** 傳入草稿的 `updatedAt` 為任意合法值
+- **THEN** 系統 SHALL 正常寫入傳入的草稿
+
+#### Scenario: Existing draft has no updatedAt field (legacy data)
+- **WHEN** 現有草稿不包含 `updatedAt` 欄位（或為 `undefined`）
+- **AND** 傳入草稿的 `updatedAt` 為合法值
+- **THEN** 系統 SHALL 允許寫入（legacy 草稿視為最舊版本）
+
+#### Scenario: Storage quota exceeded during write
+- **WHEN** `localStorage.setItem` 拋出 `QuotaExceededError`
+- **THEN** 系統 SHALL 不中斷流程
+- **AND** 系統 SHALL 嘗試清理最舊草稿或記錄警告
+
+#### Scenario: useChunkedPractice uses unified saveChunkDraftSafely
+- **WHEN** 閱讀 `hooks/useChunkedPractice.ts`
+- **THEN** 程式碼 SHALL 定義 `saveChunkDraftSafely(sessionId, chunkIndex, progress)` `useCallback`
+- **AND** `updateChunkDraft` 內 SHALL 呼叫 `saveChunkDraftSafely`（不直接呼叫 `saveChunkDraft`）
+- **AND** `beforeunload` effect 內 SHALL 呼叫 `saveChunkDraftSafely`（不直接呼叫 `saveChunkDraft`）
+- **AND** 程式碼 SHALL NOT 在兩處各自重複 `existingDraft.currentQuestionIndex > progress.currentQuestionIndex && progress.currentQuestionIndex === 0 && progress.wrongQuestionIds.length === 0` 防退步檢查（此邏輯只能存在於 `saveChunkDraftSafely` 內）
+
+#### Scenario: beforeunload with null latestProgressRef preserves existing draft
+- **WHEN** `useChunkedPractice` 剛 mount，`latestProgressRef.current` 為 `null`
+- **AND** localStorage 中存在 `currentQuestionIndex=5` 的更先進草稿
+- **AND** 使用者觸發 `beforeunload` 事件
+- **THEN** `beforeunload` effect SHALL 因 `latestProgressRef.current` 為 null 提前 return
+- **AND** localStorage 中的草稿 SHALL 維持 `currentQuestionIndex=5`（不被空進度覆蓋）
+
+#### Scenario: Regression guard triggers warning
+- **WHEN** 透過 `saveChunkDraftSafely` 寫入進度，且現有草稿 `currentQuestionIndex=5` 嚴格大於傳入 `progress.currentQuestionIndex=0` 並且 `progress.wrongQuestionIds.length === 0`
+- **THEN** 系統 SHALL 記錄 `console.warn` 包含两个 currentQuestionIndex 值
+- **AND** localStorage SHALL 維持不變
+- **AND** 行為 SHALL 等價於舊版 `updateChunkDraft` 與舊版 `beforeunload` 兩處的退步保護

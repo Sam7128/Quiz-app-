@@ -60,6 +60,17 @@
     - [x] React.lazy 代碼分割 (KG chunk 26.64KB gzip)
     - [x] 47 個新測試 (graphStorage 15 + mermaidBridge 19 + betaFeature 4 + readingModes 9)
     - [x] 8 輪多模型自動驗證 (Claude Opus + GPT-5.3 + GPT-5.4)
+- [x] **[Security]** 安全架構防護與硬化 (Security Architecture Hardening v2) `security-architecture-hardening-v2`
+    - [x] T1 — Vercel.json 安全標頭（N1 + X3）
+    - [x] T2 — 跨分頁與同步併發鎖（N2 + D4-001）
+    - [x] T3 — 統一 saveChunkDraftSafely（N3）
+    - [x] T4 — refreshBanksData 安全合併（N4 — Critical）
+    - [x] T5 — FocusTimer AudioContext 生命週期（N5）
+    - [x] T6 — useKeyboardShortcuts ref 模式（N6）
+    - [x] T7 — Howler 生命週期與死導出清理（X1 + §5.3）
+    - [x] T8 — dirty-bank 預寫 + removeDirtyBank（N7）
+    - [x] T9 — 限制與邊界文件（N1 + D6-001 緩解）
+    - [x] T100 — 全域驗證 + 文件 + 記憶更新
 
 ## 🟡 待辦 (Pending)
 - [ ] **[Build]** 單元測試覆蓋率提升 (Test Coverage Improvement)

@@ -102,6 +102,8 @@ python .agents\skills\project-memory-refresh\scripts\refresh_project_memory_bund
 | 索引含 `file_hashes` + UTC `built_at` | ✅ 新增 |
 | 自動偵測檔案變更並重建索引 | ✅ 新增 |
 | `get_memory_health` 含 5 項 `quality_checks` | ✅ 新增 |
+| 雙 MCP 健康檢查與可用性報告 (codebase-memory-mcp 整合) | ✅ 支援 |
+| Windows 非同步進程冷啟動 DOS 限流保護與 taskkill 清理 | ✅ 新增 |
 
 ---
 
@@ -125,7 +127,8 @@ python .agents\skills\project-memory-refresh\scripts\refresh_project_memory_bund
 | `get_aliases` | 取得詞彙對照表（Aliases & Vocabulary） |
 | `get_source_of_truth` | 取得關鍵資料來源說明 |
 | `get_search_recipes` | 取得搜尋配方與常見查詢路徑 |
-| `get_memory_health` | 健康檢查，含 `quality_checks` 與 `warnings` |
+| `get_memory_health` | 健康檢查，含 codebase-memory-mcp 可用性與索引新鮮度、品質檢測及警告 |
+| `summarize_index_health` | 回傳格式化後的健康狀態摘要字串 |
 | `rebuild_project_memory_cache` | 強制重建索引 |
 
 ---
@@ -136,3 +139,16 @@ python .agents\skills\project-memory-refresh\scripts\refresh_project_memory_bund
 - 動態 UUID smoke test 防止技能文件本身被索引後造成健康檢查自我命中。
 - `ensure_project_mcp_configs.py` 是**冪等**的：重跑不會破壞已正確設定的 MCP，只會更新過時的 wrapper 或缺少的工具設定。
 - 多個專案可各自有獨立的記憶 MCP 伺服器，Antigravity 的命名規則為 `pm-<slug>-<hash8>`，確保 Agent 只使用對應專案的伺服器。
+
+---
+
+## 雙 MCP 工具路由與健康檢查
+
+- **健康檢查 (`get_memory_health` / `summarize_index_health`)**：
+  - 整合 `codebase-memory-mcp` (AST) 與 `project-memory-mcp` (High-Level)。
+  - `codebase_graph_status` 欄位報告外部圖譜的可用性 (`available`) 及索引狀態 (`is_stale`)。
+  - 新增 `bridge_consistent` 品質檢測，若外部可用但專案未索引，將自動警示。
+  - 具備 1.0 秒防抖限流保護，避免高頻調用壓垮 CPU；且在 Windows 下採用非同步 subprocess 執行，並提供超時殘留進程樹 taskkill 清理防護。
+- **工具路由指引**：
+  - 對於低階 AST 分析、調用鏈與影響範圍分析，應直接使用 `codebase-memory-mcp` 原生工具（如 `search_graph`、`trace_path`）。
+  - 對於專案高階手則、入口與熱點分析，使用 `project-memory-mcp` 工具（如 `search_memory`、`get_entry_points`、`get_hotspots`）。

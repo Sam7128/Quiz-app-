@@ -46,7 +46,8 @@ const App: React.FC = () => {
     repository,
     dispatch,
     banks: appState.banks,
-    selectedQuizBankIds: appState.selectedQuizBankIds
+    selectedQuizBankIds: appState.selectedQuizBankIds,
+    user
   });
 
   // Initialization & Data Loading

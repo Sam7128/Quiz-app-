@@ -266,6 +266,9 @@ def antigravity_rules_block(root: Path, server_name: str) -> str:
             "- Before broad search, prefer `get_entry_points`, `get_hotspots`, or `search_memory` from the matching project memory server.",
             "- If memory is missing, stale, or the root has scattered report markdown, trigger the project memory refresh workflow before broad exploration.",
             f"- This repository root is `{root}`. Only use memory files, docs archives, and indexes inside this root.",
+            "- Dual MCP Tool Routing Guidance:",
+            "  - For call-chain analysis, impact analysis, or low-level AST/symbol discovery, invoke codebase-memory-mcp tools directly (e.g., search_graph, trace_path).",
+            f"  - For project memory, stable facts, entry points, hotspots, or search recipes, invoke {server_name} tools (e.g., search_memory, get_entry_points, get_hotspots).",
             ANTIGRAVITY_RULES_END,
         ]
     )

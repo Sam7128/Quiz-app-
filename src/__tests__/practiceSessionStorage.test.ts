@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CloudStorageRepository } from '../../services/cloudRepo';
 import { LocalStorageRepository } from '../../services/localRepo';
 import { ChunkedPracticeSession } from '../../types/battleTypes';
@@ -46,9 +46,35 @@ const createSession = (id: string, status: ChunkedPracticeSession['status'], upd
 });
 
 describe('practice session storage', () => {
+  let activeLocks: Set<string>;
+
   beforeEach(() => {
     localStorage.clear();
     vi.clearAllMocks();
+    activeLocks = new Set<string>();
+    Object.defineProperty(navigator, 'locks', {
+      value: {
+        request: async (name: string, opts: any, cb?: any) => {
+          const options = typeof opts === 'object' ? opts : {};
+          const callback = typeof opts === 'function' ? opts : cb;
+          if (options.ifAvailable && activeLocks.has(name)) {
+            return await callback(null);
+          }
+          activeLocks.add(name);
+          try {
+            return await callback({ name });
+          } finally {
+            activeLocks.delete(name);
+          }
+        }
+      },
+      configurable: true
+    });
+  });
+
+  afterEach(() => {
+    // @ts-ignore
+    delete navigator.locks;
   });
 
   it('enforces guest active FIFO and total retention limits', async () => {
@@ -285,5 +311,34 @@ describe('practice session storage', () => {
     const result2 = await syncLocalPracticeSessions();
     expect(result2.skipped).toBe(1);
     expect(result2.uploaded).toBe(0);
+  });
+
+  it('skips sync and returns EMPTY_SYNC_RESULT when locks are unavailable', async () => {
+    supabaseMocks.getUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
+    activeLocks.add('mindspark_practice_sync'); // 模擬鎖已被佔用
+    const result = await syncLocalPracticeSessions();
+    expect(result).toEqual({ uploaded: 0, skipped: 0, dirty: 0 }); // EMPTY_SYNC_RESULT
+  });
+
+  it('concurrent calls to syncLocalPracticeSessions and syncLocalToCloud respect mutual exclusion and release locks after execution', async () => {
+    supabaseMocks.getUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
+    const eqMock = vi.fn(async () => {
+      // 模擬非同步操作延遲，增加並發 race 機會
+      await new Promise(resolve => setTimeout(resolve, 50));
+      return { data: [], error: null };
+    });
+    supabaseMocks.from.mockReturnValue({ select: vi.fn(() => ({ eq: eqMock })) });
+
+    // 同時發起兩個同步，因為有 mutex，必定是其中一個排他執行，另一個被阻擋
+    const [res1, res2] = await Promise.all([
+      syncLocalPracticeSessions(),
+      syncLocalPracticeSessions()
+    ]);
+
+    expect(res1).toEqual({ uploaded: 0, skipped: 0, dirty: 0 });
+    expect(res2).toEqual({ uploaded: 0, skipped: 0, dirty: 0 });
+    
+    // 驗證執行完畢後鎖已釋放
+    expect(activeLocks.has('mindspark_practice_sync')).toBe(false);
   });
 });

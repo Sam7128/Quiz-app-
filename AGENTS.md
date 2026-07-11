@@ -13,7 +13,8 @@
 7. **PERSISTENCE_INTEGRITY**: Zustand `persist` 必須在 `partialize` 中顯式列出所有欄位。實作自訂 `merge` 函式防止空資料覆蓋。
 8. **DEPENDENCY_VERIFY**: 匯入外部套件前先驗證其匯出。注意大版本升級的 breaking changes。
 9. **PERFECTIONIST_MODE**: 禁止截斷程式碼，必須輸出完整檔案內容。優先防禦式程式設計和資料安全。
-10. **DOCS_MAINTENANCE**: 在每次任務結束或有重大變更時，必須自動檢查並更新 [docs/DEVELOPMENT_LOG.md](file:///c:/Users/user/Desktop/Quiz-app--main/docs/DEVELOPMENT_LOG.md)，內容必須保持與最新代碼狀態同步。GEMINI.md 已廢除，不再維護。
+10. **DOCS_MAINTENANCE**: 在每次任務結束或有重大變更時，必須自動檢查並更新 [docs/DEVELOPMENT_LOG.md](file:///c:/Users/user/Desktop/Quiz-app-/docs/DEVELOPMENT_LOG.md)，內容必須保持與最新代碼狀態同步。GEMINI.md 已廢除，不再維護。
+
 
 ## 📍 模組快速索引
 
@@ -30,374 +31,72 @@
 | Tests | `src/__tests__/` | `src/__tests__/AGENTS.md` | 單元測試 |
 | E2E | `e2e/` | `e2e/AGENTS.md` | 端對端測試 |
 
-## Quick Start & Build Commands
+## 🛠️ Quick Start & Build
 
-### Development
 ```bash
-npm install                  # Install dependencies
-npm run dev                  # Start dev server (port 5173)
-npm run build               # Build for production (outputs to dist/)
-npm run preview             # Preview production build (port 5173)
-npm test                    # Run tests (Vitest with jsdom)
+npm install                  # 安裝專案依賴
+npm run dev                  # 啟動開發伺服器 (Port 5173)
+npm run build                # 生產環境編譯 (Vite + Tailwind CSS v4, 輸出至 dist/)
+npm run preview              # 本地預覽生產環境編譯結果 (Port 5173)
+npm test                     # 執行單元測試 (Vitest with jsdom)
 ```
-
-### Development Server Details
-- **Dev Server**: Vite on port 5173 by default (`npm run dev`)
-- **E2E Tests**: Playwright configured for port 5200 - see [playwright.config.ts](playwright.config.ts#L9)
-- **Preview**: `npm run preview` runs production build locally for testing
-- **Build Output**: `npm run build` creates `dist/` directory with Vite + Tailwind CSS v4
-
-### Testing Framework
-- **Unit Tests**: Vitest with jsdom - files in [src/__tests__/](src/__tests__/)
-- **E2E Tests**: Playwright in [e2e/](e2e/) directory - tests cover JSON import, quiz flow, full app flow
-- **Component Tests**: React Testing Library integration tests
-- **Requirement**: Run tests before pushing; add tests for new logic in `services/` and `hooks/`.
-
-### Environment Setup
-1. Create `.env` from `.env.example` (if available) or create manually.
-2. Required variables:
-   - `VITE_SUPABASE_URL`: Supabase project URL
-   - `VITE_SUPABASE_ANON_KEY`: Supabase anon/public key
-   - `GEMINI_API_KEY`: Google Gemini API key (or custom via AI config)
-
-## Project Architecture
-
-### Core App Structure
-- **index.tsx**: Root entry - wraps `App` with `AuthProvider` and `ThemeProvider` (dark/light mode)
-- **App.tsx**: Main logic with `useReducer` for `AppState`/`AppAction` - manages views, quiz modes, game mode toggle, bank sync
-- **index.html**: HTML entry point
-
-### Directory Structure (Root-based)
-```
-├── components/          # React components (functional, typed)
-├── services/            # Business logic (Supabase, AI, Storage, Analytics)
-├── contexts/            # React Contexts (Auth, Theme, Quiz callbacks)
-├── hooks/               # Custom domain hooks (8 total: Battle, ChunkedPractice, Achievements, Challenges, Streak, StudyStats, Sound, Keyboard)
-├── types/               # TypeScript definitions
-├── constants/           # App data (monsters, skills, achievements, dialogues)
-├── src/__tests__/       # Unit tests (Vitest)
-├── e2e/                 # E2E tests (Playwright)
-└── public/              # Static assets (battle graphics, sounds)
-```
-
-### Key Architecture Patterns
-
-**Service Layer + Domain Hooks Model**:
-- Components never access storage/Supabase directly
-- Services handle all I/O: [services/storage.ts](services/storage.ts) (localStorage), [services/cloudStorage.ts](services/cloudStorage.ts) (Supabase)
-- Domain hooks manage isolated features: [hooks/useBattleSystem.ts](hooks/useBattleSystem.ts), [hooks/useAchievements.ts](hooks/useAchievements.ts), [hooks/useChallenges.ts](hooks/useChallenges.ts), etc.
-
-**Dual Data Persistence**:
-- **Guest Mode**: Everything in localStorage (`mindspark_*` prefixed keys)
-- **User Mode**: Banks/questions from Supabase, learning data (mistakes, spaced repetition, streaks) in localStorage for device-specific persistence
-- **Auto-Sync**: On login via `syncLocalToCloud()` - mistakes and spaced repetition stay local by design (device-specific learning)
-
-**Game Mode Toggle**:
-- Global `gameMode` boolean in app state (controlled via [components/Settings.tsx](components/Settings.tsx))
-- When enabled: battle visual overlay activates, monsters appear, skill animations trigger, damage numbers fly
-- Full state persists to localStorage (`mindspark_battle_state`) to survive page refresh
-
-**Path Alias**:
-- `@/*` maps to project root `./*` - enables relative imports like `import { useAuth } from '@/contexts/AuthContext'`
-
-## Code Style Guidelines
-
-### Import Organization
-1. **Core**: `react`, `react-dom`, external libs.
-2. **Types**: `../types`.
-3. **Services/Utils**: `../services/*`, `../utils/*`.
-4. **Constants**: `../constants`.
-5. **Components**: `./Component`.
-6. **Hooks/Contexts**: `../hooks`, `../contexts`.
-7. **Assets**: Icons, images.
-
-### Component Structure
-- Use **functional components** with `React.FC<Props>`.
-- **Named exports** (e.g., `export const MyComponent...`).
-- **Interfaces** defined above the component.
-
-```typescript
-interface Props {
-  data: string[];
-}
-
-export const MyComponent: React.FC<Props> = ({ data }) => {
-  const [state, setState] = useState<string>('');
-  // ...
-};
-```
-
-### TypeScript
-- **Strict Typing**: No `any`. Use `unknown` or specific types.
-- **Explicit Returns**: Services must have return types.
-- **State**: `useState<T>(initial)`.
-
-### Naming
-- **Components/Files**: PascalCase (`QuizCard.tsx`).
-- **Functions/Vars**: camelCase (`handleSubmit`, `isLoading`).
-- **Constants**: SCREAMING_SNAKE_CASE (`MAX_RETRIES`).
-- **Booleans**: Prefix with `is`, `has`, `should`.
-
-## Integrations
-
-### Supabase (Cloud Storage)
-- **Auth**: Handled in [contexts/AuthContext.tsx](contexts/AuthContext.tsx)
-- **Data Sync**: Banks and questions stored in Supabase; learning data (mistakes, spaced repetition) stays in localStorage
-- **When User Logs In**: Auto-sync via `syncLocalToCloud()` merges local banks with cloud
-
-### AI Integration (Gemini + OpenAI Support)
-- **Config Storage**: Stored in `localStorage` under `mindspark_ai_config` with fields: `provider`, `apiKey`, `model`, `baseUrl` (optional)
-- **Service**: [services/ai.ts](services/ai.ts) - enforces strict JSON schema, auto-recovery for malformed responses
-- **Features**:
-  - PDF question generation via Google Gemini 1.5 (parses PDF files + generates questions)
-  - Configurable question type and language
-  - Few-shot examples + prompt templates for consistent quality
-- **Usage**: Accessed via [components/BankManager.tsx](components/BankManager.tsx) for file uploads
-
-### Achievement System
-- **Tracking**: Stored in localStorage with unlock status - see [hooks/useAchievements.ts](hooks/useAchievements.ts) and [services/achievements.ts](services/achievements.ts)
-- **Display**: Modal view of achievements (locked/unlocked)
-- **Data**: Achievement definitions in [constants/achievements.ts](constants/achievements.ts)
-
-### Gamification Features
-
-**Battle/RPG System** ([hooks/useBattleSystem.ts](hooks/useBattleSystem.ts)):
-- **Monster System**: 3-tier difficulty (Normal → Elite → Boss) with dynamic rotation
-- **Streak Triggering**: Skills unlock at streaks of 5, 10, 20, 30, 40, 50+
-- **Damage Calculation**: Base damage + skill multipliers + 15% critical hit (1.5-3.0x multiplier)
-- **Persistence**: Full state saved to `mindspark_battle_state` localStorage
-
-**Skill System** ([constants/skillsData.ts](constants/skillsData.ts)):
-- 6-tier progression system with unique attack animations (Fireball, Ice Arrow, etc.)
-- Each skill has base damage, critical chance, animation duration
-- Triggered automatically at streak milestones
-
-**Streak Tracking** ([hooks/useStreak.ts](hooks/useStreak.ts)):
-- Consecutive correct answers counter
-- Persists to localStorage, displayed on dashboard
-
-**Challenge System** ([hooks/useChallenges.ts](hooks/useChallenges.ts), [services/challenges.ts](services/challenges.ts)):
-- Leaderboard-style challenges with scoring
-- Cloud-backed ranking for user profiles
-
-**Study Features**:
-- **Micro-Learning with Focus Timer** ([components/MiniTimer.tsx](components/MiniTimer.tsx)): Pomodoro-style 25min default, configurable intervals
-- **Fatigue Detection**: Triggers rest break modal after N questions - see [components/RestBreakModal.tsx](components/RestBreakModal.tsx)
-- **Study Stats Dashboard** ([hooks/useStudyStats.ts](hooks/useStudyStats.ts), [components/StudyStatsCard.tsx](components/StudyStatsCard.tsx)): Total questions, correct%, time spent
-- **Sound Effects** ([hooks/useSoundEffects.ts](hooks/useSoundEffects.ts)): Howler.js-based audio with lazy loading
-
-**Learning Analytics** ([services/spacedRepetition.ts](services/spacedRepetition.ts)):
-- **SM-2 Algorithm**: Implements complete spaced repetition with easiness factor, interval calculation, repetition count
-- **Mistake Tracking**: Per-question mistake counts + last wrong answer + timestamp stored in `mindspark_recent_mistakes`
-- **Session Persistence**: Quiz progress auto-saves to `mindspark_quiz_session`; chunked mode uses `mindspark_chunk_draft:<sessionId>:<chunkIndex>` for mid-chunk restore
-- **Analytics Recording**: Both local (`recordLocalStudySession`) and cloud (`recordStudySession`) via [services/analytics.ts](services/analytics.ts)
-
-### Social Features
-- **Friend System**: Accept/reject friend requests with status tracking
-- **User Profiles**: See leaderboard, challenges, achievements of friends
-- **Social View** ([components/Social.tsx](components/Social.tsx)): Compare stats with friends
-- **Implementation**: [services/supabase.ts](services/supabase.ts) handles cloud queries
-
-## State Management
-
-**App-Level State** ([App.tsx](App.tsx)):
-- Uses `useReducer` with `AppState` and `AppAction` union types
-- Manages: quiz views, quiz modes (`random`/`mistake`/`retry_session`), game mode toggle, bank sync status
-- Global access via component prop drilling (intentionally simple for team readability)
-
-**Context & Hooks Pattern**:
-- [contexts/AuthContext.tsx](contexts/AuthContext.tsx): User auth state and login/logout
-- [contexts/ThemeContext.tsx](contexts/ThemeContext.tsx): Dark/light mode toggle with localStorage persistence
-- [contexts/QuizContext.tsx](contexts/QuizContext.tsx): Minimal context for quiz-mode callbacks (not global state container)
-- **8 Domain Hooks**: Each manages one feature in isolation:
-  - `useChunkedPractice`: Chunked session creation/restore/sync/draft handling
-  - `useBattleSystem`: Battle state, monster HP, skill triggers, animations
-  - `useAchievements`: Achievement unlock tracking
-  - `useChallenges`: Challenge scores and leaderboard data
-  - `useStreak`: Consecutive correct counter
-  - `useStudyStats`: Total questions, accuracy, study time
-  - `useSoundEffects`: Audio playback lifecycle
-  - `useKeyboardShortcuts`: Keyboard event handling for quiz navigation
-
-**Functional Updates**: Always use setState with previous state: `setState(prev => ({ ...prev, field: value }))`
-
-## Quiz Engine
-
-**Three Quiz Modes**:
-1. **Random**: All questions from selected bank in random order
-2. **Mistake**: Only questions from `mistakeLog` (wrong answers previously)
-3. **Retry Session**: Resume incomplete quiz session from `mindspark_quiz_session`
-4. **Chunked**: Practice by chunk session (`mindspark_practice_sessions`) with per-chunk restore draft
-
-**Question Types** ([types.ts](types.ts#L6-L10)):
-- Single-choice: `question.type === 'single'` - one correct answer (string match)
-- Multiple-choice: `question.type === 'multiple'` - set of correct answers (array subset match)
-
-**Answer Validation**:
-- Single: Direct string comparison
-- Multiple: Check if all selected answers are in correct set
-- Mistakes logged per question with timestamp
-
-**Real-time Feedback Cycle**:
-1. User submits answer → validates against correct answer
-2. Log mistake if wrong (increments mistake count, stores last error)
-3. Update spaced repetition interval (SM-2 calculation)
-4. Show explanation or auto-advance based on `showExplanation` flag
-5. Update streaks, achievements, damage on correct answer
-
-**Hint & Explanation System**:
-- Lazy state flags in [components/QuizCard.tsx](components/QuizCard.tsx): `showHint`, `showExplanation`
-- Revealed on demand, not auto-shown
-- Used for learning personalization
-
-## Data Persistence Architecture
-
-**localStorage Key Prefix Convention** ([services/storage.ts](services/storage.ts#L3-L18)):
-- All keys prefixed with `mindspark_` (e.g., `mindspark_banks`, `mindspark_recent_mistakes`)
-- Bulk cleanup: `localStorage.clear()` "nukes" all data safely
-
-**Persistent Storage Keys**:
-- `mindspark_banks`: Array of question banks (guest + cloud-synced)
-- `mindspark_recent_mistakes`: Last 5 incorrect session objects (FIFO rotation)
-- `mindspark_battle_state`: Full game mode state (damage, monsters, skills)
-- `mindspark_quiz_session`: In-progress quiz data (resume on page refresh)
-- `mindspark_practice_sessions`: Chunked practice sessions (guest fallback + dirty retry queue)
-- `mindspark_chunk_draft:<sessionId>:<chunkIndex>`: Mid-chunk restore snapshot
-- `mindspark_spaced_repetition`: SM-2 intervals and easiness factors per question
-- `mindspark_streak_data`: Current streak count
-- `mindspark_achievements`: Unlocked achievement IDs
-- `mindspark_settings`: User settings (rest interval, sound toggle, model name)
-- `mindspark_folders`: Question bank folder organization
-- `mindspark_bank_folder_map`: Bank-to-folder relationships
-- `mindspark_ai_config`: AI provider config (Gemini/OpenAI API keys, model, base URL)
-- `mindspark_study_sessions`: Local study analytics
-
-**Guest vs Authenticated Mode**:
-- **Guest**: All data in localStorage only, no Supabase access
-- **Authenticated**: Banks/questions fetched from Supabase, learning data stays in localStorage for device-specific tracking
-- **Sync**: On login, `syncLocalToCloud()` merges local banks with cloud (adds/updates)
-
-## Component Architecture Patterns
-
-**Modal Pattern**: 
-- Consistent open/close state management in modals: Settings, Share, Achievements, Challenge, RestBreak, Resume
-- See [components/Settings.tsx](components/Settings.tsx), [components/AchievementsModal.tsx](components/AchievementsModal.tsx) for examples
-- Controlled by parent app state or local modal state
-
-**Animation Variants**:
-- **Why Extracted**: Framer Motion variants extracted outside component to prevent re-renders on every update
-- **Example**: `QUIZ_CARD_ANIM` constants in [components/QuizCard.tsx](components/QuizCard.tsx#L38-L43)
-- **Pattern**: Define as module-level constant, import into component
-
-**Dashboard Cards Family**:
-- Consistent layout/spacing: AchievementsCard, StreakCard, RecentMistakesCard, StudyStatsCard
-- Props: `data`, `onAction?` (callback for modal opens)
-- Responsive grid layout via Tailwind
-
-**Battle Animation System**:
-- Separate components for each attack type:
-  - [components/FireballAttack.tsx](components/FireballAttack.tsx): Fireball trajectory and explosion
-  - [components/IceArrowAttack.tsx](components/IceArrowAttack.tsx): Projectile arrow animation
-  - [components/AttackEffect.tsx](components/AttackEffect.tsx): Damage indicator overlay
-  - [components/DamageNumber.tsx](components/DamageNumber.tsx): Floating damage text
-  - [components/SkillAnimation.tsx](components/SkillAnimation.tsx): Stat change animations
-- All use Framer Motion with precise timing for choreographed sequences
-
-## Testing Patterns
-
-**Unit Tests** (Vitest + jsdom):
-- Files in [src/__tests__/](src/__tests__/) mirror source structure
-- **Key test files**:
-  - [src/__tests__/spacedRepetition.test.ts](src/__tests__/spacedRepetition.test.ts): SM-2 algorithm validation
-  - [src/__tests__/useBattleSystem.test.ts](src/__tests__/useBattleSystem.test.ts): Damage, skill triggers, monster rotation
-- Focus on: business logic, state transitions, edge cases
-
-**E2E Tests** (Playwright):
-- Location: [e2e/](e2e/) directory
-- **Port**: Hardcoded to 5200 in [playwright.config.ts](playwright.config.ts#L9)
-- **Coverage**:
-  - [e2e/json-import.spec.ts](e2e/json-import.spec.ts): Question bank import flow
-  - [e2e/quiz-flow.spec.ts](e2e/quiz-flow.spec.ts): Quiz start → answer → completion
-  - [e2e/mindspark.spec.ts](e2e/mindspark.spec.ts): Full app flow with game mode
-
-**Testing Guidelines**:
-- Add tests for all new logic in `services/` and `hooks/`
-- Run `npm test` before pushing
-- E2E should cover critical user journeys
-- Use React Testing Library for component assertions (preferred over snapshot tests)
-## Keyboard Shortcuts
-
-**Quiz Navigation** ([hooks/useKeyboardShortcuts.ts](hooks/useKeyboardShortcuts.ts)):
-- **Enter**: Submit answer / advance to next question
-- **Space**: Toggle hint visibility
-- **Ctrl/Cmd + K**: Open command palette or quick settings
-- **Escape**: Close modals
-
-These are implemented for accessibility and power-user experience. Add new shortcuts to the hook, not scatter them across components.
-
-## Error Handling & Security
-
-**Service Layer Error Handling**:
-- All storage/cloud functions wrap operations with try-catch
-- Return sensible defaults on error (empty array, false, etc.)
-- See [services/storage.ts](services/storage.ts#L26-L35) for pattern
-- Never throw uncaught errors to UI—wrap in try-catch at component level
-
-**Type Safety**:
-- **Strict TypeScript**: No `any` types anywhere
-- Use `unknown` for uncertain values, then narrow with type guards
-- Define interfaces in [types.ts](types.ts) and [types/battleTypes.ts](types/battleTypes.ts)
-- Services must have explicit return types
-
-**Input Validation**:
-- Question ID validation in spacedRepetition service
-- Grade range checking (0-5 for SM-2)
-- Folder name length limits
-- Bank name validation before save
-
-**XSS Prevention**:
-- DOMPurify imported (see [package.json](package.json#L8)) but used sparingly
-- No `dangerouslySetInnerHTML` in codebase
-- All user input (question text, explanations) stored as plain text
-- Render as text content, not HTML
-
-## Performance Optimization
-
-**Memoization Patterns**:
-- Animation variants extracted to module level (prevents recreation)
-- Question pool filtering memoized with `useMemo` for complex filters
-- Mastery calculations cached when referenced multiple times
-
-**Storage Optimization**:
-- Question data cached locally to avoid repeated cloud fetches
-- Cache invalidated on bank selection change
-- Mistake log limited to 5 most recent (FIFO rotation prevents unbounded growth)
-
-**Bundle & Lazy Loading**:
-- Modal components lazy-loaded (conditional render)
-- Sound effects lazy init on first interaction via `use-sound` hook + Howler.js
-- Battle animations only loaded when game mode enabled
-
-**Tailwind & CSS**:
-- Tailwind CSS v4 via `@tailwindcss/vite` plugin
-- Custom animations in [index.css](index.css) for battle effects
-- Dark mode via Tailwind dark variant (toggled in ThemeContext)
-
-## Git & Review
-
-### Commit Style
-- **Imperative**: "Add feature", "Fix bug".
-- **Descriptive**: "Fix white screen: add index.tsx entry".
-
-### Pre-Commit Checklist
-- [ ] `npm run build` passes.
-- [ ] `npm test` passes.
-- [ ] No `any` types.
-- [ ] Imports sorted.
-- [ ] Components typed properly.
-- [ ] New services/hooks have tests.
-- [ ] No XSS vulnerabilities (no `dangerouslySetInnerHTML`).
-- [ ] 完成動作後請以繁體中文說一次。
+- **開發伺服器**: 預設 Vite 運行於 Port 5173。`vite.config.ts` 已將 React 核心與 Recharts/Framer-motion 強制打包在同一 `vendor-ui-core` chunk，防止 `forwardRef` undefined 錯誤。
+- **E2E 測試**: Playwright 設定於 Port 5200 (執行 `npx playwright test`)，涵蓋匯入、測驗與完整 RPG 戰鬥流程。
+- **測試規範**: 修改 `services/` 或 `hooks/` 後，推送前必須通過單元測試，新邏輯須補上對應測試。
+
+## 🏗️ 專案架構與設計模式
+
+- **核心目錄結構**:
+  - `components/`: UI 元件與動畫（Framer Motion）
+  - `services/`: 業務邏輯、Supabase、AI、儲存與分析記錄
+  - `contexts/`: React Contexts (Auth, Theme)
+  - `hooks/`: 8大領域獨立 Hooks (Battle, ChunkedPractice, Achievements, Challenges, Streak, StudyStats, Sound, Keyboard)
+  - `types/` & `constants/`: 型別定義與靜態資料（怪物、技能、成就等）
+- **Service Layer + Domain Hooks 模式**:
+  - 元件嚴禁直接存取儲存或 Supabase。所有 I/O 由 `services/` 處理，狀態與領域邏輯由自訂 `hooks/` 管理。
+- **雙重數據持久化與並發**:
+  - 訪客模式：資料存於 localStorage (以 `mindspark_` 為前綴)。從 localStorage 載入設定需透過 Type Guards/Schema 檢查防範惡意注入。
+  - 登入模式：Question banks 由 Supabase 託管，答題紀錄與間隔重複（SM-2）留於本地。登入自動執行 `syncLocalToCloud()`。
+  - 同步機制：導入 `runWithSyncLock` (Web Locks 併發鎖) 保護同步安全；雲端 upsert 引入「預寫 dirty-bank」與成功後 `removeDirtyBank` 機制防止中斷丟失。
+  - 分階段練習：session 使用 `mindspark_practice_sessions`，進行中恢復使用 `mindspark_chunk_draft:<sessionId>:<chunkIndex>`，同步使用 LWW (Last-Write-Wins) 策略。
+- **RPG 戰鬥與遊戲化機制**:
+  - 依答題 streak (5, 10, 20...) 觸發技能與傷害計算。戰鬥狀態保存於 `mindspark_battle_state` (有載入安全範圍守衛，異常即重置)。
+- **AI 整合**:
+  - [services/ai.ts](file:///c:/Users/user/Desktop/Quiz-app-/services/ai.ts) 提供 PDF 解析與題目生成。支援 strict JSON schema 與出錯自動修復。
+- **路徑別名**: `@/*` 對應專案根目錄 `./*`，請優先使用。
+
+## 📝 程式碼規範與安全
+
+- **TypeScript & Import**:
+  - 嚴格禁用 `any`，一律使用具體型別或 `unknown` + 型別守衛。
+  - 依 Core → Types → Services/Utils → Constants → Components → Hooks/Contexts 順序整理導入。
+- **元件結構**:
+  - 使用具名導出的函式元件 `React.FC<Props>`。Props 接口定義於元件上方。
+- **命名規則**: 元件/檔案使用 PascalCase；變數/函式使用 camelCase；常數使用 SCREAMING_SNAKE_CASE。
+- **鍵盤快捷鍵**:
+  - [useKeyboardShortcuts.ts](file:///c:/Users/user/Desktop/Quiz-app-/hooks/useKeyboardShortcuts.ts) 統一處理 Enter (送出/下一題)、Space (提示)、Esc (關閉 Modal) 等，以 `handlersRef` 模式將 callbacks 與監聽器解耦，監聽器 dependency 設為空，避免重複綁定。
+- **錯誤處理與防禦**:
+  - 儲存/雲端呼叫均需用 try-catch 包裹並返回安全預設值。
+  - 禁用 `dangerouslySetInnerHTML` 以防止 XSS，所有使用者輸入皆渲染為純文字。
+- **效能與記憶體優化**:
+  - Framer Motion 的 animation variants 必須提取到元件外部定義，防止重複渲染。
+  - 音效播放元件引入 `activeAudioContextsRef` 在 unmount 時強制 close() 釋放，防範記憶體洩漏。
+  - 重度過濾與計算使用 `useMemo`/`useCallback`。`App.tsx` + `useQuizEngine.ts` 回調必須使用 `useCallback` 封裝，防止競態條件。
+
+## 📈 Git 提交與記憶協議 (Memory Protocol)
+
+- **Commit 規範**: 使用祈使句開頭（例如 `"Add feature"`, `"Fix bug"`）。
+- **Pre-commit 檢查清單**:
+  - [ ] `npm run build` 通過
+  - [ ] `npm test` 通過
+  - [ ] 無 `any` 類型且導入已排序
+  - [ ] 無 XSS 漏洞
+- **E2E 測試規範**: 因使用自製 `ConfirmDialog` 取代原生對話框，E2E 測試必須改為點擊 Confirm 按鈕，不得使用 `page.on('dialog')` 監聽。
+- **專案記憶維護與 MCP 輔助**:
+  - 優先使用 `codebase-memory-mcp` (如 `search_graph`, `trace_path` 等) 與專案記憶 MCP (如 `search_memory`, `get_aliases` 等) 快速且精準地獲取檔案與程式碼資訊，防範大範圍 recursive grep 造成 Token 耗費。
+  - 任務開始前先閱讀根目錄的 `MEMORY.md`。
+  - 重大變更或架構重構後，必須同步更新 `MEMORY.md` 以及 [docs/DEVELOPMENT_LOG.md](file:///c:/Users/user/Desktop/Quiz-app-/docs/DEVELOPMENT_LOG.md)。
+  - 完成動作後請以繁體中文向使用者說明，若使用原始人說話風格，只需在最後對話總結時說一次
 
 <!-- >>> project-memory protocol >>> -->
 ## Memory Refresh Protocol

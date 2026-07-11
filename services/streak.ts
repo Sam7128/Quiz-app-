@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { STORAGE_KEYS } from './storage';
+import { isAbortError } from '../utils/isAbortError';
 
 export interface StreakData {
   currentStreak: number;
@@ -23,6 +24,10 @@ export const getCloudStreak = async (): Promise<StreakData | null> => {
   const data = streakRows?.[0];
 
   if (error) {
+    if (isAbortError(error)) {
+      console.info('Fetch streak aborted gracefully.');
+      return null;
+    }
     console.error('Error fetching streak:', error);
     return null;
   }

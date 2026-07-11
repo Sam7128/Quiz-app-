@@ -149,7 +149,7 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
         console.log('Verified retry success toast');
     });
 
-    test('同步容錯與重試機制：部分同步失敗，更新本地 metadata 只留失敗者', async ({ page }) => {
+    test('同步容錯與重試機制：部分同步失敗，更新本地 metadata 的 cloudSyncedAt', async ({ page }) => {
         // 1. 初始化本地資料 (Success Bank & Failed Bank)
         await page.addInitScript(() => {
             localStorage.setItem('sb-aotvcbfrgsxibemsogoh-auth-token', JSON.stringify({
@@ -263,15 +263,20 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
         await expect(partialToast).toBeVisible({ timeout: 15000 });
         console.log('Verified partial-success toast');
 
-        // 4. 驗證本地 metadata 是否僅剩 Failed Bank
+        // 4. 驗證本地 metadata，成功的題庫應打上 cloudSyncedAt，失敗的則沒有
         const localMetaAfter = await page.evaluate(() => {
             return localStorage.getItem('mindspark_banks_meta');
         });
         expect(localMetaAfter).not.toBeNull();
         const parsed = JSON.parse(localMetaAfter!);
-        expect(parsed.length).toBe(1);
-        expect(parsed[0].name).toBe('Failed Bank');
-        console.log('Verified local storage contains only failed bank metadata');
+        expect(parsed.length).toBe(2);
+        const successBank = parsed.find((b: { name: string; cloudSyncedAt?: number }) => b.name === 'Success Bank');
+        const failedBank = parsed.find((b: { name: string; cloudSyncedAt?: number }) => b.name === 'Failed Bank');
+        expect(successBank).toBeDefined();
+        expect(successBank.cloudSyncedAt).toBeDefined();
+        expect(failedBank).toBeDefined();
+        expect(failedBank.cloudSyncedAt).toBeUndefined();
+        console.log('Verified local storage retains both banks and updates cloudSyncedAt correctly');
     });
 
     test('損壞的 AI 設定容錯：當 localStorage 含有無效 JSON 時，設定頁面應可順利載入並自動回退為預設值', async ({ page }) => {

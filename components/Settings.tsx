@@ -388,6 +388,18 @@ const SettingsComponent: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode,
                 建議：金鑰正以長期保存模式儲存在 localStorage 中，可能面臨被惡意腳本讀取的風險。為求安全，建議關閉下方「記住金鑰」。
               </p>
             )}
+            {config.provider === 'nvidia' && config.baseUrl && !config.baseUrl.includes('api.nvidia.com') && (
+              <p className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 mt-1 animate-in fade-in duration-200">
+                <AlertTriangle size={12} className="text-amber-500" />
+                <span>
+                  注意：自訂 AI 端點受 CSP connect-src 限制保護，若連線失敗，請參考{' '}
+                  <a href="/docs/SECURITY_LIMITATIONS.md" className="underline text-brand-600 hover:text-brand-700" target="_blank" rel="noopener noreferrer">
+                    安全邊界與限制指南
+                  </a>{' '}
+                  手動修改 vercel.json。
+                </span>
+              </p>
+            )}
             <div className="flex items-center justify-between p-3 bg-slate-50/60 dark:bg-black/20 border border-slate-200/60 dark:border-white/10 rounded-xl">
               <div className="text-xs">
                 <div className="font-bold text-slate-700 dark:text-slate-200">記住金鑰</div>

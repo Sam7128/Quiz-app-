@@ -105,6 +105,7 @@ python ".agents\skills\project-memory-refresh\scripts\ensure_project_mcp_configs
 | 中文搜尋無結果 | ✅ 重建索引即修復 |
 | `quality_checks` 欄位缺失 | ✅ 新版 `get_memory_health` 即包含 |
 | `file_hashes` / UTC `built_at` 缺失 | ✅ 重建索引即修復 |
+| 缺乏 codebase-memory-mcp 可用性/新鮮度報告 | ✅ 新增 `codebase_graph_status` 整合與 `bridge_consistent` 檢測 |
 
 > **注意**：`ensure_project_mcp_configs.py` 是冪等的。若設定已是最新版，會印出
 > `Wrapper ready` 與 `already present` 而非重新安裝，安全重跑。
@@ -145,7 +146,7 @@ python ".agents\skills\project-memory-refresh\scripts\ensure_project_mcp_configs
 1. **`.project-memory/project_memory_mcp_entry.py`** 存在，且內容不含任何 `C:\Users\...` 硬編碼路徑
 2. **`.memory-index/index.json`** 存在，且含有 `"file_hashes"` 與帶時區的 `"built_at"` 欄位
 3. **MCP 設定**已寫入（`.gemini/settings.json` 含 `"project-memory"` 區塊）
-4. 執行健康檢查：`get_memory_health` 回傳 `quality_checks` 全部為 `true`、`warnings` 為空
+4. 執行健康檢查：`get_memory_health` 回傳 `quality_checks` 包含 `bridge_consistent` 等皆為 `true`，且 `codebase_graph_status` 正確報告外部 AST 可用性與新鮮度。
 
 ---
 

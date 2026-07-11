@@ -206,7 +206,8 @@ Line 2.
 
     def test_health_reports_hash_stale_warning(self) -> None:
         from build_project_memory_index import INDEX_DIR, INDEX_FILE, build_index, write_index_atomic
-        from project_memory_mcp_server import summarize_index_health
+        from project_memory_mcp_server import get_memory_health_for_root, ProjectMemoryMCP
+        import asyncio
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             (root / "MEMORY.md").write_text("## Entry Points\n- old entry\n", encoding="utf-8")
@@ -215,7 +216,12 @@ Line 2.
             write_index_atomic(index_dir / INDEX_FILE, build_index(root))
             (root / "MEMORY.md").write_text("## Entry Points\n- changed entry\n", encoding="utf-8")
 
-            health = summarize_index_health(root)
+            class MockServer:
+                _last_checked_time = 0.0
+                _last_health_result = None
+
+            server = MockServer()
+            health = asyncio.run(get_memory_health_for_root(root, server))
             self.assertTrue(any("index is stale" in warning for warning in health["warnings"]))
 
     def test_corrupted_index_recovers(self) -> None:

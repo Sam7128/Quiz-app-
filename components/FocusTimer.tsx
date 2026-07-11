@@ -15,12 +15,22 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({ onSessionComplete }) => 
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [completedSessions, setCompletedSessions] = useState(0);
   const audioTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const activeAudioContextsRef = useRef<AudioContext[]>([]);
 
-  // Cleanup audio timers on unmount
+  // Cleanup audio timers and contexts on unmount
   useEffect(() => {
     return () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       audioTimersRef.current.forEach(timer => clearTimeout(timer));
+      activeAudioContextsRef.current.forEach(ctx => {
+        try {
+          if (ctx.state !== 'closed') {
+            ctx.close();
+          }
+        } catch (err) {
+          console.error('[FocusTimer] Unmount closing AudioContext failed:', err);
+        }
+      });
     };
   }, []);
 
@@ -60,6 +70,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({ onSessionComplete }) => 
     try {
       const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       const audioContext = new AudioContextClass();
+      activeAudioContextsRef.current.push(audioContext);
+
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
       
@@ -79,6 +91,7 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({ onSessionComplete }) => 
       const timer = setTimeout(() => {
         try {
           audioContext.close();
+          activeAudioContextsRef.current = activeAudioContextsRef.current.filter(ctx => ctx !== audioContext);
         } catch (closeErr) {
           console.error('[FocusTimer] Failed to close AudioContext:', closeErr);
         }

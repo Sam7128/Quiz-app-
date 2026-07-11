@@ -1,8 +1,22 @@
 // types/global.d.ts
-// 擴充 Window 宣告，包含同步鎖，用以防範重複同步/競態條件
+// 擴充 Navigator 宣告，包含 Web Locks API，以供並發同步鎖使用
+
+interface NavigatorLocksManager {
+  request(
+    name: string,
+    callback: (lock: any) => Promise<any>
+  ): Promise<any>;
+  request(
+    name: string,
+    options: { mode?: 'shared' | 'exclusive'; ifAvailable?: boolean; steal?: boolean; signal?: AbortSignal },
+    callback: (lock: any | null) => Promise<any>
+  ): Promise<any>;
+  query(): Promise<{ pending: any[]; held: any[] }>;
+}
+
 declare global {
-  interface Window {
-    __MINDSPARK_SYNC_LOCK__?: boolean;
+  interface Navigator {
+    locks?: NavigatorLocksManager;
   }
 }
 

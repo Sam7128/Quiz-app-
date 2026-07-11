@@ -306,5 +306,57 @@ describe('saveCloudQuestions', () => {
     expect(selectMock).not.toHaveBeenCalled();
     expect(deleteMock).not.toHaveBeenCalled();
   });
+
+  it('marks bank dirty before upsert then clears on success', async () => {
+    const fixedUuid = '123e4567-e89b-12d3-a456-426614174000';
+    const upsertMock = vi.fn().mockResolvedValue({ error: null });
+    const eqMock = vi.fn().mockResolvedValue({
+      data: [{ id: fixedUuid }],
+      error: null,
+    });
+    const selectMock = vi.fn().mockReturnValue({ eq: eqMock });
+
+    mocks.from.mockReturnValue({
+      upsert: upsertMock,
+      select: selectMock,
+    });
+
+    const questions: Question[] = [
+      {
+        id: fixedUuid,
+        question: 'Q1',
+        options: ['A', 'B'],
+        answer: 'A',
+        type: 'single',
+      },
+    ];
+
+    await saveCloudQuestions('bank-success', questions);
+
+    const dirty = JSON.parse(localStorage.getItem('mindspark_dirty_banks') || '[]');
+    expect(dirty).not.toContain('bank-success');
+  });
+
+  it('marks bank dirty and keeps it when upsert fails', async () => {
+    const upsertMock = vi.fn().mockResolvedValue({ error: { message: 'Upsert failed' } });
+    mocks.from.mockReturnValue({
+      upsert: upsertMock,
+    });
+
+    const questions: Question[] = [
+      {
+        id: '123e4567-e89b-12d3-a456-426614174000',
+        question: 'Q1',
+        options: ['A', 'B'],
+        answer: 'A',
+        type: 'single',
+      },
+    ];
+
+    await expect(saveCloudQuestions('bank-fail', questions)).rejects.toThrow();
+
+    const dirty = JSON.parse(localStorage.getItem('mindspark_dirty_banks') || '[]');
+    expect(dirty).toContain('bank-fail');
+  });
 });
 

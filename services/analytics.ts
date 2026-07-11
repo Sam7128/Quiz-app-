@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { STORAGE_KEYS } from './storage';
+import { isAbortError } from '../utils/isAbortError';
 
 
 export interface StudyStats {
@@ -87,6 +88,10 @@ export const getStudyStats = async (): Promise<StudyStats | null> => {
   if (error) {
     // PGRST116 means no rows found (not truly an error for analytics)
     if (error.code !== 'PGRST116') {
+      if (isAbortError(error)) {
+        console.info('Fetch study stats aborted gracefully.');
+        return null;
+      }
       console.error('Error fetching study stats:', error);
       return null;
     }

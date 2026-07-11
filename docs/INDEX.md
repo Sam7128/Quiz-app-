@@ -1,6 +1,6 @@
 # Docs Index
 
-- Updated: `2026-06-12 16:38`
+- Updated: `2026-07-11 20:57`
 - Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs.
 
 ## archive
@@ -29,8 +29,11 @@
 ## root
 - `battle-state-diagram.md` - Battle System State Diagram
 - `DEVELOPMENT_LOG.md` - Development Log
+- `goal_audit_prompt.md` - MindSpark 全方位架構與安全性窮盡審計 `/goal` 提示詞模板
 - `knowledge-graph-exploration-notes-2026-03-08.md` - 知識圖 / 視覺化筆記功能探索整理
 - `knowledge-graph-workspace-implementation-report.md` - 知識圖工作區 (Knowledge Graph Workspace) — 實作報告
+- `SECURITY_AND_ARCHITECTURE_AUDIT_REPORT_V2.md` - MindSpark 全方位系統架構與安全性窮盡審計報告 (V2 - 終極窮盡版)
 - `SECURITY_AND_LOGIC_AUDIT_REPORT.md` - MindSpark 專案安全性與邏輯風險稽核報告
+- `SECURITY_LIMITATIONS.md` - MindSpark 安全邊界與限制指南 (Security Limitations Guide)
 - `SPECIFICATION.md` - MindSpark System Specification
 - `SUPABASE_SECURITY_GUIDE.md` - Supabase Security Hardening Configuration Guide

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import type { Dispatch } from 'react';
 import { AppAction, BankMetadata } from '../types';
 import {
@@ -19,6 +19,7 @@ interface UseBankManagerParams {
   dispatch: Dispatch<AppAction>;
   banks: BankMetadata[];
   selectedQuizBankIds: string[];
+  user: unknown;
 }
 
 interface UseBankManagerReturn {
@@ -36,43 +37,64 @@ export const useBankManager = ({
   repository,
   dispatch,
   banks,
-  selectedQuizBankIds
+  selectedQuizBankIds,
+  user
 }: UseBankManagerParams): UseBankManagerReturn => {
   const confirmDialog = useConfirm();
   const toast = useToast();
+  const isRefreshingRef = useRef(false);
 
   const refreshBanksData = useCallback(async () => {
-    let latest = await repository.getBanks();
+    if (isRefreshingRef.current) {
+      console.log('[BankManager] refreshBanksData already in progress, skipping');
+      return [];
+    }
+    isRefreshingRef.current = true;
 
-    const localMeta = getBanksMeta();
-    if (localMeta.length > 0 && latest.length === 0) {
-      if (await confirmDialog({ title: '同步題庫', message: '偵測到您在本地端有題庫，但雲端是空的。是否要將本地題庫上傳至雲端同步？' })) {
-        const syncResult = await repository.syncLocalToCloud(localMeta);
-        latest = await repository.getBanks();
-        if (syncResult.failed.length === 0) {
-          localStorage.removeItem(STORAGE_KEYS.BANKS_META);
-          toast.success('同步完成！');
-        } else if (syncResult.successIds.length > 0) {
-          const failedMeta = localMeta.filter(b => syncResult.failed.some(f => f.id === b.id));
-          localStorage.setItem(STORAGE_KEYS.BANKS_META, JSON.stringify(failedMeta));
-          toast.warning(`同步部分成功！${syncResult.successIds.length} 個題庫同步成功，${syncResult.failed.length} 個失敗。`);
-        } else {
-          toast.error(`同步失敗！所有 ${syncResult.failed.length} 個題庫同步失敗，請稍後重試。`);
+    try {
+      let latest = await repository.getBanks();
+
+      const localMeta = getBanksMeta();
+      const unsyncedLocalMeta = localMeta.filter(b => !b.cloudSyncedAt);
+
+      if (user && unsyncedLocalMeta.length > 0) {
+        const message = latest.length === 0
+          ? '偵測到您在本地端有題庫，但雲端是空的。是否要將本地題庫上傳至雲端同步？'
+          : `偵測到您在本地端有 ${unsyncedLocalMeta.length} 個新題庫尚未同步至雲端。是否要上傳同步？`;
+
+        if (await confirmDialog({ title: '同步題庫', message })) {
+          try {
+            const syncResult = await repository.syncLocalToCloud(unsyncedLocalMeta);
+            latest = await repository.getBanks();
+            if (syncResult.failed.length === 0) {
+              toast.success('同步完成！');
+            } else if (syncResult.successIds.length > 0) {
+              toast.warning(`同步部分成功！${syncResult.successIds.length} 個題庫同步成功，${syncResult.failed.length} 個失敗。`);
+            } else {
+              toast.error(`同步失敗！所有 ${syncResult.failed.length} 個題庫同步失敗，請稍後重試。`);
+            }
+          } catch (err) {
+            console.error('[BankManager] Sync failed with exception:', err);
+            const msg = err instanceof Error ? err.message : String(err);
+            toast.error(`同步失敗：${msg}`);
+          }
         }
       }
+
+      const folderMap = getBankFolderMap();
+      latest = latest.map(b => ({
+        ...b,
+        folderId: Object.prototype.hasOwnProperty.call(folderMap, b.id) ? folderMap[b.id] : b.folderId
+      }));
+
+      const latestFolders = getFolders();
+      dispatch({ type: 'sync_banks_data', banks: latest, folders: latestFolders });
+
+      return latest;
+    } finally {
+      isRefreshingRef.current = false;
     }
-
-    const folderMap = getBankFolderMap();
-    latest = latest.map(b => ({
-      ...b,
-      folderId: Object.prototype.hasOwnProperty.call(folderMap, b.id) ? folderMap[b.id] : b.folderId
-    }));
-
-    const latestFolders = getFolders();
-    dispatch({ type: 'sync_banks_data', banks: latest, folders: latestFolders });
-
-    return latest;
-  }, [confirmDialog, dispatch, repository, toast]);
+  }, [confirmDialog, dispatch, repository, toast, user]);
 
   const handleCreateFolder = useCallback((name: string) => {
     createFolder(name);

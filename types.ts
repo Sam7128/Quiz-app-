@@ -46,6 +46,7 @@ export interface BankMetadata {
   questionCount: number;
   description?: string;
   folderId?: string | null; // Optional reference to a parent folder
+  cloudSyncedAt?: number;
 }
 
 export type AppView = 'dashboard' | 'quiz' | 'mistakes' | 'manager' | 'guide' | 'social' | 'graph';

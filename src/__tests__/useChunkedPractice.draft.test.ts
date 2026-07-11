@@ -283,4 +283,43 @@ describe('useChunkedPractice draft lifecycle', () => {
       expect(secondRun.result.current.quizEngine.quizState.currentQuestionIndex).toBe(4);
     });
   });
+
+  it('preserves existing draft when beforeunload fires with null latestProgressRef', async () => {
+    const { repository } = createRepository(createQuestions(10));
+    const onStartChunkQuiz = vi.fn(async () => {});
+
+    const { result } = renderHook(() => useChunkedPractice({
+      repository,
+      banks,
+      selectedQuizBankIds: ['bank-a'],
+      toast,
+      onStartChunkQuiz,
+    }));
+
+    let sessionId = '';
+    await act(async () => {
+      const session = await result.current.createSession(5);
+      sessionId = session?.id ?? '';
+    });
+
+    saveChunkDraft({
+      sessionId,
+      chunkIndex: 0,
+      currentQuestionIndex: 5,
+      score: 5,
+      wrongQuestionIds: [],
+      pendingSkill: null,
+      updatedAt: Date.now()
+    });
+
+    await act(async () => {
+      await result.current.startChunk(sessionId, 0);
+    });
+
+    act(() => {
+      window.dispatchEvent(new Event('beforeunload'));
+    });
+
+    expect(getChunkDraft(sessionId, 0)?.currentQuestionIndex).toBe(5);
+  });
 });
