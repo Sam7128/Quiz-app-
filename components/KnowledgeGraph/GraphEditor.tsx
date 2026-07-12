@@ -25,8 +25,11 @@ import { graphToMermaid, mermaidToGraph } from '@/services/mermaidBridge';
 import { useToast } from '@/contexts/ToastContext';
 
 import ConceptNode from './ConceptNode';
+import StickyNoteNode from './StickyNoteNode';
 import { NodeEditPanel } from './NodeEditPanel';
 import { GraphToolbar } from './GraphToolbar';
+import { GraphNotesPanel, renameNoteKey } from './GraphNotesPanel';
+import { NotesSearch } from './NotesSearch';
 
 // Convert our GraphNode → React Flow node
 function toRFNode(node: GraphNode): RFNode {
@@ -144,6 +147,7 @@ const nodeTypes = {
   concept: ConceptNode,
   rounded: ConceptNode,
   diamond: ConceptNode,
+  sticky: StickyNoteNode,
 };
 
 // ── Inner Editor (must be inside ReactFlowProvider) ────────────────
@@ -162,6 +166,8 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
   // Initialise RF state from graph document
   const [nodes, setNodes, onNodesChange] = useNodesState(graph.nodes.map(toRFNode));
   const [edges, setEdges, onEdgesChange] = useEdgesState(graph.edges.map(toRFEdge));
+  const [notesDict, setNotesDict] = useState<Record<string, string>>(graph.notes || {});
+  const [activeSidePanel, setActiveSidePanel] = useState<'edit' | 'notes' | 'search' | null>(null);
 
   const [readingMode, setReadingMode] = useState<ReadingMode>(graph.viewState.readingMode);
   const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
@@ -186,6 +192,7 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
       ...graph,
       nodes: fromRFNodes(nodes),
       edges: fromRFEdges(edges),
+      notes: notesDict,
       viewState: { ...graph.viewState, readingMode },
       updatedAt: new Date().toISOString(),
     };
@@ -193,7 +200,7 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
     if (!result.success && result.error) {
       toast.warning(result.error);
     }
-  }, [graph, nodes, edges, readingMode, toast]);
+  }, [graph, nodes, edges, notesDict, readingMode, toast]);
 
   const scheduleSave = useCallback(() => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
@@ -215,8 +222,8 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
     };
   }, [flushSave]);
 
-  // Trigger save on node/edge changes
-  useEffect(() => { scheduleSave(); }, [nodes, edges, readingMode]);
+  // Trigger save on node/edge/notes changes
+  useEffect(() => { scheduleSave(); }, [nodes, edges, notesDict, readingMode]);
 
   // ── Handlers ──────────────────────────────────────────────────
 
@@ -264,6 +271,33 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
       type: 'concept',
     };
     setNodes((nds) => [...nds, newNode]);
+  }, [readOnly, nodes, edges, pushState, setNodes, screenToFlowPosition, toast]);
+
+  const handleAddSticky = useCallback(() => {
+    if (readOnly) return;
+    const currentStickyCount = nodes.filter((n) => n.type === 'sticky').length;
+    if (currentStickyCount >= GRAPH_LIMITS.MAX_STICKY_NOTES) {
+      toast.warning(`每張圖表最多只能有 ${GRAPH_LIMITS.MAX_STICKY_NOTES} 個便利貼`);
+      return;
+    }
+    if (nodes.length >= GRAPH_LIMITS.MAX_NODES) {
+      toast.warning(`每張圖表最多只能有 ${GRAPH_LIMITS.MAX_NODES} 個節點`);
+      return;
+    }
+    pushState(nodes, edges);
+
+    const id = `node-${crypto.randomUUID().slice(0, 8)}`;
+    const center = screenToFlowPosition({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+    const newSticky: RFNode = {
+      id,
+      position: { x: center.x + (Math.random() - 0.5) * 40, y: center.y + (Math.random() - 0.5) * 40 },
+      data: {
+        title: '',
+        label: '',
+      },
+      type: 'sticky',
+    };
+    setNodes((nds) => [...nds, newSticky]);
   }, [readOnly, nodes, edges, pushState, setNodes, screenToFlowPosition, toast]);
 
   const handleDeleteSelected = useCallback(() => {
@@ -314,13 +348,18 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
     // Show property panel on click (all modes, desktop only)
     if (!readOnly) {
       setEditingNodeId(node.id);
+      if (node.type === 'sticky' && activeSidePanel === 'notes') {
+        setActiveSidePanel('edit');
+      }
     }
-  }, [readingMode, readOnly, setNodes]);
+  }, [readingMode, readOnly, activeSidePanel, setNodes]);
 
   // Double-click node: open edit panel (or focus title) on desktop only
   const handleNodeDoubleClick = useCallback((_: React.MouseEvent, node: RFNode) => {
     if (readOnly) return;
-    setEditingNodeId(node.id);
+    if (node.type !== 'sticky') {
+      setEditingNodeId(node.id);
+    }
   }, [readOnly]);
 
   // Click on blank canvas: hide edit panel
@@ -518,6 +557,7 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
         <GraphToolbar
           readingMode={readingMode}
           onAddNode={handleAddNode}
+          onAddSticky={handleAddSticky}
           onDeleteSelected={handleDeleteSelected}
           onUndo={handleUndo}
           onRedo={handleRedo}
@@ -532,6 +572,11 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
           readOnly={readOnly}
           connectMode={connectMode}
           onToggleConnectMode={() => setConnectMode((c) => !c)}
+          onToggleSidePanel={(panel) => {
+            setActiveSidePanel((current) => (current === panel ? null : panel));
+          }}
+          activeSidePanel={activeSidePanel}
+          hasSelectedConcept={!!(editingNode && editingNode.type !== 'sticky')}
         />
       )}
 
@@ -581,7 +626,35 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
         </div>
 
         {/* Side panel */}
-        {editingNode && (
+        {activeSidePanel === 'search' && (
+          <NotesSearch
+            nodes={nodes}
+            notes={notesDict}
+            onChangeNotes={setNotesDict}
+            onSelectNode={(nodeId) => {
+              setEditingNodeId(nodeId);
+              const node = nodes.find((n) => n.id === nodeId);
+              if (node && node.type !== 'sticky') {
+                setActiveSidePanel('notes');
+              } else {
+                setActiveSidePanel('edit');
+              }
+            }}
+            selectedNodeId={editingNodeId}
+            onClose={() => setActiveSidePanel(null)}
+          />
+        )}
+
+        {activeSidePanel === 'notes' && editingNode && editingNode.type !== 'sticky' && (
+          <GraphNotesPanel
+            nodeTitle={((editingNode.data.title || '') as string).trim()}
+            notes={notesDict}
+            onChangeNotes={setNotesDict}
+            onClose={() => setActiveSidePanel(null)}
+          />
+        )}
+
+        {(activeSidePanel === 'edit' || (!activeSidePanel && editingNode)) && editingNode && editingNode.type !== 'sticky' && (
           <NodeEditPanel
             nodeId={editingNode.id}
             data={editingNode.data as unknown as GraphNodeData}

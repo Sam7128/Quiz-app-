@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import {
   Plus, Trash2, Download, Upload, Undo2, Redo2, Eye,
-  ZoomIn, ZoomOut, Maximize2, Link,
+  ZoomIn, ZoomOut, Maximize2, Link, StickyNote, Search, FileText, Settings,
 } from 'lucide-react';
 import type { ReadingMode } from '@/types/graphTypes';
 
 interface GraphToolbarProps {
   readingMode: ReadingMode;
   onAddNode: () => void;
+  onAddSticky: () => void;
   onDeleteSelected: () => void;
   onUndo: () => void;
   onRedo: () => void;
@@ -22,17 +23,32 @@ interface GraphToolbarProps {
   readOnly?: boolean;
   connectMode: boolean;
   onToggleConnectMode: () => void;
+  onToggleSidePanel: (panel: 'edit' | 'notes' | 'search') => void;
+  activeSidePanel: 'edit' | 'notes' | 'search' | null;
+  hasSelectedConcept: boolean;
 }
 
 export const GraphToolbar: React.FC<GraphToolbarProps> = ({
   readingMode,
-  onAddNode, onDeleteSelected,
-  onUndo, onRedo, canUndo, canRedo,
-  onZoomIn, onZoomOut, onFitView,
+  onAddNode,
+  onAddSticky,
+  onDeleteSelected,
+  onUndo,
+  onRedo,
+  canUndo,
+  canRedo,
+  onZoomIn,
+  onZoomOut,
+  onFitView,
   onToggleReadingMode,
-  onExportMermaid, onImportMermaid,
+  onExportMermaid,
+  onImportMermaid,
   readOnly = false,
-  connectMode, onToggleConnectMode,
+  connectMode,
+  onToggleConnectMode,
+  onToggleSidePanel,
+  activeSidePanel,
+  hasSelectedConcept,
 }) => {
   return (
     <div className="flex items-center gap-1 p-2 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex-wrap">
@@ -40,6 +56,7 @@ export const GraphToolbar: React.FC<GraphToolbarProps> = ({
       {!readOnly && (
         <div className="flex items-center gap-1 mr-2">
           <ToolButton icon={Plus} label="新增節點" onClick={onAddNode} />
+          <ToolButton icon={StickyNote} label="新增便利貼" onClick={onAddSticky} />
           <ToolButton icon={Trash2} label="刪除選取" onClick={onDeleteSelected} variant="danger" />
           <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-1" />
           <button
@@ -80,6 +97,50 @@ export const GraphToolbar: React.FC<GraphToolbarProps> = ({
         <Eye size={14} />
         <span className="hidden sm:inline">{readingMode === 'expand-all' ? '全展開' : '逐步探索'}</span>
       </button>
+
+      {/* Notes & Search Panel Controls */}
+      <div className="flex items-center gap-1 ml-2">
+        <div className="w-px h-5 bg-slate-200 dark:bg-slate-700 mx-1" />
+        <button
+          onClick={() => onToggleSidePanel('search')}
+          title="搜尋與管理筆記"
+          aria-label="搜尋與管理筆記"
+          className={`p-1.5 rounded-lg transition-colors ${
+            activeSidePanel === 'search'
+              ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+              : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400'
+          }`}
+        >
+          <Search size={16} />
+        </button>
+        <button
+          onClick={() => onToggleSidePanel('notes')}
+          disabled={!hasSelectedConcept}
+          title={hasSelectedConcept ? '編輯節點筆記' : '請先選擇一個概念節點來編輯筆記'}
+          aria-label="編輯節點筆記"
+          className={`p-1.5 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
+            activeSidePanel === 'notes'
+              ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+              : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400'
+          }`}
+        >
+          <FileText size={16} />
+        </button>
+        {hasSelectedConcept && (
+          <button
+            onClick={() => onToggleSidePanel('edit')}
+            title="編輯節點屬性"
+            aria-label="編輯節點屬性"
+            className={`p-1.5 rounded-lg transition-colors ${
+              activeSidePanel === 'edit' || !activeSidePanel
+                ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'
+                : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400'
+            }`}
+          >
+            <Settings size={16} />
+          </button>
+        )}
+      </div>
 
       {/* Mermaid */}
       <div className="flex items-center gap-1 ml-auto">
