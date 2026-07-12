@@ -1,4 +1,4 @@
-// Knowledge Graph Type Definitions — v1
+// Knowledge Graph Type Definitions — v2
 
 // Text field length constants
 export const GRAPH_LIMITS = {
@@ -11,7 +11,10 @@ export const GRAPH_LIMITS = {
   MAX_GRAPHS: 20,
   MAX_NODES: 200,
   MAX_EDGES: 500,
-  SCHEMA_VERSION: 1,
+  NOTES_MAX: 10000,
+  STICKY_TEXT_MAX: 500,
+  MAX_STICKY_NOTES: 20,
+  SCHEMA_VERSION: 2,
 } as const;
 
 export type NodeShapeType = 'concept' | 'rounded' | 'diamond';
@@ -25,13 +28,14 @@ export interface GraphNodeData {
   details?: string;
   color: string;
   fontSize: FontSize;
+  label?: string;
 }
 
 export interface GraphNode {
   id: string;
   position: { x: number; y: number };
   data: GraphNodeData;
-  type: NodeShapeType;
+  type: NodeShapeType | 'sticky';
 }
 
 export interface GraphEdge {
@@ -57,6 +61,8 @@ export interface GraphDocument {
   nodes: GraphNode[];
   edges: GraphEdge[];
   viewState: GraphViewState;
+  notes: Record<string, string>;
+  editMode: 'visual' | 'code';
   createdAt: string;
   updatedAt: string;
 }

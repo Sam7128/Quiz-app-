@@ -34,17 +34,20 @@ export function getGraphs(): GraphDocument[] {
   }
   if (!raw) return [];
 
-  let graphs: any[];
+  let graphs: unknown;
   try {
     graphs = JSON.parse(raw);
-  } catch {
-    return [];
+  } catch (err: unknown) {
+    throw new Error('解析圖表資料失敗，資料結構可能已損毀');
   }
 
-  if (!Array.isArray(graphs)) return [];
+  if (!Array.isArray(graphs)) {
+    throw new Error('圖表資料格式錯誤，預期為陣列');
+  }
 
   let migrated = false;
-  for (const graph of graphs) {
+  const typedGraphs = graphs as GraphDocument[];
+  for (const graph of typedGraphs) {
     if (!graph.schemaVersion || graph.schemaVersion < 2) {
       const notes: Record<string, string> = {};
       if (Array.isArray(graph.nodes)) {
@@ -77,10 +80,10 @@ export function getGraphs(): GraphDocument[] {
   }
 
   if (migrated) {
-    localStorage.setItem(GRAPHS_STORAGE_KEY, JSON.stringify(graphs));
+    localStorage.setItem(GRAPHS_STORAGE_KEY, JSON.stringify(typedGraphs));
   }
 
-  return graphs as GraphDocument[];
+  return typedGraphs;
 }
 
 export function getGraphById(id: string): GraphDocument | null {
@@ -173,8 +176,9 @@ export function validateGraphName(name: string): string {
 
 function isQuotaExceeded(err: unknown): boolean {
   if (err && typeof err === 'object') {
-    const name = (err as any).name;
-    const code = (err as any).code;
+    const errObj = err as Record<string, unknown>;
+    const name = errObj.name;
+    const code = errObj.code;
     if (name === 'QuotaExceededError' || code === 22) {
       return true;
     }
@@ -214,7 +218,7 @@ function validateGraphDocument(graph: GraphDocument): string | null {
       }
     } else {
       // 便利貼
-      const label = (node.data as any).label;
+      const label = node.data.label;
       const title = node.data.title;
       if (label && label.length > GRAPH_LIMITS.STICKY_TEXT_MAX) {
         return `便利貼文字不可超過 ${GRAPH_LIMITS.STICKY_TEXT_MAX} 個字元`;

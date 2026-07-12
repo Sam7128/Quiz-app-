@@ -181,7 +181,7 @@ export const GraphNotesPanel: React.FC<GraphNotesPanelProps> = ({
     isDirtyRef.current = false;
   };
 
-  const onUpdate = ({ editor: activeEditor }: { editor: any }) => {
+  const onUpdate = ({ editor: activeEditor }: { editor: NonNullable<ReturnType<typeof useEditor>> }) => {
     const html = activeEditor.getHTML();
     latestContentRef.current = html;
     isDirtyRef.current = true;

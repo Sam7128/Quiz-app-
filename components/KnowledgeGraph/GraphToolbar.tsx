@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import {
   Plus, Trash2, Download, Upload, Undo2, Redo2, Eye,
-  ZoomIn, ZoomOut, Maximize2, Link, StickyNote, Search, FileText, Settings,
+  ZoomIn, ZoomOut, Maximize2, Link, StickyNote, Search, FileText, Settings, Code
 } from 'lucide-react';
 import type { ReadingMode } from '@/types/graphTypes';
 
 interface GraphToolbarProps {
   readingMode: ReadingMode;
+  editMode: 'visual' | 'code';
+  onToggleEditMode: () => void;
   onAddNode: () => void;
   onAddSticky: () => void;
   onDeleteSelected: () => void;
@@ -30,6 +32,8 @@ interface GraphToolbarProps {
 
 export const GraphToolbar: React.FC<GraphToolbarProps> = ({
   readingMode,
+  editMode,
+  onToggleEditMode,
   onAddNode,
   onAddSticky,
   onDeleteSelected,
@@ -96,6 +100,20 @@ export const GraphToolbar: React.FC<GraphToolbarProps> = ({
       >
         <Eye size={14} />
         <span className="hidden sm:inline">{readingMode === 'expand-all' ? '全展開' : '逐步探索'}</span>
+      </button>
+
+      {/* Edit Mode Toggle */}
+      <button
+        onClick={onToggleEditMode}
+        className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+          editMode === 'code'
+            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+            : 'bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'
+        }`}
+        title={editMode === 'code' ? '視覺編輯模式' : '代碼編輯模式'}
+      >
+        <Code size={14} />
+        <span className="hidden sm:inline">{editMode === 'code' ? '代碼模式' : '視覺模式'}</span>
       </button>
 
       {/* Notes & Search Panel Controls */}

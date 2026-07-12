@@ -1,5 +1,165 @@
 # Development Log
 
+## 2026-07-12 [Enhancement] "AI Prompts & Knowledge Graph Mermaid Import Optimization"
+### 📦 AI 提示詞指引與知識圖 Mermaid 匯入防呆優化 (Enhancement)
+- **AI 助手指引 Tab 化重構**：
+  - 重構 `components/AIPromptGuide.tsx`，引入「AI 出題助手」與「AI 知識圖助手」Tab 分類切換。
+  - 在「AI 知識圖助手」中，新增「從文章生成知識圖」以及「心智圖轉換（將 Mermaid `mindmap` 格式轉換為系統支援的標準 `graph` 流程圖格式）」兩種動態 AI 提示詞生成器。
+- **知識圖編輯器匯入 Modal 加固與防呆**：
+  - 修改 `components/KnowledgeGraph/GraphEditor.tsx`，在「匯入 Mermaid」Modal 渲染中新增防護警告，明確指出目前系統僅支援標準 flowchart 語法 (graph TD/flowchart TD 等)，不支援 mindmap 格式。
+  - 於 Modal 內嵌一鍵複製「心智圖轉換 AI 提示詞」按鈕（`copiedConverter` 狀態與 `handleCopyConverter` 方法），並自動將當前輸入框內的心智圖語法代碼附加至提示詞中，實現極致無縫的格式轉換與回貼體驗。
+- **全量測試與打包驗證**：
+  - `npx tsc --noEmit` 型別檢查 100% 🟢 通過。
+  - `npm run build` 生產建置 Vite 打包 100% 🟢 通過，無任何錯誤。
+
+## 2026-07-12 [Archive] "Knowledge Graph Enhancements Completion & Archive"
+### 📦 知識圖增強功能開發結案與歸檔 (Archive)
+- **變更計畫歸檔**：將 `knowledge-graph-enhancements` 變更提案正式歸檔至 `openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/`，所有 spec 與 task 清單均標記完成。
+- **專案記憶刷新與壓縮**：執行 `project-memory-refresh` 更新記憶索引，並對 `MEMORY.md` 實施 caveman-compress 格式壓縮，降低對話 Context 耗用。
+- **Codebase Memory 更新**：呼叫 `index_repository` 重建並更新本機與全域 Codebase Memory 圖譜結構。
+
+## 2026-07-12 [Audit Remediation] "Knowledge Graph Audit Remediation & Dead Code Cleanup"
+### 🛠️ 知識圖增強最終審計缺陷修復與冗餘死代碼清理 (Audit Remediation)
+- **儲存與安全邊界補強**：
+  - 重構 `services/graphStorage.ts` 的 `getGraphs` 函式，將 `let graphs: any[]` 型別更正為強型別 `unknown`，完全清除 remaining `any`。
+  - 於 `getGraphs` 中對 `JSON.parse` 及陣列檢查加上主動拋出錯誤（Fail-fast），避免毀損資料造成靜默忽略與後續 save 覆蓋。
+  - 修復 `isQuotaExceeded` 與 `validateGraphDocument` 的屬性安全轉換，完全移除了 `as any` 型別轉換。
+- **功能重疊與局部死代碼清理 (DEAD-01)**：
+  - 徹底修改 `components/KnowledgeGraph/NodeEditPanel.tsx`，刪除與 `GraphNotesPanel` 的 TipTap 富文本編輯器重疊的 `definition` 與 `details` 輸入區（textarea）以及相關的 React hooks 和 state，使面板專注於屬性配置（標題、顏色、形狀、字體大小），避免資料多處編輯的狀態競態與冗餘代碼。
+- **便利貼預設文字修正 (WARNING-02)**：
+  - 修改 `components/KnowledgeGraph/GraphEditor.tsx` 的 `handleAddSticky`，將新便利貼的 `title` 和 `label` 預設值修正為 `'備忘'`，符合 Spec 的具體規格要求。
+- **編輯器 Unmount 變更 Flush (DEBT-02)**：
+  - 修復 `components/KnowledgeGraph/GraphCodeEditor.tsx` 的 unmount 變更丟失缺陷，引入 `localValueRef` 與 `onChangeRef` 以安全繞過 React 閉包陷阱，確保 unmount 時能將最新的 code 變更 flush 回寫。
+- **解析器冗餘代碼移除 (OVER-02 & OVER-01)**：
+  - 移除 `services/markdownGraphBridge.ts` 中 `parseMarkdownToGraph` 返回前的冗餘 `sticky` 節點過濾。
+  - 於 YAML frontmatter 跳過邏輯加註防禦式註解。
+- **全量測試與打包驗證**：
+  - 更新 `src/__tests__/graphStorage.test.ts` 以符合 JSON 毀損拋錯之新行為。
+  - `npx tsc --noEmit` 零編譯錯誤。
+  - `npm test -- --run` 全數 217 個測試案例 100% 🟢 通過。
+  - `npm run build` 生產打包 100% 成功。
+
+## 2026-07-12 [Verification & Refactor] "Zero-Any Type Safety & Verification Report"
+### 🔍 知識圖增強開發計畫驗證與 TypeScript `any` 型別徹底掃除 (Verification & Refactor)
+- **TypeScript 零 any 型別重構**：
+  - 擴充 `types/graphTypes.ts` 中的 `GraphNodeData` 介面，新增選用欄位 `label?: string`，藉此在資料結構層級去耦 React Flow Node data 原生的無型別問題。
+  - 重構 `components/KnowledgeGraph/NotesSearch.tsx`，將 `nodes: any[]` 的 Prop 型別改為 `GraphNode[]`。移除所有 `(n.data as any).label` 的 unsafe cast。
+  - 重構 `components/KnowledgeGraph/GraphEditor.tsx`，將 `(n.data as any).title` 改為 `(n.data as Partial<GraphNodeData>).title` 進行防禦式安全讀取；並在 `NotesSearch` 的 `nodes` 綁定上，使用 `fromRFNodes(nodes)` 對齊型別。
+  - 重構 `components/KnowledgeGraph/GraphNotesPanel.tsx`，將 TipTap `onUpdate` 參數中的 `editor: any` 修改為強型別 `editor: NonNullable<ReturnType<typeof useEditor>>`。
+- **全量測試與打包驗證**：
+  - 執行 `npx tsc --noEmit` 通過零 errors、零 warnings。
+  - 執行 `npm test -- --run` 全數 34 個測試檔案、217 個測試案例 100% 🟢 通過。
+
+## 2026-07-12 [Customizations / Learn] "Enforce OpenSpec tasks.md checklist completion"
+### 🛠️ 行為學與規則優化 (Learn Rule Add)
+- **鐵規新增 (AGENTS.md & MEMORY.md)**：
+  - 新增規則 11 (`OPENSPEC_TASKS_CHECKLIST`)。
+  - 規定每次任務結案前，必須將對應的 OpenSpec 變更計畫中的 `tasks.md` 所有任務標記為 `[x]`，防範遺失進度記錄。
+
+## 2026-07-12 [Workspace Integration] "Milestone 4: Workspace Integration & Verification"
+
+### 🛠️ 代碼編輯器、Fatal Error 阻斷與雙模式畫布整合 (Milestone 4)
+- **代碼模式編輯器元件 (components/KnowledgeGraph/GraphCodeEditor.tsx)**：
+  - 新建 `GraphCodeEditor.tsx` 元件，實作左側帶行號的 Markdown 編輯器。
+  - 透過 `textarea` 的 `onScroll` 事件同步行號區塊的 `scrollTop`，實現兩者的垂直滾動精準同步。
+  - 對行號區塊與 `textarea` 設定一致的 font-family、line-height 與 padding，並禁用 word-wrap（使用 `white-space: pre` 與 `overflow-x: auto`）以防排版對齊偏斜。
+  - 實作 500ms debounce 的 `onChange` 即時更新機制，以 local state 維持打字流暢度。
+  - 底部顯示解析錯誤與警告區域，若 errors 長度大於 0 則渲染紅色警告提示。
+- **Workspace 頂層 Fatal Error 阻斷與備份還原 (components/KnowledgeGraph/KnowledgeGraphWorkspace.tsx)**：
+  - 重構 `KnowledgeGraphWorkspace.tsx`，在載入 `getGraphs()` 時使用 try-catch 捕獲拋出的任何 Fatal Error（例如遷移失敗或 localStorage QuotaExceededError）。
+  - 若捕獲 Fatal Error，阻斷整個 Workspace 載入，渲染全頁錯誤畫面，引導使用者處理「儲存空間損毀或容量超限」。
+  - 實作「導出備份 JSON」按鈕，建立 Blob 並以下載檔案的形式導出 localStorage 中的原始 `mindspark_graphs`。
+  - 實作「清空資料並重置」按鈕，呼叫 `localStorage.removeItem` 清除資料並 reload 頁面。
+- **畫布編輯器雙模式切換與屬性合併 (components/KnowledgeGraph/GraphEditor.tsx & GraphToolbar.tsx)**：
+  - 引入雙模式切換，預設值來自 `graph.editMode`，可切換 `visual`（全寬編輯）與 `code`（1/3 編輯器與 2/3 唯讀畫布）。
+  - 實作雙向資料同步：視覺 -> 代碼時，呼叫 `graphToMarkdown` 序列化結構節點；代碼 -> 視覺時，呼叫 `parseMarkdownToGraph` 解析結構，若成功則套用放射狀佈局（`applyRadialLayout`）並與畫布上原有的 `sticky` 便利貼節點進行 Union 合併，更新 React Flow 狀態。
+  - 合併時依據標題比對原本畫布節點，保留原本節點的 `definition`, `details`, `color`, `fontSize`, `type` (shapeType) 屬性以防資料丟失，且 `notesDict` 獨立保存不需轉移。
+  - 儲存時將 `editMode` 寫入 `GraphDocument` 進行保存。
+  - 在 `GraphToolbar.tsx` 中新增模式切換按鈕（整合至 toolbar 與 props）。
+- **測試與生產環境建置驗證**：
+  - 所有新增與修改程式碼維持 TypeScript 0 `any` 型別安全。
+  - `npx tsc --noEmit` 型別檢查 100% 🟢 通過。
+  - 全量單元測試 `npm test -- --run`（包含 `graphStorage.test.ts`、`radialLayout.test.ts`、`markdownGraphBridge.test.ts` 等 217 個測試案例）100% 🟢 通過。
+  - `npm run build` 生產環境建置與 Vite 打包成功通過。
+
+## 2026-07-12 [UI Elements (Notes & Stickies)] "Milestone 3: UI Elements (Notes & Stickies)"
+### 🛠️ 知識圖譜便利貼、富文本筆記與搜尋面板實作 (Milestone 3)
+- **便利貼節點元件 (components/KnowledgeGraph/StickyNoteNode.tsx)**：
+  - 新建 `StickyNoteNode.tsx` 並在 `GraphEditor.tsx` 中註冊為自定義節點類型 `sticky`。
+  - 視覺上使用黃色便籤紙樣式（背景色 `#FEF3C7`、邊框 `#F59E0B`）、輕微陰影與圓角，且無連線點 Handle（完全不允許與其他節點連線）。
+  - 支援雙擊就地編輯，最大字元限制為 `500` 字元，並同步寫回該節點的 `data.label` 與 `data.title`。
+  - 使用 `onPointerDown={(e) => e.stopPropagation()}` 避免在打字、點選、拖曳選取文字時觸發 React Flow 畫布拖曳等衝突。
+- **TipTap 富文本筆記面板 (components/KnowledgeGraph/GraphNotesPanel.tsx)**：
+  - 新建 `GraphNotesPanel.tsx`，整合 TipTap 編輯器，工具列支援格式：H1, H2, Bold, Italic, Underline, Strike, OrderedList, BulletList, Clear formatting。
+  - 筆記獨立以當前選中節點的 `title` 為 key 儲存於頂層 `GraphDocument.notes` 字典中。
+  - 支援 500ms debounce 自動保存，並且在切換節點或 unmount 卸載面板時強制立即同步 (flush) 最新筆記狀態，以防資料遺失。
+  - 改名 Key 轉移：實作了 `renameNoteKey` 輔助函式，當節點名稱（title）變更時，自動將筆記的 key 從舊 title 轉移為新 title，並從 `notes` 中移除舊 title 鍵。
+  - ⚠️ Base64 圖片安全防範：在 TipTap 配置中阻斷並過濾 Base64 格式圖片的貼入或上傳（過濾 `handlePaste` 中的 `image/*`，並在 `transformPastedHTML` 中使用 Regex 移除含有 base64 src 的 img 標籤），以防撐爆 localStorage 的 5MB 限制。
+- **跨節點筆記搜尋面板 (components/KnowledgeGraph/NotesSearch.tsx)**：
+  - 新建 `NotesSearch.tsx`，支援跨 `notes` 字典進行純文字內容搜尋，搜尋時應將筆記 HTML 內容去除標籤（如 `value.replace(/<[^>]*>/g, '')`）再進行字串匹配。
+  - 搜尋結果點擊時，自動在畫布中以 `fitView` / `focus` 聚焦定位至對應節點，選中該節點並開啟該節點的筆記面板。
+  - 未歸檔（孤立）筆記管理：遍歷並找出所有當前圖表的 `notes` 字典中，Key 值在現有的 nodes 列表中不存在的無效筆記，提供刪除與重新連結功能。
+- **儲存層與工具列修改**：
+  - 在 `GraphEditor.tsx` 中建立 `notesDict` 與 `activeSidePanel` 狀態，整合側面板（編輯/筆記/搜尋）的顯示與切換邏輯。
+  - 實作了 `handleAddSticky` 行為，並加上數量上限防禦。
+  - 修正了 `graphStorage.ts` 中 3 處 useless try/catch（no-useless-catch ESLint 錯誤）。
+- **測試與型別安全**：
+  - 新增針對 `renameNoteKey` 改名轉移成功與無效改名防禦的單元測試，217 個單元測試案例全數 🟢 通過，`npx tsc --noEmit` 型別檢查 0 錯誤。
+
+## 2026-07-12 [Radial Layout & Markdown Bridge] "Milestone 2: Radial Layout & Markdown parser"
+### 🛠️ 放射狀佈局演算法與 Markdown 解析序列化橋接器實作 (Milestone 2)
+- **放射狀佈局演算法 (services/radialLayout.ts)**：
+  - 實作了 `applyRadialLayout()`，可將節點與連線進行放射狀分層定位。
+  - 根節點偵測：優先選擇入度為 0 且有關聯邊的結構節點作為根，若無或有多個，則退回選擇 `nodes[0]`。
+  - BFS 層級計算與多連通分量：使用 BFS 為每個結構節點分配層級深度，非主要連通分量之起點深度設為 1，避免與根節點重疊。
+  - 防重疊 step 調整：當某一深度層級節點數大於 12 時，自動將半徑步長 `step` 調大（大於 300 且與個數成正比），防止大層級重疊。
+  - 孤立節點處理：若節點與任何邊都無關聯（且非根節點），則將其定位在畫布右側垂直排列。
+- **Markdown 解析與序列化橋接 (services/markdownGraphBridge.ts)**：
+  - 實作了 `parseMarkdownToGraph()`：逐行解析 Markdown 縮排列表（`-` 或 `*` 開頭），忽略 YAML frontmatter。
+  - 縮排層級計算與跳躍縮排容錯：相容 2 空格、4 空格與 Tab 縮排，若有跳躍縮排則容錯掛載至最近的祖先。
+  - 自動配色：依深度對 `DEFAULT_NODE_COLORS` 進行模運算套用預設配色。
+  - 節點數量上限：超過 200 個節點時，於 `errors` 記錄警告並進行截斷阻斷。
+  - 便利貼過濾：在解析與 `graphToMarkdown` 序列化時，完全過濾與忽略 `type === 'sticky'` 類型的便利貼節點，使其在代碼模式文本中完全隱形。
+  - 實作了 `graphToMarkdown()`：使用 DFS 深度優先搜尋，將結構節點遞迴序列化回 Markdown 縮排列表。
+- **單元測試與型別安全**：
+  - 於 `src/__tests__/radialLayout.test.ts` 與 `src/__tests__/markdownGraphBridge.test.ts` 分別補齊 8 個與 7 個單元測試，涵蓋各類極端輸入與邊界條件。
+  - 全量單元測試 215 個案例全數 🟢 通過，`npx tsc --noEmit` 型別檢查 0 錯誤。
+
+## 2026-07-12 [Remedy & Hardening] "Milestone 1 Remedy: Security & Defense Hardening"
+### 🛠️ 知識圖譜儲存層防禦加固與邊界安全性修復 (Milestone 1 Remedy)
+- **欄位字元長度限制與阻擋**：於 `services/graphStorage.ts` 的 `validateGraphDocument()` 中，對 `nodes` (結構與便利貼)、`edges` 與 `notes` 實作了嚴格的長度上限檢驗（`TITLE_MAX` 100、`DEFINITION_MAX` 500、`DETAILS_MAX` 2000、`STICKY_TEXT_MAX` 500、`EDGE_LABEL_MAX` 100、`NOTES_MAX` 10000），任何不符即回傳明確的錯誤字串阻斷寫入。
+- **防止遷移覆蓋 (Data Loss)**：優化 v1->v2 遷移邏輯，當發現多個舊節點擁有完全相同的 `title` 時，自動將 definition/details 進行串接（以 `<hr />` 分隔），將內容集中在同一個 `notes[title]` 鍵下，防止資料遺失。
+- **Fail-fast 錯誤傳播**：重構 `getGraphById()` 與 `deleteGraph()` 中的例外處理，當呼叫 `getGraphs()` 時捕獲到遷移或 Fatal Error，一律直接 `throw err` 向上傳播給頂層 ErrorBoundary，僅有內部一般 localStorage 異常才回退為預設值。
+- **HTML 轉義安全防護**：實作 `escapeHtml()` 函式，在 v1->v2 遷移拼接為富文本 HTML `<p>` 前，將 `<`, `>`, `&`, `"`, `'` 進行 HTML 轉義，防止 XSS 注入。
+- **大檔案位元組精準監控**：在 `saveGraph` 中使用 `new Blob([jsonString]).size` 取代原本的 `.length`，以精確的 Byte 大小檢驗 3MB 上限。
+- **單元測試補足**：於 `src/__tests__/graphStorage.test.ts` 新增 8 個針對字元限制、同名遷移串接、HTML 轉義與例外向上傳播的單元測試，並修正 3MB 測試使其符合驗證規範，30 個單元測試與 TS 編譯全數 🟢 通過。
+
+## 2026-07-12 [Storage & Types] "Milestone 1: Dependency & Storage Layer Implementation"
+### 📦 依賴項安裝、Vite 分包設定與知識圖譜儲存層擴充 (Milestone 1)
+- **安裝 TipTap 依賴**：安裝 `@tiptap/react`、`@tiptap/starter-kit` 與 `@tiptap/extension-placeholder` 軟體包。
+- **優化 Vite manualChunks**：更新 `vite.config.ts`，將 `@tiptap` 和 `prosemirror` 劃入 `vendor-ui-core` chunk，防止 React context 分離與連結中斷。
+- **儲存層擴充與型別更新**：
+  - 在 `types/graphTypes.ts` 中擴充 `GraphDocument` 新增 `notes`（`Record<string, string>` 字典）和 `editMode`（`'visual' | 'code'`）。
+  - 在 `GRAPH_LIMITS` 中新增上限限制 `NOTES_MAX: 10000`、`STICKY_TEXT_MAX: 500`、`MAX_STICKY_NOTES: 20`，並將 `SCHEMA_VERSION` 升級為 2。
+  - 為 `GraphNode.type` 擴充允許 `'sticky'` 類型以支援便利貼。
+- **儲存層安全性與遷移邏輯 (v1→v2)**：
+  - 於 `services/graphStorage.ts` 中實作 v1 到 v2 遷移，將舊 node 中的 `definition`/`details` 資料轉移至 `notes[node.data.title]` 並將 `schemaVersion` 推進為 2。
+  - **Fail-fast 機制**：在 `getGraphs()` 遷移或寫回 localStorage 出錯時直接 `throw Error`，避免吞食錯誤返回 `[]` 而清空 localStorage。
+  - **便利貼驗證**：在 `validateGraphDocument()` 限制便利貼 (`type === 'sticky'`) 上限為 20 個。
+  - **大小監控**：在 `saveGraph()` 序列化 JSON 後檢查大小，若大於 3MB 則傳回 `{ success: true, warning: '圖表大小接近限制，請刪除部分資料' }`。
+- **全量測試與打包驗證**：
+  - 更新 `src/__tests__/graphStorage.test.ts` 加入 v1 升級合併、遷移拋錯 Fail-fast、20 個便利貼阻斷、3MB 大小警告之對應測試。
+  - 通過全部單元測試（21/21 passed）與生產環境編譯打包（`npm run build`），並執行 `tsc --noEmit` 型別檢查 0 錯誤。
+
+## 2026-07-12 [Review & Design] "Knowledge Graph Plan Review & Ponytail Optimization"
+### 🔍 知識圖增強開發計畫審查與馬尾式極簡優化 (Plan Review & Ponytail Optimization)
+- **代碼與畫布狀態即時同步**：取消原定的 Auto-Update 開關與手動更新按鈕，強制預設為即時預覽（500ms debounce）。徹底消除因手動更新造成的代碼草稿與畫布狀態分叉風險（D7-001），省去 `codeDraft` 草稿儲存欄位。
+- **筆記數據與節點實體解耦**：將筆記 HTML 資料從個別節點的 data 中抽離，改為在 `GraphDocument` 層級以 `notes: Record<string, string>` 字典（以節點 title 為 key）獨立儲存。模式切換時結構節點隨意銷毀重建，只要 title 不變即自動對齊。改名時舊筆記保留在字典中，並提供「未歸檔筆記」手動關聯，免除在 Markdown 中引入 UUID 追蹤（`<!-- id:xxx -->`）導致的光標定位 UI 漏洞（D1-001）。
+- **便利貼節點畫布整合**：取消獨立的 `stickyNotes` 儲存陣列，便利貼直接作為 `type: 'sticky'` 節點存在畫布中。代碼模式序列化與解析時直接過濾，拖曳位置與資料持久化隨 nodes 自動完成，精簡 80% 的 CRUD 代碼（過度工程）。
+- **YAML Frontmatter 與多配色主題剔除**：首版剔除 YAML config 解析與 forest/ocean 多主題配色，代碼模式預設僅套用 default 放射狀層級自動配色，極簡化 Markdown 解析器。
+- **資料遷移與儲存 Fail-fast**：在 `getGraphs()` 遷移失敗或寫入配額不足時，直接拋出 Fatal Error 並由頂層 `ErrorBoundary` 攔截，阻斷 UI 載入並引導備份，拒絕回傳空陣列 `[]` 導致舊資料被後續操作覆蓋清空（D5-001）。
+- **完整規格與任務清單重構**：更新 `proposal.md`, `design.md`, `tasks.md` 及 6 個 delta specs，將上述 ponytail 優化全面落實為可執行的具體任務。
+
 ## 2026-07-11 [Log Hygiene] "Graceful AbortError Filtering in Services"
 ### 🧹 服務層 AbortError 警告過濾與控制台噪音消除 (Log Hygiene)
 - **過濾 Supabase 請求中止錯誤**：在 `services/streak.ts` 與 `services/analytics.ts` 中，使用 `isAbortError()` 過濾 Supabase 在獲取 `streak` 和 `study stats` 被 aborted 時的錯誤，改為 `console.info` 優雅記錄，防止因 React 重新渲染或 unmount 時的主動中止請求在主控台噴出紅色 `console.error` 警告，保持控制台乾淨。

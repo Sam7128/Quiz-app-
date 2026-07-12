@@ -17,17 +17,12 @@ export const NodeEditPanel: React.FC<NodeEditPanelProps> = ({
   nodeId, data, nodeType, onUpdate, onUpdateType, onClose, readOnly = false,
 }) => {
   const [title, setTitle] = useState(data.title);
-  const [definition, setDefinition] = useState(data.definition ?? '');
-  const [details, setDetails] = useState(data.details ?? '');
-
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Sync local state when switching nodes
   useEffect(() => {
     setTitle(data.title);
-    setDefinition(data.definition ?? '');
-    setDetails(data.details ?? '');
-  }, [nodeId, data.title, data.definition, data.details]);
+  }, [nodeId, data.title]);
 
   const debouncedUpdate = useCallback((partial: Partial<GraphNodeData>) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -45,18 +40,6 @@ export const NodeEditPanel: React.FC<NodeEditPanelProps> = ({
     const v = e.target.value.slice(0, GRAPH_LIMITS.TITLE_MAX);
     setTitle(v);
     if (v.trim()) debouncedUpdate({ title: v.trim() });
-  };
-
-  const handleDefinitionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const v = e.target.value.slice(0, GRAPH_LIMITS.DEFINITION_MAX);
-    setDefinition(v);
-    debouncedUpdate({ definition: v.trim() || undefined });
-  };
-
-  const handleDetailsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const v = e.target.value.slice(0, GRAPH_LIMITS.DETAILS_MAX);
-    setDetails(v);
-    debouncedUpdate({ details: v.trim() || undefined });
   };
 
   return (
@@ -80,36 +63,6 @@ export const NodeEditPanel: React.FC<NodeEditPanelProps> = ({
           disabled={readOnly}
           className="w-full p-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-200"
           placeholder="概念名稱"
-        />
-      </div>
-
-      {/* Definition */}
-      <div className="space-y-1">
-        <label className="text-xs font-medium text-slate-500 dark:text-slate-400">
-          定義 ({definition.length}/{GRAPH_LIMITS.DEFINITION_MAX})
-        </label>
-        <textarea
-          value={definition}
-          onChange={handleDefinitionChange}
-          disabled={readOnly}
-          rows={3}
-          className="w-full p-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-200 resize-none"
-          placeholder="簡短定義（選填）"
-        />
-      </div>
-
-      {/* Details */}
-      <div className="space-y-1">
-        <label className="text-xs font-medium text-slate-500 dark:text-slate-400">
-          筆記 ({details.length}/{GRAPH_LIMITS.DETAILS_MAX})
-        </label>
-        <textarea
-          value={details}
-          onChange={handleDetailsChange}
-          disabled={readOnly}
-          rows={5}
-          className="w-full p-2 text-sm border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-200 resize-none"
-          placeholder="詳細筆記（選填）"
         />
       </div>
 

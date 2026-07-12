@@ -1,42 +1,33 @@
 # MEMORY.md
 
 ## Purpose Snapshot
-- [FACT-001] `Quiz-app--main/`: MindSpark React + TypeScript + Vite quiz app. Core: bank manage, quiz flow, AI assist, cloud sync, game study.
-- [FACT-002] Runtime: frontend SPA. Persistent: `localStorage` + Supabase. Service layer + domain hooks separate I/O + logic.
+- [FACT-001] React+TS+Vite SPA. persist: localStorage + Supabase. Domain hooks, service layer.
 
 ## Source of Truth
-- [PATH-001] `AGENTS.md`: project rules, routing.
-- [PATH-002] `types.ts`: core types: questions, banks, settings, state.
-- [PATH-003] `App.tsx`: app shell, main entry.
-- [PATH-004] `services/`: storage, cloud, AI, analytics, graph I/O.
-- [PATH-005] `hooks/`: hooks for battle, study, challenge domains.
-- [PATH-006] `docs/DEVELOPMENT_LOG.md`: change log.
-- [PATH-007] `openspec/`: specs, proposals, archived changes.
-- [PATH-008] `start-dev.bat`: script start Vite, resolve port clash, open browser.
-- [PATH-009] `package.json`: npm scripts, Vercel build, dependency versions.
+- [PATH-001] `AGENTS.md`: rules, index.
+- [PATH-002] `types.ts`: TS models.
+- [PATH-003] `App.tsx`: main wrapper.
+- [PATH-004] `services/` & `hooks/`: I/O, domain logic.
+- [PATH-005] `docs/DEVELOPMENT_LOG.md`: changes log.
+- [PATH-006] `openspec/`: spec history.
 
-## Aliases & Vocabulary
-- [ALIAS-001] "bank manager" -> `components/BankManager.tsx`, `services/storage.ts`, `services/cloudStorage.ts`
-- [ALIAS-002] "quiz flow" -> `components/QuizCard.tsx`, `hooks/useQuizEngine.ts`, `reducers/appReducer.ts`
-- [ALIAS-003] "battle" -> `hooks/useBattleSystem.ts`, `components/BattleArena.tsx`, `types/battleTypes.ts`
-- [ALIAS-004] "knowledge graph" -> `components/KnowledgeGraph/`, `services/graphStorage.ts`, `types/graphTypes.ts`
-- [ALIAS-005] "Supabase" -> `contexts/AuthContext.tsx`, `services/cloudStorage.ts`, `services/supabase.ts`
-- [ALIAS-006] "project memory" -> `MEMORY.md`, `.project-memory/project_memory_mcp_entry.py`, `.memory-index/index.json`
-- [ALIAS-007] "question identity" -> `utils/questionIdentity.ts`, `components/BankManager.tsx`, `services/cloudStorage.ts`
-- [ALIAS-008] "chunked practice" -> `hooks/useChunkedPractice.ts`, `components/ChunkedPracticePanel.tsx`, `services/cloudStorage.ts`
-- [ALIAS-009] "practice_sessions" -> `docs/migrations/PRACTICE_SESSIONS_MIGRATION.sql`, `services/cloudStorage.ts`, `services/repository.ts`
+## Aliases
+- [ALIAS-001] "bank manager" -> `components/BankManager.tsx`, `services/storage.ts`
+- [ALIAS-002] "quiz flow" -> `hooks/useQuizEngine.ts`, `reducers/appReducer.ts`
+- [ALIAS-003] "battle" -> `hooks/useBattleSystem.ts`, `components/BattleArena.tsx`
+- [ALIAS-004] "knowledge graph" -> `components/KnowledgeGraph/`, `services/graphStorage.ts`
+- [ALIAS-005] "Supabase" -> `contexts/AuthContext.tsx`, `services/supabase.ts`
+- [ALIAS-006] "project memory" -> `MEMORY.md`, `.project-memory/`
 
 ## Entry Points
-- [ENTRY-001] `AGENTS.md`: read rules, module index, safety, doc policy first.
-- [ENTRY-002] `App.tsx`: view flow, provider nesting, reducer wiring.
-- [ENTRY-003] `types.ts`: data models, obeys TYPE_FIRST rule.
-- [ENTRY-004] `services/storage.ts`: `mindspark_*` keys, guest persistence, safety boundaries.
-- [ENTRY-005] `services/cloudStorage.ts`: sync flow, Supabase boundaries.
-- [ENTRY-006] `hooks/useBattleSystem.ts`: game interaction, state persistence.
+- [ENTRY-001] `AGENTS.md`: Read first.
+- [ENTRY-002] `App.tsx`: Providers, routing.
+- [ENTRY-003] `types.ts`: TS Schema.
+- [ENTRY-004] `services/storage.ts`: localStorage.
 
 <!-- BEGIN AUTO-GENERATED: MEMORY MAP -->
 ## Auto-Generated Memory Map
-- Refreshed: `2026-07-11 20:57`
+- Refreshed: `2026-07-12 15:30`
 - Project root: `C:\Users\user\Desktop\Quiz-app-`
 
 ### Key Files
@@ -54,25 +45,25 @@
 ### Module Index
 | ID | Path | Local AGENTS | Purpose | Tags |
 |---|---|---|---|---|
-| MOD-001 | `components/` | yes | UI components | components |
-| MOD-002 | `constants/` | yes | static data | constants |
-| MOD-003 | `contexts/` | yes | shared context | contexts |
-| MOD-004 | `docs/` | no | docs | docs |
-| MOD-005 | `e2e/` | yes | E2E tests | e2e |
-| MOD-006 | `hooks/` | yes | domain hooks | hooks |
-| MOD-007 | `openspec/` | yes | OpenSpec planning | openspec |
+| MOD-001 | `components/` | yes | ui components | components |
+| MOD-002 | `constants/` | yes | static definitions and domain data | constants |
+| MOD-003 | `contexts/` | yes | shared context and state boundaries | contexts |
+| MOD-004 | `docs/` | no | project documentation | docs |
+| MOD-005 | `e2e/` | yes | end-to-end tests | e2e |
+| MOD-006 | `hooks/` | yes | feature hooks and orchestration | hooks |
+| MOD-007 | `openspec/` | yes | change planning and specs | openspec |
 | MOD-008 | `public/` | no | static assets | public |
-| MOD-009 | `Quiz-app-/` | no | root module | quiz-app- |
-| MOD-010 | `reducers/` | no | root module | reducers |
-| MOD-011 | `services/` | yes | services | services |
-| MOD-012 | `src/` | no | main source | src |
+| MOD-009 | `Quiz-app-/` | no | important project module | quiz-app- |
+| MOD-010 | `reducers/` | no | important project module | reducers |
+| MOD-011 | `services/` | yes | service and integration logic | services |
+| MOD-012 | `src/` | no | primary source implementation | src |
 
 ### OpenSpec Snapshot
 - Main specs: `openspec/specs/`
 - Active changes: none detected.
-- Archived changes: `21`
-- [OS-ARC-001] `openspec/changes/archive/2026-06-12-dead-code-cleanup/` (proposal, design, tasks, specs:1)
-- [OS-ARC-002] `openspec/changes/archive/2026-07-11-security-architecture-hardening-v2/` (proposal, design, tasks, specs:8)
+- Archived changes: `22`
+- [OS-ARC-001] `openspec/changes/archive/2026-07-11-security-architecture-hardening-v2/` (proposal, design, tasks, specs:8)
+- [OS-ARC-002] `openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/` (proposal, design, tasks, specs:6)
 - [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2)
 - [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks)
 - [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)
@@ -89,71 +80,74 @@
 <!-- END AUTO-GENERATED: MEMORY MAP -->
 
 ## Stable Facts
-- [FACT-010] `services/storage.ts`: Local keys prefix `mindspark_`. Obey data safety during migration.
-- [FACT-011] `contexts/AuthContext.tsx` + `services/cloudStorage.ts`: Banks sync to cloud. Study history stays in `localStorage` for device tracking.
-- [FACT-012] `components/KnowledgeGraph/` + `services/graphStorage.ts`: Graph workspace exists + has tests. Not draft.
-- [FACT-013] `.project-memory/project_memory_mcp_entry.py`: Local MCP wrapper provides `search_memory`, `get_aliases`.
-- [FACT-014] `Question.id`: Stable UUID internal ID. Cloud dedupe uses `sourceQuestionKey` / `sourceFingerprint`.
-- [FACT-015] `components/BankManager.tsx`: Single question delete UI. Deleting cleans mistakes, SM-2, recent mistakes, quiz session.
-- [FACT-016] `components/BankManager.tsx`: Show import summary (source, duplicate merge, final count) before JSON/AI import.
-- [FACT-017] `components/BankManager.tsx`: Import modes: `append` (new only, default), `merge` (update existing + add new), `replace` (overwrite bank).
-- [FACT-018] Chunked practice: use `mindspark_practice_sessions` session. Mid-chunk restore use `mindspark_chunk_draft:<sessionId>:<chunkIndex>`. Skip `mindspark_quiz_session`.
-- [FACT-019] `syncLocalPracticeSessions`: Use `updated_at` LWW. Save dirty local fallback for retry on sync fail.
-- [FACT-020] `App.tsx` + `useQuizEngine.ts`: Callbacks (e.g. `onChunkDraftUpdate`, `onChunkComplete`) MUST use `useCallback` to prevent race conditions during async load.
-- [FACT-021] `CloudStorageRepository.savePracticeSession`: Success clear local session cache, NOT `mindspark_chunk_draft:*`. Use `removePracticeSessionCache()`.
-- [FACT-022] Vercel build: Git must not track `node_modules` or Windows reserved names (e.g. `nul`). Vercel fresh install mandatory.
-- [FACT-023] `services/storage.ts`: Verify AI Config via Type Guards + schema from `localStorage`. Prevent malicious payload.
-- [FACT-024] `services/cloudStorage.ts`: Practice Sessions sync. Cloud-only sessions write back to local if local empty. Prevents overwrite by empty data.
-- [FACT-025] `utils/integrityCheck.ts`: Stateless dynamic HMAC-SHA256. No local salt storage. Prevents key exposure.
-- [FACT-026] `hooks/useBattleSystem.ts`: Validate battle state ranges on load. Reset on corrupt data to prevent cheats.
-- [FACT-027] `docs/sql/submit_challenge_score.sql`: Submit challenge score RPC determines winner on DB side if both scores present.
-- [FACT-028] Dead code: Use `npx -y knip --reporter compact --no-progress`. No `tldr` binary available.
-- [FACT-029] `openspec/specs/code-hygiene/spec.md`: Code Hygiene spec defines physical dead code delete, narrow export scopes, clean redundant `export default`.
-- [FACT-030] `services/cloudStorage.ts`: Concurrency lock `runWithSyncLock` (Web Locks `navigator.locks` + 30s localStorage fallback) protects `syncLocalToCloud` and `syncLocalPracticeSessions`.
-- [FACT-031] `components/FocusTimer.tsx`: Track AudioContext in `activeAudioContextsRef`. Force close() on unmount/play finish to prevent resource leak.
-- [FACT-032] `hooks/useKeyboardShortcuts.ts`: Use `handlersRef` pattern. Decouple callbacks from listeners. empty deps `[]` to prevent redundant keydown listeners.
-- [FACT-033] `services/cloudStorage.ts`: `saveCloudQuestions` writes to `mindspark_dirty_banks` before upsert, clears on success via `removeDirtyBank`. Handles offline/close mid-sync.
+- [FACT-010] Keys: `mindspark_`. Data safety on migration.
+- [FACT-011] Questions in Cloud. SM-2/mistakes in localStorage.
+- [FACT-012] Graph workspace fully functional + unit tested.
+- [FACT-013] Local wrapper `.project-memory/project_memory_mcp_entry.py` exposes memory tools.
+- [FACT-014] Question dedupe uses `sourceQuestionKey` / `sourceFingerprint`.
+- [FACT-015] Delete question cleans SM-2, mistakes, active session.
+- [FACT-016] Import UI summary shown before apply.
+- [FACT-017] Import modes: `append` (default), `merge`, `replace`.
+- [FACT-018] Practice draft: `mindspark_chunk_draft:<sessionId>:<chunkIndex>`.
+- [FACT-019] Practice sync: LWW. Offline dirty fallback cache.
+- [FACT-020] App + Quiz engine callbacks must use `useCallback` to prevent race conditions.
+- [FACT-021] Cloud save cleans practice cache (`removePracticeSessionCache`).
+- [FACT-022] Git must not track `node_modules` or reserved names (e.g., `nul`).
+- [FACT-023] Validate AI config via localStorage schema check.
+- [FACT-024] Cloud empty checks before local sync to prevent overwrite.
+- [FACT-025] Dynamic HMAC-SHA256 integrity, no local salt.
+- [FACT-026] Reset battle state on loaded out-of-range bounds.
+- [FACT-027] DB RPC `submit_challenge_score` resolves score winner.
+- [FACT-028] Dead code: Use `npx -y knip --reporter compact`.
+- [FACT-029] Code Hygiene spec defines dead code deletion and narrow export scopes.
+- [FACT-030] Concurrency: `runWithSyncLock` (Web Locks + localStorage fallback) protects sync flow.
+- [FACT-031] FocusTimer: close AudioContext in `activeAudioContextsRef` on unmount.
+- [FACT-032] Keyboard shortcuts: `handlersRef` pattern, empty deps `[]`.
+- [FACT-033] Offline writes: `mindspark_dirty_banks` cleared on cloud sync success.
+- [FACT-034] GraphStorage: length limits, HTML escape, concat migration, fail-fast, Blob checks.
+- [FACT-035] GraphLayout & Bridge: radial layout, MD parser, Nd > 12 auto-expand.
+- [FACT-036] GraphUI: sticky node limit (20), TipTap HTML note, unmount auto-flush, Base64 intercept, orphaned notes reconnect.
+- [FACT-037] Workspace: scroll sync, Fullscreen Recovery on Fatal load error, visual/code split, MD serialization/restoration.
+- [FACT-038] Rule 11: Mark `openspec/changes/<change-name>/tasks.md` `[x]` before completion.
+- [FACT-039] AI Prompts & Mermaid Import: AIPromptGuide supports Quiz and Graph tabs (with mindmap-to-flowchart converter prompt). GraphEditor's import modal alerts flowchart syntax limits and embeds the conversion prompt copy button.
 
 ## Active Decisions
-- [DEC-001] rules in `AGENTS.md`, facts in `MEMORY.md`. `GEMINI.md` deprecated.
-- [DEC-002] I/O concentrated in service layer. Components never touch storage/Supabase directly.
-- [DEC-003] Use local MCP wrapper `.project-memory/project_memory_mcp_entry.py`. Skip global `project-memory-auto`.
-- [DEC-004] `vite.config.ts`: Bundle React core + Recharts + Framer Motion in same `vendor-ui-core` chunk. Fixes production `forwardRef` undefined crash.
-- [DEC-005] `package.json`: Build entry uses `vite build`. Fix platform permissions by clean Git index, no `node_modules` commit.
-- [DEC-006] Storage Safety: Ban `any` in Storage/JSON parse. Use `unknown` + Type Guards.
-- [DEC-007] E2E: Click custom Confirm buttons instead of `page.on('dialog')` due to custom `ConfirmDialog` overlay blocking.
+- [DEC-001] Rules in `AGENTS.md`, facts in `MEMORY.md`. No `GEMINI.md`.
+- [DEC-002] Direct Storage/Supabase access banned in components. Use services/hooks.
+- [DEC-003] Local wrapper `.project-memory/` preferred over global.
+- [DEC-004] `vite.config.ts`: React+Recharts+Framer in `vendor-ui-core` chunk.
+- [DEC-005] Build runs `vite build`. Prevent Windows path permission issues.
+- [DEC-006] Ban `any` in Storage/JSON parse. Use `unknown` + Type Guards.
+- [DEC-007] E2E: click custom Confirm buttons, no window alert listeners.
 
 ## Hotspots
-- [HOT-001] `App.tsx` & `vite.config.ts`: Main entry, Provider tree, manual chunks logic. Watch out for UI core chunking.
-- [HOT-002] `services/storage.ts` & `services/cloudStorage.ts`: Data schema changes affect backward compatibility.
-- [HOT-003] `hooks/useBattleSystem.ts`: RPG game state tied with quiz engine & UI.
-- [HOT-004] `services/graphStorage.ts` & `components/KnowledgeGraph/`: Active graph code, high churn, check tests.
-- [HOT-005] `utils/questionIdentity.ts` & `components/BankManager.tsx`: Import deduplication, stable IDs, prevents data mismatch.
-- [HOT-006] `hooks/useChunkedPractice.ts` & `hooks/useQuizEngine.ts`: Intersection of practice sessions + quiz flow. Timings matter.
-- [HOT-007] `services/cloudStorage.ts`: Practice Session sync (LWW, dirty, retry logic). Validate schema.
-- [HOT-008] `.gitignore` & Git index: Vercel build fails if `node_modules/` tracked in Git. Verify via `git ls-tree`.
-- [HOT-009] `services/storage.ts` & `services/cloudStorage.ts`: Config safety filters. Type checking strictness.
+- [HOT-001] `App.tsx` & `vite.config.ts`: Chunking & providers.
+- [HOT-002] Storage schemas: backward compatibility.
+- [HOT-003] RPG battle system vs Quiz engine synchronization.
+- [HOT-004] Graph components & storage files.
+- [HOT-005] Stable ID generation during JSON/AI import.
+- [HOT-006] Practice sessions state recovery lifecycle.
+- [HOT-007] Cloud sync concurrency.
+- [HOT-008] Git index: Vercel fail if `node_modules` committed.
 
 ## Search Recipes
-- [RG-001] `rg -n "mindspark_" services hooks components`: Local storage keys and flow entries.
-- [RG-002] `rg -n "useBattleSystem|battle" hooks components types`: RPG battle states and UI components.
-- [RG-003] `rg -n "graph|KnowledgeGraph|mermaid" components services src/__tests__ types`: Graph features and tests.
-- [RG-004] `rg -n "Supabase|cloudStorage|syncLocalToCloud" contexts services`: Supabase auth and sync handlers.
-- [RG-005] `rg -n "sourceQuestionKey|sourceFingerprint|mergeImportedQuestions" components services utils src/__tests__`: Question stable IDs & import merge.
-- [RG-006] `rg -n "planQuestionImport|importMode" components utils src/__tests__`: Import checks, UI summaries.
-- [RG-007] `rg -n "useChunkedPractice|chunkMeta|mindspark_practice_sessions" App.tsx hooks services components`: Chunked session lifecycle.
-- [RG-008] `rg -n "\"build\"|vite|Vercel" package.json vercel.json docs MEMORY.md`: Vercel deployments and scripts.
-- [RG-009] `npx -y knip --reporter compact --no-progress`: Dead code and unused exports.
+- [RG-001] `rg -n "mindspark_" services hooks components`
+- [RG-002] `rg -n "useBattleSystem|battle" hooks components`
+- [RG-003] `rg -n "graph|KnowledgeGraph" components services`
+- [RG-004] `rg -n "Supabase|cloudStorage" contexts services`
+- [RG-005] `rg -n "sourceQuestionKey|sourceFingerprint" components services`
+- [RG-006] `rg -n "planQuestionImport|importMode" components`
+- [RG-007] `rg -n "useChunkedPractice" App.tsx hooks`
+- [RG-008] `rg -n "\"build\"|vite" package.json`
+- [RG-009] `npx -y knip --reporter compact`
 
 ## Archive Index
-- [DOC-001] `docs/INDEX.md`: Index of reports, archives, migrations, docs.
+- [DOC-001] `docs/INDEX.md`: index file.
 
 ## Open Risks
-- [RISK-001] `docs/DEVELOPMENT_LOG.md`: Leftover `+` format characters from semi-auto patch. Needs clean.
-- [RISK-002] `vite.config.ts`: Fragmented `manualChunks` breaks Recharts import. Re-verify if large dependencies added.
-- [RISK-003] `ensure_project_mcp_configs.py`: Tries writing `%USERPROFILE%\.gemini\antigravity\mcp_config.json`. Might fail on permissions, doesn't block local configs.
+- [RISK-001] DEVELOPMENT_LOG.md: format cleanup.
+- [RISK-002] `vite.config.ts` chunk sizes.
+- [RISK-003] permissions for local MCP config script.
 
 ## Next Refresh Triggers
-- Rename/move major directories.
-- Add/remove nested `AGENTS.md`.
-- Modify architecture, storage schemas, or integrations.
+- Move dirs, add/remove `AGENTS.md`, schema updates.

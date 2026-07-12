@@ -4,7 +4,7 @@
 
 > **所有 Agent（Codex、Gemini CLI、Claude 等）進入本專案時，必須遵守以下不可違反的規則。**
 
-1. **LANGUAGE_ZH_TW**: 所有互動與回應必須使用**繁體中文**。
+1. **LANGUAGE_ZH_TW**: 所有互動與回應必須使用**繁體中文**（若使用原始人說話風格，只需在最後對話總結時說一次）。
 2. **CHECKLIST_FIRST**: 每個重大任務必須維護並更新 `CHECKLIST.md`。
 3. **NO_ANY**: 嚴禁使用 `any` 型別。使用 `unknown` + 型別守衛。
 4. **DATA_SAFETY**: 絕對禁止對正式數據檔案（`user_data.json`、`localStorage` 中的 `mindspark_*`）執行破壞性測試。測試必須使用獨立路徑。進行任何可能影響用戶數據的操作前，必須先備份。
@@ -14,6 +14,8 @@
 8. **DEPENDENCY_VERIFY**: 匯入外部套件前先驗證其匯出。注意大版本升級的 breaking changes。
 9. **PERFECTIONIST_MODE**: 禁止截斷程式碼，必須輸出完整檔案內容。優先防禦式程式設計和資料安全。
 10. **DOCS_MAINTENANCE**: 在每次任務結束或有重大變更時，必須自動檢查並更新 [docs/DEVELOPMENT_LOG.md](file:///c:/Users/user/Desktop/Quiz-app-/docs/DEVELOPMENT_LOG.md)，內容必須保持與最新代碼狀態同步。GEMINI.md 已廢除，不再維護。
+11. **OPENSPEC_TASKS_CHECKLIST**: 實作完畢結案前，必須將對應的 OpenSpec 變更計畫中的 `tasks.md`（例如 `openspec/changes/<change-name>/tasks.md`）中所有已完成的項目標記為 `[x]`，防範遺漏任務狀態更新。
+
 
 
 ## 📍 模組快速索引

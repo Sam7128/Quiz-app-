@@ -1,13 +1,13 @@
 {
   "project_root": "C:\\Users\\user\\Desktop\\Quiz-app-",
-  "built_at": "2026-07-11T12:57:28+00:00",
+  "built_at": "2026-07-12T07:30:16+00:00",
   "file_hashes": {
-    "AGENTS.md": "64318045ffe83a1fb32a44ae645f10a7b6877f465f7704c98f4953674c89b295",
+    "AGENTS.md": "7b2f18a58a46d59ef8d0463288c73719eb8ec2e19c4fef8fded5875e52724c8c",
     "CHECKLIST.md": "0f50fa06450ead3e08c68f2015431c3f5e8e26d90f091debb85f5b884154a897",
-    "MEMORY.md": "08499357786eae33081031476a7a573f533215aa9978f95de8dcae884de6a7c3",
+    "MEMORY.md": "bbfbe75d5577ae756264add3d72f42aa846ed519a1e25239076bfbc1bb41892d",
     "README.md": "33820d726f48318f91d139f20624c26a8f3a23d79c42ec666c269c915fe25924",
-    "docs/DEVELOPMENT_LOG.md": "0471bc2063cf2119e9c5230e5724d2fad70b10527a9e9c27f446e5dd6a954188",
-    "docs/INDEX.md": "4a88e7f627f28613164208cba519991e6da84b13270b405d526be8cb2d3faf6a",
+    "docs/DEVELOPMENT_LOG.md": "bed53590fc3a8fc7108f87fe6f6e6b460ee69b72bde60839f46064c59aff1da3",
+    "docs/INDEX.md": "691f9aa6b9d9599dd506b486812d7f72ed7741ff9aae3e9a119ba0d75313bfff",
     "docs/SECURITY_AND_ARCHITECTURE_AUDIT_REPORT_V2.md": "d04b816f7eb21cea541aafd683aa424eadb9c13fb6112e580a3f9d7372fb86b5",
     "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md": "6b068d1aa0ac196fe1401f7063c84a98d73fe8b8fc19f648fe41b67e02e8a7cc",
     "docs/SECURITY_LIMITATIONS.md": "727fffa5e7afeb75fb1d04c858fe7bfede38a54dbbfe7917e6aa55cdd21a0393",
@@ -167,6 +167,18 @@
     "openspec/changes/archive/2026-07-11-security-architecture-hardening-v2/specs/vercel-security-headers/spec.md": "a7f913934d2eeb0b0330ea22bc81f37db15469994af1b1f8deba73a73d98574e",
     "openspec/changes/archive/2026-07-11-security-architecture-hardening-v2/stress-test-report.md": "67fcf07dfaeeafa827ce09eea0b86796129ee2682a7d212fe40ec7d18f7068bf",
     "openspec/changes/archive/2026-07-11-security-architecture-hardening-v2/tasks.md": "efd944a80e4585e289feb02713d4c537e0f8d2d2a6c14d91fa66d22d7ecfb9f7",
+    "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md": "693ef20af861a2c5f19580bdc92f41bc7a3dec3f31f30a8451b28be34c689ffe",
+    "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/benchmark-harness.md": "aa022c249f0a1a23a8bf7e468ad3aefd0a5449d7ed87f2a78600e6edb1fa5355",
+    "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/design.md": "3e464971592d8174b2525c5391c9dd12da7bb7f846db1862531bda10107b4ee9",
+    "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/proposal.md": "54038f8efd31a9365f951e4c98ba0f901130158dafea12baed5fce435f3fdde5",
+    "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md": "a99db5928a37afde88a264323c6c5fa3c5ed728f17f87409cedbc5daa1a96691",
+    "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-data/spec.md": "0478de861199dc6751f95506e435ea942be6a079df78f63d52e4a99da3361ebe",
+    "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md": "d9774dc71b5361341d247714d05b57e81631d9799d1809aa3c2edf4c38a6a4b8",
+    "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-editor/spec.md": "5254069bf229f1384dbd6d3d0916bb82d603a354d0637f4fc44eae71f20d266a",
+    "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md": "2768582bcc3e09d513defe17fbdcb550d2c0edd20867965cf8770c421653338e",
+    "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md": "575f7952badd6c03954714a51129fa63187d16047cf27be77befc4b0b57e36f9",
+    "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md": "c59e08fa3c085296adbdbd77c2454e3296f7481215563cb92d734e42fdcfdb93",
+    "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/tasks.md": "d3a5cf5de945563d0ea0ee07b543fc69cb36b3068e2d2a3b25c74091c9cadc2b",
     "openspec/changes/archive/enhance-quiz-experience/design.md": "dbb5784fc8a800c7d2c8e243963d7dee934aa7d3275c9604f6c90f93f81764ef",
     "openspec/changes/archive/enhance-quiz-experience/proposal.md": "0bb7f494748e205b5c47438aa7089eea592cfe4ee1614f3d91aa6a333bc211ec",
     "openspec/changes/archive/enhance-quiz-experience/specs/config-quiz-size/spec.md": "a7eb590a7f74b6f01cdc01d75cfe65d41c6ebf45ebba50b83e5c1451440a1354",
@@ -206,14 +218,14 @@
     "openspec/specs/touch-device-ux/spec.md": "1c1fd06ce623e6b0f5ccf850a87cf5f0685470e662b38360b5113b8ba0d0751f",
     "openspec/specs/vercel-security-headers/spec.md": "8bf34cb966d2512c33c617a5f7dbe63d3e8f7c2eeb8843b8a8cd3e7e2c8cce53"
   },
-  "entry_count": 2646,
+  "entry_count": 2827,
   "entries": [
     {
       "path": "AGENTS.md",
       "heading": "AGENTS.md - MindSpark Development Guide > 🔒 鐵規 (Absolute Rules)",
       "category": "rules",
       "scope": "rules",
-      "text": "> **所有 Agent（Codex、Gemini CLI、Claude 等）進入本專案時，必須遵守以下不可違反的規則。**\n\n1. **LANGUAGE_ZH_TW**: 所有互動與回應必須使用**繁體中文**。\n2. **CHECKLIST_FIRST**: 每個重大任務必須維護並更新 `CHECKLIST.md`。\n3. **NO_ANY**: 嚴禁使用 `any` 型別。使用 `unknown` + 型別守衛。\n4. **DATA_SAFETY**: 絕對禁止對正式數據檔案（`user_data.json`、`localStorage` 中的 `mindspark_*`）執行破壞性測試。測試必須使用獨立路徑。進行任何可能影響用戶數據的操作前，必須先備份。\n5. **TYPE_FIRST**: 先在 `types.ts` 定義型別 → `npx tsc --noEmit` 編譯檢查 → 再實作邏輯。\n6. **REACT_18_SAFETY**: 使用 `useTranslation` 或 async 初始化的元件必須包在 `<Suspense>` 中。關鍵資料使用 Skeleton loader。\n7. **PERSISTENCE_INTEGRITY**: Zustand `persist` 必須在 `partialize` 中顯式列出所有欄位。實作自訂 `merge` 函式防止空資料覆蓋。\n8. **DEPENDENCY_VERIFY**: 匯入外部套件前先驗證其匯出。注意大版本升級的 breaking changes。\n9. **PERFECTIONIST_MODE**: 禁止截斷程式碼，必須輸出完整檔案內容。優先防禦式程式設計和資料安全。\n10. **DOCS_MAINTENANCE**: 在每次任務結束或有重大變更時，必須自動檢查並更新 [docs/DEVELOPMENT_LOG.md](file:///c:/Users/user/Desktop/Quiz-app-/docs/DEVELOPMENT_LOG.md)，內容必須保持與最新代碼狀態同步。GEMINI.md 已廢除，不再維護。"
+      "text": "> **所有 Agent（Codex、Gemini CLI、Claude 等）進入本專案時，必須遵守以下不可違反的規則。**\n\n1. **LANGUAGE_ZH_TW**: 所有互動與回應必須使用**繁體中文**（若使用原始人說話風格，只需在最後對話總結時說一次）。\n2. **CHECKLIST_FIRST**: 每個重大任務必須維護並更新 `CHECKLIST.md`。\n3. **NO_ANY**: 嚴禁使用 `any` 型別。使用 `unknown` + 型別守衛。\n4. **DATA_SAFETY**: 絕對禁止對正式數據檔案（`user_data.json`、`localStorage` 中的 `mindspark_*`）執行破壞性測試。測試必須使用獨立路徑。進行任何可能影響用戶數據的操作前，必須先備份。\n5. **TYPE_FIRST**: 先在 `types.ts` 定義型別 → `npx tsc --noEmit` 編譯檢查 → 再實作邏輯。\n6. **REACT_18_SAFETY**: 使用 `useTranslation` 或 async 初始化的元件必須包在 `<Suspense>` 中。關鍵資料使用 Skeleton loader。\n7. **PERSISTENCE_INTEGRITY**: Zustand `persist` 必須在 `partialize` 中顯式列出所有欄位。實作自訂 `merge` 函式防止空資料覆蓋。\n8. **DEPENDENCY_VERIFY**: 匯入外部套件前先驗證其匯出。注意大版本升級的 breaking changes。\n9. **PERFECTIONIST_MODE**: 禁止截斷程式碼，必須輸出完整檔案內容。優先防禦式程式設計和資料安全。\n10. **DOCS_MAINTENANCE**: 在每次任務結束或有重大變更時，必須自動檢查並更新 [docs/DEVELOPMENT_LOG.md](file:///c:/Users/user/Desktop/Quiz-app-/docs/DEVELOPMENT_LOG.md)，內容必須保持與最新代碼狀態同步。GEMINI.md 已廢除，不再維護。\n11. **OPENSPEC_TASKS_CHECKLIST**: 實作完畢結案前，必須將對應的 OpenSpec 變更計畫中的 `tasks.md`（例如 `openspec/changes/<change-name>/tasks.md`）中所有已完成的項目標記為 `[x]`，防範遺漏任務狀態更新。"
     },
     {
       "path": "AGENTS.md",
@@ -332,35 +344,35 @@
       "heading": "MEMORY.md > Purpose Snapshot",
       "category": "summary",
       "scope": "memory",
-      "text": "- [FACT-001] `Quiz-app--main/`: MindSpark 是一個以 React + TypeScript + Vite 建構的測驗學習應用，核心包含題庫管理、測驗流程、AI 輔助、雲端同步與遊戲化學習。\n- [FACT-002] 主要 runtime 是前端單頁應用；持久化同時依賴 `localStorage` 與 Supabase，並以 service layer + domain hooks 分離 I/O 與業務邏輯。"
+      "text": "- [FACT-001] `Quiz-app--main/`: MindSpark React + TypeScript + Vite quiz app. Core: bank manage, quiz flow, AI assist, cloud sync, game study.\n- [FACT-002] Runtime: frontend SPA. Persistent: `localStorage` + Supabase. Service layer + domain hooks separate I/O + logic."
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Source of Truth",
       "category": "source-of-truth",
       "scope": "memory",
-      "text": "- [PATH-001] `AGENTS.md`: project rules and routing.\n- [PATH-002] `types.ts`: 核心題目、題庫、設定與應用狀態型別。\n- [PATH-003] `App.tsx`: app shell 與主流程掛載入口。\n- [PATH-004] `services/`: storage、cloud、AI、analytics 與 graph 相關 I/O 邏輯。\n- [PATH-005] `hooks/`: battle、study、challenge 等領域 hook。\n- [PATH-006] `docs/DEVELOPMENT_LOG.md`: 重大變更歷史。\n- [PATH-007] `openspec/`: 規格、變更提案與 archived change 歷史。\n- [PATH-008] `start-dev.bat`: 快速啟動 Vite 開發伺服器、自動處理 Port 衝突與開啟瀏覽器的 Windows 批次腳本。\n- [PATH-009] `package.json`: npm scripts、Vercel build entry 與前端依賴版本來源。"
+      "text": "- [PATH-001] `AGENTS.md`: project rules, routing.\n- [PATH-002] `types.ts`: core types: questions, banks, settings, state.\n- [PATH-003] `App.tsx`: app shell, main entry.\n- [PATH-004] `services/`: storage, cloud, AI, analytics, graph I/O.\n- [PATH-005] `hooks/`: hooks for battle, study, challenge domains.\n- [PATH-006] `docs/DEVELOPMENT_LOG.md`: change log.\n- [PATH-007] `openspec/`: specs, proposals, archived changes.\n- [PATH-008] `start-dev.bat`: script start Vite, resolve port clash, open browser.\n- [PATH-009] `package.json`: npm scripts, Vercel build, dependency versions."
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Aliases & Vocabulary",
       "category": "alias",
       "scope": "memory",
-      "text": "- [ALIAS-001] 「題庫管理」「bank manager」-> `components/BankManager.tsx`, `services/storage.ts`, `services/cloudStorage.ts`\n- [ALIAS-002] 「測驗引擎」「quiz flow」-> `components/QuizCard.tsx`, `hooks/useQuizEngine.ts`, `reducers/appReducer.ts`\n- [ALIAS-003] 「遊戲模式」「battle」-> `hooks/useBattleSystem.ts`, `components/BattleArena.tsx`, `types/battleTypes.ts`\n- [ALIAS-004] 「知識圖」「knowledge graph」-> `components/KnowledgeGraph/`, `services/graphStorage.ts`, `types/graphTypes.ts`\n- [ALIAS-005] 「雲端同步」「Supabase」-> `contexts/AuthContext.tsx`, `services/cloudStorage.ts`, `services/supabase.ts`\n- [ALIAS-006] 「專案記憶」「project memory」-> `MEMORY.md`, `.project-memory/project_memory_mcp_entry.py`, `.memory-index/index.json`\n- [ALIAS-007] 「題目身份」「question identity」-> `utils/questionIdentity.ts`, `components/BankManager.tsx`, `services/cloudStorage.ts`\n- [ALIAS-008] 「分階段練習」「chunked practice」-> `hooks/useChunkedPractice.ts`, `components/ChunkedPracticePanel.tsx`, `services/cloudStorage.ts`\n- [ALIAS-009] 「practice_sessions」-> `docs/migrations/PRACTICE_SESSIONS_MIGRATION.sql`, `services/cloudStorage.ts`, `services/repository.ts`"
+      "text": "- [ALIAS-001] \"bank manager\" -> `components/BankManager.tsx`, `services/storage.ts`, `services/cloudStorage.ts`\n- [ALIAS-002] \"quiz flow\" -> `components/QuizCard.tsx`, `hooks/useQuizEngine.ts`, `reducers/appReducer.ts`\n- [ALIAS-003] \"battle\" -> `hooks/useBattleSystem.ts`, `components/BattleArena.tsx`, `types/battleTypes.ts`\n- [ALIAS-004] \"knowledge graph\" -> `components/KnowledgeGraph/`, `services/graphStorage.ts`, `types/graphTypes.ts`\n- [ALIAS-005] \"Supabase\" -> `contexts/AuthContext.tsx`, `services/cloudStorage.ts`, `services/supabase.ts`\n- [ALIAS-006] \"project memory\" -> `MEMORY.md`, `.project-memory/project_memory_mcp_entry.py`, `.memory-index/index.json`\n- [ALIAS-007] \"question identity\" -> `utils/questionIdentity.ts`, `components/BankManager.tsx`, `services/cloudStorage.ts`\n- [ALIAS-008] \"chunked practice\" -> `hooks/useChunkedPractice.ts`, `components/ChunkedPracticePanel.tsx`, `services/cloudStorage.ts`\n- [ALIAS-009] \"practice_sessions\" -> `docs/migrations/PRACTICE_SESSIONS_MIGRATION.sql`, `services/cloudStorage.ts`, `services/repository.ts`"
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Entry Points",
       "category": "entry-point",
       "scope": "memory",
-      "text": "- [ENTRY-001] `AGENTS.md`: 先讀鐵規、模組索引、資料安全與文件維護要求。\n- [ENTRY-002] `App.tsx`: 確認 view flow、provider 組裝與 reducer 接線。\n- [ENTRY-003] `types.ts`: 先鎖定資料模型，符合 TYPE_FIRST 規則。\n- [ENTRY-004] `services/storage.ts`: 檢查 `mindspark_*` key、guest mode 持久化與資料安全界線。\n- [ENTRY-005] `services/cloudStorage.ts`: 檢查登入後同步與 Supabase 邊界。\n- [ENTRY-006] `hooks/useBattleSystem.ts`: 遊戲化互動與持久化的主要熱區。\n\n<!-- BEGIN AUTO-GENERATED: MEMORY MAP -->"
+      "text": "- [ENTRY-001] `AGENTS.md`: read rules, module index, safety, doc policy first.\n- [ENTRY-002] `App.tsx`: view flow, provider nesting, reducer wiring.\n- [ENTRY-003] `types.ts`: data models, obeys TYPE_FIRST rule.\n- [ENTRY-004] `services/storage.ts`: `mindspark_*` keys, guest persistence, safety boundaries.\n- [ENTRY-005] `services/cloudStorage.ts`: sync flow, Supabase boundaries.\n- [ENTRY-006] `hooks/useBattleSystem.ts`: game interaction, state persistence.\n\n<!-- BEGIN AUTO-GENERATED: MEMORY MAP -->"
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Auto-Generated Memory Map",
       "category": "memory",
       "scope": "memory",
-      "text": "- Refreshed: `2026-07-11 20:57`\n- Project root: `C:\\Users\\user\\Desktop\\Quiz-app-`"
+      "text": "- Refreshed: `2026-07-12 15:30`\n- Project root: `C:\\Users\\user\\Desktop\\Quiz-app-`"
     },
     {
       "path": "MEMORY.md",
@@ -381,7 +393,7 @@
       "heading": "MEMORY.md > Auto-Generated Memory Map > OpenSpec Snapshot",
       "category": "memory",
       "scope": "memory",
-      "text": "- Main specs: `openspec/specs/`\n- Active changes: none detected.\n- Archived changes: `21`\n- [OS-ARC-001] `openspec/changes/archive/2026-06-12-dead-code-cleanup/` (proposal, design, tasks, specs:1)\n- [OS-ARC-002] `openspec/changes/archive/2026-07-11-security-architecture-hardening-v2/` (proposal, design, tasks, specs:8)\n- [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2)\n- [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks)\n- [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)"
+      "text": "- Main specs: `openspec/specs/`\n- Active changes: none detected.\n- Archived changes: `22`\n- [OS-ARC-001] `openspec/changes/archive/2026-07-11-security-architecture-hardening-v2/` (proposal, design, tasks, specs:8)\n- [OS-ARC-002] `openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/` (proposal, design, tasks, specs:6)\n- [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2)\n- [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks)\n- [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)"
     },
     {
       "path": "MEMORY.md",
@@ -395,56 +407,63 @@
       "heading": "MEMORY.md > Stable Facts (part 1)",
       "category": "fact",
       "scope": "memory",
-      "text": "- [FACT-010] `services/storage.ts`: 所有本地持久化 key 皆以 `mindspark_` 為前綴，清理或遷移時要遵守資料安全規則。\n- [FACT-011] `contexts/AuthContext.tsx` + `services/cloudStorage.ts`: 題庫可上雲，但學習行為資料仍大量保留在 localStorage 作裝置級追蹤。\n- [FACT-012] `components/KnowledgeGraph/` + `services/graphStorage.ts`: 知識圖工作區已存在且有測試覆蓋，不是草稿目錄。\n- [FACT-013] `.project-memory/project_memory_mcp_entry.py`: 此 repo 已有 project-local MCP wrapper，可直接提供 `search_memory`、`get_aliases` 等工具。\n- [FACT-014] `Question.id` 現在視為內部穩定 ID；外部匯入來源以 `sourceQuestionKey` / `sourceFingerprint` 協助合併與去重。\n- [FACT-015] `components/BankManager.tsx` 已具備單題編輯/刪除 UI，刪題會清理錯題、SM-2、最近錯題與 quiz session 殘留資料。\n- [FACT-016] `components/BankManager.tsx` 在 JSON / AI 匯入前會顯示匯入摘要，明確列出原始題數、重複合併數與實際可匯入題數。\n- [FACT-017] `components/BankManager.tsx` 現在支援三種匯入模式：`append` 只新增全新題目、`merge` 更新同來源題目並新增新題、`replace` 以匯入內容覆蓋整個題庫；預設為 `append`。\n- [FACT-018] 分階段練習 session 使用 `mindspark_practice_sessions`；進行中恢復使用 `mindspark_chunk_draft:<sessionId>:<chunkIndex>`，且 chunked 模式不寫入 `mindspark_quiz_session`。\n- [FACT-019] `syncLocalPracticeSessions` 採 `updated_at` LWW，同步失敗會保留 dirty local fallback 以供後續重試。\n- [FACT-020] `App.tsx` + `useQuizEngine.ts`: 回調函數（如 `onChunkDraftUpdate`、`onChunkComplete`）必須使用 `useCallback` 封裝，避免在 React 渲染時因為引用變更引發與 `useQuizEngine` 異步載入題庫之間的競態條件，此規則已被 hotfix 完美證實。\n- [FACT-021] `CloudStorageRepository.savePracticeSession` 雲端保存成功後只能移除本地 session cache，不能清除 `mindspark_chunk_draft:*`；使用 `removePracticeSessionCache()`，避免登入狀態下刷新後續答回到第一題。\n- [FACT-022] Vercel build 的真正風險是遠端 Git 若追蹤 `node_modules/` 或 Windows 保留檔名（如 `nul`），會造成 Linux 部署依賴樹殘缺或 shim 權限錯誤；`package.json` 應維持標準 `vite build`，並確保依賴由 Vercel fresh install 產生。\n- [FACT-023] `services/storage.ts`: 引入了防禦性 AI Config 驗證與 Zustand 狀態防禦，確保從 `localStorage` 載入設定時，通過 Type Guards 與 schema 檢查防止惡意 payload 注入。\n- [FACT-024] `services/cloudStorage.ts`: 練習階段 (Practice Sessions) 同步中，修正了 Cloud-only sessions 寫回邏輯。登入後當本地無資料但雲端有紀錄時，會安全地將雲端 session 寫回本地，避免被空資料覆蓋。\n- [FACT-025] `utils/integrityCheck.ts`: HMAC-SHA256 簽名改為無狀態動態派生，不依賴 localStorage 中的明文 sal"
+      "text": "- [FACT-010] `services/storage.ts`: Local keys prefix `mindspark_`. Obey data safety during migration.\n- [FACT-011] `contexts/AuthContext.tsx` + `services/cloudStorage.ts`: Banks sync to cloud. Study history stays in `localStorage` for device tracking.\n- [FACT-012] `components/KnowledgeGraph/` + `services/graphStorage.ts`: Graph workspace exists + has tests. Not draft.\n- [FACT-013] `.project-memory/project_memory_mcp_entry.py`: Local MCP wrapper provides `search_memory`, `get_aliases`.\n- [FACT-014] `Question.id`: Stable UUID internal ID. Cloud dedupe uses `sourceQuestionKey` / `sourceFingerprint`.\n- [FACT-015] `components/BankManager.tsx`: Single question delete UI. Deleting cleans mistakes, SM-2, recent mistakes, quiz session.\n- [FACT-016] `components/BankManager.tsx`: Show import summary (source, duplicate merge, final count) before JSON/AI import.\n- [FACT-017] `components/BankManager.tsx`: Import modes: `append` (new only, default), `merge` (update existing + add new), `replace` (overwrite bank).\n- [FACT-018] Chunked practice: use `mindspark_practice_sessions` session. Mid-chunk restore use `mindspark_chunk_draft:<sessionId>:<chunkIndex>`. Skip `mindspark_quiz_session`.\n- [FACT-019] `syncLocalPracticeSessions`: Use `updated_at` LWW. Save dirty local fallback for retry on sync fail.\n- [FACT-020] `App.tsx` + `useQuizEngine.ts`: Callbacks (e.g. `onChunkDraftUpdate`, `onChunkComplete`) MUST use `useCallback` to prevent race conditions during async load.\n- [FACT-021] `CloudStorageRepository.savePracticeSession`: Success clear local session cache, NOT `mindspark_chunk_draft:*`. Use `removePracticeSessionCache()`.\n- [FACT-022] Vercel build: Git must not track `node_modules` or Windows reserved names (e.g. `nul`). Vercel fresh install mandatory.\n- [FACT-023] `services/storage.ts`: Verify AI Config via Type Guards + schema from `localStorage`. Prevent malicious payload.\n- [FACT-024] `services/cloudStorage.ts`: Practice Sessions sync. Cloud-only sessions write back to loca"
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Stable Facts (part 2)",
       "category": "fact",
       "scope": "memory",
-      "text": "t，杜絕金鑰洩露威脅。\n- [FACT-026] `hooks/useBattleSystem.ts`: 載入存檔時已整合 `isBattleState` 安全與範圍守衛，若格式或數值不符即重置，防範注入惡意數據或作弊。\n- [FACT-027] `docs/sql/submit_challenge_score.sql`: 聯賽分數提交 SQL RPC 強制於資料庫端結算完賽狀態，且雙方皆有分數時自動判定並記錄 `winner_id`。\n- [FACT-028] `dead-code` 分析在本 repo 可直接改用 `npx -y knip --reporter compact --no-progress`；目前環境沒有 `tldr` 指令可用。\n- [FACT-029] `openspec/specs/code-hygiene/spec.md`: 定義了專案的代碼潔淨度 (Code Hygiene) 規範，包含死碼物理刪除、導出作用域收窄、依賴清理與重複導出 (export default) 的清理標準。\n- [FACT-030] `services/cloudStorage.ts`: 引入了跨分頁與同步併發鎖 `runWithSyncLock`（主用 Web Locks `navigator.locks`，備用 localStorage 30s 逾時鎖），以保護 `syncLocalToCloud` 與 `syncLocalPracticeSessions` 的併發安全。\n- [FACT-031] `components/FocusTimer.tsx`: 引入 `activeAudioContextsRef` 來追蹤生命週期，在音效播放完畢與組件 unmount 時強制調用 close() 釋放，防範記憶體洩漏。\n- [FACT-032] `hooks/useKeyboardShortcuts.ts`: 引入 `handlersRef` 模式將快捷鍵 callbacks 與監聽器解耦，監聽器 dependency array 設為空，避免 references 變更造成重複綁定事件監聽器。\n- [FACT-033] `services/cloudStorage.ts`: `saveCloudQuestions` 引入了「upsert 前預寫 dirty-bank」與成功後 `removeDirtyBank` 機制，確保即使在網路中斷或突然關閉瀏覽器時，髒題庫仍會被記錄以供下次同步時清理。"
+      "text": "l if local empty. Prevents overwrite by empty data.\n- [FACT-025] `utils/integrityCheck.ts`: Stateless dynamic HMAC-SHA256. No local salt storage. Prevents key exposure.\n- [FACT-026] `hooks/useBattleSystem.ts`: Validate battle state ranges on load. Reset on corrupt data to prevent cheats.\n- [FACT-027] `docs/sql/submit_challenge_score.sql`: Submit challenge score RPC determines winner on DB side if both scores present.\n- [FACT-028] Dead code: Use `npx -y knip --reporter compact --no-progress`. No `tldr` binary available.\n- [FACT-029] `openspec/specs/code-hygiene/spec.md`: Code Hygiene spec defines physical dead code delete, narrow export scopes, clean redundant `export default`.\n- [FACT-030] `services/cloudStorage.ts`: Concurrency lock `runWithSyncLock` (Web Locks `navigator.locks` + 30s localStorage fallback) protects `syncLocalToCloud` and `syncLocalPracticeSessions`.\n- [FACT-031] `components/FocusTimer.tsx`: Track AudioContext in `activeAudioContextsRef`. Force close() on unmount/play finish to prevent resource leak.\n- [FACT-032] `hooks/useKeyboardShortcuts.ts`: Use `handlersRef` pattern. Decouple callbacks from listeners. empty deps `[]` to prevent redundant keydown listeners.\n- [FACT-033] `services/cloudStorage.ts`: `saveCloudQuestions` writes to `mindspark_dirty_banks` before upsert, clears on success via `removeDirtyBank`. Handles offline/close mid-sync.\n- [FACT-034] `services/graphStorage.ts`: M1 Remedy added length checks, HTML escape, concat migration, Fail-fast error propagation, and Blob.size check.\n- [FACT-035] `services/radialLayout.ts` & `services/markdownGraphBridge.ts`: Milestone 2 radial layout and Markdown parser/serializer (with sticky node filter, max nodes truncation, jump indentation tolerance, and Nd > 12 step expansion).\n- [FACT-036] `components/KnowledgeGraph/StickyNoteNode.tsx` & `components/KnowledgeGraph/GraphNotesPanel.tsx` & `components/KnowledgeGraph/NotesSearch.tsx`: Milestone 3 UI Elements. Sticky Note nodes have yellow note appearanc"
+    },
+    {
+      "path": "MEMORY.md",
+      "heading": "MEMORY.md > Stable Facts (part 3)",
+      "category": "fact",
+      "scope": "memory",
+      "text": "e (#FEF3C7/#F59E0B), no Handles, and limit of 500 characters edited in-place. Notes are stored in GraphDocument.notes with title keys, debounced auto-save, immediate flush on unmount/node switch, and key rename transfer. Paste/drop Base64 image interception prevents localStorage quota exhaustion. NotesSearch parses HTML tags for text matching, focuses/fits view to graph node, and manages orphaned notes (delete or reconnect).\n- [FACT-037] `components/KnowledgeGraph/GraphCodeEditor.tsx` & `KnowledgeGraphWorkspace.tsx` & `GraphEditor.tsx`: Milestone 4 Workspace Integration. GraphCodeEditor features scroll syncing (scrollTop alignment), monospaced styling (no word-wrap), 500ms debounced input, and error display. KnowledgeGraphWorkspace intercepts Fatal Errors in getGraphs(), rendering full-screen recovery with Backup JSON export (Blob-based) and Reset buttons. GraphEditor supports visual/code mode with 1/3-editor & 2/3-readonly-canvas in code mode, graphToMarkdown DFS serialization, parseMarkdownToGraph BFS parsing with radialLayout positioning and sticky node Union merging, and title-based node property restoration (definition, details, color, fontSize, shapeType).\n- [FACT-038] `AGENTS.md`: Rule 11 (OPENSPEC_TASKS_CHECKLIST) requires checking and marking all tasks in `openspec/changes/<change-name>/tasks.md` as `[x]` before declaring a task finished."
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Active Decisions",
       "category": "decision",
       "scope": "memory",
-      "text": "- [DEC-001] `AGENTS.md`: 採用 `AGENTS.md` 承載規則、`MEMORY.md` 承載動態事實，repo-local `GEMINI.md` 不再維護。\n- [DEC-002] `services/` + `hooks/`: 元件不直接碰 storage / Supabase，I/O 維持集中於 service layer。\n- [DEC-003] `.codex/config.toml` + `.project-memory/project_memory_mcp_entry.py`: 本專案改用 project-local MCP wrapper，避免只依賴全域 `project-memory-auto`。\n- [DEC-004] `vite.config.ts`: 將 React 核心與 Recharts/Framer-motion 強制打包在同一 `vendor-ui-core` chunk，解決生產環境下因拆分導致的 `forwardRef` undefined 錯誤。\n- [DEC-005] `package.json`: 部署 build 入口維持標準 `vite build`；跨平台 shim 權限問題應從 Git 依賴衛生修正，不能提交 `node_modules/`。\n- [DEC-006] Storage 與 Config 安全：全面禁止在 Storage 讀取與 JSON 解析中使用 `any`，必須使用 `unknown` 加上特定的 Type Guard 進行防禦式屬性驗證與合併。\n- [DEC-007] E2E 測試對齊：由於自製 React `ConfirmDialog` 取代了原生對話框，所有 E2E 測試皆改用點擊 Confirm 鈕而非 `page.on('dialog')`，以防範黑紗遮罩阻擋所致的超時死鎖。"
+      "text": "- [DEC-001] rules in `AGENTS.md`, facts in `MEMORY.md`. `GEMINI.md` deprecated.\n- [DEC-002] I/O concentrated in service layer. Components never touch storage/Supabase directly.\n- [DEC-003] Use local MCP wrapper `.project-memory/project_memory_mcp_entry.py`. Skip global `project-memory-auto`.\n- [DEC-004] `vite.config.ts`: Bundle React core + Recharts + Framer Motion in same `vendor-ui-core` chunk. Fixes production `forwardRef` undefined crash.\n- [DEC-005] `package.json`: Build entry uses `vite build`. Fix platform permissions by clean Git index, no `node_modules` commit.\n- [DEC-006] Storage Safety: Ban `any` in Storage/JSON parse. Use `unknown` + Type Guards.\n- [DEC-007] E2E: Click custom Confirm buttons instead of `page.on('dialog')` due to custom `ConfirmDialog` overlay blocking."
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Hotspots",
       "category": "hotspot",
       "scope": "memory",
-      "text": "- [HOT-001] `App.tsx` & `vite.config.ts`: 全域流程、Provider 接線與生產環境打包配置，任何大型 UI 功能更新都需注意 Chunk 拆分相容性。\n- [HOT-002] `services/storage.ts` / `services/cloudStorage.ts`: 任何資料模型變更都可能影響相容性與使用者資料完整性。\n- [HOT-003] `hooks/useBattleSystem.ts`: 遊戲化狀態複雜且與 UI、持久化、測驗結果交錯。\n- [HOT-004] `services/graphStorage.ts` + `components/KnowledgeGraph/`: 新近功能區，仍在演化，改動容易打到測試與資料結構。\n- [HOT-005] `utils/questionIdentity.ts` + `components/BankManager.tsx`: 題目匯入、覆蓋與手動修正流程的核心熱區，影響題目穩定識別與學習紀錄是否斷鏈。\n- [HOT-006] `hooks/useChunkedPractice.ts` + `hooks/useQuizEngine.ts`: chunked session 與 quiz flow 的交界，容易出現 restore/完成回調與持久化時序問題。\n- [HOT-007] `services/cloudStorage.ts` + `services/storage.ts`: practice session 的 LWW/dirty/retry 與 guest retention 都在此，任何變更都要驗證資料完整性。\n- [HOT-008] `.gitignore` + Git index hygiene: Vercel 曾因遠端追蹤 `node_modules/` 造成 `.bin/vite` 權限失敗與 `vite/dist/node/cli.js` 缺檔；部署修復時先查 `git ls-tree -r origin/main node_modules`。\n- [HOT-009] `services/storage.ts` + `services/cloudStorage.ts`: 安全與同步強化引入了嚴格的資料驗證。修改此處的儲存格式需特別注意升級時的資料還原相容性。"
+      "text": "- [HOT-001] `App.tsx` & `vite.config.ts`: Main entry, Provider tree, manual chunks logic. Watch out for UI core chunking.\n- [HOT-002] `services/storage.ts` & `services/cloudStorage.ts`: Data schema changes affect backward compatibility.\n- [HOT-003] `hooks/useBattleSystem.ts`: RPG game state tied with quiz engine & UI.\n- [HOT-004] `services/graphStorage.ts` & `components/KnowledgeGraph/`: Active graph code, high churn, check tests.\n- [HOT-005] `utils/questionIdentity.ts` & `components/BankManager.tsx`: Import deduplication, stable IDs, prevents data mismatch.\n- [HOT-006] `hooks/useChunkedPractice.ts` & `hooks/useQuizEngine.ts`: Intersection of practice sessions + quiz flow. Timings matter.\n- [HOT-007] `services/cloudStorage.ts`: Practice Session sync (LWW, dirty, retry logic). Validate schema.\n- [HOT-008] `.gitignore` & Git index: Vercel build fails if `node_modules/` tracked in Git. Verify via `git ls-tree`.\n- [HOT-009] `services/storage.ts` & `services/cloudStorage.ts`: Config safety filters. Type checking strictness."
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Search Recipes",
       "category": "search-recipe",
       "scope": "memory",
-      "text": "- [RG-001] `rg -n \"mindspark_\" services hooks components`: 找所有持久化 key 與資料流入口。\n- [RG-002] `rg -n \"useBattleSystem|battle\" hooks components types`: 找遊戲模式狀態與 UI 接線。\n- [RG-003] `rg -n \"graph|KnowledgeGraph|mermaid\" components services src/__tests__ types`: 找知識圖功能與測試。\n- [RG-004] `rg -n \"Supabase|cloudStorage|syncLocalToCloud\" contexts services`: 找登入同步與雲端行為。\n- [RG-005] `rg -n \"sourceQuestionKey|sourceFingerprint|mergeImportedQuestions\" components services utils src/__tests__`: 找題目身份與匯入合併實作。\n- [RG-006] `rg -n \"planQuestionImport|importMode|匯入前檢查\" components utils src/__tests__`: 找匯入模式、摘要提示與測試。\n- [RG-007] `rg -n \"useChunkedPractice|chunkMeta|mindspark_practice_sessions|syncLocalPracticeSessions\" App.tsx hooks services components src/__tests__`: 找分階段練習主流程與同步點。\n- [RG-008] `rg -n \"\\\"build\\\"|vite|Vercel|Permission denied\" package.json vercel.json docs CHECKLIST.md MEMORY.md`: 找部署 build 腳本與 Vercel 權限問題紀錄。\n- [RG-009] `npx -y knip --reporter compact --no-progress`: 重跑 dead-code / unused export / unused dependency 掃描。"
+      "text": "- [RG-001] `rg -n \"mindspark_\" services hooks components`: Local storage keys and flow entries.\n- [RG-002] `rg -n \"useBattleSystem|battle\" hooks components types`: RPG battle states and UI components.\n- [RG-003] `rg -n \"graph|KnowledgeGraph|mermaid\" components services src/__tests__ types`: Graph features and tests.\n- [RG-004] `rg -n \"Supabase|cloudStorage|syncLocalToCloud\" contexts services`: Supabase auth and sync handlers.\n- [RG-005] `rg -n \"sourceQuestionKey|sourceFingerprint|mergeImportedQuestions\" components services utils src/__tests__`: Question stable IDs & import merge.\n- [RG-006] `rg -n \"planQuestionImport|importMode\" components utils src/__tests__`: Import checks, UI summaries.\n- [RG-007] `rg -n \"useChunkedPractice|chunkMeta|mindspark_practice_sessions\" App.tsx hooks services components`: Chunked session lifecycle.\n- [RG-008] `rg -n \"\\\"build\\\"|vite|Vercel\" package.json vercel.json docs MEMORY.md`: Vercel deployments and scripts.\n- [RG-009] `npx -y knip --reporter compact --no-progress`: Dead code and unused exports."
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Archive Index",
       "category": "memory",
       "scope": "memory",
-      "text": "- [DOC-001] `docs/INDEX.md`: 已整理 reports、archive、migrations 與 root docs 索引，查歷史輸出先看這裡。"
+      "text": "- [DOC-001] `docs/INDEX.md`: Index of reports, archives, migrations, docs."
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Open Risks",
       "category": "risk",
       "scope": "memory",
-      "text": "- [RISK-001] `docs/DEVELOPMENT_LOG.md`: 現有檔案曾被半自動 patch，格式有殘留 `+` 字元，後續需再做一次整體清理。\n- [RISK-002] `vite.config.ts` 的 `manualChunks` 若過於破碎會引發 Recharts 載入失敗；雖然已修復，但後續新增大型依賴時需再次驗證 Production Build。\n- [RISK-003] `ensure_project_mcp_configs.py` 預設會碰 `%USERPROFILE%\\\\.gemini\\\\antigravity\\\\mcp_config.json`，在受限環境下可能因權限失敗，但不影響 repo-local Codex/Gemini/Cursor 設定。"
+      "text": "- [RISK-001] `docs/DEVELOPMENT_LOG.md`: Leftover `+` format characters from semi-auto patch. Needs clean.\n- [RISK-002] `vite.config.ts`: Fragmented `manualChunks` breaks Recharts import. Re-verify if large dependencies added.\n- [RISK-003] `ensure_project_mcp_configs.py`: Tries writing `%USERPROFILE%\\.gemini\\antigravity\\mcp_config.json`. Might fail on permissions, doesn't block local configs."
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Next Refresh Triggers",
       "category": "refresh-trigger",
       "scope": "memory",
-      "text": "- Rename or move a major directory.\n- Add or remove nested `AGENTS.md` files.\n- Change architecture, persistence, or integration boundaries."
+      "text": "- Rename/move major directories.\n- Add/remove nested `AGENTS.md`.\n- Modify architecture, storage schemas, or integrations."
     },
     {
       "path": "README.md",
@@ -466,6 +485,76 @@
       "category": "source-doc",
       "scope": "source",
       "text": "**Prerequisites:**  Node.js\n\n\n1. Install dependencies:\n   `npm install`\n2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key\n3. Run the app:\n   `npm run dev`"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-12 [Audit Remediation] \"Knowledge Graph Audit Remediation & Dead Code Cleanup\" > 🛠️ 知識圖增強最終審計缺陷修復與冗餘死代碼清理 (Audit Remediation)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **儲存與安全邊界補強**：\n  - 重構 `services/graphStorage.ts` 的 `getGraphs` 函式，將 `let graphs: any[]` 型別更正為強型別 `unknown`，完全清除 remaining `any`。\n  - 於 `getGraphs` 中對 `JSON.parse` 及陣列檢查加上主動拋出錯誤（Fail-fast），避免毀損資料造成靜默忽略與後續 save 覆蓋。\n  - 修復 `isQuotaExceeded` 與 `validateGraphDocument` 的屬性安全轉換，完全移除了 `as any` 型別轉換。\n- **功能重疊與局部死代碼清理 (DEAD-01)**：\n  - 徹底修改 `components/KnowledgeGraph/NodeEditPanel.tsx`，刪除與 `GraphNotesPanel` 的 TipTap 富文本編輯器重疊的 `definition` 與 `details` 輸入區（textarea）以及相關的 React hooks 和 state，使面板專注於屬性配置（標題、顏色、形狀、字體大小），避免資料多處編輯的狀態競態與冗餘代碼。\n- **便利貼預設文字修正 (WARNING-02)**：\n  - 修改 `components/KnowledgeGraph/GraphEditor.tsx` 的 `handleAddSticky`，將新便利貼的 `title` 和 `label` 預設值修正為 `'備忘'`，符合 Spec 的具體規格要求。\n- **編輯器 Unmount 變更 Flush (DEBT-02)**：\n  - 修復 `components/KnowledgeGraph/GraphCodeEditor.tsx` 的 unmount 變更丟失缺陷，引入 `localValueRef` 與 `onChangeRef` 以安全繞過 React 閉包陷阱，確保 unmount 時能將最新的 code 變更 flush 回寫。\n- **解析器冗餘代碼移除 (OVER-02 & OVER-01)**：\n  - 移除 `services/markdownGraphBridge.ts` 中 `parseMarkdownToGraph` 返回前的冗餘 `sticky` 節點過濾。\n  - 於 YAML frontmatter 跳過邏輯加註防禦式註解。\n- **全量測試與打包驗證**：\n  - 更新 `src/__tests__/graphStorage.test.ts` 以符合 JSON 毀損拋錯之新行為。\n  - `npx tsc --noEmit` 零編譯錯誤。\n  - `npm test -- --run` 全數 217 個測試案例 100% 🟢 通過。\n  - `npm run build` 生產打包 100% 成功。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-12 [Verification & Refactor] \"Zero-Any Type Safety & Verification Report\" > 🔍 知識圖增強開發計畫驗證與 TypeScript `any` 型別徹底掃除 (Verification & Refactor)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **TypeScript 零 any 型別重構**：\n  - 擴充 `types/graphTypes.ts` 中的 `GraphNodeData` 介面，新增選用欄位 `label?: string`，藉此在資料結構層級去耦 React Flow Node data 原生的無型別問題。\n  - 重構 `components/KnowledgeGraph/NotesSearch.tsx`，將 `nodes: any[]` 的 Prop 型別改為 `GraphNode[]`。移除所有 `(n.data as any).label` 的 unsafe cast。\n  - 重構 `components/KnowledgeGraph/GraphEditor.tsx`，將 `(n.data as any).title` 改為 `(n.data as Partial<GraphNodeData>).title` 進行防禦式安全讀取；並在 `NotesSearch` 的 `nodes` 綁定上，使用 `fromRFNodes(nodes)` 對齊型別。\n  - 重構 `components/KnowledgeGraph/GraphNotesPanel.tsx`，將 TipTap `onUpdate` 參數中的 `editor: any` 修改為強型別 `editor: NonNullable<ReturnType<typeof useEditor>>`。\n- **全量測試與打包驗證**：\n  - 執行 `npx tsc --noEmit` 通過零 errors、零 warnings。\n  - 執行 `npm test -- --run` 全數 34 個測試檔案、217 個測試案例 100% 🟢 通過。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-12 [Customizations / Learn] \"Enforce OpenSpec tasks.md checklist completion\" > 🛠️ 行為學與規則優化 (Learn Rule Add)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **鐵規新增 (AGENTS.md & MEMORY.md)**：\n  - 新增規則 11 (`OPENSPEC_TASKS_CHECKLIST`)。\n  - 規定每次任務結案前，必須將對應的 OpenSpec 變更計畫中的 `tasks.md` 所有任務標記為 `[x]`，防範遺失進度記錄。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-12 [Workspace Integration] \"Milestone 4: Workspace Integration & Verification\" > 🛠️ 代碼編輯器、Fatal Error 阻斷與雙模式畫布整合 (Milestone 4)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **代碼模式編輯器元件 (components/KnowledgeGraph/GraphCodeEditor.tsx)**：\n  - 新建 `GraphCodeEditor.tsx` 元件，實作左側帶行號的 Markdown 編輯器。\n  - 透過 `textarea` 的 `onScroll` 事件同步行號區塊的 `scrollTop`，實現兩者的垂直滾動精準同步。\n  - 對行號區塊與 `textarea` 設定一致的 font-family、line-height 與 padding，並禁用 word-wrap（使用 `white-space: pre` 與 `overflow-x: auto`）以防排版對齊偏斜。\n  - 實作 500ms debounce 的 `onChange` 即時更新機制，以 local state 維持打字流暢度。\n  - 底部顯示解析錯誤與警告區域，若 errors 長度大於 0 則渲染紅色警告提示。\n- **Workspace 頂層 Fatal Error 阻斷與備份還原 (components/KnowledgeGraph/KnowledgeGraphWorkspace.tsx)**：\n  - 重構 `KnowledgeGraphWorkspace.tsx`，在載入 `getGraphs()` 時使用 try-catch 捕獲拋出的任何 Fatal Error（例如遷移失敗或 localStorage QuotaExceededError）。\n  - 若捕獲 Fatal Error，阻斷整個 Workspace 載入，渲染全頁錯誤畫面，引導使用者處理「儲存空間損毀或容量超限」。\n  - 實作「導出備份 JSON」按鈕，建立 Blob 並以下載檔案的形式導出 localStorage 中的原始 `mindspark_graphs`。\n  - 實作「清空資料並重置」按鈕，呼叫 `localStorage.removeItem` 清除資料並 reload 頁面。\n- **畫布編輯器雙模式切換與屬性合併 (components/KnowledgeGraph/GraphEditor.tsx & GraphToolbar.tsx)**：\n  - 引入雙模式切換，預設值來自 `graph.editMode`，可切換 `visual`（全寬編輯）與 `code`（1/3 編輯器與 2/3 唯讀畫布）。\n  - 實作雙向資料同步：視覺 -> 代碼時，呼叫 `graphToMarkdown` 序列化結構節點；代碼 -> 視覺時，呼叫 `parseMarkdownToGraph` 解析結構，若成功則套用放射狀佈局（`applyRadialLayout`）並與畫布上原有的 `sticky` 便利貼節點進行 Union 合併，更新 React Flow 狀態。\n  - 合併時依據標題比對原本畫布節點，保留原本節點的 `definition`, `details`, `color`, `fontSize`, `type` (shapeType) 屬性以防資料丟失，且 `notesDict` 獨立保存不需轉移。\n  - 儲存時將 `editMode` 寫入 `GraphDocument` 進行保存。\n  - 在 `GraphToolbar.tsx` 中新增模式切換按鈕（整合至 toolbar 與 props）。\n- **測試與生產環境建置驗證**：\n  - 所有新增與修改程式碼維持 TypeScript 0 `any` 型別安全。\n  - `npx tsc --noEmit` 型別檢查 100% 🟢 通過。\n  - 全量單元測試 `npm test -- --run`（包含 `graphStorage.test.ts`、`radialLayout.test.ts`、`markdownGraphBridge.test.ts` 等 217 個測試案例）100% 🟢 通過。\n  - `npm run build` 生產環境建置與 Vite 打包成功通過。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-12 [UI Elements (Notes & Stickies)] \"Milestone 3: UI Elements (Notes & Stickies)\" > 🛠️ 知識圖譜便利貼、富文本筆記與搜尋面板實作 (Milestone 3)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **便利貼節點元件 (components/KnowledgeGraph/StickyNoteNode.tsx)**：\n  - 新建 `StickyNoteNode.tsx` 並在 `GraphEditor.tsx` 中註冊為自定義節點類型 `sticky`。\n  - 視覺上使用黃色便籤紙樣式（背景色 `#FEF3C7`、邊框 `#F59E0B`）、輕微陰影與圓角，且無連線點 Handle（完全不允許與其他節點連線）。\n  - 支援雙擊就地編輯，最大字元限制為 `500` 字元，並同步寫回該節點的 `data.label` 與 `data.title`。\n  - 使用 `onPointerDown={(e) => e.stopPropagation()}` 避免在打字、點選、拖曳選取文字時觸發 React Flow 畫布拖曳等衝突。\n- **TipTap 富文本筆記面板 (components/KnowledgeGraph/GraphNotesPanel.tsx)**：\n  - 新建 `GraphNotesPanel.tsx`，整合 TipTap 編輯器，工具列支援格式：H1, H2, Bold, Italic, Underline, Strike, OrderedList, BulletList, Clear formatting。\n  - 筆記獨立以當前選中節點的 `title` 為 key 儲存於頂層 `GraphDocument.notes` 字典中。\n  - 支援 500ms debounce 自動保存，並且在切換節點或 unmount 卸載面板時強制立即同步 (flush) 最新筆記狀態，以防資料遺失。\n  - 改名 Key 轉移：實作了 `renameNoteKey` 輔助函式，當節點名稱（title）變更時，自動將筆記的 key 從舊 title 轉移為新 title，並從 `notes` 中移除舊 title 鍵。\n  - ⚠️ Base64 圖片安全防範：在 TipTap 配置中阻斷並過濾 Base64 格式圖片的貼入或上傳（過濾 `handlePaste` 中的 `image/*`，並在 `transformPastedHTML` 中使用 Regex 移除含有 base64 src 的 img 標籤），以防撐爆 localStorage 的 5MB 限制。\n- **跨節點筆記搜尋面板 (components/KnowledgeGraph/NotesSearch.tsx)**：\n  - 新建 `NotesSearch.tsx`，支援跨 `notes` 字典進行純文字內容搜尋，搜尋時應將筆記 HTML 內容去除標籤（如 `value.replace(/<[^>]*>/g, '')`）再進行字串匹配。\n  - 搜尋結果點擊時，自動在畫布中以 `fitView` / `focus` 聚焦定位至對應節點，選中該節點並開啟該節點的筆記面板。\n  - 未歸檔（孤立）筆記管理：遍歷並找出所有當前圖表的 `notes` 字典中，Key 值在現有的 nodes 列表中不存在的無效筆記，提供刪除與重新連結功能。\n- **儲存層與工具列修改**：\n  - 在 `GraphEditor.tsx` 中建立 `notesDict` 與 `activeSidePanel` 狀態，整合側面板（編輯/筆記/搜尋）的顯示與切換邏輯。\n  - 實作了 `handleAddSticky` 行為，並加上數量上限防禦。\n  - 修正了 `graphStorage.ts` 中 3 處 useless try/catch（no-useless-catch ESLint 錯誤）。\n- **測試與型別安全**：\n  - 新增針對 `renameNoteKey` 改名轉移成功與無效改名防禦的單元測試，217 個單元測試案例全數 🟢 通過，`npx tsc --noEmit` 型別檢查 0 錯誤。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-12 [Radial Layout & Markdown Bridge] \"Milestone 2: Radial Layout & Markdown parser\" > 🛠️ 放射狀佈局演算法與 Markdown 解析序列化橋接器實作 (Milestone 2)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **放射狀佈局演算法 (services/radialLayout.ts)**：\n  - 實作了 `applyRadialLayout()`，可將節點與連線進行放射狀分層定位。\n  - 根節點偵測：優先選擇入度為 0 且有關聯邊的結構節點作為根，若無或有多個，則退回選擇 `nodes[0]`。\n  - BFS 層級計算與多連通分量：使用 BFS 為每個結構節點分配層級深度，非主要連通分量之起點深度設為 1，避免與根節點重疊。\n  - 防重疊 step 調整：當某一深度層級節點數大於 12 時，自動將半徑步長 `step` 調大（大於 300 且與個數成正比），防止大層級重疊。\n  - 孤立節點處理：若節點與任何邊都無關聯（且非根節點），則將其定位在畫布右側垂直排列。\n- **Markdown 解析與序列化橋接 (services/markdownGraphBridge.ts)**：\n  - 實作了 `parseMarkdownToGraph()`：逐行解析 Markdown 縮排列表（`-` 或 `*` 開頭），忽略 YAML frontmatter。\n  - 縮排層級計算與跳躍縮排容錯：相容 2 空格、4 空格與 Tab 縮排，若有跳躍縮排則容錯掛載至最近的祖先。\n  - 自動配色：依深度對 `DEFAULT_NODE_COLORS` 進行模運算套用預設配色。\n  - 節點數量上限：超過 200 個節點時，於 `errors` 記錄警告並進行截斷阻斷。\n  - 便利貼過濾：在解析與 `graphToMarkdown` 序列化時，完全過濾與忽略 `type === 'sticky'` 類型的便利貼節點，使其在代碼模式文本中完全隱形。\n  - 實作了 `graphToMarkdown()`：使用 DFS 深度優先搜尋，將結構節點遞迴序列化回 Markdown 縮排列表。\n- **單元測試與型別安全**：\n  - 於 `src/__tests__/radialLayout.test.ts` 與 `src/__tests__/markdownGraphBridge.test.ts` 分別補齊 8 個與 7 個單元測試，涵蓋各類極端輸入與邊界條件。\n  - 全量單元測試 215 個案例全數 🟢 通過，`npx tsc --noEmit` 型別檢查 0 錯誤。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-12 [Remedy & Hardening] \"Milestone 1 Remedy: Security & Defense Hardening\" > 🛠️ 知識圖譜儲存層防禦加固與邊界安全性修復 (Milestone 1 Remedy)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **欄位字元長度限制與阻擋**：於 `services/graphStorage.ts` 的 `validateGraphDocument()` 中，對 `nodes` (結構與便利貼)、`edges` 與 `notes` 實作了嚴格的長度上限檢驗（`TITLE_MAX` 100、`DEFINITION_MAX` 500、`DETAILS_MAX` 2000、`STICKY_TEXT_MAX` 500、`EDGE_LABEL_MAX` 100、`NOTES_MAX` 10000），任何不符即回傳明確的錯誤字串阻斷寫入。\n- **防止遷移覆蓋 (Data Loss)**：優化 v1->v2 遷移邏輯，當發現多個舊節點擁有完全相同的 `title` 時，自動將 definition/details 進行串接（以 `<hr />` 分隔），將內容集中在同一個 `notes[title]` 鍵下，防止資料遺失。\n- **Fail-fast 錯誤傳播**：重構 `getGraphById()` 與 `deleteGraph()` 中的例外處理，當呼叫 `getGraphs()` 時捕獲到遷移或 Fatal Error，一律直接 `throw err` 向上傳播給頂層 ErrorBoundary，僅有內部一般 localStorage 異常才回退為預設值。\n- **HTML 轉義安全防護**：實作 `escapeHtml()` 函式，在 v1->v2 遷移拼接為富文本 HTML `<p>` 前，將 `<`, `>`, `&`, `\"`, `'` 進行 HTML 轉義，防止 XSS 注入。\n- **大檔案位元組精準監控**：在 `saveGraph` 中使用 `new Blob([jsonString]).size` 取代原本的 `.length`，以精確的 Byte 大小檢驗 3MB 上限。\n- **單元測試補足**：於 `src/__tests__/graphStorage.test.ts` 新增 8 個針對字元限制、同名遷移串接、HTML 轉義與例外向上傳播的單元測試，並修正 3MB 測試使其符合驗證規範，30 個單元測試與 TS 編譯全數 🟢 通過。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-12 [Storage & Types] \"Milestone 1: Dependency & Storage Layer Implementation\" > 📦 依賴項安裝、Vite 分包設定與知識圖譜儲存層擴充 (Milestone 1)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **安裝 TipTap 依賴**：安裝 `@tiptap/react`、`@tiptap/starter-kit` 與 `@tiptap/extension-placeholder` 軟體包。\n- **優化 Vite manualChunks**：更新 `vite.config.ts`，將 `@tiptap` 和 `prosemirror` 劃入 `vendor-ui-core` chunk，防止 React context 分離與連結中斷。\n- **儲存層擴充與型別更新**：\n  - 在 `types/graphTypes.ts` 中擴充 `GraphDocument` 新增 `notes`（`Record<string, string>` 字典）和 `editMode`（`'visual' | 'code'`）。\n  - 在 `GRAPH_LIMITS` 中新增上限限制 `NOTES_MAX: 10000`、`STICKY_TEXT_MAX: 500`、`MAX_STICKY_NOTES: 20`，並將 `SCHEMA_VERSION` 升級為 2。\n  - 為 `GraphNode.type` 擴充允許 `'sticky'` 類型以支援便利貼。\n- **儲存層安全性與遷移邏輯 (v1→v2)**：\n  - 於 `services/graphStorage.ts` 中實作 v1 到 v2 遷移，將舊 node 中的 `definition`/`details` 資料轉移至 `notes[node.data.title]` 並將 `schemaVersion` 推進為 2。\n  - **Fail-fast 機制**：在 `getGraphs()` 遷移或寫回 localStorage 出錯時直接 `throw Error`，避免吞食錯誤返回 `[]` 而清空 localStorage。\n  - **便利貼驗證**：在 `validateGraphDocument()` 限制便利貼 (`type === 'sticky'`) 上限為 20 個。\n  - **大小監控**：在 `saveGraph()` 序列化 JSON 後檢查大小，若大於 3MB 則傳回 `{ success: true, warning: '圖表大小接近限制，請刪除部分資料' }`。\n- **全量測試與打包驗證**：\n  - 更新 `src/__tests__/graphStorage.test.ts` 加入 v1 升級合併、遷移拋錯 Fail-fast、20 個便利貼阻斷、3MB 大小警告之對應測試。\n  - 通過全部單元測試（21/21 passed）與生產環境編譯打包（`npm run build`），並執行 `tsc --noEmit` 型別檢查 0 錯誤。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-12 [Review & Design] \"Knowledge Graph Plan Review & Ponytail Optimization\" > 🔍 知識圖增強開發計畫審查與馬尾式極簡優化 (Plan Review & Ponytail Optimization)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **代碼與畫布狀態即時同步**：取消原定的 Auto-Update 開關與手動更新按鈕，強制預設為即時預覽（500ms debounce）。徹底消除因手動更新造成的代碼草稿與畫布狀態分叉風險（D7-001），省去 `codeDraft` 草稿儲存欄位。\n- **筆記數據與節點實體解耦**：將筆記 HTML 資料從個別節點的 data 中抽離，改為在 `GraphDocument` 層級以 `notes: Record<string, string>` 字典（以節點 title 為 key）獨立儲存。模式切換時結構節點隨意銷毀重建，只要 title 不變即自動對齊。改名時舊筆記保留在字典中，並提供「未歸檔筆記」手動關聯，免除在 Markdown 中引入 UUID 追蹤（`<!-- id:xxx -->`）導致的光標定位 UI 漏洞（D1-001）。\n- **便利貼節點畫布整合**：取消獨立的 `stickyNotes` 儲存陣列，便利貼直接作為 `type: 'sticky'` 節點存在畫布中。代碼模式序列化與解析時直接過濾，拖曳位置與資料持久化隨 nodes 自動完成，精簡 80% 的 CRUD 代碼（過度工程）。\n- **YAML Frontmatter 與多配色主題剔除**：首版剔除 YAML config 解析與 forest/ocean 多主題配色，代碼模式預設僅套用 default 放射狀層級自動配色，極簡化 Markdown 解析器。\n- **資料遷移與儲存 Fail-fast**：在 `getGraphs()` 遷移失敗或寫入配額不足時，直接拋出 Fatal Error 並由頂層 `ErrorBoundary` 攔截，阻斷 UI 載入並引導備份，拒絕回傳空陣列 `[]` 導致舊資料被後續操作覆蓋清空（D5-001）。\n- **完整規格與任務清單重構**：更新 `proposal.md`, `design.md`, `tasks.md` 及 6 個 delta specs，將上述 ponytail 優化全面落實為可執行的具體任務。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-11 [Log Hygiene] \"Graceful AbortError Filtering in Services\" > 🧹 服務層 AbortError 警告過濾與控制台噪音消除 (Log Hygiene)",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **過濾 Supabase 請求中止錯誤**：在 `services/streak.ts` 與 `services/analytics.ts` 中，使用 `isAbortError()` 過濾 Supabase 在獲取 `streak` 和 `study stats` 被 aborted 時的錯誤，改為 `console.info` 優雅記錄，防止因 React 重新渲染或 unmount 時的主動中止請求在主控台噴出紅色 `console.error` 警告，保持控制台乾淨。\n- **全量測試與打包驗證**：經 `npx tsc --noEmit` 型別檢查與 `npm run build` 生產環境打包測試，100% 成功通過，確認無任何副作用。"
     },
     {
       "path": "docs/DEVELOPMENT_LOG.md",
@@ -1067,7 +1156,7 @@
       "heading": "Docs Index",
       "category": "archive-index",
       "scope": "archive",
-      "text": "- Updated: `2026-07-11 20:57`\n- Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs."
+      "text": "- Updated: `2026-07-12 15:30`\n- Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs."
     },
     {
       "path": "docs/INDEX.md",
@@ -15334,6 +15423,1196 @@
       "category": "openspec-task",
       "scope": "openspec",
       "text": "- [x] 100.1 全套測試\n  - **執行**：`npm test -- --run`\n  - **驗證**：全綠（不允許任何 skip / xdescribe）；與 baseline 比較不應有新 fail\n\n- [x] 100.2 型別 + build\n  - **執行**：`npx tsc --noEmit` + `npm run build`\n  - **驗證**：0 type errors；build 成功產出 `dist/`\n\n- [x] 100.3 Lint\n  - **執行**：`npm run lint`（若 package.json 提供）\n  - **驗證**：0 errors；若無 lint 指令則跳過並於 DEVELOPMENT_LOG 註明\n\n- [x] 100.4 E2E（port 5200）\n  - **執行**：`npm run preview`（背景）+ `npx playwright test`\n  - **驗證**：`e2e/sync-and-settings-hardening.spec.ts` 與 `e2e/mindspark.spec.ts` 全綠\n\n- [x] 100.5 `any` 型別稽核\n  - **執行**：`Select-String -Path hooks/,services/,components/ -Include *.ts,*.tsx -Pattern \":\\s*any\\b|<any>|as any\"`\n  - **驗證**：除受控的 `unknown` + type guard 外 0 件 `any`；若有殘留記錄於 DEVELOPMENT_LOG 並列 tech debt\n\n- [x] 100.6 死導出最後確認\n  - **執行**：`Select-String \"playCorrectSfx|playWrongSfx\" -Path hooks/,components/,contexts/,services/ -Include *.ts,*.tsx`\n  - **驗證**：返回空（T7.1 已移除）\n\n- [x] 100.7 更新 `docs/DEVELOPMENT_LOG.md`\n  - **目標**：記錄本次變更（遵循 AGENTS.md 鐵規 10）；列出每個 Phase 的結果\n  - **邊界**：日期為今日；列出 8 個 N+X 項修補狀態\n  - **驗證**：檔案含本次變更段，含完成日期\n\n- [x] 100.8 更新 `MEMORY.md` Hotspots 與 Stable Facts\n  - **目標**：\n    - Hotspots 新增：`saveCloudQuestions`（預寫/清除 dirty）、`refreshBanksData`（cloudSyncedAt 合併邏輯）、`runWithSyncLock`（Web Locks）\n    - Stable Facts 更新：API Key 加密邊界、跨分頁鎖機制、AudioContext 生命週期\n    - Aliases & Vocabulary：新增 `cloudSyncedAt`、`saveChunkDraftSafely`、`activeAudioContextsRef`、`handlersRef`、`removeDirtyBank`\n  - **驗證**：`project-memory_rebuild_project_memory_cache` 執行後回 success\n\n- [x] 100.9 OpenSpec 驗證\n  - **執行**：`openspec validate security-architecture-hardening-v2 --strict`\n  - **驗證**：全 pass；準備好執行 `/opsx:verify` 與 `/opsx:archive`（不在本次範圍內，留給用戶）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> **審計者**: 獨立第二位高階 AI（Claude Opus 4.6 Thinking）  \n> **審計日期**: 2026-07-12  \n> **審計範圍**: OpenSpec 規格驗證 + 過度工程/死代碼審計 + 技術債評估\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > Summary Scorecard",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| 維度 | 狀態 | 詳細 |\n|------|------|------|\n| **Completeness** | ✅ 22/22 tasks | 所有任務已完成並標記 `[x]` |\n| **Correctness** | ⚠ 12/13 requirements | 1 項 spec/design 分歧、2 項實作偏移 |\n| **Coherence** | ⚠ 設計大致遵循 | 3 項 `any` 型別違規、1 項死代碼 |\n| **YAGNI / Dead Code** | ⚠ 2 項過度設計 / 1 項死代碼 |\n| **技術債** | ⚠ 5 項需登記 |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 📋 Phase 1: OpenSpec 規格驗證 > 1.1 Completeness（完整性）",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "**Task Completion: 22/22 ✅**\n\n所有 `tasks.md` 中的 9 大階段、22 個子任務均已標記 `[x]`。涵蓋：\n- 環境準備（1.1-1.2）✅\n- 資料模型（2.1-2.3）✅\n- 放射狀佈局（3.1-3.2）✅\n- Markdown 解析器（4.1-4.2）✅\n- 便利貼元件（5.1）✅\n- 富文本筆記面板（6.1-6.2）✅\n- 代碼編輯器（7.1）✅\n- 雙模式切換（8.1-8.3）✅\n- 完整性驗證（9.1-9.5）✅\n\n**Spec Coverage: 6/6 spec files ✅**\n\n所有 6 個 delta spec 文件中的 Requirements 均在代碼中找到對應實作：\n\n| Spec | Requirements | 覆蓋 |\n|------|-------------|------|\n| knowledge-graph-code-editor | 6 | ✅ 6/6 |\n| knowledge-graph-data | 5 | ✅ 5/5 |\n| knowledge-graph-dual-mode | 7 | ⚠ 6/7 (見 WARNING-01) |\n| knowledge-graph-editor | 3 | ✅ 3/3 |\n| knowledge-graph-notes-panel | 6 | ✅ 6/6 |\n| knowledge-graph-sticky-notes | 6 | ✅ 6/6 |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 📋 Phase 1: OpenSpec 規格驗證 > 1.2 Correctness（正確性） > 🟢 CRITICAL Issues: 0 項",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "所有核心功能均已實作，無遺漏的 critical 需求。\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 📋 Phase 1: OpenSpec 規格驗證 > 1.2 Correctness（正確性） > 🟡 WARNING Issues: 3 項 (part 1)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "---\n\n**WARNING-01** — Spec/Design Divergence：「使用者手動覆寫顏色」Scenario 與 Design Non-Goals 矛盾\n\n- **Spec**: [knowledge-graph-code-editor/spec.md:60-62](file:///c:/Users/user/Desktop/Quiz-app-/openspec/changes/knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md#L60-L62) 定義了 `#### Scenario: 使用者手動覆寫顏色`，要求「代碼模式解析時被層級自動配色覆寫」\n- **Design**: [design.md:36](file:///c:/Users/user/Desktop/Quiz-app-/openspec/changes/knowledge-graph-enhancements/design.md#L36) Non-Goals 明確排除「YAML frontmatter 解析和多個主題切換」\n- **實作**: [markdownGraphBridge.ts:104](file:///c:/Users/user/Desktop/Quiz-app-/services/markdownGraphBridge.ts#L104) 僅使用 `DEFAULT_NODE_COLORS[level % DEFAULT_NODE_COLORS.length]`，代碼模式確實會覆寫顏色（行為正確），但 [GraphEditor.tsx:281-296](file:///c:/Users/user/Desktop/Quiz-app-/components/KnowledgeGraph/GraphEditor.tsx#L281-L296) 中的 `handleCodeChange` 嘗試**恢復**先前節點的顏色（`prevNode.data.color`），這與 Spec 中「代碼模式始終根據最新結構重新配色」的描述**矛盾**\n- **結論**: 實作中的 `handleCodeChange` 保留了舊顏色，與 Spec 的「覆寫」語意衝突\n- **Recommendation**: \n  1. 將該 Scenario 標註為 `Out of scope for v1` 或從 spec 中移除（使用者確認的方案）\n  2. 如果決定保留覆寫行為，應移除 `handleCodeChange` 中第 283-294 行的顏色恢復邏輯\n\n---\n\n**WARNING-02** — 便利貼預設文字不符合 Spec\n\n- **Spec**: [knowledge-graph-sticky-notes/spec.md:13](file:///c:/Users/user/Desktop/Quiz-app-/openspec/changes/knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md#L13) 要求預設文字為「**備忘**」\n- **實作**: [GraphEditor.tsx:374-377](file:///c:/Users/user/Desktop/Quiz-app-/components/KnowledgeGraph/GraphEditor.tsx#L374-L377) 便利貼建立時 `title: ''`, `label: ''`（空字串），不是「備忘」\n- **UI 呈現**: [StickyNoteNode.tsx:82](file:///c:/Users/user/Desktop/Quiz-app-/components/KnowledgeGraph/StickyNoteNode.tsx#L82) 顯示 `雙擊編輯便利貼...` 的 placeholder，而非 Spec 所述的「備忘」\n- **Recommendation**: 將 `handleAddSticky` 中的 `title` 和 `label` 改為 `'備忘'`\n\n---\n\n**WARNING-03** — Fail-fast 遷移保護有缺口（含 `any` 型別違規）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 📋 Phase 1: OpenSpec 規格驗證 > 1.2 Correctness（正確性） > 🟡 WARNING Issues: 3 項 (part 2)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Spec**: [knowledge-graph-data/spec.md:33-35](file:///c:/Users/user/Desktop/Quiz-app-/openspec/changes/knowledge-graph-enhancements/specs/knowledge-graph-data/spec.md#L33-L35) 要求遷移失敗時「直接向外拋出異常」\n- **實作**: [graphStorage.ts:28-84](file:///c:/Users/user/Desktop/Quiz-app-/services/graphStorage.ts#L28-L84) 中 `getGraphs()` 的遷移邏輯**沒有** try-catch 包裹（依賴自然拋出），但以下兩處返回 `[]` 可能掩蓋問題：\n  - 第 32-34 行：`localStorage.getItem` 失敗返回 `[]`（合理，初始讀取）\n  - 第 40-42 行：`JSON.parse` 失敗返回 `[]`（**風險**：腐敗的 JSON 資料被靜默忽略，後續 save 可能覆蓋）\n- **`any` 違規**: 第 37 行 `let graphs: any[];` 直接使用 `any` 型別，違反 AGENTS.md 鐵規 `NO_ANY`\n- **Recommendation**: \n  1. 將 `any[]` 改為 `unknown[]` + 型別守衛\n  2. 考慮 `JSON.parse` 失敗時也 throw（或至少 console.error 並保留原始 raw data）\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 📋 Phase 1: OpenSpec 規格驗證 > 1.3 Coherence（一致性） > Design Adherence ✅（大致符合）",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Decision | 狀態 | 備註 |\n|----------|------|------|\n| D1: TipTap v2 | ✅ | 正確使用 `@tiptap/react` + `starter-kit` + `extension-placeholder` + `extension-underline` |\n| D2: Notes 字典去耦 | ✅ | `GraphDocument.notes` 正確實作為 `Record<string, string>` |\n| D3: 自定義 Radial Layout | ✅ | [radialLayout.ts](file:///c:/Users/user/Desktop/Quiz-app-/services/radialLayout.ts) 無外部依賴 |\n| D4: 輕量 Markdown 解析器 | ✅ | [markdownGraphBridge.ts](file:///c:/Users/user/Desktop/Quiz-app-/services/markdownGraphBridge.ts) ~240 行，自建 |\n| D5: 強制即時預覽 | ✅ | 500ms debounce 在 [GraphCodeEditor.tsx:31](file:///c:/Users/user/Desktop/Quiz-app-/components/KnowledgeGraph/GraphCodeEditor.tsx#L31) |\n| D6: 便利貼作為 `sticky` 節點 | ✅ | 正確存在於 `nodes[]` 中 |\n| D7: TipTap 打包策略 | ✅ | 需確認 `vite.config.ts` 設定（未在本次審查範圍深入驗證） |\n| D8: Fail-fast 安全策略 | ⚠ | 見 WARNING-03 |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 📋 Phase 2: 過度工程與死代碼審計（Ponytail-Audit） > 🔴 DEAD CODE: 1 項",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "**DEAD-01** — `NodeEditPanel` 與 `GraphNotesPanel` 功能重疊\n\n- **問題**: 根據 [knowledge-graph-editor/spec.md:6](file:///c:/Users/user/Desktop/Quiz-app-/openspec/changes/knowledge-graph-enhancements/specs/knowledge-graph-editor/spec.md#L6) 的 Requirement: `Properties panel replacement`，原有的 `NodeEditPanel`（純文字 textarea）**SHALL 被替換為**新的 `GraphNotesPanel`。\n- **實作**: [NodeEditPanel.tsx](file:///c:/Users/user/Desktop/Quiz-app-/components/KnowledgeGraph/NodeEditPanel.tsx) (187 行) 仍然完整保留，且在 [GraphEditor.tsx:749-758](file:///c:/Users/user/Desktop/Quiz-app-/components/KnowledgeGraph/GraphEditor.tsx#L749-L758) 中**仍然被使用**作為「屬性編輯面板」（顏色、形狀、字體大小）。\n- **分析**: \n  - Spec 說 \"replaced\"，但 design.md 的 dual-mode spec (L77) 說「原有的 NodeEditPanel 中的屬性編輯（標題、顏色、形狀等）**精簡後保留**在筆記面板頂部的摺疊區域中」\n  - 實際上 **GraphNotesPanel 中沒有任何摺疊的屬性編輯 UI**，所以 NodeEditPanel 被保留為獨立面板使用\n  - 這導致兩個面板的標題編輯功能重疊（NodeEditPanel 有標題輸入，GraphNotesPanel 也顯示節點標題）\n- **Verdict**: NodeEditPanel 不是純死代碼（仍在使用），但其「定義/筆記 textarea」（第 87-113 行）與 GraphNotesPanel 的 TipTap 編輯器**功能完全重疊**，形成「partial dead code」\n- **Recommendation**: \n  - 短期：保留 NodeEditPanel 僅作為屬性面板（顏色/形狀/字體），移除其中的 definition 和 details textarea\n  - 長期：按照 spec，將屬性編輯整合進 GraphNotesPanel 的摺疊區域，然後刪除 NodeEditPanel\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 📋 Phase 2: 過度工程與死代碼審計（Ponytail-Audit） > 🟡 OVER-ENGINEERING: 2 項",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "**OVER-01** — `markdownGraphBridge.ts` 中的 YAML Frontmatter 偵測邏輯\n\n- **Design**: [design.md:36](file:///c:/Users/user/Desktop/Quiz-app-/openspec/changes/knowledge-graph-enhancements/design.md#L36) Non-Goals 明確「不實作 YAML frontmatter 解析」\n- **實作**: [markdownGraphBridge.ts:50-63](file:///c:/Users/user/Desktop/Quiz-app-/services/markdownGraphBridge.ts#L50-L63) 實作了完整的 YAML frontmatter 偵測與跳過邏輯（`inFrontmatter` flag，`---` 開閉偵測）\n- **YAGNI 判定**: 雖然這段代碼讓解析器更健壯（可安全忽略用戶貼入帶 frontmatter 的 markdown），但根據嚴格的 YAGNI 原則，這 14 行代碼在 v1 中不需要存在。\n- **風險等級**: 低（代碼正確且有防禦價值）\n- **Recommendation**: 保留但標註 `// Defensive: skip YAML frontmatter if present (not parsed per design.md Non-Goals)`\n\n---\n\n**OVER-02** — `markdownGraphBridge.ts:135-138` 二次 sticky 節點過濾\n\n- **程式碼**: [markdownGraphBridge.ts:135-138](file:///c:/Users/user/Desktop/Quiz-app-/services/markdownGraphBridge.ts#L135-L138)\n  ```typescript\n  // 二次確保完全過濾並忽略 'sticky' 節點（雖然從 markdown 中不會解析出 sticky）\n  const filteredNodes = nodes.filter(n => n.type !== 'sticky');\n  ```\n- **分析**: 正如註釋所說，**從 Markdown 中永遠不可能解析出 `sticky` 節點**。所有 `parseMarkdownToGraph` 建立的節點 `type` 都是 `'concept'`（第 114 行）。這個二次過濾是純粹的冗餘代碼。\n- **Recommendation**: 移除第 135-138 行，或改為 `assert`/開發環境檢查\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 📋 Phase 3: 技術債評估（Ponytail-Debt） > DEBT-01 — `graphStorage.ts` 中的 3 處 `any` 型別違規 🔴",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| 行號 | 代碼 | 問題 |\n|------|------|------|\n| [L37](file:///c:/Users/user/Desktop/Quiz-app-/services/graphStorage.ts#L37) | `let graphs: any[];` | 直接使用 `any`，應改 `unknown[]` |\n| [L176-178](file:///c:/Users/user/Desktop/Quiz-app-/services/graphStorage.ts#L176-L178) | `(err as any).name`, `(err as any).code` | 應使用具體型別或 `unknown` + 型別守衛 |\n| [L217](file:///c:/Users/user/Desktop/Quiz-app-/services/graphStorage.ts#L217) | `(node.data as any).label` | 應使用 `GraphNodeData & { label?: string }` |\n\n**違反**: AGENTS.md 鐵規 #3 `NO_ANY`  \n**Recommendation**: 使用 `unknown` + 型別守衛或精確的型別斷言替代所有 `any`\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 📋 Phase 3: 技術債評估（Ponytail-Debt） > DEBT-02 — `GraphCodeEditor.tsx` 的 unmount 不 flush debounced 變更 🟡",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **問題**: [GraphCodeEditor.tsx:42-49](file:///c:/Users/user/Desktop/Quiz-app-/components/KnowledgeGraph/GraphCodeEditor.tsx#L42-L49) 在 unmount 時只 `clearTimeout`，但**不呼叫 `onChange`**。這表示用戶最後 500ms 內的輸入會在切換模式時丟失。\n- **對比**: [GraphNotesPanel.tsx:253-257](file:///c:/Users/user/Desktop/Quiz-app-/components/KnowledgeGraph/GraphNotesPanel.tsx#L253-L257) 正確地在 unmount 時呼叫 `flush()` 強制同步。\n- **Recommendation**: 在 `GraphCodeEditor` 的 unmount cleanup 中呼叫 `onChange(localValue)` 而非僅清除 timeout\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 📋 Phase 3: 技術債評估（Ponytail-Debt） > DEBT-03 — 驗證錯誤使用中文硬編碼字串 🟢",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **問題**: [graphStorage.ts:188-242](file:///c:/Users/user/Desktop/Quiz-app-/services/graphStorage.ts#L188-L242) 中的 `validateGraphDocument` 函式直接回傳中文字串（例如 `'節點標題不可超過 100 個字元'`）\n- **影響**: 所有驗證錯誤直接作為 Toast 訊息使用，目前功能正常\n- **Recommendation**: 長期考慮使用自定義 Error Classes 或 enum 錯誤代碼處理商務邏輯驗證，為未來多語系支援保留空間（與使用者提出的 SUGGESTION 一致）\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 📋 Phase 3: 技術債評估（Ponytail-Debt） > DEBT-04 — `GraphEditorInner` 巨型元件（878 行）🟡",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **問題**: [GraphEditor.tsx](file:///c:/Users/user/Desktop/Quiz-app-/components/KnowledgeGraph/GraphEditor.tsx) 共 878 行，`GraphEditorInner` 單一函式元件包含：\n  - 20+ 個 `useState`/`useCallback`/`useMemo` hooks\n  - 完整的 Mermaid modal UI\n  - 雙模式切換邏輯\n  - undo/redo 管理\n  - autosave 計時器\n- **Recommendation**: \n  - 抽取 `useMermaidModal` 自定義 hook\n  - 抽取 `useAutoSave` 自定義 hook\n  - 將 Mermaid Modal JSX 抽取為獨立元件 `MermaidModal.tsx`\n  - 將 undo/redo 邏輯移至專用 hook（已部分完成 `useUndoRedo`）\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 📋 Phase 3: 技術債評估（Ponytail-Debt） > DEBT-05 — `handleCodeChange` 中的「名稱相同即視為相同節點」恢復邏輯缺乏邊界防禦 🟡",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **問題**: [GraphEditor.tsx:270-297](file:///c:/Users/user/Desktop/Quiz-app-/components/KnowledgeGraph/GraphEditor.tsx#L270-L297) 中的節點恢復邏輯使用 `title` 作為 key 進行匹配，但如果存在多個同名節點，`Map` 只會保留最後一個，導致先前同名節點的屬性被丟棄。\n- **Recommendation**: 加入 `console.warn` 提示同名節點衝突，或改用更健壯的匹配策略（例如 title + 層級深度組合 key）\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 📊 Final Assessment",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| 類別 | 數量 | 結論 |\n|------|------|------|\n| CRITICAL | **0** | 無阻斷性缺陷 |\n| WARNING | **3** | W-01: Spec/Design 顏色覆寫矛盾、W-02: 便利貼預設文字、W-03: Fail-fast `any` 違規 |\n| SUGGESTION | **2** | OVER-01: YAML frontmatter 偵測（可保留）、OVER-02: 冗餘 sticky 過濾 |\n| DEAD CODE | **1** | NodeEditPanel 部分功能重疊 |\n| TECH DEBT | **5** | DEBT-01~05 如上所列 |\n\n> [!IMPORTANT]\n> **整體評估**: 無 CRITICAL 阻斷問題。3 項 WARNING 建議在歸檔前修正（特別是 `any` 違規和便利貼預設文字），但不影響核心功能的正確運作。代碼品質整體良好，架構決策合理，測試覆蓋完整。\n>\n> **建議**: 修正 3 項 WARNING 後即可安全歸檔。SUGGESTION 和 TECH DEBT 項目可登記為後續迭代任務。\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/audit_report.md",
+      "heading": "🔍 最終審計缺陷報告：knowledge-graph-enhancements > 附錄：與使用者自檢結果交叉驗證",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| 使用者發現 | 本審計對應 | 結論 |\n|-----------|-----------|------|\n| Spec 中「使用者手動覆寫顏色」Scenario 與 Design Non-Goals 矛盾 | **WARNING-01** | ✅ 確認一致。實作還有額外問題：`handleCodeChange` 嘗試恢復舊顏色（與 spec 「覆寫」語意矛盾） |\n| `validateGraphDocument` 使用中文硬編碼字串 | **DEBT-03** | ✅ 確認一致。分類為長期技術債，非阻斷性問題 |\n\n使用者發現的問題已**全部納入**本報告，且補充了更深層的實作分析。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/benchmark-harness.md",
+      "heading": "Performance Benchmark Specification: knowledge-graph-enhancements",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> **Generated by**: Plan Stress Test v2.0 — Deep Analysis Engine\n> **Date**: 2026-07-12\n> **Change Scale**: Large (L)\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/benchmark-harness.md",
+      "heading": "Performance Benchmark Specification: knowledge-graph-enhancements > 1. Performance Objectives & SLOs > Service Level Objectives",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Metric | Target | Warning Threshold | Critical Threshold | Measurement Method |\n|--------|--------|--------------------|--------------------|-------------------|\n| 解析與排版 Latency (100 節點) | < 50ms | > 100ms | > 300ms | 瀏覽器 Performance API |\n| TipTap 載入時間 (Cold Start) | < 300ms | > 500ms | > 1000ms | 瀏覽器 Performance API |\n| 雙模式切換延遲 (包含序列化) | < 100ms | > 200ms | > 500ms | 瀏覽器 Performance API |\n| 跨節點筆記搜尋時間 (100 節點) | < 50ms | > 100ms | > 200ms | 搜尋函數執行計時 |\n| UI 渲染幀率 (拖曳/縮放時) | 60 FPS | < 30 FPS | < 15 FPS | Chrome DevTools FPS |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/benchmark-harness.md",
+      "heading": "Performance Benchmark Specification: knowledge-graph-enhancements > 1. Performance Objectives & SLOs > Resource Constraints",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Resource | Baseline Budget | Peak Budget | Hard Limit | Alert Threshold |\n|----------|----------------|-------------|------------|-----------------|\n| LocalStorage Usage (Per Graph) | < 500KB | < 1MB | 3MB | 2MB |\n| Memory (Heap) | < 50MB | < 100MB | 250MB | 150MB |\n| React Context Re-renders | 1 per keystroke | 2 per keystroke | > 3 per keystroke | N/A |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/benchmark-harness.md",
+      "heading": "Performance Benchmark Specification: knowledge-graph-enhancements > 2. Benchmark Scenarios > Scenario A: Cold Start (Lazy Load TipTap)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> 測量 TipTap 編輯器首次載入時的效能，驗證 `vendor-ui-core` chunk 拆分策略是否有效。\n\n| Parameter | Value |\n|-----------|-------|\n| **Description** | 使用者首次點擊節點，觸發 GraphNotesPanel 渲染與 TipTap 實例化 |\n| **First Render Target** | < 300ms |\n| **Measurement Points** | 從 `onClick` 觸發到 TipTap `onTransaction` ready |\n| **Acceptance Criteria** | 點擊後無明顯卡頓感，輸入框立即獲得焦點 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/benchmark-harness.md",
+      "heading": "Performance Benchmark Specification: knowledge-graph-enhancements > 2. Benchmark Scenarios > Scenario B: Baseline (Steady-State Typing)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> 測量代碼模式下，打字時的效能。\n\n| Parameter | Value |\n|-----------|-------|\n| **Text Size** | 50 行 Markdown |\n| **Typing Rate** | 模擬 300 CPM (Characters Per Minute) |\n| **Auto-Update State** | OFF |\n| **Expected Latency (p95)** | < 16ms (不掉幀) |\n| **Expected Behavior** | 只有 GraphCodeEditor 重新渲染，GraphEditor 畫布不應重繪 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/benchmark-harness.md",
+      "heading": "Performance Benchmark Specification: knowledge-graph-enhancements > 2. Benchmark Scenarios > Scenario C: Peak Load (Markdown Parser Stress)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> 測量解析器與佈局演算法在處理複雜圖表時的極限。\n\n| Parameter | Value |\n|-----------|-------|\n| **Data Volume** | 300 行 Markdown 列表，包含 10 層深度 |\n| **Action** | 觸發 Auto-Update 或點擊手動更新 |\n| **Expected Behavior** | `parseMarkdownToGraph` + `applyRadialLayout` + React Flow state update |\n| **Max Acceptable Latency** | < 200ms 總計算時間 |\n| **Failure Mode** | 必須截斷超出 200 節點的部分，但不能導致瀏覽器「Page Unresponsive」崩潰 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/benchmark-harness.md",
+      "heading": "Performance Benchmark Specification: knowledge-graph-enhancements > 2. Benchmark Scenarios > Scenario D: Sustained Stress (Soak Test - Debounce Accumulation)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> 測量 TipTap 長時間輸入時是否會導致記憶體洩漏或效能退化。\n\n| Parameter | Value |\n|-----------|-------|\n| **Load Level** | 持續輸入並修改富文本筆記 10 分鐘 |\n| **Measurement Interval** | 每 1 分鐘 |\n| **Memory Growth Tolerance** | < 5MB growth (允許 undo 堆疊增長，但須有上限) |\n| **Success Criteria** | 沒有 OOM，打字延遲維持在 <16ms |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/benchmark-harness.md",
+      "heading": "Performance Benchmark Specification: knowledge-graph-enhancements > 2. Benchmark Scenarios > Scenario E: Chaos / Fault Injection (Storage Quota)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> 測試當 localStorage 容量滿時的系統彈性。\n\n| Fault Type | Injection Method | Expected Behavior | Recovery Time Target |\n|------------|-----------------|--------------------|--------------------|\n| Quota Exceeded on Save | 塞入 5MB 垃圾資料填滿 localStorage | `saveGraph` 拋出警告 Toast，但 UI 不崩潰，使用者可繼續編輯並刪除其他圖表釋放空間 | 立即恢復（UI 不被 blocking） |\n| Migration Failure | Mock migration 觸發 Error | 拋出 ErrorBoundary，提示使用者資料錯誤，防止回傳 `[]` 覆蓋 | 立即阻斷 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/benchmark-harness.md",
+      "heading": "Performance Benchmark Specification: knowledge-graph-enhancements > 2. Benchmark Scenarios > Scenario F: Data Scale Progression (Search Scope)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> 測量筆記搜尋功能隨節點數量的效能退化。\n\n| Node Count | Expected Search Latency | Method |\n|-------------|----------------------|--------|\n| 10 nodes (1KB each) | < 10ms | Sync strip tags & match |\n| 50 nodes (1KB each) | < 30ms | Sync strip tags & match |\n| 200 nodes (1KB each) | < 100ms | Sync strip tags & match (若 >100ms，需改為 Web Worker 或非同步 yield 處理) |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/benchmark-harness.md",
+      "heading": "Performance Benchmark Specification: knowledge-graph-enhancements > 3. Warm-up Curve Specification",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> Vite 開發伺服器與生產環境的載入差異。由於是純前端系統，Warm-up 主要指的是 React 的首屏渲染與 TipTap 的非同步資源載入。\n\n**Acceptance Criteria**:\n- 載入帶有 TipTap 的 chunk (`vendor-ui-core`) 的時間 < 500ms（在 Fast 3G 網路下需 < 3s）\n- 首屏可互動時間 (TTI) < 1.5s\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/benchmark-harness.md",
+      "heading": "Performance Benchmark Specification: knowledge-graph-enhancements > 4. Resource Contention Matrix",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Resource | Competing Modules | Contention Pattern | Risk Level | Mitigation |\n|----------|-------------------|-------------------|------------|------------|\n| LocalStorage | `GraphEditor` vs `QuizEngine` | 兩者同時 autosave，若遇到配額不足，可能導致一方儲存失敗 | 🟠 HIGH | 實作全域 `StorageManager` 監控配額，當剩餘空間 < 500KB 時停止保存低優先級快取 |\n| Main Thread (CPU) | `TipTap` vs `React Flow` | 在切換模式的瞬間，TipTap 的銷毀與 React Flow 的大量節點渲染同時發生 | 🟡 MEDIUM | 使用 `React.startTransition` 或 `setTimeout` 分散計算壓力 |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/benchmark-harness.md",
+      "heading": "Performance Benchmark Specification: knowledge-graph-enhancements > 5. Benchmark Harness Specification > Execution Protocol (Manual QA via Browser DevTools)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "1. **環境**: Chrome (最新版) 隱身模式（無擴充套件干擾），CPU Throttle 設為 4x slowdown。\n2. **Setup**: 在 `mindspark_graphs` 中注入 150 個節點的測試 JSON。\n3. **Run Scenario A**: 點擊節點，觀察 Profiler 中的 TipTap 渲染時間。\n4. **Run Scenario B**: 在代碼模式輸入，觀察 React DevTools Profiler，確認 `GraphEditor` 沒有無意義的 re-render。\n5. **Run Scenario C**: 貼上 300 行 Markdown，觀察 Main Thread 阻塞時間。\n6. **Run Scenario E**: 執行 `localStorage.setItem('junk', 'a'.repeat(4.5 * 1024 * 1024))`，然後在面板中打字觸發 autosave，驗證 UI 反應。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/design.md",
+      "heading": "Context",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "MindSpark 的 Knowledge Graph 模組目前提供基於 React Flow 的節點拖曳編輯、屬性面板（NodeEditPanel）、Mermaid 匯入匯出，以及 Dagre 樹狀自動排版。使用者希望將其升級為接近專業心智圖工具的體驗，核心需求為：\n1. 左側代碼編輯器（Markdown 列表 → 即時生成圖表）\n2. 右側富文本筆記面板（TipTap WYSIWYG）\n3. 獨立便利貼功能\n4. 筆記搜尋\n5. 放射狀佈局\n\n**現有架構約束**：\n- localStorage 單一 key `mindspark_graphs` 儲存所有 GraphDocument\n- Service Layer 模式：所有 I/O 透過 `services/graphStorage.ts`\n- React Flow v12 + Dagre v2 已安裝\n- Tailwind CSS v4 + Framer Motion 已安裝\n- 嚴禁 `any` 型別"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/design.md",
+      "heading": "Goals / Non-Goals",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**Goals:**\n- 實作雙模式切換（視覺化 / 代碼），保持介面清爽不擁擠。\n- 提供 TipTap 富文本筆記面板，取代現有 NodeEditPanel 的 textarea。\n- 實作放射狀佈局演算法，重現參考圖片的視覺效果。\n- 實作 Markdown 列表 → 節點/邊 的即時解析器（500ms debounce，強制開啟，避免狀態分叉）。\n- 實作層級自動配色（根據節點深度套用預設顏色組）。\n- 實作便利貼功能與筆記搜尋（便利貼直接作為 `type: 'sticky'` 節點存在畫布中）。\n- 實作 Document 級別的筆記儲存映射表，以防止改名或重新建構節點時筆記丟失。\n- 完整的 schema migration，若失敗則 Fail-fast 阻斷並提示，向後相容舊資料。\n- 所有新功能有對應的單元測試。\n\n**Non-Goals:**\n- 不實作多人即時協作 / Team / Present / Share 功能。\n- 不實作雲端同步（知識圖目前僅 localStorage）。\n- 不更改現有的 Mermaid 匯入匯出功能。\n- 不修改 Quiz、Battle、Dashboard 等非知識圖模組。\n- 不實作檔案匯出（PDF/PNG）功能。\n- 不實作 YAML frontmatter 解析和多個主題切換（第一版僅使用 default 放射狀層級配色）。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/design.md",
+      "heading": "Decisions > D1: TipTap 版本選擇",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**決策**：使用 `@tiptap/react` v2 + `@tiptap/starter-kit` + `@tiptap/extension-placeholder`。\n**原因**：TipTap v2 是最穩定的主流版本，starter-kit 包含粗體/斜體/標題/清單等基礎格式，無須安裝大量獨立 extension。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/design.md",
+      "heading": "Decisions > D2: 富文本儲存格式與資料去耦 (Ponytail 核心決策)",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**決策**：將筆記內容（HTML string）從個別節點的 data 中抽離，獨立以 `Record<string, string>` 字典（以節點標題 `title` 作為 key，HTML 為 value）形式儲存在 `GraphDocument.notes` 中。\n**原因**：\n1. **防丟失**：當使用者在代碼模式修改節點名稱或重構結構時，節點 UUID 會變，但 `GraphDocument.notes` 的內容依然保留。只要改回原標題，筆記立刻找回。\n2. **極簡化同步**：代碼模式解析和反向序列化時，不需在 Markdown 文字中塞入 UUID（如 `<!-- id:xxx -->`），也不需在切換模式時拷貝資料。\n3. **同名共享**：同名節點天然共享同一份概念筆記；使用者若想獨立筆記則應使用不同名稱。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/design.md",
+      "heading": "Decisions > D3: 放射狀佈局演算法",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**決策**：自定義 radial layout 函式，不依賴外部庫。\n**原因**：Dagre 不支援放射狀佈局，而安裝 d3-hierarchy 或 elkjs 等重量級庫只為一個佈局模式不值得。自定義演算法約 80 行，邏輯簡單（BFS 層級分配 → 角度均分 → 座標計算）。\n**演算法大綱**：\n1. 從根節點開始 BFS，計算每個節點的層級（depth）\n2. 每層按子節點數量均分 360° 角度\n3. 半徑隨層級線性遞增（`radius = level * 200`）\n4. 計算 `x = centerX + radius * cos(angle)`, `y = centerY + radius * sin(angle)`"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/design.md",
+      "heading": "Decisions > D4: Markdown 解析器設計 (Ponytail 簡化)",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**決策**：自建輕量級 Markdown 列表解析器（`parseMarkdownToGraph`），不解析 YAML frontmatter。\n**原因**：我們只需要解析 `- text` 和縮排層級。自建解析器約 50 行，無外部依賴，容易測試和維護。不支援 YAML frontmatter 可簡化解析器程式碼。\n**解析規則**：\n1. 每行以 `-` 或 `*` 開頭的為有效節點行\n2. 縮排深度（以 2 空格或 Tab 為單位）決定父子關係\n3. 第一個無縮排的行為根節點（中央節點）\n4. 自動生成 `parent → child` 的 edge\n5. 解析時自動忽略 `type: 'sticky'` 的便利貼行（代碼模式只管理結構節點）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/design.md",
+      "heading": "Decisions > D5: 雙模式切換與 Auto-Update 策略 (PonyTail 防禦)",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**決策**：取消 Auto-Update 開關，強制即時預覽（500ms debounce）。\n**原因**：解析與佈局計算開銷極低（100個節點約 10ms），即時同步可完全消除「未套用代碼草稿」與「畫布狀態分叉」的 🔴 CRITICAL 風險，免除 `codeDraft` 欄位和手動更新 UI。\n**切換行為**：\n- 視覺 → 代碼：將當前 nodes/edges 反向序列化為 Markdown 列表文字，填入左側編輯器。\n- 代碼 → 視覺：即時解析後的 nodes/edges 成為新狀態。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/design.md",
+      "heading": "Decisions > D6: 便利貼實作方式 (Ponytail 核心簡化)",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**決策**：便利貼直接作為 `type: 'sticky'` 的 React Flow 節點存在畫布 `nodes` 中，不建立獨立的 `stickyNotes` 儲存陣列。\n**原因**：\n1. 直接利用 React Flow 的位置拖曳與渲染系統，不需手動同步 coordinates。\n2. 儲存時自然隨著 `nodes` 序列化持久化，不需在 storage 層寫便利貼的 CRUD 程式碼。\n3. 切換到代碼模式時，代碼編輯器只反序列化 `type !== 'sticky'` 的節點，忽略便利貼；代碼模式渲染時，將便利貼節點與解析出的結構節點合併傳給 React Flow，互不干涉。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/design.md",
+      "heading": "Decisions > D7: Vite 打包策略",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**決策**：將 TipTap 相關套件加入 `vendor-ui-core` chunk。\n**原因**：防止 React 與 ProseMirror context 不同步。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/design.md",
+      "heading": "Decisions > D8: Schema Migration 與 Fail-fast 安全策略 (PonyTail 安全防禦)",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**決策**：`SCHEMA_VERSION` 從 1 升級到 2。在 `getGraphs()` 中檢測版本並自動遷移。\n**遷移邏輯**：\n1. 若 `schemaVersion === 1`：為 document 新增 `notes: {}`，並將舊 nodes 中個別的 `notes` (若有) 或其他 definition/details 合併遷移到 `notes` 字典中；新增 `editMode: 'visual'`；將 `schemaVersion` 更新為 2。\n2. **Fail-fast 阻斷**：如果遷移過程拋出 QuotaExceededError 或任何錯誤，**直接 throw Error**，由頂層 ErrorBoundary 攔截並阻斷應用載入，提示磁碟空間不足，**絕對不回傳空陣列 `[]`**，防止後續儲存覆蓋並清空使用者舊資料。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/design.md",
+      "heading": "Risks / Trade-offs",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "| 風險 | 嚴重度 | 緩解措施 |\n|------|--------|----------|\n| TipTap 套件增加 bundle size | 中 | 使用 React.lazy 動態載入 KnowledgeGraph 模組；將依賴加入專屬 chunk |\n| localStorage 空間不足（大量 HTML 筆記） | 中 | 設定 `NOTES_MAX: 10000` 字元/節點；寫入失敗時 Fail-fast 阻斷，避免回傳空陣列 |\n| 放射狀佈局在極端情況下節點重疊 | 低 | 當子節點超過 12 個時自動增大半徑；提供 fitView 按鈕讓使用者重新縮放 |\n| 代碼→視覺切換時節點位置丟失 | 中 | 代碼模式始終自動放射狀排版；視覺模式拖曳的位置在不更改結構時保留 |\n| 改名時筆記未歸檔 | 低 | 筆記儲存在 `notes` 字典中，改名後原筆記仍在字典中。將在搜尋中提供「未歸檔筆記」功能供使用者檢視與重聯 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/proposal.md",
+      "heading": "Why",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "現有的知識圖（Knowledge Graph）模組僅提供基礎的節點拖曳編輯和 Mermaid 匯入匯出。使用者需要一個更高效的工作流：能夠**透過純文字快速建構心智圖**（如參考圖片中的左側代碼編輯器），同時在**點擊節點時查看和編輯豐富的筆記**（如參考影片中的右側 Notes 面板）。這兩種模式的整合將大幅提升知識整理效率，從「一個一個手動新增節點」進化為「鍵盤流快速傾倒思緒 + 視覺化精修」的雙軌工作模式。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/proposal.md",
+      "heading": "What Changes",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- **新增「代碼編輯模式」**：左側提供帶行號的 Markdown 列表編輯器，使用者透過 `-` 加縮排即時生成右側的心智圖。預設開啟 500ms 即時同步（不設手動更新開關，避免草稿遺失與狀態分叉）。\n- **新增「富文本筆記面板」**：整合 TipTap WYSIWYG 編輯器取代現有的純文字 textarea，支援 H1/H2 標題、粗體、斜體、底線、刪除線、有序/無序清單等格式。每個節點獨立擁有一個筆記，筆記數據獨立儲存在圖表級別的對照表中。\n- **新增「便利貼」節點**：使用者可在畫布上新增獨立的黃色便利貼。便利貼直接作為 `type: 'sticky'` 節點存在畫布中，代碼模式解析時會自動忽略。\n- **新增「筆記搜尋」功能**：在筆記面板頂部提供搜尋欄位，可跨節點搜尋所有筆記內容，點擊搜尋結果自動跳轉到對應節點。\n- **雙模式切換 UI**：提供一個切換按鈕，使用者可在「視覺化編輯模式」（畫布 + 筆記面板）與「代碼編輯模式」（左側編輯器 + 右側畫布預覽）之間自由切換。\n- **放射狀自動排版**：在代碼模式下，心智圖使用自定義的放射狀（radial）佈局演算法，中央節點在正中心，其他節點向外延伸。\n- **層級自動配色**：代碼模式自動根據縮排層級分配節點顏色。\n- **擴充資料模型**：`GraphDocument` 新增 `notes` (Record<string, string>，以 node title 為 key，防範節點改名/重建丟失) 欄位；`GraphDocument` 新增 `editMode` 狀態欄位。\n- **儲存安全防禦**：Schema v1→v2 升級失敗或 localStorage 寫入配額不足時，執行 Fail-fast 拋出錯誤並由 ErrorBoundary 阻斷載入，防範覆蓋使用者舊資料。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/proposal.md",
+      "heading": "Capabilities > New Capabilities",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- `knowledge-graph-code-editor`: 左側 Markdown 列表代碼編輯器，含行號、即時解析、放射狀佈局演算法、層級自動配色\n- `knowledge-graph-notes-panel`: 右側富文本筆記面板（TipTap 整合）、筆記搜尋功能、未歸檔筆記管理\n- `knowledge-graph-sticky-notes`: 獨立便利貼節點系統（作為畫布節點）\n- `knowledge-graph-dual-mode`: 雙模式切換 UI 與佈局管理"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/proposal.md",
+      "heading": "Capabilities > Modified Capabilities",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- `knowledge-graph-data`: 資料模型擴充（新增 `notes` 字典、`editMode` 欄位）與 Fail-fast 儲存安全防禦\n- `knowledge-graph-editor`: 節點點擊行為變更（從開啟 NodeEditPanel 改為開啟 GraphNotesPanel），畫布支持渲染便利貼節點，佈局支援放射狀排版"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/proposal.md",
+      "heading": "Impact",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- **受影響的檔案**：\n  - `types/graphTypes.ts`: 新增欄位至 `GraphDocument`\n  - `services/graphStorage.ts`: schema migration + 新欄位持久化 + Fail-fast 安全錯誤處理\n  - `components/KnowledgeGraph/*`: 幾乎所有元件都會被重構或新增\n  - `package.json`: 新增 TipTap 依賴\n  - `vite.config.ts`: 將 TipTap 依賴打包進 manual chunks\n- **受影響的測試**：\n  - `src/__tests__/graphStorage.test.ts`: 需要更新以覆蓋新欄位和 schema migration\n- **不受影響的系統**：Quiz flow、Battle system、Cloud sync、所有非 KnowledgeGraph 的元件\n- **新增依賴**：`@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/extension-placeholder`"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > Purpose",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "提供左側 Markdown 列表代碼編輯器，支援透過純文字快速建構心智圖節點結構，含行號顯示、即時解析與放射狀佈局演算法。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Markdown list editor with line numbers",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在代碼編輯模式下，於畫布左側提供帶行號的文字編輯區域。編輯器 SHALL 使用等寬字體，行號 SHALL 從 1 開始遞增，並與文字內容保持垂直同步滾動。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Markdown list editor with line numbers > Scenario: 進入代碼模式顯示編輯器",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者切換到代碼編輯模式\n- **THEN** 畫布左側 SHALL 顯示一個帶行號的文字編輯區域，佔據約 1/3 寬度"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Markdown list editor with line numbers > Scenario: 行號同步滾動",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在編輯區域中滾動文字\n- **THEN** 左側行號 SHALL 與右側內容保持垂直同步滾動"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Markdown to graph parsing",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 將編輯器中的 Markdown 縮排列表語法即時解析為心智圖的節點（GraphNode）和邊（GraphEdge）。解析規則如下：\n- 每行以 `-` 或 `*` 開頭的行為有效節點行\n- 縮排深度（以 2/4 空格或 Tab 為單位）決定父子層級關係\n- 第一個無縮排的節點行為根節點（中央節點）\n- 自動為每對父子節點生成一條 edge\n- 空行和純空白行 SHALL 被忽略\n- 不以 `-` 或 `*` 開頭的非空行 SHALL 被忽略但不報錯"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Markdown to graph parsing > Scenario: 基本列表解析",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者輸入以下文字：\n  ```\n  - 核心主題\n    - 子主題A\n    - 子主題B\n      - 孫主題B1\n  ```\n- **THEN** 系統 SHALL 生成 4 個節點和 3 條邊：核心主題→子主題A、核心主題→子主題B、子主題B→孫主題B1"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Markdown to graph parsing > Scenario: 多個根節點",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者輸入多個無縮排的頂層項目\n- **THEN** 系統 SHALL 僅以第一個頂層項目為根節點，其餘頂層項目視為根節點的直接子節點"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Markdown to graph parsing > Scenario: 解析容錯 — 跳躍縮排",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者輸入縮排從 0 直接跳到 3 層的異常結構\n- **THEN** 系統 SHALL 將該節點掛載到最近的祖先節點下（而非報錯或丟棄）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Immediate Update Preview",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 強制開啟即時預覽（以 500ms debounce 觸發），使用者在代碼編輯器中輸入的任何變更，SHALL 在停止輸入 500ms 後自動解析並重繪右側圖表，以確保文字狀態與畫布狀態即時同步，避免狀態分叉。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Immediate Update Preview > Scenario: 打字即時更新",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在代碼編輯器中輸入文字\n- **THEN** 系統 SHALL 在 500ms 內防抖觸發 Markdown 解析與放射狀佈局，並即時更新畫布"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Level-based auto coloring",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 根據節點的縮排層級（depth）自動分配預設顏色。同一層級的所有節點使用相同顏色。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Level-based auto coloring > Scenario: 自動配色",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 系統解析 Markdown 列表並生成節點\n- **THEN** 根節點 SHALL 使用預設主題的第一個顏色，第一層子節點使用第二個顏色，依此類推。超出可用顏色數時 SHALL 循環使用。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Level-based auto coloring > Scenario: 使用者手動覆寫顏色",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在視覺模式下手動修改某節點的顏色\n- **THEN** 該節點的自定義顏色 SHALL 在代碼模式解析時被層級自動配色覆寫（代碼模式始終根據最新結構重新配色）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Radial layout algorithm",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在代碼模式下使用放射狀（radial）佈局演算法排列節點，中央節點位於畫布中心，子節點以同心圓方式向外擴展。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Radial layout algorithm > Scenario: 放射狀排列",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 系統解析 Markdown 文字並生成節點後\n- **THEN** 根節點 SHALL 位於畫布中心，第一層子節點 SHALL 均勻分布在半徑 R1 的圓上，第二層子節點 SHALL 分布在半徑 R2 的圓上"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Radial layout algorithm > Scenario: 大量子節點不重疊",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 某一層有超過 12 個子節點\n- **THEN** 系統 SHALL 自動增大該層的半徑，確保節點不重疊"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Graph to markdown serialization",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 能將現有的結構節點（不含 `type === 'sticky'` 的便利貼節點）反向序列化為 Markdown 列表文字。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Graph to markdown serialization > Scenario: 視覺模式切換到代碼模式",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者從視覺模式切換到代碼模式\n- **THEN** 系統 SHALL 將當前的結構節點序列化為 Markdown 列表文字並填入編輯器，排除便利貼節點"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Code editor node count limits",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 遵守 `GRAPH_LIMITS.MAX_NODES` 限制。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-code-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Code Editor > ADDED Requirements > Requirement: Code editor node count limits > Scenario: 超出節點上限",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在代碼編輯器中輸入超過 200 行有效節點定義\n- **THEN** 系統 SHALL 截斷超出部分並在編輯器底部顯示警告提示"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-data/spec.md",
+      "heading": "Spec: Knowledge Graph Data (Delta) > MODIFIED Requirements > Requirement: Graph data model definition",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 定義 `GraphDocument`、`GraphNode`、`GraphEdge`、`GraphViewState` 四個核心型別，作為知識圖的主資料結構。\n\n**新增與修改欄位**：\n- `GraphDocument` SHALL 新增 `notes` 欄位（`Record<string, string>`），用於儲存以節點標題 `title` 作為 key、TipTap HTML 格式富文本作為 value 的筆記。\n- `GraphDocument` SHALL 新增 `editMode` 欄位（`'visual' | 'code'`），用於持久化編輯模式。\n- 便利貼節點 SHALL 直接作為 React Flow 的節點（`type: 'sticky'`）存在於 `GraphDocument.nodes` 中，不另設獨立儲存欄位。便利貼節點的文字內容直接存於 `node.data.label` 或 `node.data.title`。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-data/spec.md",
+      "heading": "Spec: Knowledge Graph Data (Delta) > MODIFIED Requirements > Requirement: Graph data model definition > Scenario: GraphDocument 型別完整性",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 開發者建立一個新的 GraphDocument 物件\n- **THEN** 物件 MUST 包含 id (string)、name (string)、nodes (GraphNode[])、edges (GraphEdge[])、viewState (GraphViewState)、createdAt (string)、updatedAt (string)、notes (Record<string, string>)、editMode ('visual' | 'code') 所有欄位\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-data/spec.md",
+      "heading": "Spec: Knowledge Graph Data (Delta) > ADDED Requirements > Requirement: Schema version migration (Fail-fast)",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在載入 `mindspark_graphs` 時自動偵測 `schemaVersion` 並執行向上遷移。當遷移失敗時，系統 SHALL 阻斷 UI 載入，確保資料完整。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-data/spec.md",
+      "heading": "Spec: Knowledge Graph Data (Delta) > ADDED Requirements > Requirement: Schema version migration (Fail-fast) > Scenario: v1 到 v2 遷移",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 系統從 localStorage 載入 `schemaVersion === 1` 的 GraphDocument\n- **THEN** 系統 SHALL 自動：\n  1. 新增 `notes: {}` 欄位\n  2. 遍歷舊有的 nodes，若舊 nodes 的 data 中含有 `notes`、`definition`、或 `details`，將其併入 document 級別的 `notes` 字典中，以該節點標題 `title` 作為 key\n  3. 新增 `editMode: 'visual'`\n  4. 將 `schemaVersion` 更新為 2\n  5. 靜默寫回 localStorage"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-data/spec.md",
+      "heading": "Spec: Knowledge Graph Data (Delta) > ADDED Requirements > Requirement: Schema version migration (Fail-fast) > Scenario: 遷移失敗安全阻斷 (Fail-fast)",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** schema migration 過程中發生 QuotaExceededError 或任何錯誤\n- **THEN** 系統 SHALL 在 console 記錄錯誤、直接向外拋出異常 `throw error`、阻止 UI 載入，並在頁面展示「儲存空間已滿，載入失敗」與「備份資料」及「重置資料」的選項，**絕對不回傳空陣列 `[]`**"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-data/spec.md",
+      "heading": "Spec: Knowledge Graph Data (Delta) > ADDED Requirements > Requirement: Notes storage size monitoring",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 監控單一圖表的 localStorage 佔用大小，在超過閾值時發出警告。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-data/spec.md",
+      "heading": "Spec: Knowledge Graph Data (Delta) > ADDED Requirements > Requirement: Notes storage size monitoring > Scenario: 儲存大小警告",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 單一 GraphDocument 序列化後的 JSON 字串超過 3MB\n- **THEN** 系統 SHALL 在儲存成功後顯示 Toast 警告：「此圖表資料量較大，建議精簡筆記以避免儲存空間不足」"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-data/spec.md",
+      "heading": "Spec: Knowledge Graph Data (Delta) > ADDED Requirements > Requirement: Sticky notes count limits in nodes",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 限制每張圖表的便利貼總數。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-data/spec.md",
+      "heading": "Spec: Knowledge Graph Data (Delta) > ADDED Requirements > Requirement: Sticky notes count limits in nodes > Scenario: 便利貼數量上限",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者嘗試新增便利貼，但畫布上已存在的 `type: 'sticky'` 節點數量已達 20 個\n- **THEN** 系統 SHALL 阻斷新增並提示已達便利貼上限"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-data/spec.md",
+      "heading": "Spec: Knowledge Graph Data (Delta) > ADDED Requirements > Requirement: Limits constants",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "`GRAPH_LIMITS` SHALL 新增 `NOTES_MAX: 10000`、`STICKY_TEXT_MAX: 500` 和 `MAX_STICKY_NOTES: 20` 常數。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > Purpose",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "提供視覺化編輯模式與代碼編輯模式之間的雙模式切換介面與佈局管理，並維持資料的一致性與安全。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Mode toggle button",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在知識圖編輯器的 header bar 中提供一個模式切換按鈕，使用者可以在「視覺模式」和「代碼模式」之間切換。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Mode toggle button > Scenario: 切換到代碼模式",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者點擊模式切換按鈕從視覺模式切換到代碼模式\n- **THEN** 介面 SHALL 變更為：左側 1/3 為代碼編輯器、右側 2/3 為畫布預覽（唯讀）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Mode toggle button > Scenario: 切換到視覺模式",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者點擊模式切換按鈕從代碼模式切換回視覺模式\n- **THEN** 介面 SHALL 變更為：全寬畫布（可編輯）、點擊節點可開啟右側筆記面板"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Mode toggle button > Scenario: 切換按鈕圖標",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 當前處於視覺模式\n- **THEN** 切換按鈕 SHALL 顯示「Code」圖標和文字\n- **WHEN** 當前處於代碼模式\n- **THEN** 切換按鈕 SHALL 顯示「Visual」圖標和文字"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Layout management",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 根據當前模式動態調整佈局。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Layout management > Scenario: 視覺模式佈局 - 無筆記面板",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 處於視覺模式且沒有選中任何節點\n- **THEN** 畫布 SHALL 佔據全部可用寬度"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Layout management > Scenario: 視覺模式佈局 - 有筆記面板",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 處於視覺模式且使用者點擊了一個節點\n- **THEN** 畫布 SHALL 縮至左側約 2/3，右側 1/3 為筆記面板"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Layout management > Scenario: 代碼模式佈局",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 處於代碼模式\n- **THEN** 左側 1/3 為代碼編輯器，右側 2/3 為唯讀畫布預覽"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Mode state persistence",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在 `GraphDocument` 中持久化當前的編輯模式狀態。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Mode state persistence > Scenario: 記住上次模式",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在代碼模式下離開知識圖工作區，之後重新進入同一圖表\n- **THEN** 系統 SHALL 自動恢復為代碼模式"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Visual to code transition",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在從視覺模式切換到代碼模式時，將當前的結構節點（排除便利貼節點）序列化為 Markdown 列表文字。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Visual to code transition > Scenario: 節點結構序列化",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者從視覺模式切換到代碼模式\n- **THEN** 系統 SHALL 分析 edges 建立父子關係樹，並以 Markdown 縮排列表格式輸出到左側編輯器\n- **THEN** 根節點 SHALL 為無縮排的頂層項目，子節點 SHALL 根據層級遞增縮排\n- **THEN** 畫布中的 `type === 'sticky'` 便利貼節點 SHALL 被序列化器忽略"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Visual to code transition > Scenario: 筆記不受切換影響",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 切換到代碼模式時\n- **THEN** 筆記資料仍安全地保存在 `GraphDocument.notes` 中，不需拷貝或更新"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Code to visual transition (Immediate Sync)",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在代碼模式下，透過 500ms debounce 即時同步將編輯器文字解析為結構節點，並應用放射狀佈局。同時合併原有的便利貼節點。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Code to visual transition (Immediate Sync) > Scenario: 解析並顯示",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者編輯 Markdown 文字或切換回視覺模式\n- **THEN** 系統 SHALL 解析當前文字，生成結構節點，套用放射狀佈局，並與畫布中原有的便利貼節點（`type === 'sticky'`）合併後，渲染到畫布上"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Mobile mode restriction",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "手機端 SHALL 不提供代碼模式。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > ADDED Requirements > Requirement: Mobile mode restriction > Scenario: 手機端隱藏模式切換",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在手機端（≤768px）開啟知識圖編輯器\n- **THEN** 模式切換按鈕 SHALL 隱藏，系統 SHALL 固定為視覺模式（唯讀）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > MODIFIED Requirements > Requirement: Node content editing",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 允許使用者透過右側富文本筆記面板編輯節點的詳細內容。原有的 NodeEditPanel 中的屬性編輯（標題、顏色、形狀等）精簡後保留在筆記面板頂部的摺疊區域中。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-dual-mode/spec.md",
+      "heading": "Spec: Knowledge Graph Dual Mode > MODIFIED Requirements > Requirement: Node content editing > Scenario: 點擊節點開啟筆記面板",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在視覺模式下點擊一個節點（結構節點）\n- **THEN** 系統 SHALL 在畫布右側顯示筆記面板，包含：\n  1. 頂部：節點屬性編輯（摺疊區域，如標題、顏色、形狀）\n  2. 中部：TipTap 富文本筆記編輯器（讀寫 `notes[nodeTitle]`）\n  3. 底部：字數統計"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Editor (Delta) > MODIFIED Requirements > Requirement: Properties panel replacement",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "原有的 `NodeEditPanel`（純文字 textarea）SHALL 被替換為新的 `GraphNotesPanel`（TipTap 富文本編輯器 + 屬性編輯）。點擊節點時開啟的面板從 NodeEditPanel 改為 GraphNotesPanel。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Editor (Delta) > MODIFIED Requirements > Requirement: Properties panel replacement > Scenario: 選中節點顯示筆記面板",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在視覺模式下點擊選中一個結構節點\n- **THEN** 系統 SHALL 在畫布右側顯示 GraphNotesPanel，包含屬性編輯（摺疊區域）和 TipTap 富文本筆記編輯器"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Editor (Delta) > MODIFIED Requirements > Requirement: Properties panel replacement > Scenario: 取消選中隱藏筆記面板",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者點擊畫布空白處\n- **THEN** GraphNotesPanel SHALL 自動隱藏"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Editor (Delta) > MODIFIED Requirements > Requirement: Visual node editor canvas",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 提供基於 @xyflow/react 的視覺化節點編輯器畫布。畫布 SHALL 同時渲染結構節點和便利貼節點。便利貼使用 `type: 'sticky'` 的自定義節點類型。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Editor (Delta) > MODIFIED Requirements > Requirement: Visual node editor canvas > Scenario: 畫布渲染便利貼",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者進入知識圖工作區的編輯模式，且圖表中有便利貼\n- **THEN** 便利貼 SHALL 以黃色方塊形式渲染在畫布上，與結構節點共存，並可自由拖曳定位"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Editor (Delta) > MODIFIED Requirements > Requirement: Visual node editor canvas > Scenario: 代碼模式畫布唯讀",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 當前處於代碼模式\n- **THEN** 畫布上的所有節點（結構節點與便利貼節點）SHALL 設為唯讀且不可拖曳（`nodesDraggable: false`, `nodesConnectable: false`）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Editor (Delta) > MODIFIED Requirements > Requirement: Toolbar design",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "工具列 SHALL 新增以下按鈕：\n- 「新增便利貼」按鈕（StickyNote 圖標）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-editor/spec.md",
+      "heading": "Spec: Knowledge Graph Editor (Delta) > MODIFIED Requirements > Requirement: Toolbar design > Scenario: 桌面端工具列增加便利貼按鈕",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在桌面端進入編輯模式\n- **THEN** 工具列 SHALL 包含「新增便利貼」按鈕，與「新增節點」按鈕相鄰"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > Purpose",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "提供右側富文本筆記面板，整合 TipTap WYSIWYG 編輯器，支援透過節點標題對照的富文本筆記，以及跨節點筆記搜尋與未歸檔筆記管理功能。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Rich text notes panel with TipTap",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在使用者點擊畫布中的節點時，於畫布右側滑出一個富文本筆記面板。面板 SHALL 使用 TipTap 編輯器，支援以下格式：H1 標題、H2 標題、粗體、斜體、底線、刪除線、有序清單、無序清單、清除格式。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Rich text notes panel with TipTap > Scenario: 點擊節點開啟筆記面板",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在視覺模式下點擊畫布上的一個結構節點\n- **THEN** 右側 SHALL 滑出筆記面板，顯示該節點的標題和已儲存的富文本筆記（透過 `notes[nodeTitle]` 讀取）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Rich text notes panel with TipTap > Scenario: 點擊不同節點切換筆記",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在已開啟筆記面板的狀態下點擊另一個節點\n- **THEN** 面板 SHALL 自動切換顯示新節點的筆記內容，前一個節點的修改 SHALL 已自動儲存到 `notes` 字典中"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Rich text notes panel with TipTap > Scenario: 點擊空白處關閉筆記面板",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在視覺模式下點擊畫布空白處\n- **THEN** 右側筆記面板 SHALL 自動收合隱藏"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Notes panel toolbar",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "筆記面板 SHALL 在 TipTap 編輯區域上方提供一排格式工具列，包含以下按鈕：\n- H1 標題、H2 標題\n- 粗體 (B)、斜體 (I)、底線 (U)、刪除線 (S)\n- 有序清單、無序清單\n- 清除格式"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Notes auto-save",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "筆記面板的內容修改 SHALL 使用 debounce 策略（500ms）自動儲存到 `GraphDocument.notes[nodeTitle]` 欄位中。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Notes auto-save > Scenario: 自動儲存筆記",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在筆記面板中修改文字後停止輸入 500ms\n- **THEN** 系統 SHALL 自動將 TipTap 的 HTML 輸出儲存到 `notes` 字典中對應標題的欄位"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Notes auto-save > Scenario: 切換節點前自動儲存",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在編輯筆記的途中點擊另一個節點\n- **THEN** 系統 SHALL 在切換前立即儲存當前筆記（不等待 debounce）"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Notes content length limit",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "每個節點的筆記 SHALL 有最大長度限制 `NOTES_MAX: 10000` 字元（HTML 格式）。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Cross-node notes search",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 在筆記面板頂部提供搜尋欄位，支援跨 `notes` 字典進行關鍵字搜尋。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Cross-node notes search > Scenario: 搜尋筆記",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在搜尋欄位輸入關鍵字\n- **THEN** 系統 SHALL 即時顯示所有包含該關鍵字的節點列表，每個結果 SHALL 顯示節點標題和匹配的筆記片段"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Cross-node notes search > Scenario: 搜尋結果跳轉",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者點擊搜尋結果中的某個節點\n- **THEN** 系統 SHALL 關閉搜尋結果、在畫布上聚焦（fitView）到該節點、並在筆記面板中開啟該節點的筆記"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Unassigned notes management",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 管理「未歸檔筆記」（存在於 `notes` 字典中但當前 nodes 列表中沒有任何節點與之標題匹配的筆記）。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Unassigned notes management > Scenario: 顯示未歸檔筆記",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在搜尋面板或筆記面板底部檢視未歸檔筆記\n- **THEN** 系統 SHALL 列出所有無對應節點的標題和筆記摘要"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-notes-panel/spec.md",
+      "heading": "Spec: Knowledge Graph Notes Panel > ADDED Requirements > Requirement: Unassigned notes management > Scenario: 刪除或重聯未歸檔筆記",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者選擇某個未歸檔筆記並點擊「賦予當前節點」\n- **THEN** 系統 SHALL 將該筆記移至當前選中節點的標題下\n- **WHEN** 使用者點擊「刪除」未歸檔筆記\n- **THEN** 系統 SHALL 自 `notes` 字典中移除該 entry 以釋放空間"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > Purpose",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "提供獨立的便利貼節點功能，讓使用者可以在畫布上放置不屬於心智圖結構的自由備忘文字方塊。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > ADDED Requirements > Requirement: Sticky note creation (Canvas Integration)",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 允許使用者在畫布上新增獨立的便利貼節點。便利貼 SHALL 儲存在畫布的 `nodes` 陣列中，其 `type` 為 `'sticky'`。便利貼外觀具有黃色背景且無連接點 handle。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > ADDED Requirements > Requirement: Sticky note creation (Canvas Integration) > Scenario: 工具列新增便利貼",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者點擊工具列的「新增便利貼」按鈕\n- **THEN** 系統 SHALL 在畫布可見區域中央建立一個黃色便利貼節點（`type: 'sticky'`），預設文字為「備忘」"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > ADDED Requirements > Requirement: Sticky note creation (Canvas Integration) > Scenario: 便利貼外觀",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 便利貼被渲染在畫布上\n- **THEN** 便利貼 SHALL 使用黃色背景、輕微陰影效果、無連接點（Handle），視覺上明顯區別於心智圖結構節點"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > ADDED Requirements > Requirement: Sticky note editing",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 允許使用者透過雙擊便利貼來編輯其文字內容。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > ADDED Requirements > Requirement: Sticky note editing > Scenario: 雙擊編輯便利貼",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者雙擊便利貼節點\n- **THEN** 便利貼 SHALL 進入編輯模式，顯示 textarea 允許修改文字，文字將直接寫入 `node.data.label` 或 `node.data.title`"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > ADDED Requirements > Requirement: Sticky note editing > Scenario: 便利貼文字長度限制",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者輸入超過 500 字元的便利貼文字\n- **THEN** 系統 SHALL 截斷至 500 字元"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > ADDED Requirements > Requirement: Sticky note deletion",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 允許使用者刪除便利貼。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > ADDED Requirements > Requirement: Sticky note deletion > Scenario: 刪除便利貼",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者選中便利貼並按 Delete 鍵\n- **THEN** 系統 SHALL 刪除該便利貼節點"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > ADDED Requirements > Requirement: Sticky note drag and positioning",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "便利貼支援自由拖曳定位。因為便利貼直接作為 `RFNode` 存於 nodes 中，其位置（x, y）由 React Flow 自然更新並隨整個 `nodes` 陣列自動持久化，不需要額外的 CRUD 計算。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > ADDED Requirements > Requirement: Code editor isolation",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "在代碼模式的序列化與解析過程中，系統 SHALL 完全忽略 `type === 'sticky'` 的便利貼節點，確保在代碼編輯時便利貼節點維持原樣。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > ADDED Requirements > Requirement: Code editor isolation > Scenario: 代碼編輯不影響便利貼",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 使用者在代碼模式下修改文字並觸發重排\n- **THEN** 系統在解析 Markdown 時不生成便利貼，但在渲染畫布時，會將解析出的結構節點與畫布中現存的 `type === 'sticky'` 便利貼節點合併，使得便利貼位置、內容保持不變"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > ADDED Requirements > Requirement: Sticky notes count limit",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 限制每張圖表的便利貼總數不得超過 20 個。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/specs/knowledge-graph-sticky-notes/spec.md",
+      "heading": "Spec: Knowledge Graph Sticky Notes > ADDED Requirements > Requirement: Sticky notes count limit > Scenario: 限制便利貼上限",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 當前畫布已存在 20 個 `type === 'sticky'` 的節點，且使用者點擊「新增便利貼」\n- **THEN** 系統 SHALL 拒絕新增並顯示警告"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> **Generated by**: Plan Stress Test v2.0 — Deep Analysis Engine\n> **Date**: 2026-07-12\n> **Change Scale**: Large (L) — Rationale: 變更涉及 >10 個檔案、5 個以上模組（Storage, Editor, UI Panels, Parsers），並包含 Schema v1→v2 的資料遷移與新依賴引入。\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 1. Executive Summary > Plan Health Score: 54 / 100 — Grade: 🟡 C — Needs Work",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Classification | Count | Threshold |\n|----------------|-------|-----------|\n| 🔴 CRITICAL | 1 | RPN ≥ 75 |\n| 🟠 HIGH | 2 | RPN 50–74 |\n| 🟡 MEDIUM | 5 | RPN 25–49 |\n| 🔵 LOW | 1 | RPN < 25 |\n\n**Top 3 Critical Findings**:\n1. **D7-001**: 代碼模式關閉 Auto-Update 時，未儲存的純文字狀態沒有持久化欄位，重整或跳出將導致資料永久遺失。\n2. **D1-001**: 代碼模式切換依賴 `Map<title, notes>` 進行筆記關聯，若使用者在代碼模式修改了節點標題，該節點的筆記將被永久丟失（無法匹配）。\n3. **D5-001**: Schema v1→v2 遷移若因 localStorage 容量不足而失敗（返回空陣列），使用者後續的新增圖表操作將會覆蓋並清空所有舊有圖表資料。\n\n**Overall Assessment**:\n此計畫的 UI 與體驗設計十分完整，但在「雙模式狀態同步」與「資料一致性」的底層架構存在致命缺陷。尤其是 Markdown 無法攜帶 UUID 導致的筆記關聯斷裂（D1-001），以及缺少 `codeText` 持久化欄位導致的代碼遺失（D7-001）。計畫**不安全，不可直接實作**。必須修訂 `GraphDocument` Schema 以支援代碼狀態保存，並重新設計 Markdown 節點身分追蹤機制（例如在 Markdown 中隱藏或附加 ID）後才能繼續。\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 2. Cross-Validation Matrix",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> Verifies consistency across proposal.md ↔ design.md ↔ tasks.md\n\n| Aspect | proposal.md Says | design.md Says | tasks.md Says | Consistent? | Issue |\n|--------|------------------|----------------|---------------|-------------|-------|\n| 雙模式切換 | 支援切換，代碼模式可即時解析 | 共享 GraphDocument 資料源，透過 text 解析重繪 | 透過 graphToMarkdown 和 parseMarkdown 互轉 | ❌ | Design 說共享資料源，但 Tasks 是透過銷毀重建節點來切換，這不是共享，而是覆寫。 |\n| 節點筆記保留 | 提及每個節點獨立筆記 | 透過 title 匹配保留 notes | 透過 title 匹配保留 notes | ✅ | 邏輯一致，但架構上有隱患（見 D1-001）。 |\n| 便利貼儲存 | 新增 stickyNotes 陣列 | 獨立儲存於 stickyNotes | 獨立儲存於 stickyNotes | ✅ | 一致。 |\n| Theme 配置 | 支援 config 區塊與 theme | 第一版僅支援 theme | 解析 YAML frontmatter 提取 theme | ✅ | 一致。 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 2. Cross-Validation Matrix > Coverage Gap Analysis",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Tasks without design justification**: Tasks 4.1 提到「跳躍縮排容錯：掛載到最近的祖先」，Design 中未詳細說明此邊界條件的處理邏輯。\n- **Non-functional requirements without implementation strategy**: Proposal 提到「鍵盤流快速傾倒思緒」，但 Tasks 中沒有提及代碼編輯器的快捷鍵支援（如 Tab 縮排、Shift+Tab 反縮排）。\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 3. Dependency Graph > 3.1 Module Dependency Diagram",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "```mermaid\ngraph TD\n    Workspace[\"KnowledgeGraphWorkspace\"] --> Editor[\"GraphEditor\"]\n    Workspace --> Storage[\"graphStorage (DB)\"]\n    Editor --> NotesPanel[\"GraphNotesPanel\"]\n    Editor --> CodeEditor[\"GraphCodeEditor\"]\n    Editor --> Radial[\"radialLayout (Engine)\"]\n    Editor --> Bridge[\"markdownGraphBridge (Engine)\"]\n    Editor --> Sticky[\"StickyNoteNode\"]\n    NotesPanel --> TipTap[\"TipTap (External)\"]\n    NotesPanel --> Search[\"NotesSearch\"]\n    Bridge --> Themes[\"graphThemes\"]\n    CodeEditor --> Themes\n    \n    style Storage fill:#ff6b6b,stroke:#333\n    style Editor fill:#ffd166,stroke:#333\n```\n\n> 🔴 Nodes in red are single points of failure.\n> 🟡 Nodes in yellow are high fan-in nodes (many dependents)."
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 3. Dependency Graph > 3.2 Dependency Analysis Table",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Module | Depends On | Depended By | Fan-In | Fan-Out | SPOF? | Notes |\n|--------|-----------|-------------|--------|---------|-------|-------|\n| graphStorage | localStorage | Workspace, Editor | 2 | 1 | Yes | 所有讀寫必須經過，遷移邏輯的穩定性至關重要 |\n| GraphEditor | UI, Engines | Workspace | 1 | 6 | No | 肥大元件（God Component），負責協調模式切換與狀態 |\n| markdownGraphBridge | graphThemes | Editor | 1 | 1 | No | 純函式，容易測試，但承擔資料轉換的核心風險 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 3. Dependency Graph > 3.4 Implicit Dependencies",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Implicit dependency 1**: `markdownGraphBridge` 隱式依賴於「節點標題（Title）在變更模式期間不應被隨意修改，或具有唯一性」，否則 `GraphEditor` 的筆記恢復機制會失效。\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 4. 11-Dimension Deep Audit > D1: 需求完整性 (Requirement Completeness) > Findings",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| ID | Finding | Impact | Likelihood | Detectability | RPN | Classification |\n|----|---------|--------|------------|---------------|-----|----------------|\n| D1-001 | 代碼模式下，節點的標題（Title）是唯一的身份標識。若使用者在代碼模式中修改了某個節點的文字（標題），切回視覺模式時，系統將無法透過原 title 匹配到該節點的 `notes`，導致筆記永久丟失。 | 4 | 5 | 3 | 60 | 🟠 HIGH |\n| D1-002 | 若使用者在代碼模式下輸入了兩個相同名稱的節點（例如兩個「優點」），`Map<title, notes>` 將發生鍵值衝突，導致筆記錯亂或覆蓋。 | 3 | 4 | 3 | 36 | 🟡 MEDIUM |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 4. 11-Dimension Deep Audit > D1: 需求完整性 (Requirement Completeness) > 5-Why Root Cause Analysis: D1-001",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Why 1**: 節點筆記會在模式切換時丟失。\n  - **Why 2**: 系統依賴 `title` 來在舊節點與新生成的節點之間搬移筆記。\n    - **Why 3**: 代碼模式（Markdown）重新解析時，會生成全新的 UUID。\n      - **Why 4**: Markdown 的純文字列表語法中沒有存儲 UUID 的位置。\n- **Root Cause**: 將無狀態的 Markdown 文本作為有狀態圖表（帶有關聯筆記）的中間表示層，卻沒有設計隱含的身分追蹤機制。\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 4. 11-Dimension Deep Audit > D2: 設計一致性 (Design Consistency) > Findings",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| ID | Finding | Impact | Likelihood | Detectability | RPN | Classification |\n|----|---------|--------|------------|---------------|-----|----------------|\n| D2-001 | 編輯器未處理 Tab 鍵。代碼模式依賴縮排，若 TipTap 或 textarea 預設行為會跳走焦點，使用者將無法順暢使用「鍵盤流」。 | 2 | 5 | 2 | 20 | 🔵 LOW |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 4. 11-Dimension Deep Audit > D3: 邊界條件與極端輸入 (Boundary Conditions & Extreme Inputs) > Findings",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| ID | Finding | Impact | Likelihood | Detectability | RPN | Classification |\n|----|---------|--------|------------|---------------|-----|----------------|\n| D3-001 | 放射狀佈局演算法在處理超過 50 個節點的極端單層級（扁平結構）時，即使半徑增加，也可能超出畫布初始 viewport 或導致計算卡頓。 | 3 | 2 | 3 | 18 | 🔵 LOW |\n| D3-002 | 若使用者在 TipTap 編輯器中貼上帶有巨大 Base64 編碼圖片的 HTML，`NOTES_MAX` 是算純文字字數還是 HTML 字串長度？若是前者，將輕易擠爆 localStorage。 | 4 | 4 | 3 | 48 | 🟡 MEDIUM |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 4. 11-Dimension Deep Audit > D4: 併發與競態條件 (Concurrency & Race Conditions) > Findings",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| ID | Finding | Impact | Likelihood | Detectability | RPN | Classification |\n|----|---------|--------|------------|---------------|-----|----------------|\n| D4-001 | GraphNotesPanel 的自動儲存有 500ms debounce。若使用者輸入後在 500ms 內點擊「切換代碼模式」，該面板可能被 unmount 而錯失最後一次儲存，導致筆記遺失。 | 3 | 3 | 3 | 27 | 🟡 MEDIUM |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 4. 11-Dimension Deep Audit > D5: 錯誤處理與故障恢復 (Error Handling & Fault Recovery) > Findings",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| ID | Finding | Impact | Likelihood | Detectability | RPN | Classification |\n|----|---------|--------|------------|---------------|-----|----------------|\n| D5-001 | Schema migration 若在讀出後準備寫入（升級版）時遭遇 QuotaExceededError，當前實作會 return `[]` 且不覆寫。但這會導致介面顯示空清單，若使用者此時新建圖表並儲存，將會直接把 `[新圖表]` 寫入 `mindspark_graphs`，從而**無聲刪除所有舊資料**。 | 5 | 3 | 4 | 60 | 🟠 HIGH |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 4. 11-Dimension Deep Audit > D5: 錯誤處理與故障恢復 (Error Handling & Fault Recovery) > 5-Why Root Cause Analysis: D5-001",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Why 1**: 舊有圖表資料被新圖表覆蓋。\n  - **Why 2**: localStorage 寫入時包含了空的歷史記錄陣列。\n    - **Why 3**: 系統在啟動遷移失敗時，向應用層返回了空陣列 `[]` 作為 fallback。\n      - **Why 4**: 設計者希望在錯誤時不要讓 App 崩潰，因此吞噬了錯誤並給予空資料。\n- **Root Cause**: 錯誤處理策略（Fail-safe）與資料完整性原則衝突。遇到資料層面的存取失敗，應該是 Fail-fast（阻斷應用並警告），而非回傳假資料。\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 4. 11-Dimension Deep Audit > D6: 安全攻擊面分析 (Security Attack Surface) > Findings",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| ID | Finding | Impact | Likelihood | Detectability | RPN | Classification |\n|----|---------|--------|------------|---------------|-----|----------------|\n| D6-001 | `NotesSearch` 在搜尋時會「strip HTML tags後搜尋」。若實作使用簡單的 Regex，容易遭到 ReDoS（Regex 阻斷服務攻擊），導致瀏覽器卡死。 | 3 | 2 | 4 | 24 | 🔵 LOW |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 4. 11-Dimension Deep Audit > D7: 狀態管理與資料完整性 (State Management & Data Integrity) > Findings",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| ID | Finding | Impact | Likelihood | Detectability | RPN | Classification |\n|----|---------|--------|------------|---------------|-----|----------------|\n| D7-001 | 代碼模式且 Auto-Update 關閉時，左側編輯器的純文字是「唯一真實狀態」。但 `GraphDocument` 只有 `nodes`/`edges` 欄位。若此時 autosave 觸發或使用者關閉分頁，文字將不會被儲存。下次開啟時，系統從舊的 `nodes` 反序列化出舊文字，使用者剛剛輸入的內容全部遺失。 | 5 | 5 | 3 | 75 | 🔴 CRITICAL |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 4. 11-Dimension Deep Audit > D7: 狀態管理與資料完整性 (State Management & Data Integrity) > 5-Why Root Cause Analysis: D7-001",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **Why 1**: 代碼模式下未套用的文字在重整後遺失。\n  - **Why 2**: autosave 機制只把畫布的 `nodes` 和 `edges` 存進 `mindspark_graphs`。\n    - **Why 3**: `GraphDocument` 型別中沒有欄位可以儲存代碼編輯器的暫存文字。\n      - **Why 4**: 設計決策（D5）決定「共享同一份資料源」，誤以為從 nodes 隨時反序列化就足夠了。\n- **Root Cause**: 在「手動更新」模式下，系統實際上已經發生了「狀態分叉（State Split）」，但架構上卻沒有提供相應的儲存空間來容納分叉的草稿狀態。\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 4. 11-Dimension Deep Audit > D10: 隱式假設與環境依賴 (Implicit Assumptions & Environment Dependencies) > Findings",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| ID | Finding | Impact | Likelihood | Detectability | RPN | Classification |\n|----|---------|--------|------------|---------------|-----|----------------|\n| D10-001 | `markdownGraphBridge` 假設縮排是「2 個空格」。若使用者從外部貼上使用 Tab 或 4 個空格縮排的 Markdown，解析器將層級大亂。 | 3 | 4 | 2 | 24 | 🔵 LOW |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 5. Cascading Failure Analysis",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Trigger | Immediate Effect | 2nd-Order Effect | 3rd-Order Effect | Blast Radius | Recovery Difficulty |\n|---------|-----------------|-------------------|-------------------|--------------|---------------------|\n| **D7-001**: 代碼模式未儲存跳出 | `autosave` 將舊的 nodes 寫入 localStorage | 再次開啟時，從舊 nodes 產出舊 markdown | 使用者剛花 20 分鐘打的草稿徹底蒸發 | 單一圖表 | Impossible |\n| **D5-001**: 遷移遇容量上限 | 系統捕獲錯誤，回傳 `[]` 給 UI | UI 顯示空圖表列表 | 使用者新建圖表並儲存，覆蓋整個 localStorage Key | 所有知識圖 | Impossible |\n| **D1-001**: 代碼模式改標題 | 模式切換時，標題不匹配 | 該節點的新 UUID 被賦予空白 notes | 原本辛勤寫的富文本筆記失去關聯（被丟棄） | 單一節點 | Impossible |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 5. Cascading Failure Analysis > Cascade Diagram (D5-001)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "```mermaid\ngraph LR\n    T[\"Trigger: QuotaExceeded on Migration\"] --> E1[\"Effect 1: getGraphs() returns []\"]\n    E1 --> E2[\"Effect 2: UI shows empty workspace\"]\n    E2 --> E3[\"Effect 3: User creates 'Test' graph\"]\n    E3 --> E4[\"Effect 4: saveGraph overwrites mindspark_graphs with [Test]\"]\n    E4 --> E5[\"Effect 5: ALL legacy graphs permanently DELETED\"]\n    \n    style T fill:#ff6b6b\n    style E5 fill:#ff6b6b\n```\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 6. Adversarial Attack Scenarios > 🎭 Role: Security Adversary",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Attack Vector | Target | Preconditions | Steps | Expected Impact | Mitigation |\n|---------------|--------|---------------|-------|-----------------|------------|\n| XSS via JSON Import | `GraphNotesPanel` | 攻擊者誘使使用者匯入帶有惡意 payload 的 JSON 備份檔 | 1. 匯入 JSON<br>2. 點擊受感染節點<br>3. TipTap 渲染 HTML | 若 TipTap 的 DOMParser 消毒不完全，執行惡意腳本盜取其他圖表資料 | 確保 TipTap 只接受白名單 tags，或在渲染前使用 DOMPurify 進行二次過濾。 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 6. Adversarial Attack Scenarios > 🎭 Role: Chaos Engineer",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Failure Injection | Target | Scenario | Expected Behavior | Actual (Predicted) Behavior | Gap |\n|-------------------|--------|----------|--------------------|-----------------------------|-----|\n| LocalStorage Full | `graphStorage` | 正常編輯與自動儲存時磁碟滿 | 停止儲存，顯示警告，但不影響當前在記憶體中的編輯 | 自動儲存不斷拋錯可能導致 React 狀態異常或元件崩潰 | 需要確保 `saveGraph` 中的 try-catch 不會影響 UI 渲染週期。 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 6. Adversarial Attack Scenarios > 🎭 Role: Domain Skeptic",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Assumption Challenged | Evidence For | Evidence Against | Risk if Wrong | Recommendation |\n|----------------------|-------------|-----------------|---------------|----------------|\n| 「使用者標題都是唯一的」 | Markdown 列表很直觀 | 真實心智圖常有重複的分支名稱（如：優點、缺點） | 筆記因 title 衝突而被覆蓋 | 必須在 Markdown 中隱藏或加入 UUID 機制。 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 6. Adversarial Attack Scenarios > 🎭 Role: Maintainability Critic",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Concern | Location | Current Design | Problem in 6 Months | Suggested Improvement |\n|---------|----------|----------------|---------------------|----------------------|\n| God Component 傾向 | `GraphEditor.tsx` | 負責處理節點、邊、排版、模式切換、鍵盤快捷鍵、資料同步 | 檔案將超過 1000 行，難以追蹤狀態流向 | 將「雙模式同步狀態機」抽離為自訂 Hook (`useDualModeSync`)。 |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 7. Comprehensive Test Matrix",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Priority | Module | Test Scenario | Dimension | Type | Automation | Preconditions | Expected Outcome | Risk if Untested |\n|----------|--------|---------------|-----------|------|------------|---------------|------------------|------------------|\n| P0 | `markdownBridge` | 相同標題節點的解析 | D1 | Unit | Auto | 兩個 `- 相同標題` 節點 | 必須正確生成兩個獨立節點並保持原本順序 | RPN 60 |\n| P0 | `GraphEditor` | 代碼草稿儲存與恢復 | D7 | Integration | Auto | Auto-Update 關閉，輸入草稿 | `codeText` 必須被儲存並在重新載入時還原 | RPN 75 |\n| P0 | `graphStorage` | 容量滿時的遷移處理 | D5 | Unit | Auto | Mock localStorage.setItem 拋出 QuotaExceededError | 拋出錯誤並拒絕進入應用，絕不能返回 `[]` | RPN 60 |\n| P1 | `markdownBridge` | Tab 縮排容錯 | D10 | Unit | Auto | 輸入 Tab 而非 2 空格 | 應正確識別層級關係 | RPN 24 |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 8. Consolidated Risk Register",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Rank | ID | Finding | Dimension | Impact | Likelihood | Detectability | RPN | Classification | Mitigation | Owner Module | Status |\n|------|----|---------|-----------|--------|------------|---------------|-----|----------------|------------|-------------|--------|\n| 1 | D7-001 | 代碼模式草稿遺失 | D7 | 5 | 5 | 3 | 75 | 🔴 | 在 `GraphDocument` 增加 `codeDraft?: string` 欄位。 | Types/Storage | Open |\n| 2 | D1-001 | Title 修改導致筆記遺失 | D1 | 4 | 5 | 3 | 60 | 🟠 | 改變 Markdown 格式以攜帶 ID（例：`- 標題 <!-- id:xxx -->`），或強制保留 ID map。 | Parser/Editor | Open |\n| 3 | D5-001 | 遷移失敗清空資料 | D5 | 5 | 3 | 4 | 60 | 🟠 | 遷移捕捉到 Quota 錯誤時，拋出 Fatal Error 阻斷 UI 載入，而非回傳 `[]`。 | Storage | Open |\n| 4 | D3-002 | 圖片 Base64 塞爆儲存 | D3 | 4 | 4 | 3 | 48 | 🟡 | TipTap 中掛載 interceptor 阻擋貼上圖片，或清理 img 標籤。 | NotesPanel | Open |\n| 5 | D1-002 | 相同標題筆記覆蓋 | D1 | 3 | 4 | 3 | 36 | 🟡 | 解決方案同 D1-001。 | Parser | Open |\n| 6 | D4-001 | 模式切換漏存筆記 | D4 | 3 | 3 | 3 | 27 | 🟡 | `GraphNotesPanel` 的 `useEffect` cleanup 中執行 flush sync 儲存。 | NotesPanel | Open |\n| 7 | D10-001 | Tab 縮排解析錯誤 | D10 | 3 | 4 | 2 | 24 | 🔵 | 正規表達式應同時相容 Tab 與 2/4 空格。 | Parser | Open |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 9. Mitigation Action Plan > 🔴 CRITICAL — Must Fix Before Implementation",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Finding ID | Action | Affected Files | Effort Estimate | Dependency |\n|---|-----------|--------|----------------|-----------------|------------|\n| 1 | D7-001 | 修改 Schema，新增 `codeDraft` 欄位；在 `GraphCodeEditor` 的 `onChange` 中即時儲存 draft；在切換回視覺模式時清空 draft。 | `graphTypes.ts`, `graphStorage.ts`, `GraphEditor.tsx` | M | None |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 9. Mitigation Action Plan > 🟠 HIGH — Should Fix During Implementation",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Finding ID | Action | Affected Files | Effort Estimate | Dependency |\n|---|-----------|--------|----------------|-----------------|------------|\n| 1 | D1-001 | **重構解析策略**：Markdown 序列化時附加 UUID (e.g. `<!--id:123-->`)；解析時讀取並沿用該 UUID，從而徹底解決筆記關聯與同名節點問題。 | `markdownGraphBridge.ts`, `GraphEditor.tsx` | M | None |\n| 2 | D5-001 | 修改 `getGraphs` 的 Error Catch，若判定為 QuotaExceeded 則 `throw new Error('STORAGE_FULL')`，由 `AppContent` ErrorBoundary 攔截並提示，絕對不回傳空陣列。 | `graphStorage.ts` | S | None |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/stress-test-report.md",
+      "heading": "Stress Test Report: knowledge-graph-enhancements > 9. Mitigation Action Plan > 🟡 MEDIUM — Track and Address",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Finding ID | Action | Notes |\n|---|-----------|--------|-------|\n| 1 | D3-002 | 在 TipTap extension 中過濾/禁用 image node。 | 實作 Panel 時加入配置 |\n| 2 | D4-001 | 確保面板 unmount 時 flush debounced save。 | 實作 Panel 時注意 hooks 生命週期 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/tasks.md",
+      "heading": "1. 環境準備與依賴安裝",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 1.1 安裝 TipTap 依賴：`npm install @tiptap/react @tiptap/starter-kit @tiptap/extension-placeholder`\n  - **驗證**：`npm run build` 不報錯\n- [x] 1.2 更新 `vite.config.ts` 的 `manualChunks`：將 `@tiptap` 和 `prosemirror` 加入 `vendor-ui-core` chunk，防止 React context 分離\n  - **驗證**：`npm run build` 成功"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/tasks.md",
+      "heading": "2. 資料模型與儲存擴充（types + storage）",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 2.1 擴充 `types/graphTypes.ts`：\n  - 擴充 `GraphDocument`：新增 `notes: Record<string, string>` 字典（以節點 title 作為 key，HTML string 為 value），取代原有的節點級 notes 欄位\n  - 擴充 `GraphDocument`：新增 `editMode: 'visual' | 'code'`\n  - 擴充 `GRAPH_LIMITS`：新增 `NOTES_MAX: 10000`（單一筆記字元上限）、`STICKY_TEXT_MAX: 500`（便利貼字數上限）、`MAX_STICKY_NOTES: 20`（每張圖便利貼數量上限）\n  - 更新 `SCHEMA_VERSION` 從 1 到 2\n  - **驗證**：`npx tsc --noEmit` 通過\n  - **影響範圍**：`GraphDocument` 所有關聯元件\n\n- [x] 2.2 更新 `services/graphStorage.ts`：\n  - 在 `getGraphs()` 中加入 schema migration 邏輯（v1→v2）：\n    - 建立 `notes` 字典\n    - 遍歷舊節點，若舊節點中含有舊有的 definition/details 或 notes 屬性，將其轉移到 `notes[node.data.title]`\n    - 將 `schemaVersion` 更新為 2\n  - **Fail-fast 安全處理**：在 `getGraphs()` 中，如果 migration 拋出 QuotaExceededError 或 any 異常，**直接 throw Error**，不要吞食錯誤返回 `[]`，避免後續覆蓋並清空 localStorage\n  - 更新 `createNewGraph()`：包含新欄位預設值 (`notes: {}`, `editMode: 'visual'`)\n  - 更新 `validateGraphDocument()`：檢查 `nodes` 中 `type === 'sticky'` 的便利貼數量是否 ≤ `MAX_STICKY_NOTES`，若超過則拋錯\n  - 新增 `saveGraph()` 大小監控：序列化後超過 3MB 時返回 warning Toast 提示\n  - **驗證**：現有儲存測試通過，並補足 migration 與安全防禦測試\n\n- [x] 2.3 新增/更新測試 `src/__tests__/graphStorage.test.ts`：\n  - 測試：v1 格式能正確升級並合併 notes\n  - 測試：遷移出錯時拋出 Fatal Error 且不覆寫 localStorage，不回傳 `[]`\n  - 測試：單一圖表超過 20 個便利貼時 saveGraph 阻斷\n  - 測試：序列化大於 3MB 時返回 size warning\n  - **驗證**：`npm test -- --run src/__tests__/graphStorage.test.ts` 全部通過"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/tasks.md",
+      "heading": "3. 放射狀佈局演算法",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 3.1 新建 `services/radialLayout.ts`：\n  - 匯出 `applyRadialLayout(nodes: RFNode[], edges: RFEdge[]): RFNode[]`\n  - 演算法：BFS 從根節點開始分配 depth → 同 depth 節點均分 360° → 半徑線性遞增計算座標 (`x = cx + r*cos(a)`, `y = cy + r*sin(a)`)\n  - 根節點偵測：優先入度為 0 節點，否則選第一個\n  - 超過 12 個同層節點時半徑自動加大，防止重疊\n  - 無邊連接的孤立節點在右側垂直排列\n  - **驗證**：`npx tsc --noEmit` 通過\n\n- [x] 3.2 新建 `src/__tests__/radialLayout.test.ts`：\n  - 測試：根與子節點分佈、多層級半徑遞增、同層超過 12 節點防重疊、孤立節點排列、空輸入容錯\n  - **驗證**：`npm test -- --run src/__tests__/radialLayout.test.ts` 全部通過"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/tasks.md",
+      "heading": "4. Markdown 解析器與序列化器",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 4.1 新建 `services/markdownGraphBridge.ts`：\n  - 匯出 `parseMarkdownToGraph(text: string): { nodes: GraphNode[]; edges: GraphEdge[]; errors: string[] }`\n  - 只解析縮排列表（`-` 或 `*` 開頭），**不支援 YAML frontmatter**（減少複雜度與過度設計）\n  - 縮排層級：相容 2/4 空格或 Tab，跳躍縮排容錯掛載至最近祖先\n  - 層級自動配色：根據節點深度套用 default 顏色方案\n  - 超出 `MAX_NODES` 限制時截斷並回報 error\n  - 匯出 `graphToMarkdown(nodes: GraphNode[], edges: GraphEdge[]): string`\n  - 反向序列化：DFS 深度優先遍歷生成縮排列表\n  - **過濾便利貼**：不解析或序列化 `type === 'sticky'` 的便利貼節點\n  - **驗證**：`npx tsc --noEmit` 通過\n\n- [x] 4.2 新建 `src/__tests__/markdownGraphBridge.test.ts`：\n  - 測試：基本解析、多層縮排、跳躍縮排容錯、序列化為 Markdown、忽略便利貼節點\n  - **驗證**：`npm test -- --run src/__tests__/markdownGraphBridge.test.ts` 全部通過"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/tasks.md",
+      "heading": "5. 便利貼節點元件",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 5.1 新建 `components/KnowledgeGraph/StickyNoteNode.tsx`：\n  - React Flow 自定義節點（`type: 'sticky'`）\n  - 外觀：黃色背景 (`#FEF3C7`)、無連接點 Handle、帶輕微陰影和圓角\n  - 雙擊進入編輯模式（顯示 textarea，字數限制 500 字元，修改直接寫回 `node.data.label`）\n  - **驗證**：在畫布上能顯示黃色便利貼、可拖曳並雙擊修改文字"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/tasks.md",
+      "heading": "6. 富文本筆記面板與筆記搜尋",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 6.1 新建 `components/KnowledgeGraph/GraphNotesPanel.tsx`：\n  - TipTap 富文本編輯器，工具列支援：H1, H2, B, I, U, S, OL, UL, Clear formatting\n  - **資料對照讀寫**：讀寫當前選中節點 title 對應 of `GraphDocument.notes[nodeTitle]` 欄位。改名時，修改筆記 key 值\n  - Debounce 500ms 自動儲存；切換節點或 unmount 面板時 flush 儲存\n  - **驗證**：在視覺模式下點擊節點開啟面板，能打字且 500ms 後自動持久化\n- [x] 6.2 新建 `components/KnowledgeGraph/NotesSearch.tsx`：\n  - 支援跨 `notes` 字典搜尋純文字內容（去 HTML tag），點擊搜尋結果在畫布中 fitView 聚焦並開啟筆記\n  - **未歸檔筆記管理**：列出在當前節點中不存在的 `notes` key值，點擊可刪除釋放空間或將其賦予當前選中節點"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/tasks.md",
+      "heading": "7. 代碼編輯器元件",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 7.1 新建 `components/KnowledgeGraph/GraphCodeEditor.tsx`：\n  - 帶有行號與 textarea 垂直同步滾動的文字編輯器\n  - **不包含 Auto-Update 開關與手動更新按鈕**，強制即時預覽（500ms debounce 自動觸發解析與重排）\n  - 底部顯示錯誤/警告區域"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/tasks.md",
+      "heading": "8. 雙模式切換與儲存安全整合",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 8.1 重構 `components/KnowledgeGraph/KnowledgeGraphWorkspace.tsx`：\n  - 在載入 `getGraphs()` 時捕獲 Fatal Error，若拋出儲存異常，阻斷應用並顯示全頁錯誤畫面，提供「導出備份」與「清空資料」按鈕\n- [x] 8.2 重構 `components/KnowledgeGraph/GraphEditor.tsx` — 模式切換與便利貼合併：\n  - 根據 `editMode` 進行佈局切換：\n    - `visual`：全寬畫布 + 可開啟 GraphNotesPanel\n    - `code`：左側 GraphCodeEditor（1/3）+ 右側畫布預覽（唯讀，2/3）\n  - 模式切換資料同步：\n    - 視覺→代碼：反序列化 `type !== 'sticky'` 的結構節點\n    - 代碼→視覺：解析 Markdown 生成新結構節點（自動放射狀佈局），並**合併**當前 nodes 陣列中所有的 `type === 'sticky'` 便利貼節點，設為新的畫布狀態\n    - 模式切換時，因為筆記直接儲存在 `notes` 字典中，完全不需拷貝筆記，確保資料安全不丟失\n  - 工具列：新增「新增便利貼」按鈕，點擊直接在 nodes 陣列中 append 一個 `type: 'sticky'` 節點\n  - **驗證**：雙模式切換順暢，便利貼在代碼模式下不受影響，筆記在模式切換後完全保留\n- [x] 8.3 更新 `GraphToolbar.tsx`、`ConceptNode.tsx` 以相容新屬性與便利貼"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/tasks.md",
+      "heading": "9. 完整性驗證",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 9.1 執行 TypeScript 編譯檢查：`npx tsc --noEmit`（零 errors，零 `any`）\n- [x] 9.2 執行所有單元測試：`npm test`（含新舊測試）\n- [x] 9.3 執行 Vite 生產建置：`npm run build`\n- [x] 9.4 瀏覽器手動完整功能驗證（包含手機端唯讀、大圖表容量 warning、安全邊界）\n- [x] 9.5 更新 `docs/DEVELOPMENT_LOG.md`"
     },
     {
       "path": "openspec/changes/archive/enhance-quiz-experience/design.md",

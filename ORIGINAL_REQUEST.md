@@ -89,3 +89,50 @@ Integrity mode: development
 - [ ] 執行 `npm run build` 能成功將產物編譯至 `dist/` 目錄。
 - [ ] 執行 `npm test -- --run` 所有測試均能正常通過。
 - [ ] `docs/reports/DEAD_CODE_REPORT_2026_06_10.md` 及 `docs/DEVELOPMENT_LOG.md` 均已更新清理完成狀態與摘要。
+
+## Follow-up — 2026-07-12T06:22:41Z
+
+你已被指派實作知識圖增強功能 (knowledge-graph-enhancements)。
+
+請注意，你必須使用位於 `.agents/skills/openspec-apply-with-tests` 中的 skill 進行實施，並嚴格遵守專案根目錄下 `universal_remediation_prompt.md` 中規定的《防自證幻覺與對抗性協作憲章》。
+
+以下是本次實作任務的完整 Prompt 與規格要求：
+
+# 任務描述
+本項目旨在重構與升級現有 React 知識圖（Knowledge Graph）模組。引入 Markdown 列表代碼編輯器（即時解析、放射狀佈局、層級配色）、TipTap 富文本筆記面板、獨立便利貼系統與跨節點筆記搜尋，並整合 Fail-fast 儲存安全防禦。
+
+Working directory: c:\Users\user\Desktop\Quiz-app-
+Integrity mode: development
+
+## Requirements
+
+### R1. Markdown 列表代碼編輯模式 (Code Mode)
+- 提供 Markdown 列表文字編輯器，支援行號，並透過 500ms debounce 強制即時解析為心智圖。
+- 實作自定義 BFS 放射狀佈局（radial layout）與層級配色（不同縮排層級不同顏色）。
+- 提供視覺模式（畫布 + 筆記面板）與代碼模式（左側編輯器 + 右側唯讀預覽畫布）的雙向切換。
+
+### R2. TipTap WYSIWYG 富文本筆記面板與搜尋 (Notes Panel)
+- 整合 TipTap 編輯器（支援 H1/H2、粗體、斜體、底線、刪除線、清單等），筆記獨立以節點 title 作為 key 儲存於 document 級別的 `notes` 字典中。
+- 提供跨節點筆記內容搜尋功能，點擊搜尋結果自動跳轉並聚焦。支援「未歸檔筆記」檢視與重聯/清除。
+
+### R3. 便利貼節點系統 (Sticky Notes)
+- 支援在畫布新增獨立黃色便利貼（`type: 'sticky'`），代碼模式解析/序列化時忽略，但切換回視覺模式時需與結構節點合併顯示。
+
+### R4. 儲存安全與 Fail-fast 防禦 (Storage Safety)
+- 升級 Schema Version 至 2。若 getGraphs 偵測到 v1 則執行自動遷移（將舊節點筆記合併至 `notes` 字典）。
+- 遷移失敗或寫入配額不足時，執行 Fail-fast 拋出 Fatal Error 並由 ErrorBoundary 阻斷載入，防範清空舊資料。
+
+## Acceptance Criteria
+
+### Automated Tests
+- 執行 `npm test -- --run src/__tests__/graphStorage.test.ts` 通過。
+- 執行 `npm test -- --run src/__tests__/radialLayout.test.ts` 通過。
+- 執行 `npm test -- --run src/__tests__/markdownGraphBridge.test.ts` 通過。
+- 執行 `npx tsc --noEmit` 無 TypeScript 編譯錯誤（無 any 型別）。
+- 執行 `npm run build` 通過生產環境編譯。
+
+### Manual Verification
+- 雙模式切換順暢，便利貼在代碼模式不丟失，切回視覺模式仍存在。
+- 節點改名後筆記不丟失，舊 title 的筆記可透過未歸檔筆記重新連結。
+- 富文本編輯器功能正常，且 500ms 自動儲存。
+

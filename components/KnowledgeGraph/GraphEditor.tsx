@@ -22,6 +22,8 @@ import type { GraphDocument, GraphNode, GraphEdge, GraphNodeData, ReadingMode, A
 import { GRAPH_LIMITS, DEFAULT_VIEW_STATE, DEFAULT_NODE_COLORS } from '@/types/graphTypes';
 import { saveGraph } from '@/services/graphStorage';
 import { graphToMermaid, mermaidToGraph } from '@/services/mermaidBridge';
+import { parseMarkdownToGraph, graphToMarkdown } from '@/services/markdownGraphBridge';
+import { applyRadialLayout } from '@/services/radialLayout';
 import { useToast } from '@/contexts/ToastContext';
 
 import ConceptNode from './ConceptNode';
@@ -30,6 +32,7 @@ import { NodeEditPanel } from './NodeEditPanel';
 import { GraphToolbar } from './GraphToolbar';
 import { GraphNotesPanel, renameNoteKey } from './GraphNotesPanel';
 import { NotesSearch } from './NotesSearch';
+import { GraphCodeEditor } from './GraphCodeEditor';
 
 // Convert our GraphNode → React Flow node
 function toRFNode(node: GraphNode): RFNode {
@@ -176,6 +179,22 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
   const [mermaidText, setMermaidText] = useState('');
   const [mermaidErrors, setMermaidErrors] = useState<string[]>([]);
   const [importMode, setImportMode] = useState<'replace' | 'append'>('replace');
+  const [copiedConverter, setCopiedConverter] = useState(false);
+
+  // Dual mode editMode states
+  const [editMode, setEditMode] = useState<'visual' | 'code'>(graph.editMode || 'visual');
+  const [codeText, setCodeText] = useState<string>('');
+  const [codeErrors, setCodeErrors] = useState<string[]>([]);
+
+  const isReadOnlyMode = readOnly || editMode === 'code';
+
+  // Load initial markdown if default mode is code
+  useEffect(() => {
+    if (graph.editMode === 'code') {
+      const md = graphToMarkdown(graph.nodes, graph.edges);
+      setCodeText(md);
+    }
+  }, [graph]);
 
   // Undo / Redo
   const { past, future, setPast, setFuture, pushState } = useUndoRedo(nodes, edges);
@@ -193,6 +212,7 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
       nodes: fromRFNodes(nodes),
       edges: fromRFEdges(edges),
       notes: notesDict,
+      editMode,
       viewState: { ...graph.viewState, readingMode },
       updatedAt: new Date().toISOString(),
     };
@@ -200,7 +220,7 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
     if (!result.success && result.error) {
       toast.warning(result.error);
     }
-  }, [graph, nodes, edges, notesDict, readingMode, toast]);
+  }, [graph, nodes, edges, notesDict, readingMode, editMode, toast]);
 
   const scheduleSave = useCallback(() => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
@@ -223,7 +243,93 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
   }, [flushSave]);
 
   // Trigger save on node/edge/notes changes
-  useEffect(() => { scheduleSave(); }, [nodes, edges, notesDict, readingMode]);
+  useEffect(() => { scheduleSave(); }, [nodes, edges, notesDict, readingMode, editMode]);
+
+  const handleCopyConverter = useCallback(() => {
+    const mindmapContent = mermaidText.trim() ? mermaidText.trim() : '[在此貼上您的 mindmap 代碼]';
+    const prompt = `請扮演資料結構與 Mermaid.js 專家。我有一段 Mermaid \`mindmap\` 格式的代碼，但我們的系統只支援標準的 flowchart 格式 (\`graph TD\` 或 \`graph LR\`)。
+請幫我將這段 \`mindmap\` 代碼完全轉換為標準 flowchart 格式。
+
+⚠️ 轉換與語法規則：
+1. 必須以 \`graph TD\` 作為標頭。
+2. 將心智圖的樹狀層級結構轉換為一對多的父子節點連線。例如：
+   - 根節點連接到第一層節點。
+   - 第一層節點分別連接到第二層子節點。
+3. 語法要求：
+   * 節點定義：必須使用「英文或數字的唯一 ID」搭配「括號包覆標題」，例如：\`root((中央核心主題))\`、\`node1[子主題A]\`、\`node2[子主題B]\`。
+   * 連線：必須使用標準的單向箭頭連線，例如：\`root --> node1\`、\`node1 --> node1_1\`。
+   * ID 命名：所有節點 ID 必須是英文或數字（如 A, B, node1, node2 等），不可包含特殊字元，不可直接使用中文作為 ID（中文應放在括號或方括號中，例如：A[中文名稱]）。
+4. 嚴禁保留 \`mindmap\` 關鍵字、樹狀縮排、引號單獨成行等 mindmap 特有語法。所有節點必須有明確的 ID，並用 \`-->\` 進行連接。
+5. 嚴禁使用 \`subgraph\`、\`style\`、\`classDef\`、\`click\` 等系統不支援的進階語法。
+
+待轉換的 mindmap 代碼如下：
+${mindmapContent}`;
+
+    navigator.clipboard.writeText(prompt);
+    setCopiedConverter(true);
+    setTimeout(() => setCopiedConverter(false), 2000);
+  }, [mermaidText]);
+
+  // Dual mode transition handlers
+  const handleToggleEditMode = useCallback(() => {
+    setEditMode((prev) => {
+      const nextMode = prev === 'visual' ? 'code' : 'visual';
+      if (nextMode === 'code') {
+        const md = graphToMarkdown(fromRFNodes(nodes), fromRFEdges(edges));
+        setCodeText(md);
+        setCodeErrors([]);
+      }
+      return nextMode;
+    });
+  }, [nodes, edges]);
+
+  const handleCodeChange = useCallback((text: string) => {
+    setCodeText(text);
+    const { nodes: parsedNodes, edges: parsedEdges, errors } = parseMarkdownToGraph(text);
+    if (errors.length === 0) {
+      setCodeErrors([]);
+      const rfParsedNodes = parsedNodes.map(toRFNode);
+      const rfParsedEdges = parsedEdges.map(toRFEdge);
+      const layoutedNodes = applyRadialLayout(rfParsedNodes, rfParsedEdges);
+      
+      setNodes((prevNodes) => {
+        const prevConceptMap = new Map<string, GraphNode>();
+        prevNodes.forEach(n => {
+          if (n.type !== 'sticky') {
+            const data = n.data as Partial<GraphNodeData>;
+            const title = data.title || '';
+            if (title) {
+              prevConceptMap.set(title, n as unknown as GraphNode);
+            }
+          }
+        });
+
+        const restoredNodes = layoutedNodes.map(node => {
+          const prevNode = prevConceptMap.get(node.data.title as string);
+          if (prevNode) {
+            return {
+              ...node,
+              type: prevNode.type,
+              data: {
+                ...node.data,
+                definition: prevNode.data.definition,
+                details: prevNode.data.details,
+                color: prevNode.data.color,
+                fontSize: prevNode.data.fontSize,
+              }
+            };
+          }
+          return node;
+        });
+
+        const stickyNodes = prevNodes.filter(n => n.type === 'sticky');
+        return [...restoredNodes, ...stickyNodes];
+      });
+      setEdges(rfParsedEdges);
+    } else {
+      setCodeErrors(errors);
+    }
+  }, [setNodes, setEdges]);
 
   // ── Handlers ──────────────────────────────────────────────────
 
@@ -292,8 +398,8 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
       id,
       position: { x: center.x + (Math.random() - 0.5) * 40, y: center.y + (Math.random() - 0.5) * 40 },
       data: {
-        title: '',
-        label: '',
+        title: '備忘',
+        label: '備忘',
       },
       type: 'sticky',
     };
@@ -556,6 +662,8 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
       {!isMobile && (
         <GraphToolbar
           readingMode={readingMode}
+          editMode={editMode}
+          onToggleEditMode={handleToggleEditMode}
           onAddNode={handleAddNode}
           onAddSticky={handleAddSticky}
           onDeleteSelected={handleDeleteSelected}
@@ -569,7 +677,7 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
           onToggleReadingMode={handleToggleReadingMode}
           onExportMermaid={handleExportMermaid}
           onImportMermaid={handleImportMermaid}
-          readOnly={readOnly}
+          readOnly={isReadOnlyMode}
           connectMode={connectMode}
           onToggleConnectMode={() => setConnectMode((c) => !c)}
           onToggleSidePanel={(panel) => {
@@ -599,36 +707,46 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
 
       {/* Editor canvas + side panel */}
       <div className="flex-1 flex overflow-hidden">
+        {editMode === 'code' && (
+          <div className="w-1/3 min-w-[300px] border-r border-slate-200 dark:border-slate-700 h-full p-2 bg-slate-50 dark:bg-slate-900">
+            <GraphCodeEditor
+              value={codeText}
+              onChange={handleCodeChange}
+              errors={codeErrors}
+            />
+          </div>
+        )}
+
         <div className="flex-1 relative">
           <ReactFlow
             nodes={visibleNodes}
             edges={edges}
-            onNodesChange={readOnly ? undefined : onNodesChange}
-            onEdgesChange={readOnly ? undefined : onEdgesChange}
-            onConnect={onConnect}
+            onNodesChange={isReadOnlyMode ? undefined : onNodesChange}
+            onEdgesChange={isReadOnlyMode ? undefined : onEdgesChange}
+            onConnect={isReadOnlyMode ? undefined : onConnect}
             onNodeClick={handleNodeClick}
-            onNodeDoubleClick={handleNodeDoubleClick}
-            onEdgeClick={handleEdgeClick}
-            onEdgeDoubleClick={handleEdgeDoubleClick}
+            onNodeDoubleClick={isReadOnlyMode ? undefined : handleNodeDoubleClick}
+            onEdgeClick={isReadOnlyMode ? undefined : handleEdgeClick}
+            onEdgeDoubleClick={isReadOnlyMode ? undefined : handleEdgeDoubleClick}
             onPaneClick={handlePaneClick}
             nodeTypes={nodeTypes}
-            nodesDraggable={!readOnly}
-            nodesConnectable={!readOnly}
-            connectOnClick={connectMode}
-            elementsSelectable={!readOnly}
+            nodesDraggable={!isReadOnlyMode}
+            nodesConnectable={!isReadOnlyMode}
+            connectOnClick={connectMode && !isReadOnlyMode}
+            elementsSelectable={!isReadOnlyMode}
             fitView
-            deleteKeyCode={readOnly ? null : 'Delete'}
+            deleteKeyCode={isReadOnlyMode ? null : 'Delete'}
             className="bg-slate-50 dark:bg-slate-900"
           >
-            <Controls showInteractive={!readOnly} />
+            <Controls showInteractive={!isReadOnlyMode} />
             <Background variant={BackgroundVariant.Dots} gap={20} size={1} />
           </ReactFlow>
         </div>
 
         {/* Side panel */}
-        {activeSidePanel === 'search' && (
+        {editMode === 'visual' && activeSidePanel === 'search' && (
           <NotesSearch
-            nodes={nodes}
+            nodes={fromRFNodes(nodes)}
             notes={notesDict}
             onChangeNotes={setNotesDict}
             onSelectNode={(nodeId) => {
@@ -645,7 +763,7 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
           />
         )}
 
-        {activeSidePanel === 'notes' && editingNode && editingNode.type !== 'sticky' && (
+        {editMode === 'visual' && activeSidePanel === 'notes' && editingNode && editingNode.type !== 'sticky' && (
           <GraphNotesPanel
             nodeTitle={((editingNode.data.title || '') as string).trim()}
             notes={notesDict}
@@ -654,7 +772,7 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
           />
         )}
 
-        {(activeSidePanel === 'edit' || (!activeSidePanel && editingNode)) && editingNode && editingNode.type !== 'sticky' && (
+        {editMode === 'visual' && (activeSidePanel === 'edit' || (!activeSidePanel && editingNode)) && editingNode && editingNode.type !== 'sticky' && (
           <NodeEditPanel
             nodeId={editingNode.id}
             data={editingNode.data as unknown as GraphNodeData}
@@ -684,12 +802,23 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
             </div>
             <div className="p-4 flex-1 overflow-y-auto space-y-3">
               {mermaidModal === 'import' && (
-                <div className="text-[10px] text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 p-2 rounded border border-slate-200 dark:border-slate-700 font-mono leading-relaxed">
-                  <p className="font-semibold text-slate-600 dark:text-slate-300 mb-1">語法範例：</p>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 p-2.5 rounded border border-slate-200 dark:border-slate-700 font-mono leading-relaxed space-y-1">
+                  <p className="font-semibold text-slate-600 dark:text-slate-300">語法範例：</p>
                   <p>graph TD</p>
                   <p>&nbsp;&nbsp;A[概念A] --&gt; B(概念B)</p>
                   <p>&nbsp;&nbsp;B --&gt;|關聯| C&#123;決策&#125;</p>
                   <p>&nbsp;&nbsp;A &lt;--&gt; C</p>
+                  <div className="border-t border-slate-200 dark:border-slate-700 mt-2 pt-2 text-slate-600 dark:text-slate-400 font-sans">
+                    <p className="text-amber-600 dark:text-amber-400 font-medium">⚠️ 系統不支援 mindmap 或其他非 flowchart 語法。</p>
+                    <p className="mt-1">若手邊為心智圖格式，可點選下方按鈕複製專用 AI 轉換提示詞：</p>
+                    <button
+                      onClick={handleCopyConverter}
+                      className="mt-1.5 px-2 py-1 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 rounded font-semibold text-[10px] flex items-center gap-1 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors"
+                    >
+                      <Copy size={10} />
+                      {copiedConverter ? '已複製轉換提示詞！' : '複製心智圖轉換提示詞'}
+                    </button>
+                  </div>
                 </div>
               )}
               <textarea

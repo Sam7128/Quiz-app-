@@ -2,9 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import { Search, Trash2, Link2, X, AlertCircle } from 'lucide-react';
 import { useToast } from '@/contexts/ToastContext';
+import { type GraphNode } from '@/types/graphTypes';
 
 interface NotesSearchProps {
-  nodes: any[];
+  nodes: GraphNode[];
   notes: Record<string, string>;
   onChangeNotes: (notes: Record<string, string>) => void;
   onSelectNode: (nodeId: string) => void;
@@ -33,7 +34,7 @@ export const NotesSearch: React.FC<NotesSearchProps> = ({
   const nodeTitlesMap = useMemo(() => {
     const map = new Map<string, string>(); // title -> nodeId
     nodes.forEach((n) => {
-      const title = (n.data.title || (n.data as any).label || '').trim();
+      const title = (n.data.title || n.data.label || '').trim();
       if (title) {
         map.set(title, n.id);
       }
@@ -113,7 +114,7 @@ export const NotesSearch: React.FC<NotesSearchProps> = ({
     const selectedNode = nodes.find((n) => n.id === selectedNodeId);
     if (!selectedNode) return;
 
-    const newTitle = (selectedNode.data.title || (selectedNode.data as any).label || '').trim();
+    const newTitle = (selectedNode.data.title || selectedNode.data.label || '').trim();
     if (!newTitle) {
       toast.warning('選中節點無標題，請先命名該節點');
       return;
@@ -139,7 +140,7 @@ export const NotesSearch: React.FC<NotesSearchProps> = ({
   }, [nodes, selectedNodeId]);
 
   const selectedNodeTitle = selectedNode
-    ? (selectedNode.data.title || (selectedNode.data as any).label || '未命名節點').trim()
+    ? (selectedNode.data.title || selectedNode.data.label || '未命名節點').trim()
     : null;
 
   return (

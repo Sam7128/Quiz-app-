@@ -1,6 +1,6 @@
 # Docs Index
 
-- Updated: `2026-07-11 20:57`
+- Updated: `2026-07-12 15:30`
 - Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs.
 
 ## archive

@@ -36,7 +36,9 @@ export default defineConfig({
               id.includes('framer-motion') ||
               id.includes('react-redux') ||
               id.includes('@reduxjs/toolkit') ||
-              id.includes('victory-vendor')
+              id.includes('victory-vendor') ||
+              id.includes('@tiptap') ||
+              id.includes('prosemirror')
             ) {
               return 'vendor-ui-core';
             }

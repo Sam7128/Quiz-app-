@@ -1,53 +1,55 @@
-# Project: MindSpark Dead Code Cleanup & Refactoring
-
-本項目旨在對 MindSpark Quiz App 進行死碼清理與元件 Export 重構，優化系統結構並確保 100% 通過 TypeScript 型別檢查、Vite 生產建置與 Vitest 單元測試。
+# Project: knowledge-graph-enhancements
 
 ## Architecture
-
-MindSpark 是一個基於 React + TypeScript + Vite + Tailwind CSS v4 的單頁應用程式 (SPA)。
-本次重構著重於程式碼衛生 (Code Hygiene)、Export 作用域收窄、廢棄程式碼物理刪除、以及 React 元件 named export & React.memo 效能封裝。
+- **模組與邊界**：
+  - `types/graphTypes.ts`：資料結構與規格定義。
+  - `services/graphStorage.ts`：LocalStorage 持久化、資料遷移與安全防禦。
+  - `services/radialLayout.ts`：BFS 放射狀畫布自動佈局。
+  - `services/markdownGraphBridge.ts`：Markdown 縮排列表解析與 DFS 反向序列化。
+  - `components/KnowledgeGraph/`：UI 元件（視覺模式與代碼模式、TipTap 富文本、便利貼）。
+- **資料流**：
+  - Markdown 列表文本 (Code Editor) --(parse)--> 結構節點 (Radial Layout) --(merge with stickies)--> React Flow 節點 -> 畫布繪製
+  - 畫布編輯 (Concept Nodes) --(serialize)--> Markdown 列表文本 (Code Editor)
+  - 節點選取 --(title match)--> TipTap 富文本編輯 --(autosave)--> `notes` 字典 --(storage save)--> LocalStorage
 
 ## Milestones
-
 | # | Name | Scope | Dependencies | Status |
-|---|---|---|---|---|
-| M0 | 基線建立與環境檢查 | 執行測試、型別檢查與構建並記錄基線結果 | None | DONE |
-| M1 | 型別與介面清理 | 清理 `types.ts`, `types/battleTypes.ts`, `services/analytics.ts` 等未使用的型別與 export | M0 | DONE |
-| M2 | Export 作用域收窄 | 對僅在檔案內部使用的常數/函式取消 `export` | M1 | IN_PROGRESS |
-| M3 | 物理刪除廢棄函式 | 物理刪除 5 個已確認無引用的廢棄函式 | M2 | PLANNED |
-| M4 | 元件 Export 重構與 Memoization | 移轉元件為 named exports 並用 React.memo 進行效能封裝，移除其 `export default` | M3 | PLANNED |
-| M5 | 依賴與範例檔案清理 | 移除 `package.json` 中的 5 個未使用依賴，刪除 3 個範例檔案 | M4 | PLANNED |
-| M6 | 最終驗證與文檔更新 | 執行完整三連驗證，確認對比基線，更新日誌與報告 | M5 | PLANNED |
+|---|------|-------|-------------|--------|
+| 1 | Dependency & Storage Layer | 安裝 TipTap、配置 Vite chunks、擴充 types 與 graphStorage v1->v2 遷移與 fail-fast 拋錯 | 無 | DONE (v2, Blob size, escapeHtml, throw on Fatal) |
+| 2 | Radial Layout & Markdown parser | 實作 radialLayout 佈局與 markdownGraphBridge 雙向解析、過濾便利貼、層級顏色 | M1 | DONE (BFS radial, DFS markdown, filter stickies) |
+| 3 | UI Elements (Notes & Stickies) | 實作 StickyNoteNode, GraphNotesPanel (TipTap) 與 NotesSearch (搜尋與未歸檔筆記) | M1, M2 | DONE (TipTap panel, base64 prevent, sticky node, search panel) |
+| 4 | Workspace Integration & Verification | 實作 GraphCodeEditor、KnowledgeGraphWorkspace 錯誤處理 ErrorBoundary、GraphEditor 雙模式切換與便利貼/結構節點合併、完成全量測試與生產建置 | M3 | PLANNED |
 
-## Interface Contracts & Code Layout
+## Interface Contracts
+### `services/radialLayout.ts`
+- `applyRadialLayout(nodes: RFNode[], edges: RFEdge[]): RFNode[]`
+  - 傳入 React Flow 節點與邊，計算位置後傳回節點。
 
-本次清理不新增或修改外部介面契約，僅優化內部模組的封裝邊界。
+### `services/markdownGraphBridge.ts`
+- `parseMarkdownToGraph(text: string): { nodes: GraphNode[]; edges: GraphEdge[]; errors: string[] }`
+  - 將縮排列表解析為節點與邊，自動過濾並忽略 `sticky` 類型的節點。
+- `graphToMarkdown(nodes: GraphNode[], edges: GraphEdge[]): string`
+  - DFS 遍歷結構節點，生成 Markdown，忽略 `sticky` 類型的節點。
 
-### 影響檔案清單
-- `types.ts`
-- `types/battleTypes.ts`
-- `services/analytics.ts`
-- `hooks/useChunkedPractice.ts`
-- `contexts/ToastContext.tsx`
-- `constants/monstersData.ts`
-- `constants/skillsData.ts`
-- `services/ai.ts`
-- `services/supabase.ts`
-- `services/challenges.ts`
-- `services/storage.ts`
-- `utils/questionIdentity.ts`
-- `utils/typeGuards.ts`
-- `components/AIPromptGuide.tsx`
-- `components/BankManager.tsx`
-- `components/BattleArena.tsx`
-- `components/Dashboard.tsx`
-- `components/DialogueBubble.tsx`
-- `components/QuizCard.tsx`
-- `components/Settings.tsx`
-- `components/SkillAnimation.tsx`
-- `components/SkeletonLoader.tsx`
-- `hooks/useBattleSystem.ts`
-- `components/AppContent.tsx`
-- `src/__tests__/useBattleSystem.test.ts`
-- `package.json`
-- 3個範例檔案
+### `services/graphStorage.ts`
+- 升級 Schema 格式：`GraphDocument` 增加 `notes: Record<string, string>` 字典，與 `editMode: 'visual' | 'code'`。
+- 遷移邏輯：在 `getGraphs` 讀取 v1 時自動提取 nodes 中的 notes/definition/details，移至 v2 的頂層 `notes` 字典，key 為 title。
+- 寫入檢查：`validateGraphDocument` 檢查便利貼數量上限 (20)。
+- 失敗處理：若 migration 失敗，拋出 Fatal Error。
+
+## Code Layout
+- `types/graphTypes.ts` (已存在，需擴充)
+- `services/graphStorage.ts` (已存在，需更新)
+- `services/radialLayout.ts` (新增)
+- `services/markdownGraphBridge.ts` (新增)
+- `components/KnowledgeGraph/KnowledgeGraphWorkspace.tsx` (已存在，需重構)
+- `components/KnowledgeGraph/GraphEditor.tsx` (已存在，需重構)
+- `components/KnowledgeGraph/ConceptNode.tsx` (已存在，需更新)
+- `components/KnowledgeGraph/GraphToolbar.tsx` (已存在，需更新)
+- `components/KnowledgeGraph/StickyNoteNode.tsx` (新增)
+- `components/KnowledgeGraph/GraphNotesPanel.tsx` (新增)
+- `components/KnowledgeGraph/NotesSearch.tsx` (新增)
+- `components/KnowledgeGraph/GraphCodeEditor.tsx` (新增)
+- `src/__tests__/graphStorage.test.ts` (已存在，需更新)
+- `src/__tests__/radialLayout.test.ts` (新增)
+- `src/__tests__/markdownGraphBridge.test.ts` (新增)

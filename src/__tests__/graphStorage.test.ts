@@ -65,9 +65,9 @@ describe('graphStorage', () => {
       expect(getGraphs()).toEqual([]);
     });
 
-    it('getGraphs returns empty array on JSON corruption', () => {
+    it('throws Error on JSON corruption to prevent silent overwrite', () => {
       store['mindspark_graphs'] = 'not-valid-json{{{';
-      expect(getGraphs()).toEqual([]);
+      expect(() => getGraphs()).toThrow('解析圖表資料失敗，資料結構可能已損毀');
     });
 
     it('saveGraph and getGraphs round-trip', () => {

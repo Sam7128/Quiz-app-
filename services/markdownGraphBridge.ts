@@ -47,7 +47,7 @@ export function parseMarkdownToGraph(text: string): { nodes: GraphNode[]; edges:
     const line = lines[lineIndex];
     const trimmed = line.trim();
 
-    // 處理 YAML frontmatter
+    // Defensive: skip YAML frontmatter if present (not parsed per design.md Non-Goals)
     if (trimmed === '---') {
       if (lineIndex === 0) {
         inFrontmatter = true;
@@ -132,14 +132,9 @@ export function parseMarkdownToGraph(text: string): { nodes: GraphNode[]; edges:
     });
   }
 
-  // 二次確保完全過濾並忽略 'sticky' 節點（雖然從 markdown 中不會解析出 sticky）
-  const filteredNodes = nodes.filter(n => n.type !== 'sticky');
-  const nodeIds = new Set(filteredNodes.map(n => n.id));
-  const filteredEdges = edges.filter(e => nodeIds.has(e.source) && nodeIds.has(e.target));
-
   return {
-    nodes: filteredNodes,
-    edges: filteredEdges,
+    nodes,
+    edges,
     errors,
   };
 }
