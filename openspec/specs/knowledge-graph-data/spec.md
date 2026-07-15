@@ -27,9 +27,14 @@ Define the data structures and storage mechanisms for visual knowledge diagrams,
 - **WHEN** 使用者進入知識圖工作區
 - **THEN** 系統 SHALL 從 `mindspark_graphs` key 讀取並反序列化所有 GraphDocument
 
-#### Scenario: localStorage 不存在或損毀
-- **WHEN** `mindspark_graphs` key 不存在或 JSON 解析失敗
-- **THEN** 系統 SHALL 返回空陣列 `[]` 且不拋出錯誤
+#### Scenario: localStorage 不存在
+- **WHEN** `mindspark_graphs` key 不存在
+- **THEN** 系統 SHALL 返回空陣列 `[]`
+
+#### Scenario: localStorage 損毀
+- **WHEN** `mindspark_graphs` JSON 解析失敗或頂層格式錯誤
+- **THEN** 系統 SHALL 回報可識別的 `PARSE_FAILED` 或 `INVALID_FORMAT` 錯誤
+- **AND** SHALL 保留原始資料，不以空陣列靜默覆寫
 
 ### Requirement: Graph CRUD operations
 系統 SHALL 提供完整的圖表 CRUD 操作：建立、讀取、更新、刪除。
@@ -75,6 +80,20 @@ Define the data structures and storage mechanisms for visual knowledge diagrams,
 - **WHEN** 使用者輸入超過 50 個字元的圖表名稱
 - **THEN** 系統 SHALL 截斷至 50 個字元
 
+### Requirement: GraphDocument schema v3
+GraphDocument SHALL 使用 schema version `3`，並包含 `backgroundOpacity`（`translucent` | `solid`）、`layoutMode`（`free` | `radial`）與 `theme` 欄位。GraphNodeData SHALL 支援外部 `imageUrl`、便利貼 `bold` 樣式與使用者自訂顏色標記。
+
+#### Scenario: 舊版本資料自動遷移
+- **WHEN** 系統載入 schema version 小於 3 的圖表
+- **THEN** 系統 SHALL 以安全型別守衛讀取資料
+- **AND** 補上 `backgroundOpacity: 'translucent'`、`layoutMode: 'free'`、`theme: 'default'`
+- **AND** 以 schema version `3` 寫回 localStorage
+
+#### Scenario: 不可信資料不覆寫正式資料
+- **WHEN** `mindspark_graphs` JSON 損毀或頂層格式錯誤
+- **THEN** 系統 SHALL 回報可識別的 `PARSE_FAILED` 或 `INVALID_FORMAT` 錯誤
+- **AND** SHALL NOT 以空陣列靜默覆寫原資料
+
 ### Requirement: Text field length limits
 系統 SHALL 對節點內容欄位設定最大長度限制，防止 localStorage 膨脹。
 
@@ -96,3 +115,6 @@ Define the data structures and storage mechanisms for visual knowledge diagrams,
 #### Scenario: 儲存時空間不足
 - **WHEN** 儲存圖表時觸發 `QuotaExceededError`（透過 `DOMException.name === 'QuotaExceededError'` 或 legacy `DOMException.code === 22` 偵測）
 - **THEN** 系統 SHALL 捕捉錯誤、顯示 Toast 警告使用者儲存空間已滿，建議刪除舊圖表
+
+### Requirement: Cloud graph persistence
+登入使用者的 GraphDocument SHALL 可同步至 Supabase `knowledge_graphs`，且資料表 SHALL 啟用以 `auth.uid() = user_id` 為條件的 RLS。autosave 在 upsert 前 SHALL 重新檢查雲端時間戳；偵測到雲端較新版本時 SHALL 停止覆寫並標記 dirty。

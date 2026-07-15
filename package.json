@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "scripts": {
     "dev": "vite --host",
@@ -16,9 +16,8 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@dagrejs/dagre": "^2.0.4",
     "@google/generative-ai": "^0.24.1",
-    "@supabase/supabase-js": "^2.93.2",
+    "@supabase/supabase-js": "^2.110.5",
     "@tiptap/extension-placeholder": "^3.27.3",
     "@tiptap/react": "^3.27.3",
     "@tiptap/starter-kit": "^3.27.3",

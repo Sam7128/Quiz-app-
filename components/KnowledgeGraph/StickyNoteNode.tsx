@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef, memo } from 'react';
-import { useReactFlow, type NodeProps } from '@xyflow/react';
-import { GRAPH_LIMITS } from '@/types/graphTypes';
+import { Handle, Position, useReactFlow, type NodeProps } from '@xyflow/react';
+import { GRAPH_LIMITS, type FontSize } from '@/types/graphTypes';
 
 const StickyNoteNode: React.FC<NodeProps> = memo(({ id, data, selected }) => {
   const { setNodes } = useReactFlow();
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState((data.label || data.title || '') as string);
+  const fontSize = (data.fontSize as FontSize | undefined) ?? 'md';
+  const isBold = data.bold === true || data.fontWeight === 'bold';
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Sync internal state when external data changes
@@ -65,6 +67,7 @@ const StickyNoteNode: React.FC<NodeProps> = memo(({ id, data, selected }) => {
         borderColor: '#F59E0B',
       }}
     >
+      <Handle type="target" id="t" position={Position.Top} className="!w-2 !h-2" />
       {isEditing ? (
         <textarea
           ref={textareaRef}
@@ -73,15 +76,20 @@ const StickyNoteNode: React.FC<NodeProps> = memo(({ id, data, selected }) => {
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           onPointerDown={(e) => e.stopPropagation()}
-          className="w-full h-full bg-transparent resize-none outline-none border-none text-xs text-amber-900 font-sans leading-relaxed text-center"
+          className="w-full h-full bg-transparent resize-none outline-none border-none text-amber-900 font-sans leading-relaxed text-center"
+          style={{ fontSize: fontSize === 'sm' ? '0.75rem' : fontSize === 'lg' ? '1rem' : '0.875rem', fontWeight: isBold ? 700 : 400 }}
           placeholder="輸入文字..."
           maxLength={GRAPH_LIMITS.STICKY_TEXT_MAX}
         />
       ) : (
-        <div className="text-xs text-amber-900 font-sans break-words whitespace-pre-wrap select-text leading-relaxed w-full">
+        <div
+          className="text-amber-900 font-sans break-words whitespace-pre-wrap select-text leading-relaxed w-full"
+          style={{ fontSize: fontSize === 'sm' ? '0.75rem' : fontSize === 'lg' ? '1rem' : '0.875rem', fontWeight: isBold ? 700 : 400 }}
+        >
           {text || <span className="text-amber-600/60 italic">雙擊編輯便利貼...</span>}
         </div>
       )}
+      <Handle type="source" id="b" position={Position.Bottom} className="!w-2 !h-2" />
     </div>
   );
 });

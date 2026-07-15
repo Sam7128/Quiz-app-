@@ -6,9 +6,10 @@ import {
   deleteGraph,
   createNewGraph,
   validateGraphName,
+  isValidImageUrl,
 } from '../../services/graphStorage';
 import type { GraphDocument } from '../../types/graphTypes';
-import { GRAPH_LIMITS } from '../../types/graphTypes';
+import { GRAPH_LIMITS, GraphErrorCode, GraphWarningCode } from '../../types/graphTypes';
 
 // Mock localStorage
 const store: Record<string, string> = {};
@@ -42,6 +43,15 @@ describe('graphStorage', () => {
       const g = createNewGraph('我的圖表');
       expect(g.name).toBe('我的圖表');
     });
+
+    it('defaults to solid background when dark mode is active', () => {
+      document.documentElement.classList.add('dark');
+      try {
+        expect(createNewGraph().backgroundOpacity).toBe('solid');
+      } finally {
+        document.documentElement.classList.remove('dark');
+      }
+    });
   });
 
   describe('validateGraphName', () => {
@@ -60,6 +70,16 @@ describe('graphStorage', () => {
     });
   });
 
+  describe('external image URL validation', () => {
+    it('accepts only safe http/https URLs with a hostname', () => {
+      expect(isValidImageUrl('https://example.com/image.png')).toBe(true);
+      expect(isValidImageUrl('http://localhost/image.png')).toBe(true);
+      expect(isValidImageUrl('javascript:alert(1)')).toBe(false);
+      expect(isValidImageUrl('https://')).toBe(false);
+      expect(isValidImageUrl('data:image/png;base64,AAAA')).toBe(false);
+    });
+  });
+
   describe('CRUD operations', () => {
     it('getGraphs returns empty array when no data', () => {
       expect(getGraphs()).toEqual([]);
@@ -67,7 +87,7 @@ describe('graphStorage', () => {
 
     it('throws Error on JSON corruption to prevent silent overwrite', () => {
       store['mindspark_graphs'] = 'not-valid-json{{{';
-      expect(() => getGraphs()).toThrow('解析圖表資料失敗，資料結構可能已損毀');
+      expect(() => getGraphs()).toThrow(GraphErrorCode.PARSE_FAILED);
     });
 
     it('saveGraph and getGraphs round-trip', () => {
@@ -90,6 +110,74 @@ describe('graphStorage', () => {
       expect(graphs[0].name).toBe('Updated');
     });
 
+    it('round-trips a safe standalone image node', () => {
+      const graph = createNewGraph('Image graph');
+      graph.nodes.push({
+        id: 'image-1',
+        position: { x: 10, y: 20 },
+        type: 'image',
+        data: {
+          title: '參考圖',
+          imageAlt: '參考圖',
+          imageDataUrl: 'data:image/webp;base64,AAAA',
+          color: '#64748B',
+          fontSize: 'md',
+        },
+      });
+
+      expect(saveGraph(graph).success).toBe(true);
+      expect(getGraphs()[0].nodes[0]).toMatchObject({
+        type: 'image',
+        data: { imageDataUrl: 'data:image/webp;base64,AAAA', imageAlt: '參考圖' },
+      });
+    });
+
+    it('rejects unsafe image data and enforces the image-node cap', () => {
+      const unsafe = createNewGraph('Unsafe image');
+      unsafe.nodes.push({
+        id: 'image-unsafe',
+        position: { x: 0, y: 0 },
+        type: 'image',
+        data: {
+          title: 'unsafe',
+          imageDataUrl: 'data:image/svg+xml;base64,AAAA',
+          color: '#64748B',
+          fontSize: 'md',
+        },
+      });
+      expect(saveGraph(unsafe)).toMatchObject({ success: false, error: GraphErrorCode.INVALID_IMAGE_DATA });
+
+      const tooMany = createNewGraph('Too many images');
+      tooMany.nodes = Array.from({ length: GRAPH_LIMITS.MAX_IMAGE_NODES + 1 }, (_, index) => ({
+        id: `image-${index}`,
+        position: { x: index * 20, y: 0 },
+        type: 'image' as const,
+        data: {
+          title: `image-${index}`,
+          imageDataUrl: 'data:image/png;base64,AAAA',
+          color: '#64748B',
+          fontSize: 'md' as const,
+        },
+      }));
+      expect(saveGraph(tooMany)).toMatchObject({ success: false, error: GraphErrorCode.MAX_IMAGE_NODES_EXCEEDED });
+    });
+
+    it('backs up then removes persisted self-loop edges during normalization', () => {
+      const graph = createNewGraph('Self loop cleanup');
+      graph.nodes.push({
+        id: 'node-1',
+        position: { x: 0, y: 0 },
+        type: 'concept',
+        data: { title: 'Root', color: '#3B82F6', fontSize: 'md' },
+      });
+      graph.edges.push({ id: 'loop-1', source: 'node-1', target: 'node-1', arrowType: 'none' });
+      store['mindspark_graphs'] = JSON.stringify([graph]);
+
+      expect(getGraphs()[0].edges).toEqual([]);
+      expect(store['mindspark_graphs_backup_pre_v3_cleanup']).toContain('loop-1');
+      expect(store['mindspark_graphs']).not.toContain('loop-1');
+    });
+
     it('saveGraph enforces MAX_GRAPHS limit', () => {
       for (let i = 0; i < GRAPH_LIMITS.MAX_GRAPHS; i++) {
         saveGraph(createNewGraph(`Graph ${i}`));
@@ -97,7 +185,7 @@ describe('graphStorage', () => {
       const extra = createNewGraph('Too Many');
       const result = saveGraph(extra);
       expect(result.success).toBe(false);
-      expect(result.error).toContain(`${GRAPH_LIMITS.MAX_GRAPHS}`);
+      expect(result.error).toBe(GraphErrorCode.MAX_GRAPHS_EXCEEDED);
     });
 
     it('saveGraph detects QuotaExceededError by name', () => {
@@ -108,7 +196,7 @@ describe('graphStorage', () => {
       const g = createNewGraph('Test');
       const result = saveGraph(g);
       expect(result.success).toBe(false);
-      expect(result.error).toContain('儲存空間不足');
+      expect(result.error).toBe(GraphErrorCode.QUOTA_EXCEEDED);
     });
 
     it('saveGraph rejects documents exceeding MAX_NODES', () => {
@@ -125,7 +213,7 @@ describe('graphStorage', () => {
 
       const result = saveGraph(oversized);
       expect(result.success).toBe(false);
-      expect(result.error).toContain(`${GRAPH_LIMITS.MAX_NODES}`);
+      expect(result.error).toBe(GraphErrorCode.MAX_NODES_EXCEEDED);
     });
 
     it('saveGraph rejects documents exceeding MAX_EDGES', () => {
@@ -142,7 +230,7 @@ describe('graphStorage', () => {
 
       const result = saveGraph(oversized);
       expect(result.success).toBe(false);
-      expect(result.error).toContain(`${GRAPH_LIMITS.MAX_EDGES}`);
+      expect(result.error).toBe(GraphErrorCode.MAX_EDGES_EXCEEDED);
     });
 
     it('getGraphById returns correct graph', () => {
@@ -168,7 +256,7 @@ describe('graphStorage', () => {
     it('deleteGraph returns error for missing graph', () => {
       const result = deleteGraph('nonexistent');
       expect(result.success).toBe(false);
-      expect(result.error).toContain('找不到');
+      expect(result.error).toBe(GraphErrorCode.DELETE_NOT_FOUND);
     });
 
     // ── Milestone 1 Added Tests ─────────────────────────────────────
@@ -220,17 +308,56 @@ describe('graphStorage', () => {
       expect(graphs).toHaveLength(1);
       const migrated = graphs[0];
       
-      expect(migrated.schemaVersion).toBe(2);
+      expect(migrated.schemaVersion).toBe(3);
+      expect(migrated.backgroundOpacity).toBe('translucent');
+      expect(migrated.layoutMode).toBe('free');
+      expect(migrated.theme).toBe('classic');
       expect(migrated.editMode).toBe('visual');
       expect(migrated.notes).toBeDefined();
       expect(migrated.notes['React']).toBe('<p>A library for building user interfaces</p><p>Created by Facebook</p>');
       expect(migrated.notes['Vue']).toBe('<p>The progressive framework</p>');
 
-      // Verify localStorage is updated to v2
+      // Verify localStorage is updated to v3
       const updatedRaw = store['mindspark_graphs'];
       const updatedGraphs = JSON.parse(updatedRaw);
-      expect(updatedGraphs[0].schemaVersion).toBe(2);
+      expect(updatedGraphs[0].schemaVersion).toBe(3);
       expect(updatedGraphs[0].notes['React']).toBe('<p>A library for building user interfaces</p><p>Created by Facebook</p>');
+    });
+
+    it('migrates v2 documents to v3 and normalizes legacy opacity safely', () => {
+      const v2Graph = {
+        id: 'v2-graph-id',
+        schemaVersion: 2,
+        name: 'V2 Graph',
+        nodes: [],
+        edges: [],
+        viewState: {
+          readingMode: 'expand-all',
+          zoom: 1,
+          panX: 12,
+          panY: -8,
+          bgOpacity: 'opaque',
+        },
+        notes: { Root: '<p>保留既有筆記</p>' },
+        editMode: 'visual',
+        createdAt: '2026-07-12T00:00:00Z',
+        updatedAt: '2026-07-12T01:00:00Z',
+        unknownFutureField: { safeToIgnore: true },
+      };
+
+      store['mindspark_graphs'] = JSON.stringify([v2Graph]);
+
+      const [migrated] = getGraphs();
+      expect(migrated.schemaVersion).toBe(GRAPH_LIMITS.SCHEMA_VERSION);
+      expect(migrated.backgroundOpacity).toBe('solid');
+      expect(migrated.layoutMode).toBe('free');
+      expect(migrated.theme).toBe('classic');
+      expect(migrated.notes).toEqual(v2Graph.notes);
+      expect(migrated.viewState.bgOpacity).toBe('solid');
+
+      const persisted = JSON.parse(store['mindspark_graphs']) as Array<Record<string, unknown>>;
+      expect(persisted[0].schemaVersion).toBe(3);
+      expect(persisted[0].unknownFutureField).toBeUndefined();
     });
 
     it('throws Fatal Error during migration failure and does not overwrite localStorage', () => {
@@ -293,7 +420,7 @@ describe('graphStorage', () => {
 
       const result = saveGraph(oversized);
       expect(result.success).toBe(false);
-      expect(result.error).toContain('最多只能有 20 個便利貼');
+      expect(result.error).toBe(GraphErrorCode.MAX_STICKY_EXCEEDED);
     });
 
     it('returns warning when graph serialized size exceeds 3MB', () => {
@@ -309,7 +436,7 @@ describe('graphStorage', () => {
 
       const result = saveGraph(g);
       expect(result.success).toBe(true);
-      expect(result.warning).toBe('圖表大小接近限制，請刪除部分資料');
+      expect(result.warning).toBe(GraphWarningCode.SIZE_APPROACHING_LIMIT);
     });
 
     // ── Milestone 1 Remedy Added Tests ──────────────────────────────
@@ -323,7 +450,7 @@ describe('graphStorage', () => {
       }];
       const result = saveGraph(g);
       expect(result.success).toBe(false);
-      expect(result.error).toContain('節點標題不可超過');
+      expect(result.error).toBe(GraphErrorCode.TITLE_TOO_LONG);
     });
 
     it('blocks saveGraph when node definition exceeds DEFINITION_MAX', () => {
@@ -336,7 +463,7 @@ describe('graphStorage', () => {
       }];
       const result = saveGraph(g);
       expect(result.success).toBe(false);
-      expect(result.error).toContain('節點定義不可超過');
+      expect(result.error).toBe(GraphErrorCode.DEFINITION_TOO_LONG);
     });
 
     it('blocks saveGraph when node details exceeds DETAILS_MAX', () => {
@@ -349,7 +476,7 @@ describe('graphStorage', () => {
       }];
       const result = saveGraph(g);
       expect(result.success).toBe(false);
-      expect(result.error).toContain('節點詳情不可超過');
+      expect(result.error).toBe(GraphErrorCode.DETAILS_TOO_LONG);
     });
 
     it('blocks saveGraph when sticky text exceeds STICKY_TEXT_MAX', () => {
@@ -362,7 +489,7 @@ describe('graphStorage', () => {
       }];
       const result = saveGraph(g);
       expect(result.success).toBe(false);
-      expect(result.error).toContain('便利貼文字不可超過');
+      expect(result.error).toBe(GraphErrorCode.STICKY_TEXT_TOO_LONG);
     });
 
     it('blocks saveGraph when edge label exceeds EDGE_LABEL_MAX', () => {
@@ -376,7 +503,7 @@ describe('graphStorage', () => {
       }];
       const result = saveGraph(g);
       expect(result.success).toBe(false);
-      expect(result.error).toContain('連線標籤不可超過');
+      expect(result.error).toBe(GraphErrorCode.EDGE_LABEL_TOO_LONG);
     });
 
     it('blocks saveGraph when note content exceeds NOTES_MAX', () => {
@@ -384,7 +511,7 @@ describe('graphStorage', () => {
       g.notes = { 'React': 'a'.repeat(10001) };
       const result = saveGraph(g);
       expect(result.success).toBe(false);
-      expect(result.error).toContain('筆記內容不可超過');
+      expect(result.error).toBe(GraphErrorCode.NOTES_TOO_LONG);
     });
 
     it('concatenates rather than overwriting notes during migration of duplicate title nodes', () => {

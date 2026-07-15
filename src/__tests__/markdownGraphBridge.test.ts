@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { parseMarkdownToGraph, graphToMarkdown } from '../../services/markdownGraphBridge';
 import type { GraphNode, GraphEdge } from '../../types/graphTypes';
 import { GRAPH_LIMITS } from '../../types/graphTypes';
+import { runHeuristicNodeMatching, toRFEdge, toRFNode } from '../../components/KnowledgeGraph/graphUtils';
 
 describe('Markdown Graph Bridge', () => {
   describe('parseMarkdownToGraph', () => {
@@ -140,6 +141,55 @@ title: 忽略 YAML frontmatter
       const md = graphToMarkdown(nodes, edges);
       const expected = `- A\n  - B\n- 孤立概念`;
       expect(md).toBe(expected);
+    });
+  });
+
+  describe('視覺樣式匹配', () => {
+    it('以祖先路徑匹配並以 Levenshtein 修正小幅標題變更', () => {
+      const previousNodes = [
+        toRFNode({ id: 'root', position: { x: 10, y: 20 }, data: { title: 'Root', color: '#3B82F6', fontSize: 'md' }, type: 'concept' }),
+        toRFNode({ id: 'child', position: { x: 30, y: 40 }, data: { title: 'Child', color: '#EF4444', fontSize: 'lg', bold: true, imageUrl: 'https://example.com/child.png' }, type: 'diamond' }),
+      ];
+      const previousEdges = [toRFEdge({ id: 'edge-old', source: 'root', target: 'child', arrowType: 'both', label: 'old label' })];
+      const parsedNodes = [
+        toRFNode({ id: 'parsed-root', position: { x: 0, y: 0 }, data: { title: 'Root', color: '#3B82F6', fontSize: 'md' }, type: 'concept' }),
+        toRFNode({ id: 'parsed-child', position: { x: 0, y: 0 }, data: { title: 'Chilld', color: '#10B981', fontSize: 'sm' }, type: 'concept' }),
+      ];
+      const parsedEdges = [{ id: 'edge-new', source: 'parsed-root', target: 'parsed-child', arrowType: 'arrow' as const }];
+      const result = runHeuristicNodeMatching(previousNodes, previousEdges, parsedNodes, parsedEdges);
+      const restoredChild = result.restoredNodes.find((node) => node.id === 'child');
+
+      expect(restoredChild?.type).toBe('diamond');
+      expect(restoredChild?.position).toEqual({ x: 30, y: 40 });
+      expect(restoredChild?.data.color).toBe('#EF4444');
+      expect(restoredChild?.data.fontSize).toBe('lg');
+      expect(restoredChild?.data.bold).toBe(true);
+      expect(restoredChild?.data.imageUrl).toBe('https://example.com/child.png');
+      expect(result.renamePairs).toEqual([{ oldTitle: 'Child', newTitle: 'Chilld' }]);
+    });
+
+    it('同一路徑同名節點依解析順序 first-match', () => {
+      const previousNodes = [
+        toRFNode({ id: 'root', position: { x: 0, y: 0 }, data: { title: 'Root', color: '#3B82F6', fontSize: 'md' }, type: 'concept' }),
+        toRFNode({ id: 'first', position: { x: 1, y: 1 }, data: { title: 'Same', color: '#EF4444', fontSize: 'sm' }, type: 'concept' }),
+        toRFNode({ id: 'second', position: { x: 2, y: 2 }, data: { title: 'Same', color: '#8B5CF6', fontSize: 'lg' }, type: 'concept' }),
+      ];
+      const previousEdges = [
+        toRFEdge({ id: 'e1', source: 'root', target: 'first', arrowType: 'arrow' }),
+        toRFEdge({ id: 'e2', source: 'root', target: 'second', arrowType: 'arrow' }),
+      ];
+      const parsedNodes = [
+        toRFNode({ id: 'r', position: { x: 0, y: 0 }, data: { title: 'Root', color: '#3B82F6', fontSize: 'md' }, type: 'concept' }),
+        toRFNode({ id: 'a', position: { x: 0, y: 0 }, data: { title: 'Same', color: '#10B981', fontSize: 'md' }, type: 'concept' }),
+        toRFNode({ id: 'b', position: { x: 0, y: 0 }, data: { title: 'Same', color: '#10B981', fontSize: 'md' }, type: 'concept' }),
+      ];
+      const parsedEdges = [
+        { id: 'ne1', source: 'r', target: 'a', arrowType: 'arrow' as const },
+        { id: 'ne2', source: 'r', target: 'b', arrowType: 'arrow' as const },
+      ];
+      const result = runHeuristicNodeMatching(previousNodes, previousEdges, parsedNodes, parsedEdges);
+      expect(result.restoredNodes.find((node) => node.id === 'first')?.data.color).toBe('#EF4444');
+      expect(result.restoredNodes.find((node) => node.id === 'second')?.data.color).toBe('#8B5CF6');
     });
   });
 });

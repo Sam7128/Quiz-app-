@@ -15,7 +15,26 @@ vi.mock('../../services/supabase', () => ({
   },
 }));
 
-import { saveCloudQuestions } from '../../services/cloudStorage';
+import { runWithSyncLock, saveCloudQuestions } from '../../services/cloudStorage';
+
+describe('runWithSyncLock', () => {
+  it('returns the native Web Locks rejection so AbortError is observed instead of detached', async () => {
+    const original = Object.getOwnPropertyDescriptor(navigator, 'locks');
+    const abortError = new DOMException('signal is aborted without reason', 'AbortError');
+    const request = vi.fn().mockRejectedValue(abortError);
+    Object.defineProperty(navigator, 'locks', {
+      configurable: true,
+      value: { request, query: vi.fn().mockResolvedValue({ pending: [], held: [] }) },
+    });
+    try {
+      await expect(runWithSyncLock(async () => 'never-runs')).rejects.toBe(abortError);
+      expect(request).toHaveBeenCalledTimes(1);
+    } finally {
+      if (original) Object.defineProperty(navigator, 'locks', original);
+      else Reflect.deleteProperty(navigator, 'locks');
+    }
+  });
+});
 
 describe('saveCloudQuestions', () => {
   beforeEach(() => {
@@ -359,4 +378,3 @@ describe('saveCloudQuestions', () => {
     expect(dirty).toContain('bank-fail');
   });
 });
-

@@ -24,9 +24,7 @@ export const GraphList: React.FC<GraphListProps> = ({
 
   const handleFinishRename = (id: string) => {
     const trimmed = renameValue.trim();
-    if (trimmed) {
-      onRename(id, trimmed.slice(0, GRAPH_LIMITS.NAME_MAX));
-    }
+    onRename(id, trimmed.slice(0, GRAPH_LIMITS.NAME_MAX));
     setRenamingId(null);
   };
 

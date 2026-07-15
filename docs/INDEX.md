@@ -1,12 +1,18 @@
 # Docs Index
 
-- Updated: `2026-07-12 15:30`
+- Updated: `2026-07-15 11:09`
 - Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs.
 
 ## archive
 - `archive/Skills 設計.md` - 🕵️‍♂️ 頂級 Agent Skills 深度分析與診斷協定 (Pro Version)
 - `archive/verify_prompt.md` - proposal.md
 - `archive/verify_prompt_r2.md` - tasks.md
+
+## audits
+- `audits/knowledge-graph-v2-upgrade/audit-defects-report.md` - 審計缺陷報告：knowledge-graph-v2-upgrade
+- `audits/knowledge-graph-v2-upgrade/AUDIT_REPORT.md` - 🔍 知識圖譜 V2 升級 — 獨立最終審計缺陷報告
+- `audits/knowledge-graph-v2-upgrade/README.md` - Knowledge Graph V2 審計封存
+- `audits/knowledge-graph-v2-upgrade/stress-test-report.md` - Stress Test Report: knowledge-graph-v2-upgrade
 
 ## reports
 - `reports/AGENT_SKILLS_DIAGNOSTIC_REPORT.md` - 🕵️‍♂️ MindSpark Agent Skills 深度診斷報告

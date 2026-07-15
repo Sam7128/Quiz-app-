@@ -2,22 +2,16 @@
  * Reading Modes — unit tests for progressive L1→L2→L3 cycle logic
  * Validates the expand-level cycling and reading mode persistence.
  */
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { DEFAULT_VIEW_STATE } from '@/types/graphTypes';
 import type { ReadingMode, GraphViewState } from '@/types/graphTypes';
-
-/**
- * Simulates the progressive expand level cycling logic
- * as implemented in GraphEditor.handleNodeClick.
- */
-function cycleExpandLevel(
-  currentLevel: number,
-  hasDefinition: boolean,
-  hasDetails: boolean
-): number {
-  const maxLevel = hasDetails ? 2 : hasDefinition ? 1 : 0;
-  return currentLevel >= maxLevel ? 0 : currentLevel + 1;
-}
+import {
+  cycleExpandLevel,
+  getProgressiveVisibleNodeIds,
+  resetProgressiveExpandLevels,
+  toggleProgressiveBranch,
+} from '@/hooks/graphStateUtils';
+import type { Node as RFNode } from '@xyflow/react';
 
 describe('Reading Modes', () => {
   describe('DEFAULT_VIEW_STATE', () => {
@@ -62,6 +56,70 @@ describe('Reading Modes', () => {
       expect(mode).toBe('progressive');
       toggle();
       expect(mode).toBe('expand-all');
+    });
+
+    it('resets every node expandLevel when entering progressive mode', () => {
+      const nodes: RFNode[] = [
+        { id: 'root', position: { x: 0, y: 0 }, data: { title: 'Root', expandLevel: 2 }, type: 'concept' },
+        { id: 'sticky', position: { x: 10, y: 10 }, data: { title: 'Note', expandLevel: 1 }, type: 'sticky' },
+      ];
+      const reset = resetProgressiveExpandLevels(nodes);
+      expect(reset.map((node) => node.data.expandLevel)).toEqual([0, 0]);
+      expect(nodes.map((node) => node.data.expandLevel)).toEqual([2, 1]);
+    });
+  });
+
+  describe('Progressive branch visibility', () => {
+    const nodes = [
+      { id: 'main', type: 'concept' },
+      { id: 'second-a', type: 'concept' },
+      { id: 'second-b', type: 'concept' },
+      { id: 'third-a', type: 'concept' },
+      { id: 'third-b', type: 'concept' },
+      { id: 'fourth-a', type: 'concept' },
+    ];
+    const edges = [
+      { source: 'main', target: 'second-a' },
+      { source: 'main', target: 'second-b' },
+      { source: 'second-a', target: 'third-a' },
+      { source: 'second-b', target: 'third-b' },
+      { source: 'third-a', target: 'fourth-a' },
+    ];
+
+    it('shows the main node and all second-level nodes first', () => {
+      const visible = getProgressiveVisibleNodeIds(nodes, edges, new Set());
+
+      expect([...visible].sort()).toEqual(['main', 'second-a', 'second-b'].sort());
+      expect(visible.has('third-a')).toBe(false);
+      expect(visible.has('third-b')).toBe(false);
+    });
+
+    it('reveals only the clicked second-level branch', () => {
+      const expanded = toggleProgressiveBranch(new Set(), 'second-a', nodes, edges);
+      const visible = getProgressiveVisibleNodeIds(nodes, edges, expanded);
+
+      expect(visible.has('third-a')).toBe(true);
+      expect(visible.has('third-b')).toBe(false);
+    });
+
+    it('collapses the selected branch without affecting sibling branches', () => {
+      const expanded = toggleProgressiveBranch(new Set(), 'second-a', nodes, edges);
+      const collapsed = toggleProgressiveBranch(expanded, 'second-a', nodes, edges);
+      const visible = getProgressiveVisibleNodeIds(nodes, edges, collapsed);
+
+      expect(visible.has('third-a')).toBe(false);
+      expect(visible.has('second-b')).toBe(true);
+    });
+
+    it('continues one level at a time along the selected branch', () => {
+      const secondExpanded = toggleProgressiveBranch(new Set(), 'second-a', nodes, edges);
+      const afterSecond = getProgressiveVisibleNodeIds(nodes, edges, secondExpanded);
+      expect(afterSecond.has('fourth-a')).toBe(false);
+
+      const thirdExpanded = toggleProgressiveBranch(secondExpanded, 'third-a', nodes, edges);
+      const afterThird = getProgressiveVisibleNodeIds(nodes, edges, thirdExpanded);
+      expect(afterThird.has('fourth-a')).toBe(true);
+      expect(afterThird.has('third-b')).toBe(false);
     });
   });
 

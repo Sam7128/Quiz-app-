@@ -136,3 +136,57 @@ Integrity mode: development
 - 節點改名後筆記不丟失，舊 title 的筆記可透過未歸檔筆記重新連結。
 - 富文本編輯器功能正常，且 500ms 自動儲存。
 
+## Follow-up — 2026-07-12T17:11:34Z
+
+Upgrade Knowledge Graph to V2 by refactoring GraphEditor.tsx, fixing critical bugs, adding visual features (background opacity, radial layout, image URLs), implementing secure client-side/cloud synchronization with conflict resolution dialogs, and removing the beta gate.
+
+Working directory: c:/Users/user/Desktop/Quiz-app-
+Integrity mode: development
+
+## Core Rules & Verification Protocol
+You must execute the implementation using the Zero-Trust and Anti-Hallucination Covenant (from universal_remediation_prompt.md):
+1. Worker: Avoid placeholders (no TODOs/mocks), handle failure/exception paths, do not use `any`, align all imports after refactoring.
+2. Verification: Write tests first or alongside code, verify that "npm test" and "npm run build" pass with 0 warnings or failures. Test edge cases (e.g. invalid image URL protocols, duplicated paths, cloud sync conflicts).
+3. Auditor: Line-by-line whitebox code audit with code snippets as proof. No empty "PASS" summaries.
+4. Final build checks: run "npx tsc --noEmit", "npm test", and "npm run build" to ensure exit code 0.
+
+## Requirements
+
+### R1. GraphEditor Refactoring & Error Code System
+- Refactor the giant `GraphEditor.tsx` (over 900 lines) into three distinct custom hooks (each <= 150 lines) to manage state, code mode conversion, and storage respectively. `GraphEditor.tsx` itself must be reduced to <= 300 lines.
+- Implement `GraphErrorCode` enum in `types/graphTypes.ts` and return error codes instead of hardcoded Chinese strings in `graphStorage.ts`. Translate error codes to Chinese in the UI layer.
+- Retain custom node colors, fonts, shapes, and positions using a non-intrusive "Ancestor Path" matching strategy (e.g. `Parent:Child:Grandchild`) without embedding UUIDs in Markdown. Support a heuristic search (Levenshtein distance <= 2 for depth-matched nodes) for renamed nodes, and a first-match fallback for duplicates. Add a warning prompt in the code edit view next to the textarea.
+
+### R2. Bug Fixes (Diamond Nodes, Progressive Exploration, Connection Dragging)
+- Fix the CSS distortion of diamond nodes by switching from `rotate-45` to `clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)`, maintaining horizontal text rendering. Fix handle attachments at the top/bottom vertices.
+- Fix progressive reading mode by resetting `expandLevel` to `0` when toggling modes and passing the state correctly.
+- Fix React Flow connection dragging behavior and verify node handle bindings.
+
+### R3. Visual Features & Interactions
+- Support drag-to-empty-canvas connection behavior to show a shape menu (DropNodeMenu) for square, rounded, diamond, or sticky notes, creating the node and edge automatically.
+- Support background opacity option (translucent vs. solid) in toolbar, modifyingConceptNode background opacity dynamically.
+- Support layout toggle (free drag vs. radial layout using existing `radialLayout.ts`), and a reset classic colors button (BFS level-based coloring).
+- Add font size/bold styling options to sticky notes.
+- Support referencing external image URLs in CONCEPT nodes with strict security checks (only http:// or https:// allowed) and rendering images inside nodes safely to prevent XSS.
+
+### R4. Supabase JSON Sync & Auto-Retry
+- Synchronize Knowledge Graph JSONs to Supabase `knowledge_graphs` table with Last-Write-Wins (LWW) resolution.
+- Upon timestamp conflicts (both local and cloud modified), trigger a `ConfirmDialog` allowing users to keep local, keep cloud, or save local as a copy (renaming local to "Name (衝突副本)").
+- Log failures to `mindspark_dirty_graphs` and listen to the browser `online` event to retry synchronization automatically.
+
+### R5. Graduation from Beta
+- Remove the beta gate `betaFeatures.knowledgeGraph` from Settings, AppContent, AppHeader, MobileNav, and KnowledgeGraphWorkspace.
+
+## Acceptance Criteria
+
+### Verification & Regression
+- [ ] No `any` type is introduced. `npx tsc --noEmit` exits with 0.
+- [ ] `npm test` runs and all unit tests pass (including existing and new tests for storage, reading modes, layout, and bridge).
+- [ ] `npm run build` succeeds without compilation or bundle errors.
+- [ ] Diamond nodes show horizontal text, correct clip-path shapes, and handles are at the correct vertices.
+- [ ] Switching between code and visual mode preserves styles using Ancestor Path matching, and warning提示 is visible next to code textarea.
+- [ ] Paste `javascript:alert(1)` in image URL input -> fails validation and is not rendered in node.
+- [ ] Simulating conflict sync shows ConfirmDialog with options, choosing "save copy" creates a new graph entry in localStorage and Supabase with suffix "(衝突副本)".
+- [ ] Recovery of network online triggers synchronization of dirty items.
+- [ ] All beta gate checks for knowledgeGraph are deleted and the graph editor is accessible directly.
+

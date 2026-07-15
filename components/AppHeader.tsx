@@ -2,7 +2,7 @@ import React from 'react';
 import { AppView } from '../types';
 import { User } from '@supabase/supabase-js';
 import { BrainCircuit, LayoutDashboard, Settings, Users, Sparkles, User as UserIcon, LucideIcon, GitFork } from 'lucide-react';
-import { getUserSettings } from '../services/storage';
+
 
 interface AppHeaderProps {
   view: AppView;
@@ -20,15 +20,12 @@ interface AppHeaderProps {
 const BASE_NAV_ITEMS: { id: AppView; label: string; icon: LucideIcon }[] = [
   { id: 'dashboard', label: '首頁', icon: LayoutDashboard },
   { id: 'manager', label: '題庫', icon: BrainCircuit },
+  { id: 'graph', label: '🧠 知識圖', icon: GitFork },
   { id: 'guide', label: 'AI 指引', icon: Sparkles },
   { id: 'social', label: '社群', icon: Users },
 ];
 
 function getNavItems(): { id: AppView; label: string; icon: LucideIcon }[] {
-  const settings = getUserSettings();
-  if (settings.betaFeatures?.knowledgeGraph) {
-    return [...BASE_NAV_ITEMS, { id: 'graph' as AppView, label: '🧠 知識圖', icon: GitFork }];
-  }
   return BASE_NAV_ITEMS;
 }
 

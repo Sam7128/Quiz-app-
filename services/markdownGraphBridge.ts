@@ -147,7 +147,7 @@ export function parseMarkdownToGraph(text: string): { nodes: GraphNode[]; edges:
  */
 export function graphToMarkdown(nodes: GraphNode[], edges: GraphEdge[]): string {
   // 1. 完全過濾且忽略 'sticky' 便利貼節點
-  const filteredNodes = nodes.filter(n => n.type !== 'sticky');
+  const filteredNodes = nodes.filter(n => n.type !== 'sticky' && n.type !== 'image');
   const nodeIds = new Set(filteredNodes.map(n => n.id));
 
   // 過濾與非便利貼節點無關的邊

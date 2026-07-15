@@ -1,17 +1,27 @@
 // types/global.d.ts
 // 擴充 Navigator 宣告，包含 Web Locks API，以供並發同步鎖使用
 
+interface NavigatorLockRecord {
+  name: string;
+  mode: 'shared' | 'exclusive';
+}
+
+interface NavigatorLockSnapshot {
+  pending: NavigatorLockRecord[];
+  held: NavigatorLockRecord[];
+}
+
 interface NavigatorLocksManager {
-  request(
+  request<T>(
     name: string,
-    callback: (lock: any) => Promise<any>
-  ): Promise<any>;
-  request(
+    callback: (lock: NavigatorLockRecord) => Promise<T> | T
+  ): Promise<T>;
+  request<T>(
     name: string,
     options: { mode?: 'shared' | 'exclusive'; ifAvailable?: boolean; steal?: boolean; signal?: AbortSignal },
-    callback: (lock: any | null) => Promise<any>
-  ): Promise<any>;
-  query(): Promise<{ pending: any[]; held: any[] }>;
+    callback: (lock: NavigatorLockRecord | null) => Promise<T> | T
+  ): Promise<T>;
+  query(): Promise<NavigatorLockSnapshot>;
 }
 
 declare global {

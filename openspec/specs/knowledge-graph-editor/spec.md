@@ -68,6 +68,47 @@ Provide a highly interactive, visual interface for students to construct and man
 - **WHEN** 使用者在屬性面板中切換字體大小（小/中/大）
 - **THEN** 節點文字大小 SHALL 立即更新
 
+#### Scenario: 便利貼文字樣式
+- **WHEN** 使用者調整便利貼字體大小或粗體
+- **THEN** 系統 SHALL 將設定儲存在 `data.fontSize` 與 `data.bold`，並立即套用至便利貼文字
+
+#### Scenario: 外部圖片網址安全驗證
+- **WHEN** 使用者在屬性面板輸入圖片網址
+- **THEN** 系統 SHALL 僅接受具有 hostname 的 `http://` 或 `https://` URL
+- **AND** 非法 URL SHALL 即時顯示警告，不寫入 GraphNodeData，也不渲染圖片
+
+### Requirement: Drag-to-create node menu
+使用者從 handle 將連線拖至空白畫布時，系統 SHALL 顯示包含方形、圓角、菱形、便利貼的 DropNodeMenu。
+
+#### Scenario: 空白處建立節點
+- **WHEN** 使用者選擇 DropNodeMenu 的形狀
+- **THEN** 系統 SHALL 於 `screenToFlowPosition` 對應位置建立節點、建立帶箭頭連線並記錄 undo
+- **AND** 達到 MAX_NODES 或 MAX_EDGES 時 SHALL 顯示警告並阻止變更
+
+#### Scenario: 關閉 DropNodeMenu
+- **WHEN** 使用者點擊選單外部或按 Escape
+- **THEN** 系統 SHALL 關閉選單且不建立節點
+
+### Requirement: Layout and visual theme modes
+系統 SHALL 提供 `free` 與 `radial` 兩種佈局模式、背景 `translucent`/`solid` 切換與經典 BFS 配色重設。放射狀佈局 SHALL 使用既有演算法，並保留便利貼位置；自訂顏色 SHALL 不被重設。
+
+#### Scenario: 佈局模式切換
+- **WHEN** 使用者切換至 radial
+- **THEN** 系統 SHALL 重新排列概念節點、保留便利貼位置、更新 `GraphDocument.layoutMode` 並記錄 undo
+- **WHEN** 使用者切回 free
+- **THEN** 系統 SHALL 保留目前位置並允許自由拖曳
+
+#### Scenario: 暗色模式預設純色背景
+- **WHEN** 新建圖表且 `<html>` 具有 `dark` class
+- **THEN** `backgroundOpacity` SHALL 預設為 `solid`
+
+### Requirement: Code/visual mode style preservation
+代碼與視覺模式互轉 SHALL 以完整祖先路徑（使用 `:` 分隔）匹配節點，並在路徑失配時以 Levenshtein 距離 ≤ 2、同深度的 heuristic 匹配。匹配 SHALL 保留位置、顏色、形狀、字體、圖片與邊樣式；Markdown SHALL 不包含 UUID。
+
+#### Scenario: 父節點重命名提示
+- **WHEN** 使用者在代碼模式編輯圖表
+- **THEN** UI SHALL 顯示「重命名父節點會重設其子分支樣式；建議在視覺編輯中重命名以保留樣式。」提示
+
 ### Requirement: Edge label editing
 系統 SHALL 允許使用者為連線添加文字標籤。
 

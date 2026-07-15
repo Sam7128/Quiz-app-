@@ -1,195 +1,205 @@
-import { type Node as RFNode, type Edge as RFEdge } from '@xyflow/react';
+import { type Edge as RFEdge, type Node as RFNode } from '@xyflow/react';
+import { resetClassicNodeColors } from '@/utils/graphColorHelper';
 
-/**
- * 放射狀佈局演算法 (Radial Layout Algorithm)
- * 
- * 1. 根節點偵測：優先選擇入度（in-degree）為 0 的節點；若無或有多個，則選擇 `nodes` 陣列中的第一個節點。
- *    注意：孤立節點（入度與出度均為 0）將不參與此處的結構根節點選擇，而是會被直接定位到右側。
- * 2. 使用 BFS 演算法遍歷節點與連線，為每個結構節點分配層級深度 (depth)。
- * 3. 座標計算：設第 d 層 (d >= 1) 節點總數為 Nd，則該層的第 i 個節點角度 theta_i = i * 2pi / Nd，
- *    坐標為 x = cx + (d * step) * cos(theta_i), y = cy + (d * step) * sin(theta_i)。中心點 (cx, cy) 設為 (0, 0)。
- * 4. 防止重疊：當某一層的節點數 Nd > 12 時，自動加大該層的半徑步長（例如將 step 加大為 300 或是與數量成正比擴張）。
- * 5. 孤立節點處理：若節點與任何邊都無關聯（入度出度皆為 0），則將它們定位於畫布的右側，呈垂直排列。
- */
-export function applyRadialLayout(nodes: RFNode[], edges: RFEdge[]): RFNode[] {
-  if (nodes.length === 0) return [];
+const BASE_RING_RADIUS = 240;
+const NODE_ARC_GAP = 190;
+const COMPONENT_GAP = 360;
 
-  // 計算每個節點的入度與出度
-  const inDegree: Record<string, number> = {};
-  const outDegree: Record<string, number> = {};
-  const adj: Record<string, string[]> = {};
+interface LayoutTree {
+  rootId: string;
+  children: Map<string, string[]>;
+  depth: Map<string, number>;
+}
 
-  for (const node of nodes) {
-    inDegree[node.id] = 0;
-    outDegree[node.id] = 0;
-    adj[node.id] = [];
-  }
+interface Sector {
+  start: number;
+  end: number;
+}
 
-  // 建立無向鄰接表以供 BFS 遍歷所有連通分量
-  for (const edge of edges) {
-    const s = edge.source;
-    const t = edge.target;
-
-    if (adj[s] !== undefined && adj[t] !== undefined) {
-      outDegree[s]++;
-      inDegree[t]++;
-      adj[s].push(t);
-      adj[t].push(s);
-    }
-  }
-
-  // 根節點偵測：
-  // 優先從非孤立節點（入度或出度 > 0）中尋找入度為 0 的節點。
-  // 若無或有多個，或者根本沒有非孤立節點，則選擇 nodes 陣列中的第一個節點。
-  const nonIsolated = nodes.filter(n => inDegree[n.id] > 0 || outDegree[n.id] > 0);
-  let rootNode: RFNode | null = null;
-
-  if (nonIsolated.length > 0) {
-    const zeroInDegreeConnected = nonIsolated.filter(n => inDegree[n.id] === 0);
-    if (zeroInDegreeConnected.length === 1) {
-      rootNode = zeroInDegreeConnected[0];
-    } else {
-      rootNode = nodes[0];
-    }
-  } else {
-    rootNode = nodes[0];
-  }
-
-  // 區分孤立節點與結構節點
-  // 根節點即便無連線，也視為結構節點（定位於 0, 0）
-  const isolatedNodes: RFNode[] = [];
-  const connectedNodes: RFNode[] = [];
-
-  for (const node of nodes) {
-    if (rootNode && node.id === rootNode.id) {
-      connectedNodes.push(node);
-    } else if (inDegree[node.id] === 0 && outDegree[node.id] === 0) {
-      isolatedNodes.push(node);
-    } else {
-      connectedNodes.push(node);
-    }
-  }
-
-  // BFS 遍歷，分配層級深度 (depth)
-  const depth: Record<string, number> = {};
+function buildComponents(nodeIds: string[], adjacency: Map<string, string[]>): string[][] {
   const visited = new Set<string>();
-  const queue: string[] = [];
-
-  if (rootNode) {
-    // 如果 rootNode 是孤立節點，我們也予以初始標記，但它只會在 isolatedNodes 中處理
-    depth[rootNode.id] = 0;
-    visited.add(rootNode.id);
-    if (inDegree[rootNode.id] > 0 || outDegree[rootNode.id] > 0) {
-      queue.push(rootNode.id);
-    }
-  }
-
-  while (queue.length > 0) {
-    const curr = queue.shift()!;
-    const currDepth = depth[curr];
-
-    for (const neighbor of adj[curr]) {
-      if (!visited.has(neighbor)) {
+  const components: string[][] = [];
+  for (const nodeId of nodeIds) {
+    if (visited.has(nodeId)) continue;
+    const component: string[] = [];
+    const queue = [nodeId];
+    visited.add(nodeId);
+    let queueIndex = 0;
+    while (queueIndex < queue.length) {
+      const current = queue[queueIndex];
+      queueIndex += 1;
+      component.push(current);
+      for (const neighbor of adjacency.get(current) ?? []) {
+        if (visited.has(neighbor)) continue;
         visited.add(neighbor);
-        depth[neighbor] = currDepth + 1;
         queue.push(neighbor);
       }
     }
+    components.push(component);
   }
-
-  // 若還有未訪問的結構節點（說明有多個連通分量），對每個分量繼續進行 BFS，起點深度設為 1
-  for (const node of connectedNodes) {
-    if (!visited.has(node.id)) {
-      visited.add(node.id);
-      depth[node.id] = 1;
-      const q = [node.id];
-      while (q.length > 0) {
-        const curr = q.shift()!;
-        const currDepth = depth[curr];
-        for (const neighbor of adj[curr]) {
-          if (!visited.has(neighbor)) {
-            visited.add(neighbor);
-            depth[neighbor] = currDepth + 1;
-            q.push(neighbor);
-          }
-        }
-      }
-    }
-  }
-
-  // 根據 depth 將結構節點進行分組
-  const nodesByDepth: Record<number, RFNode[]> = {};
-  for (const node of connectedNodes) {
-    const d = depth[node.id];
-    const finalD = d !== undefined ? d : 1;
-    if (!nodesByDepth[finalD]) {
-      nodesByDepth[finalD] = [];
-    }
-    nodesByDepth[finalD].push(node);
-  }
-
-  const resultNodes: RFNode[] = [];
-  let maxConnectedDepth = 0;
-
-  // 定位深度為 0 的根節點於中心 (0, 0)
-  for (const node of connectedNodes) {
-    const d = depth[node.id];
-    if (d === 0) {
-      resultNodes.push({
-        ...node,
-        position: { x: 0, y: 0 }
-      });
-    } else {
-      if (d > maxConnectedDepth) {
-        maxConnectedDepth = d;
-      }
-    }
-  }
-
-  // 定位深度 d >= 1 的節點
-  for (const dStr of Object.keys(nodesByDepth)) {
-    const d = parseInt(dStr, 10);
-    if (d === 0) continue;
-
-    const layerNodes = nodesByDepth[d];
-    const Nd = layerNodes.length;
-
-    // 防止重疊：當 Nd > 12 時，加大半徑步長
-    // 預設為 200，大於 12 時加大為 300 或者是與數量成正比擴張
-    const step = Nd > 12 ? Math.max(300, 200 + (Nd - 12) * 15) : 200;
-
-    layerNodes.forEach((node, i) => {
-      const theta = (i * 2 * Math.PI) / Nd;
-      const x = (d * step) * Math.cos(theta);
-      const y = (d * step) * Math.sin(theta);
-
-      resultNodes.push({
-        ...node,
-        position: {
-          x: Math.round(x * 100) / 100,
-          y: Math.round(y * 100) / 100
-        }
-      });
-    });
-  }
-
-  // 孤立節點處理：排列在右側，垂直對稱排列
-  if (isolatedNodes.length > 0) {
-    const rightX = Math.max(300, maxConnectedDepth * 200 + 300);
-    const ySpacing = 100;
-    const totalM = isolatedNodes.length;
-
-    isolatedNodes.forEach((node, j) => {
-      const y = (j - (totalM - 1) / 2) * ySpacing;
-      resultNodes.push({
-        ...node,
-        position: {
-          x: rightX,
-          y: Math.round(y * 100) / 100
-        }
-      });
-    });
-  }
-
-  return resultNodes;
+  return components.sort((left, right) => right.length - left.length);
 }
+
+function chooseRoot(component: string[], inDegree: Map<string, number>, outgoing: Map<string, string[]>): string {
+  const zeroInDegree = component.filter((id) => (inDegree.get(id) ?? 0) === 0);
+  const candidates = zeroInDegree.length > 0 ? zeroInDegree : component;
+  return [...candidates].sort((left, right) => {
+    const degreeDifference = (outgoing.get(right)?.length ?? 0) - (outgoing.get(left)?.length ?? 0);
+    return degreeDifference !== 0 ? degreeDifference : component.indexOf(left) - component.indexOf(right);
+  })[0];
+}
+
+function buildLayoutTree(
+  component: string[],
+  rootId: string,
+  outgoing: Map<string, string[]>,
+  adjacency: Map<string, string[]>,
+): LayoutTree {
+  const componentIds = new Set(component);
+  const children = new Map(component.map((id) => [id, [] as string[]]));
+  const depth = new Map<string, number>([[rootId, 0]]);
+  const visited = new Set<string>([rootId]);
+  const queue = [rootId];
+  let queueIndex = 0;
+  while (queueIndex < queue.length) {
+    const current = queue[queueIndex];
+    queueIndex += 1;
+    const directed = outgoing.get(current) ?? [];
+    const directedIds = new Set(directed);
+    const candidates = [
+      ...directed,
+      ...(adjacency.get(current) ?? []).filter((id) => !directedIds.has(id)),
+    ];
+    for (const neighbor of candidates) {
+      if (!componentIds.has(neighbor) || visited.has(neighbor)) continue;
+      visited.add(neighbor);
+      children.get(current)?.push(neighbor);
+      depth.set(neighbor, (depth.get(current) ?? 0) + 1);
+      queue.push(neighbor);
+    }
+  }
+  return { rootId, children, depth };
+}
+
+function computeLeafWeights(rootId: string, children: Map<string, string[]>): Map<string, number> {
+  const weights = new Map<string, number>();
+  const visit = (nodeId: string): number => {
+    const childIds = children.get(nodeId) ?? [];
+    const weight = childIds.length === 0
+      ? 1
+      : childIds.reduce((sum, childId) => sum + visit(childId), 0);
+    weights.set(nodeId, weight);
+    return weight;
+  };
+  visit(rootId);
+  return weights;
+}
+
+function assignSectors(
+  nodeId: string,
+  sector: Sector,
+  children: Map<string, string[]>,
+  weights: Map<string, number>,
+  sectors: Map<string, Sector>,
+): void {
+  sectors.set(nodeId, sector);
+  const childIds = children.get(nodeId) ?? [];
+  const totalWeight = childIds.reduce((sum, childId) => sum + (weights.get(childId) ?? 1), 0);
+  let cursor = sector.start;
+  for (const childId of childIds) {
+    const fraction = (weights.get(childId) ?? 1) / Math.max(1, totalWeight);
+    const childEnd = cursor + (sector.end - sector.start) * fraction;
+    assignSectors(childId, { start: cursor, end: childEnd }, children, weights, sectors);
+    cursor = childEnd;
+  }
+}
+
+function layoutComponent(component: string[], tree: LayoutTree): Map<string, { x: number; y: number }> {
+  const countsByDepth = new Map<number, number>();
+  for (const depth of tree.depth.values()) countsByDepth.set(depth, (countsByDepth.get(depth) ?? 0) + 1);
+  const radiusByDepth = new Map<number, number>();
+  for (const [depth, count] of countsByDepth) {
+    if (depth === 0) {
+      radiusByDepth.set(depth, 0);
+      continue;
+    }
+    const crowdRadius = (count * NODE_ARC_GAP) / (2 * Math.PI);
+    radiusByDepth.set(depth, Math.max(depth * BASE_RING_RADIUS, crowdRadius));
+  }
+
+  const weights = computeLeafWeights(tree.rootId, tree.children);
+  const sectors = new Map<string, Sector>();
+  assignSectors(tree.rootId, { start: -Math.PI, end: Math.PI }, tree.children, weights, sectors);
+  const positions = new Map<string, { x: number; y: number }>();
+  for (const nodeId of component) {
+    const depth = tree.depth.get(nodeId) ?? 0;
+    if (depth === 0) {
+      positions.set(nodeId, { x: 0, y: 0 });
+      continue;
+    }
+    const sector = sectors.get(nodeId) ?? { start: 0, end: 0 };
+    const theta = (sector.start + sector.end) / 2;
+    const radius = radiusByDepth.get(depth) ?? depth * BASE_RING_RADIUS;
+    positions.set(nodeId, {
+      x: Math.round(radius * Math.cos(theta) * 100) / 100,
+      y: Math.round(radius * Math.sin(theta) * 100) / 100,
+    });
+  }
+  return positions;
+}
+
+/**
+ * Subtree-aware radial layout. Each branch owns a contiguous angular sector,
+ * crowded rings expand by estimated node width, and invalid self-loops are ignored.
+ */
+export function applyRadialLayout(nodes: RFNode[], edges: RFEdge[]): RFNode[] {
+  if (nodes.length === 0) return [];
+  const nodeIds = new Set(nodes.map((node) => node.id));
+  const adjacency = new Map(nodes.map((node) => [node.id, [] as string[]]));
+  const outgoing = new Map(nodes.map((node) => [node.id, [] as string[]]));
+  const inDegree = new Map(nodes.map((node) => [node.id, 0]));
+
+  for (const edge of edges) {
+    if (edge.source === edge.target || !nodeIds.has(edge.source) || !nodeIds.has(edge.target)) continue;
+    adjacency.get(edge.source)?.push(edge.target);
+    adjacency.get(edge.target)?.push(edge.source);
+    outgoing.get(edge.source)?.push(edge.target);
+    inDegree.set(edge.target, (inDegree.get(edge.target) ?? 0) + 1);
+  }
+
+  const components = buildComponents(nodes.map((node) => node.id), adjacency);
+  const allPositions = new Map<string, { x: number; y: number }>();
+  let previousMaxX = 0;
+  components.forEach((component, componentIndex) => {
+    const rootId = chooseRoot(component, inDegree, outgoing);
+    const tree = buildLayoutTree(component, rootId, outgoing, adjacency);
+    const localPositions = layoutComponent(component, tree);
+    const xValues = [...localPositions.values()].map((position) => position.x);
+    const minX = Math.min(...xValues);
+    const maxX = Math.max(...xValues);
+    const offsetX = componentIndex === 0 ? 0 : previousMaxX + COMPONENT_GAP - minX;
+    for (const [nodeId, position] of localPositions) {
+      allPositions.set(nodeId, { x: position.x + offsetX, y: position.y });
+    }
+    previousMaxX = componentIndex === 0 ? maxX : maxX + offsetX;
+  });
+
+  return nodes.map((node) => ({ ...node, position: allPositions.get(node.id) ?? node.position }));
+}
+
+export function applyRadialLayoutPreservingSticky(nodes: RFNode[], edges: RFEdge[]): RFNode[] {
+  const concepts = nodes.filter((node) => node.type !== 'sticky' && node.type !== 'image');
+  const conceptIds = new Set(concepts.map((node) => node.id));
+  const conceptEdges = edges.filter((edge) => (
+    edge.source !== edge.target && conceptIds.has(edge.source) && conceptIds.has(edge.target)
+  ));
+  const layouted = applyRadialLayout(concepts, conceptEdges);
+  const positions = new Map(layouted.map((node) => [node.id, node.position]));
+  return nodes.map((node) => {
+    const position = positions.get(node.id);
+    return position ? { ...node, position } : node;
+  });
+}
+
+/** @deprecated Use resetClassicNodeColors from utils/graphColorHelper. */
+export const applyClassicColoring = resetClassicNodeColors;

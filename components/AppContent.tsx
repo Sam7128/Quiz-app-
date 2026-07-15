@@ -19,7 +19,7 @@ import { QuizProvider } from '../contexts/QuizContext';
 import { IStorageRepository } from '../services/repository';
 import { ChunkCompleteSummary } from './ChunkCompleteSummary';
 
-import { getUserSettings } from '../services/storage';
+
 
 const KnowledgeGraphWorkspace = React.lazy(() => import('./KnowledgeGraph/KnowledgeGraphWorkspace'));
 
@@ -134,15 +134,6 @@ export const AppContent: React.FC<AppContentProps> = ({
     };
 
     const renderContent = () => {
-        // View Guardian: Beta off + view='graph' → force dashboard
-        if (view === 'graph') {
-            const settings = getUserSettings();
-            if (!(settings.betaFeatures?.knowledgeGraph)) {
-                actions.dispatch({ type: 'set_view', view: 'dashboard' });
-                return null;
-            }
-        }
-
         if (view === 'quiz' || view === 'mistakes') {
             if (quizEngine.quizState.isFinished) {
                 if (quizEngine.quizState.mode === 'chunked') {

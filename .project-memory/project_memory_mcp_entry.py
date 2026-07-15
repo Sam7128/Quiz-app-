@@ -17,7 +17,10 @@ else:
         "Could not find project_memory_mcp_server.py in repo-local or global project-memory-refresh scripts."
     )
 
-from project_memory_mcp_server import create_server
-
 if __name__ == "__main__":
-    create_server(ROOT).run(transport="stdio")
+    try:
+        from project_memory_mcp_server import create_server
+        create_server(ROOT).run(transport="stdio")
+    except Exception as exc:
+        print(f"project-memory server unavailable: {exc}", file=sys.stderr, flush=True)
+        raise SystemExit(1) from exc

@@ -114,4 +114,4 @@ Mermaid 匯入 SHALL 透過專屬 Modal 對話框進行，提供清晰的操作�
 
 #### Scenario: 自動佈局
 - **WHEN** Mermaid 匯入完成
-- **THEN** 系統 SHALL 使用 dagre 佈局演算法自動排列節點位置，避免節點重疊
+- **THEN** 系統 SHALL 使用知識圖既有的 radial 佈局演算法排列節點位置，避免引入額外第三方佈局依賴

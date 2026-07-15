@@ -17,7 +17,7 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-describe('Beta Feature Toggle', () => {
+describe('Beta Feature Toggle (知識圖已畢業為一級功能，此處驗證設定持久化的向下相容性)', () => {
   it('defaults knowledgeGraph to false when no settings exist', () => {
     const settings = getUserSettings();
     expect(settings.betaFeatures?.knowledgeGraph ?? false).toBe(false);

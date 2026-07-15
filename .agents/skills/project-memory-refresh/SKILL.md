@@ -89,7 +89,7 @@ python .agents\skills\project-memory-refresh\scripts\refresh_project_memory_bund
 
 ---
 
-## ✅ 本版技能保證（v2 — fix-project-memory-mcp-quality）
+## ✅ 本版技能保證（v3 — bounded MCP availability）
 
 | 能力 | 狀態 |
 |------|------|
@@ -104,6 +104,11 @@ python .agents\skills\project-memory-refresh\scripts\refresh_project_memory_bund
 | `get_memory_health` 含 5 項 `quality_checks` | ✅ 新增 |
 | 雙 MCP 健康檢查與可用性報告 (codebase-memory-mcp 整合) | ✅ 支援 |
 | Windows 非同步進程冷啟動 DOS 限流保護與 taskkill 清理 | ✅ 新增 |
+| 外部 graph 使用 `cli <tool> <json>`，且不繼承 project-memory stdin | ✅ 修復 |
+| 外部 graph 單次探測預設 5 秒 timeout，健康結果快取 30 秒 | ✅ 新增 |
+| 健康檢查分列 wrapper、local index、external graph 狀態 | ✅ 新增 |
+| 索引刷新失敗時自動 fallback 到最後一份 `.memory-index/index.json` | ✅ 新增 |
+| Codex MCP 啟動/工具 timeout（10 秒/15 秒） | ✅ 新增 |
 
 ---
 
@@ -148,7 +153,12 @@ python .agents\skills\project-memory-refresh\scripts\refresh_project_memory_bund
   - 整合 `codebase-memory-mcp` (AST) 與 `project-memory-mcp` (High-Level)。
   - `codebase_graph_status` 欄位報告外部圖譜的可用性 (`available`) 及索引狀態 (`is_stale`)。
   - 新增 `bridge_consistent` 品質檢測，若外部可用但專案未索引，將自動警示。
-  - 具備 1.0 秒防抖限流保護，避免高頻調用壓垮 CPU；且在 Windows 下採用非同步 subprocess 執行，並提供超時殘留進程樹 taskkill 清理防護。
+  - 具備預設 30 秒健康結果快取，避免高頻調用壓垮 CPU；且在 Windows 下採用非同步 subprocess 執行，並提供超時殘留進程樹 taskkill 清理防護。
+  - 回傳 `wrapper_status`、`local_index_status`、`codebase_graph_status` 與整體 `status`；外部 graph 不可用時回傳 `degraded`，不阻塞本地索引查詢。
+  - 外部 CLI timeout 可用 `PROJECT_MEMORY_EXTERNAL_TIMEOUT_SECONDS` 調整（預設 5 秒），健康快取可用 `PROJECT_MEMORY_HEALTH_CACHE_SECONDS` 調整（預設 30 秒）。
+- **降級搜尋 (`search_memory`)**：
+  - 索引自動刷新失敗時讀取最後一份可解析的 `.memory-index/index.json`，並回傳 `fallback_used: true` 與 `status: degraded`。
+  - 若最後一份索引也不可用，立即回傳 `status: server_unavailable` 與明確警告，不等待背景程序。
 - **工具路由指引**：
   - 對於低階 AST 分析、調用鏈與影響範圍分析，應直接使用 `codebase-memory-mcp` 原生工具（如 `search_graph`、`trace_path`）。
   - 對於專案高階手則、入口與熱點分析，使用 `project-memory-mcp` 工具（如 `search_memory`、`get_entry_points`、`get_hotspots`）。

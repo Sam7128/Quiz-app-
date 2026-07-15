@@ -1,7 +1,7 @@
 import React from 'react';
 import { AppView } from '../types';
 import { LayoutDashboard, Settings, Users, FileText, LucideIcon, GitFork } from 'lucide-react';
-import { getUserSettings } from '../services/storage';
+
 
 interface MobileNavProps {
   view: AppView;
@@ -16,16 +16,13 @@ type NavItem =
 const BASE_MOBILE_NAV_ITEMS: NavItem[] = [
   { id: 'dashboard', label: '首頁', icon: LayoutDashboard },
   { id: 'manager', label: '管理', icon: Settings },
+  { id: 'graph' as AppView, label: '知識圖', icon: GitFork },
   { id: '__settings__' as const, label: '設定', icon: Settings, isAction: true },
   { id: 'social', label: '社交', icon: Users },
   { id: 'guide', label: '指引', icon: FileText },
 ];
 
 function getMobileNavItems(): NavItem[] {
-  const settings = getUserSettings();
-  if (settings.betaFeatures?.knowledgeGraph) {
-    return [...BASE_MOBILE_NAV_ITEMS, { id: 'graph' as AppView, label: '🧠 知識圖', icon: GitFork }];
-  }
   return BASE_MOBILE_NAV_ITEMS;
 }
 

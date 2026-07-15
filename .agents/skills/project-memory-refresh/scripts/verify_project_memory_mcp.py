@@ -27,6 +27,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--root", required=True, help="Project root.")
     parser.add_argument("--query", default="AGENTS.md", help="Verification query for search_memory.")
     parser.add_argument("--limit", type=int, default=3, help="Maximum search results to request.")
+    parser.add_argument("--timeout", type=float, default=12.0, help="Maximum seconds for MCP startup and verification.")
     return parser.parse_args()
 
 
@@ -44,13 +45,13 @@ def extract_text_content(result: object) -> str:
     raise RuntimeError("MCP tool call returned no text payload.")
 
 
-async def verify(root: Path, query: str, limit: int) -> dict[str, object]:
+async def _verify(root: Path, query: str, limit: int) -> dict[str, object]:
     wrapper_path = root / ".project-memory" / "project_memory_mcp_entry.py"
     if not wrapper_path.exists():
         raise RuntimeError(f"Project-local MCP wrapper missing: {wrapper_path}")
 
     server = StdioServerParameters(
-        command="python",
+        command=sys.executable,
         args=[str(wrapper_path)],
         cwd=str(root),
     )
@@ -106,8 +107,22 @@ async def verify(root: Path, query: str, limit: int) -> dict[str, object]:
                 "top_result": results[0],
                 "scoped_result_count": len(scoped_results),
                 "top_scoped_result": top_scoped,
+                "status": health_payload.get("status"),
+                "wrapper_status": health_payload.get("wrapper_status"),
+                "local_index_status": health_payload.get("local_index_status"),
+                "codebase_graph_status": health_payload.get("codebase_graph_status"),
                 "health_warnings": health_payload.get("warnings", []),
             }
+
+
+async def verify(root: Path, query: str, limit: int, timeout_seconds: float = 12.0) -> dict[str, object]:
+    try:
+        with anyio.fail_after(timeout_seconds):
+            return await _verify(root, query, limit)
+    except TimeoutError as exc:
+        raise RuntimeError(
+            f"project-memory server unavailable: startup or query timed out after {timeout_seconds:g}s"
+        ) from exc
 
 
 def main() -> int:
@@ -117,7 +132,11 @@ def main() -> int:
     if not root.exists() or not root.is_dir():
         raise SystemExit(f"Root does not exist or is not a directory: {root}")
 
-    summary = anyio.run(verify, root, args.query, args.limit)
+    try:
+        summary = anyio.run(verify, root, args.query, args.limit, args.timeout)
+    except RuntimeError as exc:
+        sys.stderr.write(f"{exc}\n")
+        return 2
     sys.stdout.write(json.dumps(summary, ensure_ascii=False, indent=2))
     sys.stdout.write("\n")
     return 0

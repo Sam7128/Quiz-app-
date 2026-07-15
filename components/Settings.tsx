@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Key, ExternalLink, Info, Server, Cpu, Sun, Moon, Monitor, Swords, Music, Volume2, AlertTriangle, Trash2, Coffee, FlaskConical } from 'lucide-react';
+import { X, Save, Key, ExternalLink, Info, Server, Cpu, Sun, Moon, Monitor, Swords, AlertTriangle, Trash2, Coffee } from 'lucide-react';
 import { getAIConfig, saveAIConfig } from '../services/ai';
 import { AIConfig } from '../types';
 import { useSoundEffects } from '../hooks/useSoundEffects';
@@ -285,42 +285,7 @@ const SettingsComponent: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode,
             </p>
           </section>
 
-          {/* Beta Features */}
-          <section className="space-y-3">
-            <label className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-              <FlaskConical size={16} className="text-violet-500" /> 實驗室功能 (Beta)
-            </label>
-            <div className="p-4 bg-violet-50 dark:bg-violet-900/10 rounded-2xl border border-violet-100 dark:border-violet-900/30 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300">知識圖工作區</span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400">視覺化筆記工具，用節點與連線整理知識</span>
-                </div>
-                <button
-                  onClick={() => setUserSettings({
-                    ...userSettings,
-                    betaFeatures: {
-                      ...userSettings.betaFeatures,
-                      knowledgeGraph: !(userSettings.betaFeatures?.knowledgeGraph ?? false),
-                    },
-                  })}
-                  className={`relative w-11 h-6 rounded-full transition-colors ${
-                    userSettings.betaFeatures?.knowledgeGraph
-                      ? 'bg-violet-500'
-                      : 'bg-slate-300 dark:bg-slate-600'
-                  }`}
-                  aria-label="切換知識圖工作區"
-                >
-                  <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-                    userSettings.betaFeatures?.knowledgeGraph ? 'translate-x-5' : ''
-                  }`} />
-                </button>
-              </div>
-              <p className="text-[11px] text-violet-600 dark:text-violet-400">
-                啟用後將在導覽列出現「🧠 知識圖」入口。此功能仍在實驗階段。
-              </p>
-            </div>
-          </section>
+
           {/* Provider Selection */}
           <section className="space-y-3">
             <label className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">

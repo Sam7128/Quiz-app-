@@ -2,7 +2,21 @@
 
 此文件用於追蹤專案開發進度、待辦事項與已完成項目。
 
+## 🟡 進行中 (In Progress)
+- [ ] **[Battle UX Discovery]** 戰鬥視覺升級前期討論與素材準備
+    - [x] 盤點戰鬥元件、動畫事件與現有圖像資產
+    - [x] 定義高清像素 JRPG 候選美術方向
+    - [x] 建立怪物／技能素材需求清單與生成規格
+    - [x] 產出角色陣容與動作參考板
+    - [x] 產出技能圖示與元素特效參考板
+    - [x] 產出戰場環境特效與 HUD 演出參考板
+    - [x] 完成前期素材包索引，等待使用者檢閱（不修改正式戰鬥功能）
+
 ## 🟢 已完成 (Done)
+- [x] **[Knowledge Graph Progressive Branch Exploration]** 實作逐支線階層展開：先顯示主節點與二級節點，點擊二級節點後才顯示其三級子節點
+    - [x] 定義節點可見性與分支展開狀態
+    - [x] 實作逐步探索的子樹顯示與收合互動
+    - [x] 補上單元／E2E 回歸驗證並同步文件（41 個測試檔／265 個測試、tsc、build、lint 通過）
 - [x] **[Cleanup]** 死碼清理與重構 (Dead Code Cleanup & Refactoring) `dead-code-cleanup`
     - [x] Milestone 0 - Milestone 6: 基準建立、型別與介面清理、作用域收窄、物理刪除廢棄函式、元件重構與 React.memo 優化、依賴項與範例檔案清理、最終三連驗證及文檔更新。
 - [x] **[Refactor]** 架構品質全面優化 (Architecture Quality Overhaul) `architecture-quality-overhaul`
@@ -78,7 +92,46 @@
 - [ ] **[OpenSpec]** 分階段練習雲端接力 (Chunked Practice Cloud Sync) `chunked-practice-cloud-sync`
 - [x] **[Hotfix]** 修正分階段練習中途刷新後續答回到第一題 `chunked-practice-mid-refresh-resume`
 
+## 🔵 本輪實作中 (Knowledge Graph V2 Audit Remediation)
+- [x] 依 `openspec/changes/knowledge-graph-v2-upgrade/tasks.md` 順序修復審計確認缺陷
+- [x] Schema v3／遷移／錯誤碼與 graphStorage 測試
+- [x] GraphEditorInner ≤300 行、DropNodeMenu 四形狀、節點上限與佈局模式
+- [x] 便利貼樣式、圖片 URL 即時安全驗證、橋接與閱讀模式回歸測試
+- [x] 雲端同步衝突、SQL migration、dead-code 與完整驗證（knip 無本輪新增項目）
+
+## 🟡 本輪收尾 (Knowledge Graph V2 Audit V2)
+- [x] 同步 5 個 delta specs 至 `openspec/specs/`
+- [x] 封存過時 V1 audit/stress 報告，保留可追溯內容
+- [x] 改用 `applyAutoLayout`、移除 dead export、補 shape fallback 防護
+- [x] 補齊 `ponytail:` 技術債標記與明確升級觸發條件
+- [x] 更新 docs／MEMORY，完成 tsc、test、build、knip、OpenSpec 驗證
+
 ## 🟢 本次完成 (Completed This Round)
+- [x] **[Knowledge Graph Visual & Reading Hotfix]** 修正六邊形／雲朵節點與逐步探索狀態
+    - [x] 六邊形改用 SVG polygon 完整描繪六條邊，避免 CSS border 被 clip-path 裁切。
+    - [x] 雲朵改用 SVG path 描繪多個凸起與完整描邊，不再以橢圓假冒雲形。
+    - [x] 抽出實際使用的 `cycleExpandLevel`，並避免閱讀模式切換 updater 內執行副作用。
+    - [x] 新增形狀 SVG 與逐步探索回歸驗證；41 個測試檔／261 個測試、tsc、build、lint 通過。
+- [x] **[Knowledge Graph UX Hotfix]** 知識圖節點操作、智慧排版、模板、圖片與 Web Locks 修正
+    - [x] 核對封存 OpenSpec、原始需求與 4 張參考截圖，確認封存規格曾刻意縮小模板／圖片上傳／黑點選單範圍。
+    - [x] 黑點點擊顯示節點快捷列；支援編輯、8 種形狀、快速新增子節點與刪除。
+    - [x] 自由與放射模式改為不同狀態；放射模式鎖定概念節點並使用子樹扇區排版，清除自連線。
+    - [x] 新增 6 組分支配色模板與最多 4 張、6 MB 來源的安全圖片上傳／拖曳節點。
+    - [x] Supabase JS 更新至 2.110.5，修正 Auth Web Locks 孤兒鎖 AbortError；自訂同步鎖回傳原生 Promise。
+    - [x] `npx tsc --noEmit`、41 files／261 tests、Vite build、2 個聚焦 Playwright 情境全數通過。
+    - [x] 封存 OpenSpec tasks 維持全 `[x]` 並新增修正稽核附錄；開發日誌與專案記憶已同步。
+- [x] **[Hotfix]** 修正知識圖 Supabase 缺表同步錯誤 `knowledge-graph-cloud-table-fallback`
+    - [x] 依 production console 的 `PGRST205` 確認遠端 `knowledge_graphs` 尚未部署，保留本地圖表可用性。
+    - [x] 缺表時啟用 cloud circuit breaker，切換 local-only，避免未捕獲同步錯誤與重複請求。
+    - [x] 加入同一使用者的 in-flight sync 去重，並讓 autosave／刪除在降級期間安全 no-op。
+    - [x] 新增缺表與並行同步回歸測試；`tsc`、40 個測試檔／256 個測試、`build` 全數通過。
+- [x] **[Verification]** 知識圖模組（Knowledge Graph）V2 升級專案 M1 里程碑修復驗證（Challenger 1 二輪驗證）
+    - [x] 驗證 Levenshtein 模糊匹配與樣式/位置/UUID還原
+    - [x] 驗證新節點 UUID 去重防護，消除了 ID 衝突碰撞
+    - [x] 驗證改名級聯保留 "sharing check" 筆記防止誤刪機制
+    - [x] 單元測試 `useGraphCodeMode.challenger.test.tsx` 100% 通過
+    - [x] E2E 測試 `e2e/knowledge-graph.spec.ts` 100% 通過
+- [x] **[Review]** 完成 `knowledge-graph-v2-upgrade` 變更計畫審查（經 4 輪多代理迭代審查，2 個 Review Sub-agents 均給予 PASS，已依 Ponytail 建議進行防禦性修復與 YAGNI 簡化）
 - [x] **[OpenSpec]** 歸檔 `dead-code-cleanup` 變更計畫並將規格同步至主規格
 - [x] **[Review]** 完成 2026-06-10 dead-code report refresh
     - [x] 以 `npx -y knip --reporter compact --no-progress` 重跑死碼掃描

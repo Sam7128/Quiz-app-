@@ -21,6 +21,9 @@ from project_memory_search import search_entries
 
 logger = logging.getLogger("project-memory")
 
+EXTERNAL_CLI_TIMEOUT_SECONDS = float(os.environ.get("PROJECT_MEMORY_EXTERNAL_TIMEOUT_SECONDS", "5"))
+HEALTH_CACHE_TTL_SECONDS = float(os.environ.get("PROJECT_MEMORY_HEALTH_CACHE_SECONDS", "30"))
+
 class ProjectMemoryMCP(FastMCP):
     def __init__(self, name: str, **kwargs):
         super().__init__(name, **kwargs)
@@ -46,6 +49,7 @@ HEALTH_CRITICAL_SECTIONS = {
 }
 
 _FALLBACK_HEALTH_TEMPLATE = {
+    "status": "server_unavailable",
     "memory_exists": False,
     "index_exists": False,
     "docs_index_exists": False,
@@ -65,10 +69,14 @@ _FALLBACK_HEALTH_TEMPLATE = {
     },
     "codebase_graph_status": {
         "available": False,
+        "status": "unavailable",
         "project_name": None,
         "indexed_at": None,
-        "is_stale": None
-    }
+        "is_stale": None,
+        "error": "health check unavailable",
+    },
+    "wrapper_status": {"available": False, "status": "unavailable", "transport": "stdio"},
+    "local_index_status": {"available": False, "status": "unavailable", "path": None},
 }
 
 
@@ -125,11 +133,24 @@ async def _safe_kill_process(process, use_taskkill=False) -> None:
         pass
 
 
-async def _detect_and_run_mcp_cli(args: list[str], root_path: Path) -> Union[dict, list]:
-    fallback = {"available": False, "project_name": None, "indexed_at": None, "is_stale": None}
+async def _detect_and_run_mcp_cli(
+    tool_name: str,
+    root_path: Path,
+    arguments: dict | None = None,
+) -> Union[dict, list]:
+    def unavailable(error: str) -> dict:
+        return {
+            "available": False,
+            "status": "unavailable",
+            "project_name": None,
+            "indexed_at": None,
+            "is_stale": None,
+            "error": error,
+        }
+
     exe_path = _detect_executable()
     if not exe_path:
-        return fallback
+        return unavailable("codebase-memory-mcp executable not found")
 
     use_cmd_wrapper = False
     if os.name == 'nt':
@@ -139,40 +160,48 @@ async def _detect_and_run_mcp_cli(args: list[str], root_path: Path) -> Union[dic
 
     if use_cmd_wrapper:
         program = "cmd.exe"
-        cmd_args = ["/S", "/C", exe_path] + args
+        cmd_args = ["/S", "/C", exe_path]
     else:
         program = exe_path
-        cmd_args = args
+        cmd_args = []
+
+    cmd_args.extend(["cli", tool_name, json.dumps(arguments or {}, ensure_ascii=False)])
 
     try:
         process = await asyncio.create_subprocess_exec(
             program,
             *cmd_args,
+            stdin=asyncio.subprocess.DEVNULL,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
             cwd=root_path
         )
     except (FileNotFoundError, PermissionError) as exc:
         logger.warning(f"CLI startup failed: {exc}")
-        return fallback
+        return unavailable(f"CLI startup failed: {exc}")
     except Exception as exc:
         logger.warning(f"CLI unexpected startup failed: {exc}")
-        return fallback
+        return unavailable(f"CLI startup failed: {exc}")
 
     try:
-        stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=30.0)
+        stdout, stderr = await asyncio.wait_for(
+            process.communicate(), timeout=EXTERNAL_CLI_TIMEOUT_SECONDS
+        )
     except asyncio.TimeoutError:
-        logger.warning("CLI execution timed out (30s)")
+        logger.warning(f"CLI execution timed out ({EXTERNAL_CLI_TIMEOUT_SECONDS:g}s)")
         await _safe_kill_process(process, use_taskkill=use_cmd_wrapper)
-        return fallback
+        return unavailable(
+            f"codebase-memory-mcp {tool_name} timed out after {EXTERNAL_CLI_TIMEOUT_SECONDS:g}s"
+        )
     except Exception as exc:
         logger.warning(f"CLI execution failed with exception: {exc}")
         await _safe_kill_process(process, use_taskkill=use_cmd_wrapper)
-        return fallback
+        return unavailable(f"CLI execution failed: {exc}")
 
     if process.returncode != 0:
-        logger.warning(f"CLI returned non-zero code {process.returncode}, stderr: {stderr.decode(errors='ignore')}")
-        return fallback
+        error = stderr.decode(errors="ignore").strip()
+        logger.warning(f"CLI returned non-zero code {process.returncode}, stderr: {error}")
+        return unavailable(error or f"CLI returned exit code {process.returncode}")
 
     try:
         decoded_stdout = stdout.decode('utf-8', errors='ignore')
@@ -180,7 +209,7 @@ async def _detect_and_run_mcp_cli(args: list[str], root_path: Path) -> Union[dic
         return data
     except json.JSONDecodeError as exc:
         logger.warning(f"CLI stdout is not valid JSON: {exc}")
-        return fallback
+        return unavailable(f"CLI returned invalid JSON: {exc}")
 
 
 def _normalize_path(p: str | Path) -> str:
@@ -188,8 +217,10 @@ def _normalize_path(p: str | Path) -> str:
 
 
 def _resolve_project_name(projects: Union[dict, list], root_path: Path) -> str | None:
+    if isinstance(projects, dict):
+        projects = projects.get("projects", [])
     if not isinstance(projects, list):
-        projects = []
+        return None
     
     try:
         target_norm = _normalize_path(root_path)
@@ -199,7 +230,7 @@ def _resolve_project_name(projects: Union[dict, list], root_path: Path) -> str |
     for project in projects:
         if not isinstance(project, dict):
             continue
-        p_path = project.get("path")
+        p_path = project.get("root_path") or project.get("path")
         if not p_path or not isinstance(p_path, str):
             continue
         try:
@@ -370,14 +401,79 @@ def load_index(root: Path) -> dict:
     return payload
 
 
+def read_existing_index(root: Path) -> dict:
+    """Read the last good on-disk index without attempting a rebuild."""
+    index_path = root / INDEX_DIR / INDEX_FILE
+    payload = json.loads(index_path.read_text(encoding="utf-8"))
+    indexed_root = Path(payload["project_root"]).resolve()
+    if indexed_root != root.resolve():
+        raise RuntimeError(f"Index root mismatch: expected {root}, found {indexed_root}")
+    return payload
+
+
+def search_memory_for_root(
+    root: Path,
+    query: str,
+    limit: int = 8,
+    category: str | None = None,
+    scope: str | None = None,
+) -> dict:
+    fallback_used = False
+    warnings: list[str] = []
+
+    try:
+        if should_rebuild_index(root):
+            ensure_index(root)
+        payload = load_index(root)
+    except Exception as exc:
+        fallback_used = True
+        warnings.append(f"Index refresh failed; using the last on-disk index: {exc}")
+        try:
+            payload = read_existing_index(root)
+        except Exception as fallback_exc:
+            return {
+                "status": "server_unavailable",
+                "available": False,
+                "root": str(root),
+                "source": str(root / INDEX_DIR / INDEX_FILE),
+                "fallback_used": True,
+                "results": [],
+                "warnings": [*warnings, f"Local index fallback failed: {fallback_exc}"],
+            }
+
+    try:
+        search_payload = search_entries(payload, query, limit=limit, category=category, scope=scope)
+    except Exception as exc:
+        return {
+            "status": "server_unavailable",
+            "available": False,
+            "root": str(root),
+            "source": str(root / INDEX_DIR / INDEX_FILE),
+            "fallback_used": fallback_used,
+            "results": [],
+            "warnings": [*warnings, f"Local index query failed: {exc}"],
+        }
+
+    search_payload.update(
+        {
+            "status": "degraded" if fallback_used else "ready",
+            "available": True,
+            "root": str(root),
+            "source": str(root / INDEX_DIR / INDEX_FILE),
+            "fallback_used": fallback_used,
+            "warnings": warnings,
+        }
+    )
+    return search_payload
+
+
 def should_rebuild_index(root: Path) -> bool:
     return bool(index_stale_reasons(root))
 
 
 async def get_memory_health_for_root(root: Path, server: ProjectMemoryMCP) -> dict:
     now = time.time()
-    # 1.0 秒防抖限流保護
-    if now - server._last_checked_time < 1.0 and server._last_health_result is not None:
+    if now - server._last_checked_time < HEALTH_CACHE_TTL_SECONDS and server._last_health_result is not None:
         return server._last_health_result
 
     try:
@@ -483,34 +579,42 @@ async def _run_memory_health_check_impl(root: Path) -> dict:
     # skill_manifest_exists
     quality_checks["skill_manifest_exists"] = (skill_dir / "SKILL.md").exists() if skill_dir.exists() else False
 
-    # 呼叫 CLI 子命令
-    projects = await _detect_and_run_mcp_cli(["list_projects"], root)
-    status_data = await _detect_and_run_mcp_cli(["index_status"], root)
-
-    available = True
-    if isinstance(projects, dict) and not projects.get("available", True):
-        available = False
-    if isinstance(status_data, dict) and not status_data.get("available", True):
-        available = False
-
+    projects = await _detect_and_run_mcp_cli("list_projects", root)
+    external_error = projects.get("error") if isinstance(projects, dict) else None
+    available = not (isinstance(projects, dict) and projects.get("available") is False)
     project_name = _resolve_project_name(projects, root)
-
     if project_name is None:
+        status_data: dict = {}
         indexed_at = None
         is_stale = None
+        graph_status = "not_indexed" if available else "unavailable"
     else:
+        raw_status = await _detect_and_run_mcp_cli("index_status", root, {"project": project_name})
+        status_data = raw_status if isinstance(raw_status, dict) else {}
+        if status_data.get("available") is False:
+            graph_status = "degraded"
+            external_error = status_data.get("error")
+        else:
+            graph_status = str(status_data.get("status") or "ready")
         indexed_at = status_data.get("indexed_at") if isinstance(status_data, dict) else None
-        is_stale = status_data.get("is_stale") if isinstance(status_data, dict) else None
+        is_stale = status_data.get("is_stale")
+        if is_stale is None and graph_status == "ready":
+            is_stale = False
 
     codebase_graph_status = {
         "available": available,
+        "status": graph_status,
         "project_name": project_name,
         "indexed_at": indexed_at,
-        "is_stale": is_stale
+        "is_stale": is_stale,
+        "nodes": status_data.get("nodes"),
+        "edges": status_data.get("edges"),
+        "error": external_error,
     }
 
     # bridge_consistent
-    if available and isinstance(projects, list):
+    project_list = projects.get("projects") if isinstance(projects, dict) else projects
+    if available and isinstance(project_list, list):
         bridge_consistent = (project_name is not None)
     else:
         bridge_consistent = True
@@ -522,6 +626,8 @@ async def _run_memory_health_check_impl(root: Path) -> dict:
             warnings.append("Codebase graph index not found. Run 'codebase-memory-mcp index_repository' to refresh.")
         elif is_stale:
             warnings.append("Codebase graph index is stale. Run 'codebase-memory-mcp index_repository' to refresh.")
+    else:
+        warnings.append(f"Codebase graph server unavailable: {external_error or 'unknown error'}")
 
     # Warnings for failed quality checks
     if not quality_checks["random_query_clean"]:
@@ -544,7 +650,23 @@ async def _run_memory_health_check_impl(root: Path) -> dict:
     if index_age_days is not None and index_age_days > 7:
         warnings.append(f"Memory index is stale ({index_age_days} days old).")
 
+    local_index_available = isinstance(payload, dict)
+    local_index_status = "ready"
+    if not index_path.exists():
+        local_index_status = "missing"
+    elif not local_index_available:
+        local_index_status = "error"
+    elif index_stale_reasons(root, payload):
+        local_index_status = "stale"
+
+    overall_status = "ready"
+    if not local_index_available:
+        overall_status = "server_unavailable"
+    elif not available or graph_status in {"degraded", "not_indexed"}:
+        overall_status = "degraded"
+
     return {
+        "status": overall_status,
         "root": str(root),
         "memory_exists": memory_path.exists(),
         "index_exists": index_path.exists(),
@@ -558,6 +680,13 @@ async def _run_memory_health_check_impl(root: Path) -> dict:
         "warnings": warnings,
         "quality_checks": quality_checks,
         "codebase_graph_status": codebase_graph_status,
+        "wrapper_status": {"available": True, "status": "ready", "transport": "stdio"},
+        "local_index_status": {
+            "available": local_index_available,
+            "status": local_index_status,
+            "path": str(index_path),
+            "fallback_source": str(index_path) if local_index_available else None,
+        },
     }
 
 
@@ -569,9 +698,20 @@ async def summarize_index_health_for_root(root: Path, server: ProjectMemoryMCP) 
     lines.append(f"  Memory file exists: {health_data.get('memory_exists')}")
     lines.append(f"  Index file exists: {health_data.get('index_exists')}")
     lines.append(f"  Docs index exists: {health_data.get('docs_index_exists')}")
+    lines.append(f"  Overall status: {health_data.get('status')}")
+
+    wrapper_status = health_data.get("wrapper_status", {})
+    local_status = health_data.get("local_index_status", {})
+    lines.append(
+        f"  Wrapper: {wrapper_status.get('status')} (available={wrapper_status.get('available')})"
+    )
+    lines.append(
+        f"  Local index: {local_status.get('status')} (available={local_status.get('available')})"
+    )
     
     cgs = health_data.get("codebase_graph_status", {})
     lines.append("  Codebase Graph Status:")
+    lines.append(f"    Status: {cgs.get('status')}")
     lines.append(f"    Available: {cgs.get('available')}")
     lines.append(f"    Project Name: {cgs.get('project_name')}")
     lines.append(f"    Indexed At: {cgs.get('indexed_at')}")
@@ -618,12 +758,13 @@ def create_server(root: Path) -> ProjectMemoryMCP:
         category: str | None = None,
         scope: str | None = None,
     ) -> dict:
-        if should_rebuild_index(resolved_root):
-            ensure_index(resolved_root)
-        payload = load_index(resolved_root)
-        search_payload = search_entries(payload, query, limit=limit, category=category, scope=scope)
-        search_payload["root"] = str(resolved_root)
-        return search_payload
+        return search_memory_for_root(
+            resolved_root,
+            query,
+            limit=limit,
+            category=category,
+            scope=scope,
+        )
 
     @server.tool(description="Return the current Aliases & Vocabulary section from MEMORY.md.")
     def get_aliases() -> dict:

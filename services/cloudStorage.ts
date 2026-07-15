@@ -24,26 +24,18 @@ const FALLBACK_LOCK_KEY = 'mindspark_sync_lock_ts';
 const BANKS_SYNC_LOCK_NAME = 'mindspark_banks_sync';
 const BANKS_FALLBACK_LOCK_KEY = 'mindspark_banks_sync_lock_ts';
 
-const runWithSyncLock = async <T>(
+export const runWithSyncLock = async <T>(
   cb: () => Promise<T>,
   lockName: string = SYNC_LOCK_NAME,
   fallbackKey: string = FALLBACK_LOCK_KEY
 ): Promise<T> => {
   const locks = typeof navigator !== 'undefined' ? navigator.locks : undefined;
   if (locks) {
-    return new Promise<T>((resolve, reject) => {
-      locks.request(lockName, { mode: 'exclusive', ifAvailable: true }, async (lock) => {
-        if (lock === null) {
-          reject(new Error('Sync lock held'));
-          return;
-        }
-        try {
-          const result = await cb();
-          resolve(result);
-        } catch (err) {
-          reject(err);
-        }
-      });
+    // Return the native request promise so browser cancellations are observed by callers.
+    // The previous detached promise caused AbortError to surface as "Uncaught (in promise)".
+    return locks.request<T>(lockName, { mode: 'exclusive', ifAvailable: true }, async (lock) => {
+      if (lock === null) throw new Error('Sync lock held');
+      return cb();
     });
   } else {
     const raw = localStorage.getItem(fallbackKey);

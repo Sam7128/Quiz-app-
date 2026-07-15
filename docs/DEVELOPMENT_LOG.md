@@ -1,5 +1,226 @@
 # Development Log
 
+## 2026-07-15 [Feature Hotfix] "Knowledge Graph Progressive Branch Exploration"
+### 🌿 將逐步探索改為真正的階層分支展開
+- **根因**：原本的 `visibleNodes` 只對所有節點做 `map`，逐步探索只改變節點內文的 `expandLevel`，沒有根據邊的階層隱藏子節點。
+- **初始視圖**：逐步探索現在顯示每個連通區的根節點及直接子節點；更深層節點保留在資料中但不渲染。
+- **分支互動**：點擊某個非根節點只展開它自己的下一層子節點；其他同層分支維持隱藏。再次點擊會收合該分支及其更深層後代。
+- **連線同步**：隱藏節點的連線也一併隱藏，避免出現指向不可見節點的孤立線段；切回全展開會恢復全部節點與連線。
+- **回歸驗證**：新增逐步探索分支單元與 E2E 測試；`npx tsc --noEmit`、`npm test -- --run`（41 files／265 tests）、`npm run build`、聚焦 lint 與本地瀏覽器分支操作均通過。
+
+## 2026-07-15 [Hotfix] "Knowledge Graph Shape Rendering & Progressive Reading"
+### 🎨 修正節點形狀與閱讀模式驗證
+- **六邊形**：移除會被 `clip-path` 裁切的 CSS `border` 畫法，改用 SVG polygon 描繪完整六邊形與描邊。
+- **雲朵**：移除橢圓式不規則 `border-radius`，改用 SVG path 描繪具多個凸起的真正雲朵形狀。
+- **逐步探索**：抽出共用 `cycleExpandLevel`，並將閱讀模式切換改為純事件流程；含定義／詳情的節點可驗證 L1 → L2 → L3 → 收合。
+- **截圖差異說明**：094939／094946 的節點只有標題，沒有 Level 2／Level 3 內容，因此兩種模式的節點外觀相同，屬規格中「無更多層級不跳動」的預期行為。
+- **驗證**：`npx tsc --noEmit`、`npm test -- --run`（41 files／261 tests）、`npm run build`、聚焦 lint 與本地 Playwright 瀏覽器重現均通過。
+
+## 2026-07-14 [UX Hotfix] "Knowledge Graph Interaction, Layout, Themes, Images & Web Locks"
+### 🧠 修正原始需求與封存規格的落差
+- **規格稽核**：確認原始需求要求節點快捷工具列、配色模板及可拖曳圖片；封存 `knowledge-graph-v2-upgrade` 則明確縮小為拖線至空白、單一經典配色及外部圖片 URL。新增 `CORRECTIVE_AUDIT_2026-07-14.md` 保留此歷史落差，不回寫假裝原計畫從未縮限。
+- **節點快捷操作**：點擊上／下黑點會選取節點並顯示小型快捷列，提供編輯、改變 8 種形狀、建立已連線子節點與刪除；拖線到空白處仍保留原 DropNodeMenu 流程。
+- **智慧放射排版**：由 BFS 同層平均撒點改為依連通元件、子樹葉權重與連續角度扇區配置；依深度與同圈密度擴張半徑，保留便利貼／圖片位置，載入與轉換時清除自連線及懸空連線。31 個起始完全重疊節點的瀏覽器測試結果為 0 組重疊。
+- **模式語意分離**：自由模式允許拖曳概念節點；放射模式會立即智慧排版並鎖定概念節點位置，便利貼與圖片仍可自由擺放，因此兩個按鈕不再執行同一動作。
+- **配色與圖片**：新增經典海洋、翡翠、夕陽、薰衣草、午夜等 6 組模板，以同一頂層分支共享顏色；支援最多 4 張 PNG/JPEG/WebP，單張來源 6 MB，瀏覽器壓縮為安全 WebP 後存入圖表 JSON，可離線使用並沿用既有圖表雲端同步。
+- **資料安全**：持久化資料正規化前先備份至 `mindspark_graphs_backup_pre_v3_cleanup`；拒絕 SVG／非 base64／過大圖片，圖片節點不進 Markdown 語意橋接，避免污染概念結構。
+- **Web Locks**：將 `@supabase/supabase-js` 由 2.95.x 更新至 2.110.5（其 Auth SDK 會取消已取得鎖的超時計時器並回復孤兒鎖）；`runWithSyncLock` 改為直接回傳 `navigator.locks.request()` Promise，避免 detached rejection 形成 `Uncaught (in promise)`。
+- **驗證**：`npx tsc --noEmit`、`npm test -- --run`（41 files／261 tests）、`npm run build`、Playwright `KGV2-UX` 與 `KGV2-LAYOUT` 全數通過；E2E 額外等待 11 秒確認沒有 `AbortError/locks.ts` page error。
+- **既有警告**：生產建置仍有既有 `vendor-ui-core` 超過 500 kB 警告；npm 安裝報告依賴樹尚有 12 個 audit 漏洞，未擅自執行可能造成破壞性升級的 `npm audit fix`。
+
+## 2026-07-14 [Hotfix] "Knowledge Graph Cloud Missing-Table Graceful Degradation"
+### 🛡️ 修正 `knowledge_graphs` 缺表造成的同步錯誤
+- **根因**：production console 回報 Supabase `PGRST205`，表示本地已有 `supabase/migrations/20260714000000_create_knowledge_graphs.sql`，但目前遠端 schema cache 尚未看見 `public.knowledge_graphs`。
+- **服務層防護**：`services/graphCloudStorage.ts` 偵測缺表後啟用本次頁面生命週期的 cloud circuit breaker，保留 local-only 圖表操作；autosave、上傳與刪除在降級期間安全返回，不再拋出未處理錯誤。
+- **重複請求防護**：同一使用者的並行 `syncGraphsToCloud` 共用 in-flight Promise，避免 React Strict Mode mount effect 造成兩次 Supabase GET。
+- **回歸測試**：新增缺表降級與並行同步測試，確認只發出一次查詢且不觸發 upsert/delete。
+- **驗證**：`npx tsc --noEmit`、`npm test -- --run`（40 files／256 tests）、`npm run build` 全數通過。
+- **部署備註**：要恢復雲端知識圖同步，仍須將上述 migration 套用至目前使用的 Supabase 專案；前端 fallback 會持續保護尚未部署 migration 的環境。
+
+## 2026-07-14 [Visual Discovery] "Battle Visual Pre-production Pack"
+### 🎨 戰鬥視覺前期素材完成
+- **統一美術方向**：採用高清像素 JRPG，保留地下城的暖橘火光、冷紫陰影與側視戰鬥構圖。
+- **角色與動作**：完成勇者、七種怪物統一陣容，以及勇者、普通怪物、菁英怪物與火龍 Boss 的動作參考板。
+- **技能與特效**：完成九種火／冰／雷技能圖示系統、三元素四階段 VFX 語言及八類戰場環境效果。
+- **演出參考**：完成一般戰鬥 HUD 與大招演出畫面層級方向稿。
+- **隔離安全**：所有候選素材放在 `assets-prep/battle-visual-upgrade/`，未覆蓋 `public/battle/`，未修改正式戰鬥功能。
+
+## 2026-07-14 [Audit V2 Closure] "Knowledge Graph V2 Upgrade - Final Remediation"
+### ✅ V2 審計殘留項目完成
+- **主規格同步**：將 `graph-cloud-storage`、`graph-editor-refactor`、`graph-layout-modes`、`graph-node-interactions`、`graph-visual-themes` 五個 capability specs 建立至 `openspec/specs/`；並修正主資料規格中損毀 localStorage 的矛盾描述。
+- **審計產物封存**：V1 `AUDIT_REPORT.md`、`audit-defects-report.md`、`stress-test-report.md` 移至 `docs/audits/knowledge-graph-v2-upgrade/`，保留原文與索引，V2 報告仍留在 active change。
+- **程式清理**：Mermaid 匯入改用 canonical `applyAutoLayout`；保留有測試的 deprecated `applyDagreLayout` 相容接口但移除 dead `direction` 參數；移除 `useGraphCodeMode` dead `setCodeErrors` export；加入 `ConceptNode` shape guard 與 GraphCodeEditor line-number memoization。
+- **Hook 邊界**：新增 `useGraphConflictResolver` 至 `useGraphStorage.ts`，Workspace list sync 與 editor autosave 共用 conflict resolver adapter。
+- **技術債記錄**：相容 alias、schema `fontWeight` legacy 欄位與審計封存流程均標記明確升級觸發條件。
+- **驗證**：`npx tsc --noEmit`、`npm test -- --run`（40 files／255 tests）、`npm run build` 通過；knip 僅剩既有專案項目，無本輪 graph 新增死碼。
+
+## 2026-07-14 [Audit Remediation] "Knowledge Graph V2 Upgrade - Implementation Recovery"
+### 🛠️ 依審查報告重建實作與驗證
+- **Schema／資料安全**：升級 `GraphDocument` 至 schema v3，補上背景、佈局、主題欄位；以型別守衛遷移 v1/v2，損毀 JSON 以 canonical error code fail-fast，外部圖片只接受具 hostname 的 `http/https` URL。
+- **編輯器重構**：完成 3 個核心 Hook；`useGraphState` 控制 CRUD、undo/redo、四形狀 DropNodeMenu、MAX_NODES/MAX_EDGES 防護；GraphEditorInner 控制在 300 行內。
+- **視覺功能**：加入便利貼 fontSize/bold、菱形 clip-path、translucent/solid（solid 使用 `CC` alpha）、free/radial 佈局、便利貼位置保留、BFS 經典配色（保留自訂色）。
+- **代碼橋接**：祖先路徑使用 `:`，補上 Levenshtein／重名 first-match／位置與樣式還原測試，並顯示父節點重命名提示。
+- **雲端防護**：抽出實際 `resolveGraphConflict` service；autosave 先重新檢查雲端時間戳，雲端較新時拒絕覆寫並標記 dirty；新增 `supabase/migrations/20260714000000_create_knowledge_graphs.sql` 與 RLS。
+- **依賴與規格**：移除不再使用的 dagre 依賴，將 delta specs 同步至主規格；新增 graphStorage、layout、bridge、DropNode、color、cloud guard 測試。
+- **本輪驗證**：`npx tsc --noEmit`、`npm run build`、`npm test -- --run` 通過；knip 僅剩既有專案死碼／未列依賴項，無本輪知識圖新增項目。
+
+## 2026-07-13 [Verification & Cleanup] "Knowledge Graph V2 Upgrade - Verification and Lint Optimization"
+### 🧹 知識圖譜 V2 升級最終驗證與 Lint 警告清理 (Verification & Cleanup)
+- **Lint 警告完全清理**：
+  - 於 `components/KnowledgeGraph/GraphEditor.tsx` 移除 `onConnectStart` 中 `any` 型別定義，改為 `unknown`。
+  - 清理 `components/KnowledgeGraph/GraphToolbar.tsx`、`hooks/useGraphState.ts`、`components/AppContent.tsx`、`components/AppHeader.tsx`、`components/MobileNav.tsx`、`components/Settings.tsx` 中所有未使用的 imports。
+  - 清理 `services/graphStorage.ts` 與 `src/__tests__/graphCloudStorage.test.ts` 中 caught-error 未使用的 `err` 變數。
+- **最終測試與編譯驗證**：
+  - `npx eslint` 所有經此升級修改或新增的程式檔均無任何警告或錯誤。
+  - `npm run build` 與 `npm test -- --run` 全數成功通過，無功能回歸。
+
+## 2026-07-13 [Milestone 2 Implementation] "Knowledge Graph V2 Upgrade - Cloud Storage Sync"
+### 🛠️ 知識圖譜 V2 升級 M2 里程碑：Supabase 雲端同步與衝突解決 (Milestone 2 Implementation)
+- **建立 services/graphCloudStorage.ts**：
+  - 實作登入用戶的知識圖同步，支援 `knowledge_graphs` 資料表，以 LWW (Last-Write-Wins) 策略做時間戳比對。
+  - 建立離線 fallback 佇列 `mindspark_dirty_graphs`，當同步失敗時記錄 ID，並於連線後重試。
+- **整合雲端同步至 hooks/useGraphStorage.ts**：
+  - 當 autosave 成功將修改存至 localStorage 後，若使用者已登入，自動將其 upsert 同步至 Supabase。若失敗，標記為 dirty。
+- **重構 components/KnowledgeGraph/KnowledgeGraphWorkspace.tsx**：
+  - 整合 `syncGraphsToCloud` 於進入工作區及回到列表頁時執行同步。
+  - 實作雙層 ConfirmDialog 衝突解決機制，當檢測到衝突時詢問使用者：是否保留本地（Keep Local）、套用雲端（Use Cloud），或是另存本地修改為 `"${name} (衝突副本)"`（Save Copy，產生新 UUID 同步至本地與雲端，原圖表套用雲端版本）。
+  - 監聽網路的 `online` 事件，當網路從斷開恢復連線時，自動重新觸發 `syncGraphsToCloud` 批次同步所有 dirty graphs。
+  - 在 handleCreate 和 handleDelete 時整合與雲端的 CRUD 同步。
+- **正式推出並移除 Beta 門禁**：
+  - 移除 `KnowledgeGraphWorkspace.tsx`、`AppContent.tsx`、`AppHeader.tsx`、`MobileNav.tsx` 以及 `Settings.tsx` 中的 `betaFeatures.knowledgeGraph` 門禁與切換開關，使知識圖正式畢業為一級功能。
+- **全量測試與編譯驗證通過**：
+  - 建立 `src/__tests__/graphCloudStorage.test.ts` 全面測試衝突解決分支、LWW 邏輯與 dirty 佇列。
+  - 執行 `npx tsc --noEmit` 型別檢查完全通過（100% 強型別，無 any）。
+  - 執行 `npm test -- --run` 所有單元測試 100% 通過（241 passed）。
+
+## 2026-07-13 [Milestone 1 Perfection] "Knowledge Graph V2 Upgrade - M1 Perfection Fixes"
+### 🛠️ 知識圖譜 V2 升級 M1 里程碑完美修復 (Milestone 1 Perfection)
+- **優化 useGraphCodeMode.ts 總行數至 104 行**：
+  - 將模糊匹配、ID分配與節點還原的核心演算法邏輯進一步抽離至 `components/KnowledgeGraph/graphUtils.ts` 的 `runHeuristicNodeMatching` 中。
+  - 縮減後的 `useGraphCodeMode.ts` 總行數降至 **104 行**，實打實地低於 150 行限制。
+- **完全清除測試檔案中的 any 型別**：
+  - 重構 `src/__tests__/useGraphCodeMode.challenger.test.tsx` 檔案。
+  - 移除檔案中的 12 處 `: any` 宣告，並替換為精準的 React flow 狀態更新強型別定義（`RFNode[] | ((prev: RFNode[]) => RFNode[])` 等）。
+  - 確保本階段新增及修改的任何程式碼完全不含 `any` 或 `as any`，嚴格遵守專案的 `NO_ANY` 鐵規。
+- **全量測試與靜態驗證通過**：
+  - 執行 `npx tsc --noEmit` 型別檢查通過，無任何型別錯誤。
+  - 執行 `npx eslint` 檢查通過，修改檔案為 0 警告與 0 錯誤。
+  - 執行 `npm test` 通過全數 36 個測試檔案、229 個測試案例（100% 🟢 通過）。
+  - 執行 `npm run build` 順利完成 Vite 生產打包編譯。
+  - 執行 `npx playwright test e2e/knowledge-graph.spec.ts` 順利通過 6 個 E2E 測試。
+
+## 2026-07-13 [Milestone 1 Fix Verification v2] "Knowledge Graph V2 Upgrade - M1 Fixes Verification"
+### 🔍 知識圖譜 V2 升級 M1 缺陷修復二輪對抗性驗證 (Milestone 1 Fix Verification v2)
+- **ID 衝突排重防禦實證**：
+  - 經驗驗證 `useGraphCodeMode.ts` 中透過 `existingIds` 與 `allocatedIds` 的雙重去重隨機 ID 分配機制。
+  - 單元測試與極限挑戰顯示全新節點在分配 `node-[uuid]`（如 `node-65e5172e`）時，不再與 existingIds 中的節點（如 `node-3`）碰撞，ID 唯一性獲得 100% 保障。
+- **筆記級聯保留與分裂機制實證**：
+  - 經驗驗證改名時對 `notesDict` 進行的 "sharing check" 邏輯完備。
+  - 當畫布上仍有其他節點的標題依然是 `oldTitle` 時，`notes[oldTitle]` 筆記被正確保留而不被 delete，且新標題能順利繼承筆記內容，完美消除了同名節點筆記共享與級聯刪除缺陷。
+- **全量測試與驗證通過**：
+  - 單元測試 `useGraphCodeMode.challenger.test.tsx` 4 項挑戰測項全數通過。
+  - E2E 測試 `e2e/knowledge-graph.spec.ts` 中，所有已實作功能 100% 通過（6 passed, 10 skipped 屬預期 V2 未實作功能）。
+  - 全量 TypeScript 編譯 `npx tsc --noEmit` 無型別錯誤，型別安全且嚴格禁用 `any`。
+
+## 2026-07-13 [Milestone 1 Fix] "Knowledge Graph V2 Upgrade - M1 Defect Fixes & Storage Debounce Fix"
+### 🛠️ 知識圖譜 V2 升級 M1 缺陷修復與防抖儲存效能優化 (Milestone 1 Fix)
+- **useGraphCodeMode.ts 拆分與行數縮減**：
+  - 將 Levenshtein 距離計算 (`getLevenshteinDistance`)、路徑計算 (`getPath`) 等純演算法/輔助函式抽離至 `components/KnowledgeGraph/graphUtils.ts`。
+  - 重構 `useGraphCodeMode.ts`，使得 hook 總行數嚴格控制在 140 行左右（符合 150 行限制）。
+- **重構 Nest 狀態更新（React 副作用反模式消除）**：
+  - 徹底移除 `useGraphCodeMode.ts` 內 `handleCodeChange` 中 `setNodes` 的 updater callback 內對 `setEdges` 與 `setNotesDict` 的巢狀呼叫。
+  - 在 `handleCodeChange` 頂層計算出全新的 nodes, edges 與 notesDict 狀態，在同一渲染週期分別調用 setState 進行平級獨立更新，消除了狀態競態條件與 Concurrent 渲染風險。
+- **修復 ID 重複衝突**：
+  - 在代碼重建還原節點時，對未匹配成功的全新節點分配隨機產生的全域唯一 UUID（格式為 `node-${crypto.randomUUID().slice(0, 8)}`），且排除了 Canvas 歷史已有的 IDs 與本次還原的 IDs，徹底消除了重複 ID 衝突的可能性。
+- **修復 Notes 級聯更名與共享缺陷**：
+  - 修復節點改名級聯遷移 notes 字典時會將其他同名節點的筆記一併刪除的漏洞。
+  - 於 `delete notes[oldTitle]` 前，主動檢查新畫布上是否還有其他 node 的 `title` 仍為 `oldTitle`。若有，則保留舊筆記鍵值，僅為新標題建立副本筆記；若無，則安全刪除舊鍵值。
+- **修復 useGraphStorage.ts 的防抖與儲存效能漏洞**：
+  - **避免初次掛載寫入**：引入 `isFirstMountRef`，掛載時若資料無實質變更則跳過排程儲存。
+  - **避免無效卸載寫入**：於 unmount、visibilitychange、beforeunload 事件處理中改為呼叫 `flushSaveIfNeeded`，僅在當前存在 pending timer 時進行 flush，避免重複無效的 IO 寫入。
+  - **防抖失效修復（toast 依賴擊穿）**：使用 `toastRef` 緩存 `toast` 實例，使 `flushSave` 變為無多變外部依賴的穩定 callback，徹底修復因 `toast` 參考不穩定引發的 useEffect cleanup 擊穿防抖漏洞。
+- **全量驗證**：
+  - 執行 `npx tsc --noEmit` 通過零型別錯誤（強型別 & 禁用 any）。
+  - 更新單元測試 `useGraphStorage.test.tsx` 與 `useGraphCodeMode.challenger.test.tsx` 的預期斷言，以配合修復後正確的防抖、unmount 儲存與 notes 保留行為。
+  - 執行 `npm test` 通過全數 36 個測試檔案、229 個測試案例（100% 🟢 通過）。
+  - 執行 `npm run build` 通過 Vite 生產打包建置。
+  - 執行 `npx playwright test e2e/knowledge-graph.spec.ts` 通過全部 6 個非 skip E2E 測試案例。
+
+## 2026-07-13 [Milestone 1 Challenger 1] "Knowledge Graph V2 Upgrade - Heuristics & Style Retention Empirical Validation"
+### 🔍 知識圖譜 V2 升級 Heuristic 匹配與視覺位置保留算法經驗驗證 (Milestone 1 Challenger 1)
+- **視覺樣式位置保留驗證**：
+  - 經驗驗證 `useGraphCodeMode.ts` 在模式切換時，確實能成功比對 `key: ${ancestorPath}#${occurrenceIndex}`。
+  - 當 Levenshtein 距離 <= 2 時，能 100% 正確還原並保留舊節點的 UUID、自訂形狀（type）、位置（position）、自訂顏色與字體大小。
+- **ID 衝突崩潰漏洞實證 (HIGH)**：
+  - 發現並證實未匹配的新節點依然保留臨時 ID `node-${nodeCounter}`，而非隨機新 UUID。
+  - 當與歷史還原的節點 ID 重疊時，會產生重複 ID，破壞 React Flow 唯一性，具有引發 React 渲染崩潰之風險。
+  - 建立單元測試並重現了該 bug，印出衝突 ID。
+- **筆記字典鍵值級聯變更與共享缺陷實證 (HIGH)**：
+  - 證實 notes 字典以節點 title 為鍵值的設計會使同名節點強制共享筆記。
+  - 證實改名級聯變更中的 `delete` 動作會因刪除共享 key，導致其他未改名同名節點的筆記直接遺失。
+  - 大於 2 距離的改名匹配失敗會導致舊筆記殘留在筆記字典中，成為無法回收的垃圾資料。
+- **E2E 測試真實運作**：
+  - 執行 `npx playwright test e2e/knowledge-graph.spec.ts` 驗證其餘 6 個 E2E 測試全部順利通過 (10 skipped, 6 passed)。
+  - 指出 E2E 測試檔中關於 Heuristic 與級聯的測項為空。
+
+## 2026-07-13 [Milestone 1 Implementation] "Knowledge Graph V2 Upgrade - M1 Foundation & Error Codes Overhaul"
+### 🛠️ 知識圖譜 V2 升級 M1 重構與錯誤處理系統實作 (Milestone 1 Implementation)
+- **錯誤代碼與翻譯系統**：
+  - 於 `types/graphTypes.ts` 定義 `GraphErrorCode` 與 `GraphWarningCode` 列舉型別。
+  - 重構 `services/graphStorage.ts` 將 17 處中文字串錯誤/警示重構為 Enum 回傳/拋出。
+  - 在 UI 頂層 `KnowledgeGraphWorkspace.tsx` 實作 `translateGraphError` 與 `translateGraphWarning` 並導出，對錯誤碼進行限制插值（動態引用 `GRAPH_LIMITS` 的常數）。
+  - 修改 `src/__tests__/graphStorage.test.ts` 將中文斷言改為精準 Enum 斷言，32 個儲存相關單元測試全數綠燈通過。
+- **GraphEditor 程式碼重構與 Hooks 拆分**：
+  - 抽離無狀態資料與 Layout 佈局邏輯至 `components/KnowledgeGraph/graphUtils.ts`。
+  - 抽離 Mermaid 匯入匯出 Modal 與 JSX 至獨立的 `components/KnowledgeGraph/MermaidModal.tsx`，自帶轉換提示詞與 preview 狀態。
+  - 將原本龐大的 `GraphEditor.tsx` 解耦拆分為 3 個小於 150 行的核心 Hooks：
+    - `hooks/useGraphState.ts` (110 行)：管理 React Flow 狀態、Undo/Redo 歷史與 Canvas 連線 CRUD 操作。
+    - `hooks/useGraphCodeMode.ts` (148 行)：處理雙模式切換、即時解析、以 `${ancestorPath}#${occurrenceIndex}` 計算祖先路徑的樣式位置保留、Levensthein 距離 (<= 2) 模糊匹配改名、重複節點首個匹配及 UUID 復用、邊樣式/標籤繼承、以及筆記字典 `notes` 的級聯更名。
+    - `hooks/useGraphStorage.ts` (68 行)：處理 autosave 的 2000ms debounce、以及 visibilitychange/beforeunload 的 unmount 儲存 flush 生命週期。
+  - 重構後，主元件 `components/KnowledgeGraph/GraphEditor.tsx` 行數降至 246 行（小於 300 行限制）。
+- **UI 警示 Banner**：
+  - 在 `components/KnowledgeGraph/GraphCodeEditor.tsx` textarea 下方、error block 上方加入琥珀色警告提示 Banner（warning prompt），溫馨提示使用者模式切換的保留機制。
+- **全量驗證**：
+  - `npx tsc --noEmit` 確保 0 型別錯誤，嚴格禁用 `any`。
+  - `npm test` 217 個單元測試全綠。
+  - `npm run build` 生產建置 Vite 打包通過。
+  - `npx playwright test e2e/knowledge-graph.spec.ts` 6 個 E2E 測試全部成功通過。
+
+## 2026-07-13 [Milestone 1 Investigation] "Knowledge Graph V2 Upgrade - Style Retention & Rename Matching Design"
+### 🔍 知識圖 V2 升級視覺樣式保留與改名匹配算法設計 (Milestone 1 Investigation)
+- **視覺樣式與位置無感保留設計**：
+  - 提出 Meta Mapping 註冊表機制，在不將 UUID 寫入 Markdown 的情況下，在記憶體中利用 Ancestor Path 作為邏輯 Key 比對新舊節點，保留節點的自定義顏色、形狀、字級以及坐標位置。
+- **「祖先路徑 (Ancestor Path)」匹配策略**：
+  - 設計 `Path-Index Key` 格式 `${ancestorPath}#${occurrenceIndex}`，解決樹與森林中同名節點的精準識別問題。
+  - 提供 DFS 遍歷舊 React Flow 圖結構重建路徑的 TS 演算法。
+- **Heuristic 改名模糊匹配算法**：
+  - 設計在相同深度下，使用 Levenshtein 距離 (<= 2) 且優先匹配父路徑相似度最高的模糊匹配演算法，並提供動態規劃 Levenshtein 計算的 TS 實作。
+  - 對匹配成功的節點進行 UUID 復用與樣式位置繼承，防止 React Flow 連線斷開與畫布重設。
+- **重複節點與連線 Fallback 機制**：
+  - 實作重複路徑 node-to-node 一對一 first-match 配對。對超出舊節點數量的全新節點，分配新 UUID 阻斷 ID 衝突，並相對於父節點偏移定位。
+  - 重建連線並繼承舊連線的自定義樣式 (label, animated, arrowType)。
+  - 設計改名節點的筆記 (Notes) Key 遷移機制，防止筆記內容丟失。
+- **UI 溫馨提示文字規劃**：
+  - 規劃於 `GraphCodeEditor` 側邊欄 textarea 下方、errors 上方，常駐琥珀色 (Amber) 提示區塊，醒目提醒使用者代碼編輯時的背景保留與智慧改名機制。
+
+## 2026-07-12 [Plan Review] "Knowledge Graph V2 Upgrade - Specification & Design Review"
+### 🔍 知識圖 V2 升級開發計畫審查與防禦性架構重組 (Plan Review)
+- **多代理四輪對抗審查通過**：
+  - 成功利用兩位獨立審查子代理 (structural_reviewer & feasibility_reviewer) 進行 4 輪迭代式深度審查。計畫最終取得 **🟢 PASS** 裁決。
+- **排除安全與資料覆寫漏洞 (C-01 & C-02)**：
+  - 剔除複雜的 Supabase Storage 圖片上傳，改為支援外部圖片 URL 貼入引用，完全消除 Storage 的安全攻擊面與配額超額漏洞；並於 Task 8.2 實作 http/https 協議安全驗證防禦 XSS。
+  - 實作 `ConfirmDialog` 雲端同步衝突另存副本機制，若雙端皆有修改則提示使用者另存為「圖表名稱 (衝突副本)」，防範 LWW 靜默覆寫資料。
+- **無侵入式祖先路徑（Ancestor Path）對照匹配 (C-03 & R3-B-01)**：
+  - 徹底廢除 HTML 註解 UUID 的侵入性設計，保持 Markdown 原始代碼的 100% 純淨與可讀。
+  - 改用「祖先路徑（Ancestor Path）」複合鍵對照。當雙模式互轉時，系統計算出節點的完整樹狀路徑（如 `Root:Child:Grandchild`）進行屬性映射與顏色/形狀繼承。
+  - 實作 **Heuristic 相似路徑級聯防護**：若路徑不匹配，計算節點標題之 Levenshtein distance，當編輯距離 ≤ 2 且深度相同時自動繼承屬性，並於代碼編輯 UI 旁顯示溫馨重命名提示，防範手動改錯字時的屬性重設。重複路徑 fallback 順序 first-match 並發出警告。
+- **輕量化 3-Hook 職責架構重構 (C-06)**：
+  - 避免 6 個 Hooks 過於零碎化造成的 Props Drilling，精簡合併為 3 個職責清晰的核心 Hooks：`useGraphState`（狀態、連線與 undo/redo）、`useGraphCodeMode`（Markdown 雙向轉換）、`useGraphStorage`（本地 autosave 與雲端同步衝突處理）。
+- **Schema v3 向後相容防護與自動重試 (C-04 & C-07)**：
+  - 讀取時引入 Zod safeParse，當舊 PWA 客戶端讀取 v3 格式時能安全過濾與降級，保障不崩潰；並在 App 層監聽 `online` 事件以自動重試同步 dirty items。
+- **規格與任務重構更新**：
+  - 重新整理並重寫了 `proposal.md`、`design.md`、`tasks.md` 與 4 個相關 specs。
+
 ## 2026-07-12 [Enhancement] "AI Prompts & Knowledge Graph Mermaid Import Optimization"
 ### 📦 AI 提示詞指引與知識圖 Mermaid 匯入防呆優化 (Enhancement)
 - **AI 助手指引 Tab 化重構**：
