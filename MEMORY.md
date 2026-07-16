@@ -27,7 +27,7 @@
 
 <!-- BEGIN AUTO-GENERATED: MEMORY MAP -->
 ## Auto-Generated Memory Map
-- Refreshed: `2026-07-15 19:31`
+- Refreshed: `2026-07-16 20:13`
 - Project root: `C:\Users\user\Desktop\Quiz-app-`
 
 ### Key Files
@@ -39,129 +39,122 @@
 - [PATH-006] `tsconfig.json`
 - [PATH-007] `docs/INDEX.md`
 - [PATH-008] `App.tsx`
-- [PATH-009] `constants.ts`
-- [PATH-010] `dashboard.png`
+- [PATH-009] `eslint.config.js`
 
 ### Module Index
 | ID | Path | Local AGENTS | Purpose | Tags |
 |---|---|---|---|---|
-| MOD-001 | `assets-prep/` | no | important project module | assets-prep |
+| MOD-001 | `assets-prep/` | no | project module | assets-prep |
 | MOD-002 | `components/` | yes | ui components | components |
-| MOD-003 | `constants/` | yes | static definitions and domain data | constants |
-| MOD-004 | `contexts/` | yes | shared context and state boundaries | contexts |
+| MOD-003 | `constants/` | yes | static definitions + domain data | constants |
+| MOD-004 | `contexts/` | yes | shared context + state boundaries | contexts |
 | MOD-005 | `docs/` | no | project documentation | docs |
 | MOD-006 | `e2e/` | yes | end-to-end tests | e2e |
-| MOD-007 | `hooks/` | yes | feature hooks and orchestration | hooks |
-| MOD-008 | `openspec/` | yes | change planning and specs | openspec |
+| MOD-007 | `hooks/` | yes | feature hooks + orchestration | hooks |
+| MOD-008 | `openspec/` | yes | change planning + specs | openspec |
 | MOD-009 | `public/` | no | static assets | public |
-| MOD-010 | `Quiz-app-/` | no | important project module | quiz-app- |
-| MOD-011 | `reducers/` | no | important project module | reducers |
+| MOD-010 | `Quiz-app-/` | no | project module | quiz-app- |
+| MOD-011 | `reducers/` | no | project module | reducers |
 | MOD-012 | `scripts/` | no | automation scripts | scripts |
 
 ### OpenSpec Snapshot
 - Main specs: `openspec/specs/`
-- Active changes: `1`
-- [OS-ACT-001] `openspec/changes/battle-system-quality-overhaul/` (proposal, design, tasks, specs:4; all tasks implemented and independently verified; v2 audit passes, awaiting user archive decision)
-- Archived changes: `23`
-- [OS-ARC-001] `openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/` (proposal, design, tasks, specs:6)
-- [OS-ARC-002] `openspec/changes/archive/2026-07-14-knowledge-graph-v2-upgrade/` (proposal, design, tasks, specs:5)
+- Active changes: none.
+- Archived: `24`
+- [OS-ARC-001] `openspec/changes/archive/2026-07-14-knowledge-graph-v2-upgrade/` (proposal, design, tasks, specs:5)
+- [OS-ARC-002] `openspec/changes/archive/2026-07-16-battle-system-quality-overhaul/` (proposal, design, tasks, specs:4)
 - [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2)
 - [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks)
 - [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)
 
 ### Nested AGENTS
-- [AG-001] `components/AGENTS.md`
-- [AG-002] `constants/AGENTS.md`
-- [AG-003] `contexts/AGENTS.md`
-- [AG-004] `e2e/AGENTS.md`
-- [AG-005] `hooks/AGENTS.md`
-- [AG-006] `openspec/AGENTS.md`
-- [AG-007] `services/AGENTS.md`
-- [AG-008] `src/__tests__/AGENTS.md`
+- [AG-001] `components/AGENTS.md` | [AG-002] `constants/AGENTS.md` | [AG-003] `contexts/AGENTS.md`
+- [AG-004] `e2e/AGENTS.md` | [AG-005] `hooks/AGENTS.md` | [AG-006] `openspec/AGENTS.md`
+- [AG-007] `services/AGENTS.md` | [AG-008] `src/__tests__/AGENTS.md`
 <!-- END AUTO-GENERATED: MEMORY MAP -->
 
 ## Stable Facts
-- [FACT-010] Keys: `mindspark_` prefix; data safety on migration.
-- [FACT-011] Questions in Cloud. SM-2/mistakes in localStorage.
-- [FACT-012] Graph workspace fully functional + unit tested.
-- [FACT-013] `.project-memory/project_memory_mcp_entry.py` exposes memory tools.
+- [FACT-010] Keys `mindspark_` prefix. Data safety on migration.
+- [FACT-011] Cloud questions. SM-2/mistakes localStorage.
+- [FACT-012] Graph workspace functional + unit tested.
+- [FACT-013] `.project-memory/project_memory_mcp_entry.py` memory tools.
 - [FACT-014] Dedupe by `sourceQuestionKey` / `sourceFingerprint`.
-- [FACT-015] Delete question cleans SM-2, mistakes, active session.
+- [FACT-015] Delete question cleans SM-2, mistakes, session.
 - [FACT-016] Import UI summary before apply.
 - [FACT-017] Import modes: `append` (default), `merge`, `replace`.
 - [FACT-018] Practice draft: `mindspark_chunk_draft:<sessionId>:<chunkIndex>`.
 - [FACT-019] Practice sync: LWW. Offline dirty fallback cache.
-- [FACT-020] App + Quiz engine callbacks: `useCallback` prevent race conditions.
+- [FACT-020] App + Quiz engine callbacks: `useCallback` prevent race.
 - [FACT-021] Cloud save cleans practice cache (`removePracticeSessionCache`).
-- [FACT-022] Git: exclude `node_modules` + reserved names (e.g., `nul`).
+- [FACT-022] Git exclude `node_modules` + reserved names (`nul`).
 - [FACT-023] Validate AI config via localStorage schema check.
-- [FACT-024] Cloud empty checks before local sync prevent overwrite.
+- [FACT-024] Cloud empty checks prevent local overwrite.
 - [FACT-025] Dynamic HMAC-SHA256 integrity, no local salt.
-- [FACT-026] Reset battle state on out-of-range bounds.
+- [FACT-026] Reset battle on out-of-range bounds.
 - [FACT-027] DB RPC `submit_challenge_score` resolves score winner.
 - [FACT-028] Dead code scan: `npx -y knip --reporter compact`.
-- [FACT-029] Code Hygiene spec: delete dead code, narrow export scopes.
+- [FACT-029] Code Hygiene: delete dead code, narrow exports.
 - [FACT-030] Concurrency: `runWithSyncLock` (Web Locks + localStorage fallback).
 - [FACT-031] FocusTimer: close AudioContext via `activeAudioContextsRef` on unmount.
-- [FACT-032] Keyboard shortcuts: `handlersRef` pattern, empty deps `[]`.
-- [FACT-033] Offline writes: `mindspark_dirty_banks` cleared on cloud sync success.
+- [FACT-032] Keyboard: `handlersRef`, empty deps `[]`.
+- [FACT-033] Offline writes: `mindspark_dirty_banks` cleared on sync success.
 - [FACT-034] GraphStorage: length limits, HTML escape, concat migration, fail-fast, Blob checks.
-- [FACT-035] GraphLayout & Bridge: subtree-sector radial layout + density-aware rings; sticky/image nodes preserve positions; MD parser, Nd > 12 auto-expand.
-- [FACT-036] GraphUI: sticky limit (20), TipTap HTML note, unmount auto-flush, Base64 intercept, orphaned notes reconnect.
-- [FACT-037] Workspace: scroll sync, Fullscreen Recovery on fatal load error, visual/code split, MD serialization/restoration.
-- [FACT-038] Rule 11: Mark `openspec/changes/<name>/tasks.md` `[x]` before completion.
-- [FACT-039] AI Prompts & Mermaid Import: AIPromptGuide supports Quiz + Graph tabs. GraphEditor import modal shows syntax limits + conversion prompt copy.
-- [FACT-040] KG V2: Ancestor Path + Heuristic Levenshtein ≤2 matching, no UUID in MD.
-- [FACT-041] Graph images: safe external http/https URLs + up to 4 standalone PNG/JPEG/WebP uploads; compressed to bounded WebP data URLs inside graph JSON; reuse graph cloud sync (no public Storage bucket).
+- [FACT-035] GraphLayout+Bridge: subtree-sector radial + density-aware rings; sticky/image preserve positions; MD parser, Nd > 12 auto-expand.
+- [FACT-036] GraphUI: sticky limit 20, TipTap HTML note, unmount auto-flush, Base64 intercept, orphaned notes reconnect.
+- [FACT-037] Workspace: scroll sync, Fullscreen Recovery on load error, visual/code split, MD serialize/restore.
+- [FACT-038] Rule 11: Mark `openspec/changes/<name>/tasks.md` `[x]` before complete.
+- [FACT-039] AI Prompts+Mermaid Import: AIPromptGuide Quiz+Graph tabs. GraphEditor import shows syntax limits + conversion prompt copy.
+- [FACT-040] KG V2: Ancestor Path + Levenshtein ≤2 matching, no UUID in MD.
+- [FACT-041] Graph images: safe http/https URLs + 4 standalone PNG/JPEG/WebP uploads; compressed to WebP data URLs inside JSON; reuse graph cloud sync (no public Storage).
 - [FACT-042] Cloud sync: ConfirmDialog conflict resolution + save copy + online retry.
 - [FACT-043] 3 core Hooks: `useGraphState`, `useGraphCodeMode`, `useGraphStorage`.
-- [FACT-044] GraphErrorCode + GraphWarningCode enums; graphUtils, MermaidModal extracted; Hooks <150 lines; GraphCodeEditor amber rename hint banner.
-- [FACT-045] `runHeuristicNodeMatching` extracted to `graphUtils.ts`; `useGraphCodeMode.ts` shrunk to 104 lines; all `: any` removed from challenger tests.
-- [FACT-046] `graphCloudStorage.ts` LWW sync + `mindspark_dirty_graphs` queue; autosave upload + 2-layer ConfirmDialog conflict resolution; online auto-retry; beta gate removed.
-- [FACT-047] V1 audit fixes: schema v3 + migration, canonical GraphErrorCode, URL validation, dark-mode default solid.
+- [FACT-044] GraphErrorCode+GraphWarningCode enums; graphUtils, MermaidModal extracted; Hooks <150 lines; GraphCodeEditor amber rename hint.
+- [FACT-045] `runHeuristicNodeMatching` in `graphUtils.ts`; `useGraphCodeMode.ts` 104 lines; all `: any` removed from challenger tests.
+- [FACT-046] `graphCloudStorage.ts` LWW sync + `mindspark_dirty_graphs` queue; autosave upload + 2-layer ConfirmDialog; online retry; beta gate removed.
+- [FACT-047] V1 audit fixes: schema v3 + migration, canonical GraphErrorCode, URL validation, dark-mode solid default.
 - [FACT-048] Editor: 3 Hooks + DropNodeMenu (concept/rounded/diamond/sticky). Drag-create checks MAX_NODES/MAX_EDGES.
-- [FACT-049] Six branch-coherent presets via `constants/graphThemes.ts` + `utils/graphColorHelper.ts`; sticky/image nodes preserved; radial moves concept nodes only; solid bg uses `${color}CC`.
-- [FACT-050] MD bridge uses `:` ancestor path separator. Levenshtein ≤2 heuristic + duplicate-path first-match tested. UI rename-warning shown. No UUID in MD.
+- [FACT-049] 6 branch-coherent presets via `constants/graphThemes.ts` + `utils/graphColorHelper.ts`; sticky/image preserved; radial moves concept only; solid bg `${color}CC`.
+- [FACT-050] MD bridge uses `:` ancestor path separator. Levenshtein ≤2 + duplicate-path first-match tested. UI rename-warning. No UUID in MD.
 - [FACT-051] `uploadGraphToCloudSafely` compares cloud timestamp before upsert. Conflict marks dirty. Supabase migration + RLS in `supabase/migrations/`.
-- [FACT-052] 2026-07-14 KG UX hotfix verification: 41 test files / 261 tests, tsc zero, Vite build passed, plus focused UX and 31-node no-overlap Playwright tests.
-- [FACT-053] 5 graph capability specs synced to `openspec/specs/`. V1 audit artifacts moved to `docs/audits/knowledge-graph-v2-upgrade/`.
-- [FACT-054] Canonical auto-layout: `applyAutoLayout`. Deprecated `applyDagreLayout` alias. `useGraphConflictResolver` in `useGraphStorage`. `setCodeErrors` dead export removed. ConceptNode shape guard.
-- [FACT-055] Graph cloud fallback: `PGRST205`/missing `knowledge_graphs` disables cloud sync for session, preserves local graphs, deduplicates same-user in-flight sync requests.
-- [FACT-056] Node handle click opens `NodeQuickMenu` (edit, 8 shapes, add child, delete); drag-to-blank uses `DropNodeMenu`.
-- [FACT-057] Free layout permits concept dragging; radial layout applies subtree-aware auto-placement, locks concepts, keeps sticky/image draggable.
-- [FACT-058] Self-loop/dangling edges removed during normalization after one-time raw backup at `mindspark_graphs_backup_pre_v3_cleanup`.
-- [FACT-059] Supabase JS 2.110.5 required for Auth Web Locks orphan-lock recovery; Node engine >=22. `runWithSyncLock` returns native lock Promise so AbortError observable.
-- [FACT-060] KG shapes: hexagon uses SVG polygon with complete stroke; cloud uses SVG path with multiple lobes. Progressive reading cycles L1/L2/L3 via `hooks/graphStateUtils.ts`.
-- [FACT-061] KG progressive reading branch-based: `hooks/graphStateUtils.ts` exposes root-plus-direct-child visibility + per-node branch toggling; `GraphEditor.tsx` filters hidden descendant nodes/edges while preserving full graph in state.
-- [FACT-062] Battle apply: `services/battle/battleEngine.ts` is pure and injectable; `useBattleSystem` owns latest-state commit, V2 ordered persistence and `useBattlePresentation` enqueue only.
-- [FACT-063] Battle V2: `mindspark_battle_state` is legacy read-only; new writes use canonical durable `mindspark_battle_state_v2`; presentation/transient data stays out of snapshot.
-- [FACT-064] Battle runtime media: `constants/battleAssetRegistry.ts` is the only manifest; current local WebP/WebM assets pass 25-entry existence/format/bytes validation.
-- [FACT-065] Battle final verification 2026-07-16: 47 test files / 301 tests, tsc, build, 25-entry assets, Knip and full lint (0 errors / 0 warnings) pass; direct Chromium verifies 20 image dimension/alpha checks and a 25-answer battle flow.
-- [FACT-066] Battle legacy renderers/state adapters and cross-module pending battle fields are removed; `BattleSkillOverlay` plus `useBattlePresentation` is the only presentation completion path. Final evidence: `openspec/changes/battle-system-quality-overhaul/AUDIT_REPORT.md` v2.0.
-- [FACT-067] Battle art production plan: `docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md`; `assets-prep/battle-visual-upgrade/production-source-v2/` holds 7 generated chroma masters plus 7 transparent alpha source atlases for future slicing/animation. They are intentionally not runtime-approved or registered.
+- [FACT-052] 2026-07-14 KG UX hotfix: 41 tests/261, tsc zero, Vite build pass, UX + 31-node no-overlap Playwright.
+- [FACT-053] 5 graph specs synced to `openspec/specs/`. V1 audit to `docs/audits/knowledge-graph-v2-upgrade/`.
+- [FACT-054] Canonical layout: `applyAutoLayout`. Deprecated `applyDagreLayout` alias. `useGraphConflictResolver`. `setCodeErrors` dead export removed.
+- [FACT-055] Graph cloud fallback: `PGRST205`/missing `knowledge_graphs` disables sync, preserves local, dedupes in-flight.
+- [FACT-056] Node click opens `NodeQuickMenu` (edit, 8 shapes, add child, delete); drag-to-blank `DropNodeMenu`.
+- [FACT-057] Free layout: concept draggable. Radial: subtree auto-placement, concepts locked, sticky/image draggable.
+- [FACT-058] Self-loop/dangling edges removed after one-time backup at `mindspark_graphs_backup_pre_v3_cleanup`.
+- [FACT-059] Supabase JS 2.110.5 for Auth Web Locks orphan recovery; Node >=22. `runWithSyncLock` returns native Promise.
+- [FACT-060] KG shapes: hexagon SVG polygon, cloud SVG path multi-lobe. Progressive L1/L2/L3 via `hooks/graphStateUtils.ts`.
+- [FACT-061] KG progressive reading branch-based: `hooks/graphStateUtils.ts` root+direct-child visibility + per-node toggle; `GraphEditor.tsx` filters hidden descendants.
+- [FACT-062] Battle engine: `services/battle/battleEngine.ts` pure+injectable. `useBattleSystem` owns commit, V2 persistence, `useBattlePresentation` enqueue.
+- [FACT-063] Battle V2: `mindspark_battle_state` legacy read-only. New writes to `mindspark_battle_state_v2`. No presentation/transient in snapshot.
+- [FACT-064] Battle runtime media: `constants/battleAssetRegistry.ts` single manifest. 25-entry WebP/WebM pass validation.
+- [FACT-065] Battle final verify 2026-07-16: 47 tests/301, tsc, build, 25 assets, Knip, lint 0 errors/warnings pass; Chromium 20 image dim/alpha + 25-answer flow.
+- [FACT-066] Legacy renderers/state adapters removed; `BattleSkillOverlay`+`useBattlePresentation` only completion path. Evidence: `openspec/changes/battle-system-quality-overhaul/AUDIT_REPORT.md` v2.0.
+- [FACT-067] Battle art plan: `docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md`; `assets-prep/battle-visual-upgrade/production-source-v2/` 7 chroma masters + 7 alpha atlases. Not runtime-approved/registered.
 
 ## Active Decisions
 - [DEC-001] Rules in `AGENTS.md`, facts in `MEMORY.md`. No `GEMINI.md`.
-- [DEC-002] Components ban direct Storage/Supabase access. Use services/hooks.
-- [DEC-003] Local wrapper `.project-memory/` preferred over global.
+- [DEC-002] Components ban direct Storage/Supabase. Use services/hooks.
+- [DEC-003] Local `.project-memory/` preferred over global.
 - [DEC-004] `vite.config.ts`: React+Recharts+Framer in `vendor-ui-core` chunk.
 - [DEC-005] Build: `vite build`. Avoid Windows path permission issues.
-- [DEC-006] Ban `any` in Storage/JSON parse. Use `unknown` + Type Guards.
-- [DEC-007] E2E: click custom Confirm buttons, no `window.alert` listeners.
-- [DEC-008] KG layout uses radial algorithm only; dagre dependency removed.
-- [DEC-009] Autosave cloud: `uploadGraphToCloudSafely`, never silently overwrite newer timestamps.
-- [DEC-010] `applyDagreLayout` kept as deprecated alias until 2026-10-01; new callers use `applyAutoLayout`.
-- [DEC-011] Supabase migration `20260714000000_create_knowledge_graphs.sql` must be applied remotely for graph cloud sync; client local-only fallback for stale schema-cache envs.
-- [DEC-012] Uploaded graph images stay private to graph JSON/offline storage + existing graph sync; no public Storage bucket without privacy/capacity design.
-- [DEC-013] `battle-system-quality-overhaul` 已完成 apply、legacy cleanup 與獨立 verify；邊界維持純 battle engine、durable/presentation 分離、hidden cancel-to-settle、V1 key 只讀/V2 新 key、單一 pending encounter（Boss supersedes Elite）與唯一 runtime asset registry。不引入 sharp、自製 asset cache、第二 audio controller 或跨硬體效能 hard gate。
+- [DEC-006] Ban `any`. Use `unknown` + Type Guards.
+- [DEC-007] E2E: click custom Confirm buttons, no `window.alert`.
+- [DEC-008] KG radial layout only; dagre removed.
+- [DEC-009] Autosave: `uploadGraphToCloudSafely`, never overwrite newer timestamps.
+- [DEC-010] `applyDagreLayout` deprecated alias until 2026-10-01; new callers use `applyAutoLayout`.
+- [DEC-011] Supabase migration `20260714000000_create_knowledge_graphs.sql` must apply remotely; client local fallback for stale schema-cache.
+- [DEC-012] Graph images private to JSON/offline + sync; no public Storage without design.
+- [DEC-013] `battle-system-quality-overhaul` archived (`openspec/changes/archive/2026-07-16-battle-system-quality-overhaul/`). Pure engine, durable/presentation split, hidden cancel-to-settle, V1 read-only/V2 new key, single pending encounter (Boss supersedes Elite), single asset registry. No sharp, custom cache, second audio controller or cross-hardware gate.
 
 ## Hotspots
 - [HOT-001] `App.tsx` & `vite.config.ts`: Chunking & providers.
 - [HOT-002] Storage schemas: backward compatibility.
-- [HOT-003] RPG battle system vs Quiz engine sync.
-- [HOT-004] Graph components & storage files.
+- [HOT-003] RPG battle vs Quiz engine sync.
+- [HOT-004] Graph components & storage.
 - [HOT-005] Stable ID generation during JSON/AI import.
-- [HOT-006] Practice sessions state recovery lifecycle.
+- [HOT-006] Practice session state recovery.
 - [HOT-007] Cloud sync concurrency.
 - [HOT-008] Git: Vercel fail if `node_modules` committed.
 
@@ -178,15 +171,15 @@
 - [RG-010] `rg -n "schemaVersion|backgroundOpacity|layoutMode" types services components hooks`
 
 ## Archive Index
-- [DOC-001] `docs/INDEX.md`: index file.
+- [DOC-001] `docs/INDEX.md`: index.
 
 ## Open Risks
-- [RISK-001] DEVELOPMENT_LOG.md: format cleanup.
+- [RISK-001] DEVELOPMENT_LOG.md format cleanup.
 - [RISK-002] `vite.config.ts` chunk sizes.
-- [RISK-003] permissions for local MCP config script.
-- [RISK-004] Playwright CLI worker/webServer teardown can hang this Windows/Codex runner; direct Chromium through the `webapp-testing` server helper passes and exits cleanly.
-- [RISK-006] Supabase project `public.knowledge_graphs` not exposed in schema cache; graph cloud sync local-only until migration deployed.
-- [RISK-007] `production-source-v2` battle atlases are key-pose sources, not shippable sprite animations; require cell slicing, edge cleanup, pivot alignment, frame production, bytes/decode and browser QA before registry promotion.
+- [RISK-003] MCP config script permissions.
+- [RISK-004] Playwright CLI/webServer teardown hangs Windows/Codex; direct Chromium via `webapp-testing` helper exits cleanly.
+- [RISK-006] Supabase `public.knowledge_graphs` not in schema cache; graph cloud sync local-only until migration deployed.
+- [RISK-007] `production-source-v2` battle atlases are key-pose sources, not shippable sprites; need slicing, cleanup, alignment, frame production, browser QA.
 
 ## Next Refresh Triggers
 - Move dirs, add/remove `AGENTS.md`, schema updates.
