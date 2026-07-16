@@ -3,7 +3,7 @@
  * Monsters Database
  */
 
-import { Monster, MonsterDifficulty } from '../types/battleTypes';
+import { Monster } from '../types/battleTypes';
 import {
     MONSTER_ATTACK_DIALOGUES,
     MONSTER_HURT_DIALOGUES,
@@ -17,9 +17,6 @@ const NORMAL_MONSTERS: Monster[] = [
         id: 'slime_blue',
         name: '藍色史萊姆',
         difficulty: 'normal',
-        imagePath: '/battle/monsters/slime_blue.png',
-        hurtImagePath: '/battle/monsters/slime_blue.png',
-        attackImagePath: '/battle/monsters/slime_blue.png',
         maxHp: 50,
         attackPower: 10,
         attackDialogues: [
@@ -44,9 +41,6 @@ const NORMAL_MONSTERS: Monster[] = [
         id: 'goblin_green',
         name: '綠皮哥布林',
         difficulty: 'normal',
-        imagePath: '/battle/monsters/goblin_green.png',
-        hurtImagePath: '/battle/monsters/goblin_green.png',
-        attackImagePath: '/battle/monsters/goblin_green.png',
         maxHp: 60,
         attackPower: 12,
         attackDialogues: [
@@ -71,9 +65,6 @@ const NORMAL_MONSTERS: Monster[] = [
         id: 'bat_shadow',
         name: '暗影蝙蝠',
         difficulty: 'normal',
-        imagePath: '/battle/monsters/bat_shadow.png',
-        hurtImagePath: '/battle/monsters/bat_shadow.png',
-        attackImagePath: '/battle/monsters/bat_shadow.png',
         maxHp: 40,
         attackPower: 15,
         attackDialogues: [
@@ -103,9 +94,6 @@ const ELITE_MONSTERS: Monster[] = [
         id: 'skeleton_warrior',
         name: '骷髏戰士',
         difficulty: 'elite',
-        imagePath: '/battle/monsters/skeleton_warrior.png',
-        hurtImagePath: '/battle/monsters/skeleton_warrior.png',
-        attackImagePath: '/battle/monsters/skeleton_warrior.png',
         maxHp: 180,
         attackPower: 18,
         attackDialogues: [
@@ -126,15 +114,11 @@ const ELITE_MONSTERS: Monster[] = [
             "咯咯...下次再會...",
             ...MONSTER_DEFEAT_DIALOGUES.slice(0, 2),
         ],
-        visualScale: 1.25,
     },
     {
         id: 'orc_berserker',
         name: '獸人狂戰士',
         difficulty: 'elite',
-        imagePath: '/battle/monsters/orc_berserker.png',
-        hurtImagePath: '/battle/monsters/orc_berserker.png',
-        attackImagePath: '/battle/monsters/orc_berserker.png',
         maxHp: 220,
         attackPower: 20,
         attackDialogues: [
@@ -155,7 +139,6 @@ const ELITE_MONSTERS: Monster[] = [
             "光榮的...死亡...",
             ...MONSTER_DEFEAT_DIALOGUES.slice(2, 4),
         ],
-        visualScale: 1.25,
     },
 ];
 
@@ -166,9 +149,6 @@ const BOSS_MONSTERS: Monster[] = [
         id: 'dragon_fire',
         name: '炎龍・伊格尼斯',
         difficulty: 'boss',
-        imagePath: '/battle/monsters/dragon_fire.png',
-        hurtImagePath: '/battle/monsters/dragon_fire.png',
-        attackImagePath: '/battle/monsters/dragon_fire.png',
         maxHp: 500,
         attackPower: 25,
         attackDialogues: [
@@ -191,15 +171,11 @@ const BOSS_MONSTERS: Monster[] = [
             "傳說...竟然成真了...",
             "吾認可你...勇者...",
         ],
-        visualScale: 1.5,
     },
     {
         id: 'skeleton_wizard',
         name: '骷髏巫師・涅克羅斯',
         difficulty: 'boss',
-        imagePath: '/battle/monsters/skeleton_wizard.png',
-        hurtImagePath: '/battle/monsters/skeleton_wizard.png',
-        attackImagePath: '/battle/monsters/skeleton_wizard.png',
         maxHp: 700,
         attackPower: 22,
         attackDialogues: [
@@ -220,43 +196,14 @@ const BOSS_MONSTERS: Monster[] = [
             "知識終將傳承...在黑暗中...",
             "魔力正在枯竭...",
         ],
-        visualScale: 1.8,
     },
 ];
 
 // ==================== 怪物查詢工具 ====================
 
 /** 所有怪物合集 */
-const ALL_MONSTERS: Monster[] = [
+export const ALL_MONSTERS: Monster[] = [
     ...NORMAL_MONSTERS,
     ...ELITE_MONSTERS,
     ...BOSS_MONSTERS,
 ];
-
-/** 根據難度獲取怪物池 */
-export function getMonstersByDifficulty(difficulty: MonsterDifficulty): Monster[] {
-    switch (difficulty) {
-        case 'normal':
-            return NORMAL_MONSTERS;
-        case 'elite':
-            return ELITE_MONSTERS;
-        case 'boss':
-            return BOSS_MONSTERS;
-        default:
-            return NORMAL_MONSTERS;
-    }
-}
-
-/** 隨機選擇一個怪物 */
-export function getRandomMonster(difficulty?: MonsterDifficulty): Monster {
-    const pool = difficulty ? getMonstersByDifficulty(difficulty) : ALL_MONSTERS;
-    const index = Math.floor(Math.random() * pool.length);
-    return pool[index];
-}
-
-
-
-// 匯出怪物 ID 列表供隨機與輪替使用
-export const NORMAL_MONSTER_IDS = NORMAL_MONSTERS.map(m => m.id);
-export const ELITE_MONSTER_IDS = ELITE_MONSTERS.map(m => m.id);
-export const BOSS_MONSTER_IDS = BOSS_MONSTERS.map(m => m.id);

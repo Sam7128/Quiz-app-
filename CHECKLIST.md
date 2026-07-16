@@ -3,6 +3,22 @@
 此文件用於追蹤專案開發進度、待辦事項與已完成項目。
 
 ## 🟡 進行中 (In Progress)
+- [x] **[Battle Content Production Plan]** 戰鬥美術、動畫、特效與音效未來全面升級計畫
+    - [x] 盤點正式 runtime、前期概念板與仍缺少的角色／技能／環境／音效內容
+    - [x] 生成 7 組 `production-source-v2` 候選 atlas，保留原始色鍵與透明 PNG
+    - [x] 驗證透明輸出為 32-bit ARGB、四角 alpha=0，且未接入正式 registry
+    - [x] 產出詳細 Markdown 計畫，含素材矩陣、升格步驟、驗收 gate、YAGNI 邊界與重用提示詞
+- [x] **[Independent Final Audit]** `battle-system-quality-overhaul` 最終獨立審計與修復
+    - [x] 依 `openspec-verify-change` 核對 proposal／specs／design／tasks 與實作
+    - [x] 依 `ponytail-audit` 執行全庫過度工程與死代碼審計；Knip 零項
+    - [x] 依 `ponytail-debt` 盤點技術債標記、上限與升級觸發條件（2 markers／0 no-trigger）
+    - [x] 交叉驗證 v1 報告、修復有效缺陷並產出 v2 Markdown 報告
+- [x] **[OpenSpec Planning]** 戰鬥系統與視覺演出全面品質升級 `battle-system-quality-overhaul`
+    - [x] 以 codebase-memory-mcp／專案記憶核實現況、耦合與問題真實性
+    - [x] 建立 proposal、delta specs、design、tasks 完整規劃產物
+    - [x] 將大任務拆分成初階執行者可完成的小任務與逐步自動驗證
+    - [x] 定義資料安全、動畫生命週期、效能、無障礙與回滾邊界
+    - [x] 驗證 OpenSpec artifacts 完整且達到 apply-ready
 - [ ] **[Battle UX Discovery]** 戰鬥視覺升級前期討論與素材準備
     - [x] 盤點戰鬥元件、動畫事件與現有圖像資產
     - [x] 定義高清像素 JRPG 候選美術方向
@@ -11,6 +27,18 @@
     - [x] 產出技能圖示與元素特效參考板
     - [x] 產出戰場環境特效與 HUD 演出參考板
     - [x] 完成前期素材包索引，等待使用者檢閱（不修改正式戰鬥功能）
+
+## 🔵 本輪實作與驗證 (Battle System Quality Overhaul Apply)
+- [x] Type-first `battleEngine`、V2 persistence、single pending encounter 與 presenter adapter
+- [x] QuizCard chunk/game-mode 邊界、答案 event ID、hidden cancel-to-settle、legacy caller contract
+- [x] BattleArena HUD/a11y、correlated VFX/cues、reduced-motion、local asset registry 與 WebP/WebM bytes 驗證
+- [x] 隔離測試：47 files／301 tests、`npx tsc --noEmit`、asset validator、production build
+- [x] 公開 battle E2E：冷啟動／預載／streak／Boss／錯答／fallback／toggle／chunk 全過；initial image bytes 338,080–344,570
+- [x] Playwright browser canvas dimensions/alpha gate；25 runtime assets existence/format/bytes gate
+- [x] 一次性 QA screenshots：desktop normal、mobile Boss、reduced-motion WebM fallback，已人工檢閱
+- [x] 短版 benchmark：10 題 chunk UI、30 次 presenter enqueue/cancel、media timeout/unmount cleanup 全過
+- [x] 全域 lint 0 errors／0 warnings；顯式 `any` 與 `.skip/.only` 掃描零命中
+- [x] Legacy leaf/dead export 最終清理與 OpenSpec verify 結案；`AUDIT_REPORT.md` v2 判定通過
 
 ## 🟢 已完成 (Done)
 - [x] **[Knowledge Graph Progressive Branch Exploration]** 實作逐支線階層展開：先顯示主節點與二級節點，點擊二級節點後才顯示其三級子節點
@@ -98,6 +126,14 @@
 - [x] GraphEditorInner ≤300 行、DropNodeMenu 四形狀、節點上限與佈局模式
 - [x] 便利貼樣式、圖片 URL 即時安全驗證、橋接與閱讀模式回歸測試
 - [x] 雲端同步衝突、SQL migration、dead-code 與完整驗證（knip 無本輪新增項目）
+
+## 🟢 本輪審查完成 (Battle System Quality Overhaul Plan Review)
+
+- [x] 完整打包 proposal／delta specs／design／tasks／stress-test-report／benchmark-harness
+- [x] 依 `review-check` 派發兩位獨立審查員，彙總可執行問題
+- [x] 依 `ponytail` 與 `ponytail-review` 刪除 YAGNI、推測性擴充與不必要抽象（114 → 52 tasks）
+- [x] 修訂 OpenSpec artifacts 後重複審查；Round 2 兩位審查員均 PASS，CRITICAL／WARNING 與過度工程發現為 0
+- [x] 驗證 OpenSpec 狀態、artifact 一致性，並同步開發日誌與專案記憶
 
 ## 🟡 本輪收尾 (Knowledge Graph V2 Audit V2)
 - [x] 同步 5 個 delta specs 至 `openspec/specs/`

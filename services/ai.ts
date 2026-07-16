@@ -160,7 +160,7 @@ const NVIDIA_DEFAULT_BASE_URL = "https://integrate.api.nvidia.com/v1";
 
 export const resolveNvidiaBaseUrl = (
   baseUrl: string | undefined,
-  isProd: boolean = import.meta.env.PROD,
+  _isProd: boolean = import.meta.env.PROD,
   origin: string = window.location.origin
 ): string => {
   const isDefaultUrl = !baseUrl || baseUrl === NVIDIA_DEFAULT_BASE_URL;

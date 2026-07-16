@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Coffee, ArrowRight, Play } from 'lucide-react';
+import { Coffee, Play } from 'lucide-react';
 
 interface RestBreakModalProps {
     isOpen: boolean;

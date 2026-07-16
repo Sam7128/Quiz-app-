@@ -142,6 +142,8 @@ export enum GraphErrorCode {
   IMAGE_DATA_TOO_LARGE = 'IMAGE_DATA_TOO_LARGE',
   INVALID_IMAGE_DATA = 'INVALID_IMAGE_DATA',
 
+  /* Compatibility aliases intentionally share the canonical error values. */
+  /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
   /** @deprecated Use MAX_GRAPHS_EXCEEDED. */
   MAX_GRAPHS_LIMIT = 'MAX_GRAPHS_EXCEEDED',
   /** @deprecated Use MAX_NODES_EXCEEDED. */
@@ -164,6 +166,7 @@ export enum GraphErrorCode {
   GRAPH_NOT_FOUND = 'DELETE_NOT_FOUND',
   /** @deprecated Use DELETE_ERROR. */
   DELETE_FAILED = 'DELETE_ERROR',
+  /* eslint-enable @typescript-eslint/no-duplicate-enum-values */
 }
 
 export enum GraphWarningCode {

@@ -2,7 +2,8 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useBankManager } from '../../hooks/useBankManager';
 import { STORAGE_KEYS } from '../../services/storage';
-import { BankMetadata } from '../../types';
+import type { IStorageRepository } from '../../services/repository';
+import { BankMetadata, type SyncLocalToCloudResult } from '../../types';
 
 // Mock dependencies
 const confirmMock = vi.fn();
@@ -22,7 +23,7 @@ vi.mock('../../contexts/ToastContext', () => ({
 
 // Mock folder functions since they access localstorage or folders logic
 vi.mock('../../services/storage', async (importOriginal) => {
-  const original = await importOriginal<any>();
+  const original = await importOriginal<typeof import('../../services/storage')>();
   return {
     ...original,
     getBankFolderMap: vi.fn(() => ({})),
@@ -38,16 +39,16 @@ describe('useBankManager refreshBanksData sync logic', () => {
 
   const createMockRepository = () => ({
     getBanks: vi.fn(),
-    syncLocalToCloud: vi.fn(async (banks: BankMetadata[]) => {
-      const current = JSON.parse(localStorage.getItem(STORAGE_KEYS.BANKS_META) || '[]');
+    syncLocalToCloud: vi.fn(async (banks: BankMetadata[]): Promise<SyncLocalToCloudResult> => {
+      const current = JSON.parse(localStorage.getItem(STORAGE_KEYS.BANKS_META) || '[]') as BankMetadata[];
       banks.forEach(b => {
-        const target = current.find((x: any) => x.id === b.id);
+        const target = current.find((candidate) => candidate.id === b.id);
         if (target) target.cloudSyncedAt = Date.now();
       });
       localStorage.setItem(STORAGE_KEYS.BANKS_META, JSON.stringify(current));
       return { successIds: banks.map(b => b.id), failed: [] };
     }),
-  } as any);
+  });
 
   it('scenario 1: cloud empty, local has unsynced -> confirm -> sync -> BANKS_META updated with cloudSyncedAt', async () => {
     const repo = createMockRepository();
@@ -63,7 +64,7 @@ describe('useBankManager refreshBanksData sync logic', () => {
 
     const dispatch = vi.fn();
     const { result } = renderHook(() => useBankManager({
-      repository: repo,
+      repository: repo as unknown as IStorageRepository,
       dispatch,
       banks: [],
       selectedQuizBankIds: [],
@@ -103,7 +104,7 @@ describe('useBankManager refreshBanksData sync logic', () => {
 
     const dispatch = vi.fn();
     const { result } = renderHook(() => useBankManager({
-      repository: repo,
+      repository: repo as unknown as IStorageRepository,
       dispatch,
       banks: [],
       selectedQuizBankIds: [],
@@ -139,7 +140,7 @@ describe('useBankManager refreshBanksData sync logic', () => {
 
     const dispatch = vi.fn();
     const { result } = renderHook(() => useBankManager({
-      repository: repo,
+      repository: repo as unknown as IStorageRepository,
       dispatch,
       banks: [],
       selectedQuizBankIds: [],
@@ -167,7 +168,7 @@ describe('useBankManager refreshBanksData sync logic', () => {
 
     const dispatch = vi.fn();
     const { result } = renderHook(() => useBankManager({
-      repository: repo,
+      repository: repo as unknown as IStorageRepository,
       dispatch,
       banks: [],
       selectedQuizBankIds: [],
@@ -194,7 +195,7 @@ describe('useBankManager refreshBanksData sync logic', () => {
 
     const dispatch = vi.fn();
     const { result } = renderHook(() => useBankManager({
-      repository: repo,
+      repository: repo as unknown as IStorageRepository,
       dispatch,
       banks: [],
       selectedQuizBankIds: [],

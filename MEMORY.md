@@ -27,7 +27,7 @@
 
 <!-- BEGIN AUTO-GENERATED: MEMORY MAP -->
 ## Auto-Generated Memory Map
-- Refreshed: `2026-07-15 11:09`
+- Refreshed: `2026-07-15 19:31`
 - Project root: `C:\Users\user\Desktop\Quiz-app-`
 
 ### Key Files
@@ -45,7 +45,7 @@
 ### Module Index
 | ID | Path | Local AGENTS | Purpose | Tags |
 |---|---|---|---|---|
-| MOD-001 | `assets-prep/` | no | project assets preparation | assets-prep |
+| MOD-001 | `assets-prep/` | no | important project module | assets-prep |
 | MOD-002 | `components/` | yes | ui components | components |
 | MOD-003 | `constants/` | yes | static definitions and domain data | constants |
 | MOD-004 | `contexts/` | yes | shared context and state boundaries | contexts |
@@ -54,19 +54,20 @@
 | MOD-007 | `hooks/` | yes | feature hooks and orchestration | hooks |
 | MOD-008 | `openspec/` | yes | change planning and specs | openspec |
 | MOD-009 | `public/` | no | static assets | public |
-| MOD-010 | `Quiz-app-/` | no | project submodule | quiz-app- |
-| MOD-011 | `reducers/` | no | reducers | reducers |
-| MOD-012 | `services/` | yes | service and integration logic | services |
+| MOD-010 | `Quiz-app-/` | no | important project module | quiz-app- |
+| MOD-011 | `reducers/` | no | important project module | reducers |
+| MOD-012 | `scripts/` | no | automation scripts | scripts |
 
 ### OpenSpec Snapshot
 - Main specs: `openspec/specs/`
-- Active changes: none.
+- Active changes: `1`
+- [OS-ACT-001] `openspec/changes/battle-system-quality-overhaul/` (proposal, design, tasks, specs:4; all tasks implemented and independently verified; v2 audit passes, awaiting user archive decision)
 - Archived changes: `23`
-- [OS-ARC-001] `2026-07-12-knowledge-graph-enhancements/` (proposal, design, tasks, specs:6)
-- [OS-ARC-002] `2026-07-14-knowledge-graph-v2-upgrade/` (proposal, design, tasks, specs:5)
-- [OS-ARC-003] `enhance-quiz-experience/` (proposal, design, tasks, specs:2)
-- [OS-ARC-004] `quiz-ux-enhancement/` (proposal, tasks)
-- [OS-ARC-005] `supabase-cloud-sync/` (proposal, tasks)
+- [OS-ARC-001] `openspec/changes/archive/2026-07-12-knowledge-graph-enhancements/` (proposal, design, tasks, specs:6)
+- [OS-ARC-002] `openspec/changes/archive/2026-07-14-knowledge-graph-v2-upgrade/` (proposal, design, tasks, specs:5)
+- [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2)
+- [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks)
+- [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)
 
 ### Nested AGENTS
 - [AG-001] `components/AGENTS.md`
@@ -132,6 +133,12 @@
 - [FACT-059] Supabase JS 2.110.5 required for Auth Web Locks orphan-lock recovery; Node engine >=22. `runWithSyncLock` returns native lock Promise so AbortError observable.
 - [FACT-060] KG shapes: hexagon uses SVG polygon with complete stroke; cloud uses SVG path with multiple lobes. Progressive reading cycles L1/L2/L3 via `hooks/graphStateUtils.ts`.
 - [FACT-061] KG progressive reading branch-based: `hooks/graphStateUtils.ts` exposes root-plus-direct-child visibility + per-node branch toggling; `GraphEditor.tsx` filters hidden descendant nodes/edges while preserving full graph in state.
+- [FACT-062] Battle apply: `services/battle/battleEngine.ts` is pure and injectable; `useBattleSystem` owns latest-state commit, V2 ordered persistence and `useBattlePresentation` enqueue only.
+- [FACT-063] Battle V2: `mindspark_battle_state` is legacy read-only; new writes use canonical durable `mindspark_battle_state_v2`; presentation/transient data stays out of snapshot.
+- [FACT-064] Battle runtime media: `constants/battleAssetRegistry.ts` is the only manifest; current local WebP/WebM assets pass 25-entry existence/format/bytes validation.
+- [FACT-065] Battle final verification 2026-07-16: 47 test files / 301 tests, tsc, build, 25-entry assets, Knip and full lint (0 errors / 0 warnings) pass; direct Chromium verifies 20 image dimension/alpha checks and a 25-answer battle flow.
+- [FACT-066] Battle legacy renderers/state adapters and cross-module pending battle fields are removed; `BattleSkillOverlay` plus `useBattlePresentation` is the only presentation completion path. Final evidence: `openspec/changes/battle-system-quality-overhaul/AUDIT_REPORT.md` v2.0.
+- [FACT-067] Battle art production plan: `docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md`; `assets-prep/battle-visual-upgrade/production-source-v2/` holds 7 generated chroma masters plus 7 transparent alpha source atlases for future slicing/animation. They are intentionally not runtime-approved or registered.
 
 ## Active Decisions
 - [DEC-001] Rules in `AGENTS.md`, facts in `MEMORY.md`. No `GEMINI.md`.
@@ -146,6 +153,7 @@
 - [DEC-010] `applyDagreLayout` kept as deprecated alias until 2026-10-01; new callers use `applyAutoLayout`.
 - [DEC-011] Supabase migration `20260714000000_create_knowledge_graphs.sql` must be applied remotely for graph cloud sync; client local-only fallback for stale schema-cache envs.
 - [DEC-012] Uploaded graph images stay private to graph JSON/offline storage + existing graph sync; no public Storage bucket without privacy/capacity design.
+- [DEC-013] `battle-system-quality-overhaul` 已完成 apply、legacy cleanup 與獨立 verify；邊界維持純 battle engine、durable/presentation 分離、hidden cancel-to-settle、V1 key 只讀/V2 新 key、單一 pending encounter（Boss supersedes Elite）與唯一 runtime asset registry。不引入 sharp、自製 asset cache、第二 audio controller 或跨硬體效能 hard gate。
 
 ## Hotspots
 - [HOT-001] `App.tsx` & `vite.config.ts`: Chunking & providers.
@@ -176,9 +184,9 @@
 - [RISK-001] DEVELOPMENT_LOG.md: format cleanup.
 - [RISK-002] `vite.config.ts` chunk sizes.
 - [RISK-003] permissions for local MCP config script.
-- [RISK-004] Playwright CLI knowledge-graph suite can hang local runner; Node/Playwright smoke path passes.
-- [RISK-005] knip reports pre-existing unused files/exports + unlisted dependency.
+- [RISK-004] Playwright CLI worker/webServer teardown can hang this Windows/Codex runner; direct Chromium through the `webapp-testing` server helper passes and exits cleanly.
 - [RISK-006] Supabase project `public.knowledge_graphs` not exposed in schema cache; graph cloud sync local-only until migration deployed.
+- [RISK-007] `production-source-v2` battle atlases are key-pose sources, not shippable sprite animations; require cell slicing, edge cleanup, pivot alignment, frame production, bytes/decode and browser QA before registry promotion.
 
 ## Next Refresh Triggers
 - Move dirs, add/remove `AGENTS.md`, schema updates.

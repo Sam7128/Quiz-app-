@@ -1,130 +1,165 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Howl } from 'howler';
+import type { BattlePresentationEvent, BattlePresentationEventKind } from '../types/battleTypes';
 import { STORAGE_KEYS } from '../services/storage';
 
-// 預設音效路徑 - 請確保這些檔案存在於 public/sounds/
 const SOUND_PATHS = {
-    BGM_DUNGEON: '/sounds/bgm_dungeon.mp3',
-    SFX_ATTACK_FIREBALL: '/sounds/attack_fireball.mp3',
+  bgm: '/sounds/bgm_dungeon.mp3',
+  attack: '/sounds/attack_fireball.mp3',
+} as const;
+
+const SOUND_CUE_PATHS: Partial<Record<BattlePresentationEventKind, string>> = {
+  hero_attack: SOUND_PATHS.attack,
 };
 
 interface UseSoundEffectsReturn {
-    playBgm: () => void;
-    stopBgm: () => void;
-    playAttackSfx: () => void;
-    unloadSfx: () => void;
-    isBgmEnabled: boolean;
-    isSfxEnabled: boolean;
-    toggleBgm: () => void;
-    toggleSfx: () => void;
+  playBgm: () => void;
+  stopBgm: () => void;
+  playBattleCue: (
+    cue: BattlePresentationEventKind,
+    eventId?: string,
+    element?: BattlePresentationEvent['payload']['element'],
+  ) => void;
+  isBgmEnabled: boolean;
+  isSfxEnabled: boolean;
+  toggleBgm: () => void;
+  toggleSfx: () => void;
 }
 
-// 使用 Howler.js 直接管理音效，避免 use-sound 的相容性問題
-// Howler 對瀏覽器自動播放策略有更完善的處理
-
-// 建立全域單例，避免多次實例化導致記憶體洩漏或重複播放
 let bgmInstance: Howl | null = null;
-let sfxAttackInstance: Howl | null = null;
+const sfxInstances = new Map<string, Howl>();
 
-const initSounds = () => {
-    if (!bgmInstance) {
-        bgmInstance = new Howl({
-            src: [SOUND_PATHS.BGM_DUNGEON],
-            loop: true,
-            volume: 0.3,
-            html5: true, // 使用 HTML5 Audio 以支援長音軌串流
-            preload: true,
-        });
+const readBooleanSetting = (key: string, fallback: boolean): boolean => {
+  try {
+    const saved = globalThis.localStorage?.getItem(key);
+    return saved === null ? fallback : saved === 'true';
+  } catch {
+    return fallback;
+  }
+};
+
+const saveBooleanSetting = (key: string, value: boolean): void => {
+  try {
+    globalThis.localStorage?.setItem(key, String(value));
+  } catch {
+    // 設定保存失敗不阻塞測驗或戰鬥。
+  }
+};
+
+const initSounds = (): void => {
+  if (!bgmInstance) {
+    try {
+      bgmInstance = new Howl({
+        src: [SOUND_PATHS.bgm],
+        loop: true,
+        volume: 0.3,
+        html5: true,
+        preload: true,
+      });
+    } catch (error) {
+      console.warn('[SoundEffects] BGM initialization failed; continuing silently.', error);
     }
-    if (!sfxAttackInstance) {
-        sfxAttackInstance = new Howl({
-            src: [SOUND_PATHS.SFX_ATTACK_FIREBALL],
-            volume: 0.6,
-        });
+  }
+
+  const attackPath = SOUND_CUE_PATHS.hero_attack;
+  if (attackPath && !sfxInstances.has(attackPath)) {
+    try {
+      sfxInstances.set(attackPath, new Howl({
+        src: [attackPath],
+        volume: 0.6,
+        preload: true,
+      }));
+    } catch (error) {
+      console.warn('[SoundEffects] SFX initialization failed; continuing silently.', error);
     }
+  }
 };
 
 export function useSoundEffects(): UseSoundEffectsReturn {
-    // 從 localStorage 讀取設定，預設開啟
-    const [isBgmEnabled, setIsBgmEnabled] = useState(() => {
-        const saved = localStorage.getItem(STORAGE_KEYS.BGM_ENABLED);
-        return saved !== null ? saved === 'true' : true;
-    });
+  const [isBgmEnabled, setIsBgmEnabled] = useState(() => (
+    readBooleanSetting(STORAGE_KEYS.BGM_ENABLED, true)
+  ));
+  const [isSfxEnabled, setIsSfxEnabled] = useState(() => (
+    readBooleanSetting(STORAGE_KEYS.SFX_ENABLED, true)
+  ));
+  const playedEventCuesRef = useRef<Set<string>>(new Set());
 
-    const [isSfxEnabled, setIsSfxEnabled] = useState(() => {
-        const saved = localStorage.getItem(STORAGE_KEYS.SFX_ENABLED);
-        return saved !== null ? saved === 'true' : true;
-    });
+  useEffect(() => {
+    initSounds();
+  }, []);
 
-    // 初始化音效
-    useEffect(() => {
-        initSounds();
-    }, []);
+  useEffect(() => {
+    saveBooleanSetting(STORAGE_KEYS.BGM_ENABLED, isBgmEnabled);
+  }, [isBgmEnabled]);
 
-    // 保存設定
-    useEffect(() => {
-        localStorage.setItem(STORAGE_KEYS.BGM_ENABLED, String(isBgmEnabled));
-    }, [isBgmEnabled]);
+  useEffect(() => {
+    saveBooleanSetting(STORAGE_KEYS.SFX_ENABLED, isSfxEnabled);
+  }, [isSfxEnabled]);
 
-    useEffect(() => {
-        localStorage.setItem(STORAGE_KEYS.SFX_ENABLED, String(isSfxEnabled));
-    }, [isSfxEnabled]);
+  const playBgm = useCallback(() => {
+    if (!isBgmEnabled) return;
+    initSounds();
+    if (!bgmInstance || bgmInstance.playing()) return;
+    try {
+      bgmInstance.play();
+    } catch (error) {
+      console.warn('[SoundEffects] BGM play failed; continuing silently.', error);
+    }
+  }, [isBgmEnabled]);
 
-    const bgmIdRef = useRef<number | null>(null);
+  const stopBgm = useCallback(() => {
+    try {
+      bgmInstance?.stop();
+    } catch (error) {
+      console.warn('[SoundEffects] BGM stop failed; continuing silently.', error);
+    }
+  }, []);
 
-    const playBgm = useCallback(() => {
-        if (!isBgmEnabled || !bgmInstance) return;
+  useEffect(() => {
+    if (!isBgmEnabled) stopBgm();
+  }, [isBgmEnabled, stopBgm]);
 
-        // 確保不會重複播放
-        if (bgmInstance.playing()) return;
+  const playBattleCue = useCallback((
+    cue: BattlePresentationEventKind,
+    eventId?: string,
+    element?: BattlePresentationEvent['payload']['element'],
+  ): void => {
+    if (!isSfxEnabled) return;
+    const source = cue === 'skill_cast' && element === 'fire'
+      ? SOUND_PATHS.attack
+      : SOUND_CUE_PATHS[cue];
+    if (!source) return;
 
-        try {
-            bgmIdRef.current = bgmInstance.play();
-            console.log('[SoundEffects] BGM started playing');
-        } catch (e) {
-            console.warn('[SoundEffects] BGM play failed:', e);
-        }
-    }, [isBgmEnabled]);
+    const dedupeKey = eventId ? `${eventId}:${cue}` : null;
+    if (dedupeKey && playedEventCuesRef.current.has(dedupeKey)) return;
+    if (dedupeKey) {
+      playedEventCuesRef.current.add(dedupeKey);
+      if (playedEventCuesRef.current.size > 512) {
+        const oldest = playedEventCuesRef.current.values().next().value;
+        if (typeof oldest === 'string') playedEventCuesRef.current.delete(oldest);
+      }
+    }
 
-    const stopBgm = useCallback(() => {
-        if (bgmInstance) {
-            bgmInstance.stop();
-            bgmIdRef.current = null;
-            console.log('[SoundEffects] BGM stopped');
-        }
-    }, []);
+    initSounds();
+    const instance = sfxInstances.get(source);
+    if (!instance) return;
+    try {
+      instance.play();
+    } catch (error) {
+      console.warn(`[SoundEffects] Cue ${cue} failed; continuing silently.`, error);
+    }
+  }, [isSfxEnabled]);
 
-    // 當 BGM 開關切換時的即時反應
-    useEffect(() => {
-        if (!isBgmEnabled) {
-            stopBgm();
-        }
-    }, [isBgmEnabled, stopBgm]);
+  const toggleBgm = useCallback(() => setIsBgmEnabled(previous => !previous), []);
+  const toggleSfx = useCallback(() => setIsSfxEnabled(previous => !previous), []);
 
-    const playAttackSfx = useCallback(() => {
-        if (isSfxEnabled && sfxAttackInstance) {
-            sfxAttackInstance.play();
-        }
-    }, [isSfxEnabled]);
-
-    const unloadSfx = useCallback(() => {
-        if (sfxAttackInstance) {
-            sfxAttackInstance.unload();
-            sfxAttackInstance = null;
-        }
-    }, []);
-
-    const toggleBgm = () => setIsBgmEnabled(prev => !prev);
-    const toggleSfx = () => setIsSfxEnabled(prev => !prev);
-
-    return {
-        playBgm,
-        stopBgm,
-        playAttackSfx,
-        unloadSfx,
-        isBgmEnabled,
-        isSfxEnabled,
-        toggleBgm,
-        toggleSfx,
-    };
+  return {
+    playBgm,
+    stopBgm,
+    playBattleCue,
+    isBgmEnabled,
+    isSfxEnabled,
+    toggleBgm,
+    toggleSfx,
+  };
 }

@@ -74,11 +74,3 @@ test('分階段練習：放棄流程會移除 active session', async ({ page }) 
 
   await expect(page.getByText('分階段練習接力')).toHaveCount(0);
 });
-
-test.skip('跨裝置（多 browser context）流程：Context A 登入並完成第一階段 → Context B 重新登入 → Dashboard 顯示同一 session 的下一個階段可繼續', async ({ browser }) => {
-  // Test stub for cloud sync across devices
-  // Requires proper auth mocking and Supabase request interception
-  // 1. Context A: Login, create session, complete chunk 1, sync to cloud
-  // 2. Context B: Login as same user, app fetches sessions from cloud
-  // 3. Context B: Verify chunk 2 is available and start it
-});

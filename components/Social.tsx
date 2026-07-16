@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Users, UserPlus, Send, Inbox, Check, X, Clock, Search, BookOpen, Share2, Trash2, Trophy } from 'lucide-react';
+import { Users, UserPlus, Inbox, Check, X, Clock, Search, BookOpen, Trash2, Trophy } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useRepository } from '../contexts/RepositoryContext';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../hooks/useConfirm';
-import { Friendship, SharedBank, UserProfile } from '../types';
+import { Friendship, SharedBank } from '../types';
 import { ChallengeList } from './ChallengeList';
 import { ChallengeModal } from './ChallengeModal';
 import { useChallenges } from '../hooks/useChallenges';

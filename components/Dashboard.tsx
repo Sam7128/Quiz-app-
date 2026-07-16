@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Question, MistakeLog, BankMetadata, Folder } from '../types';
+import { MistakeLog, BankMetadata, Folder } from '../types';
 import { ChunkedPracticeSession, MistakeDetail } from '../types/battleTypes';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { BookOpen, AlertTriangle, Zap, CheckSquare, Square, Layers, Share2, Folder as FolderIcon, FolderPlus, ArrowLeft, MoreVertical, Trash2, FolderInput, Calendar } from 'lucide-react';
+import { AlertTriangle, Zap, CheckSquare, Square, Layers, Share2, Folder as FolderIcon, FolderPlus, ArrowLeft, Trash2, FolderInput, Calendar } from 'lucide-react';
 import { getDueQuestions } from '../services/spacedRepetition';
 import { StudyStatsCard } from './StudyStatsCard';
 import { StreakCard } from './StreakCard';
@@ -17,7 +16,6 @@ import { ChunkedPracticePanel } from './ChunkedPracticePanel';
 import { ActiveSessionCard } from './ActiveSessionCard';
 
 interface DashboardProps {
-  questions: Question[]; // Combined questions
   mistakeLog: MistakeLog;
   banks: BankMetadata[];
   folders: Folder[];
@@ -32,7 +30,6 @@ interface DashboardProps {
   onMoveBank: (bankId: string, folderId: string | undefined) => void;
   onBatchDelete: () => void;
   onSelectAll?: (selected: boolean) => void;
-  isAuthenticated?: boolean;
   chunkedPractice?: {
     activeSessions: ChunkedPracticeSession[];
     chunkSizeOptions: readonly number[];
@@ -44,7 +41,6 @@ interface DashboardProps {
 }
 
 const DashboardBase: React.FC<DashboardProps> = ({
-  questions,
   mistakeLog,
   banks,
   folders,
@@ -59,7 +55,6 @@ const DashboardBase: React.FC<DashboardProps> = ({
   onBatchDelete,
   onSelectAll,
   onPracticeMistakes, // Add this
-  isAuthenticated = false,
   chunkedPractice
 }) => {
   const confirmDialog = useConfirm();
@@ -102,12 +97,6 @@ const DashboardBase: React.FC<DashboardProps> = ({
   }, 0);
 
   const relevantMistakes = Object.keys(mistakeLog).length;
-
-  const masteryData = [
-    { name: '已掌握', value: Math.max(0, totalQuestions - relevantMistakes) },
-    { name: '需複習', value: relevantMistakes },
-  ];
-  const COLORS = ['#10b981', '#ef4444'];
 
   const handleStartQuiz = () => {
     let count = totalQuestions;
@@ -509,10 +498,10 @@ const DashboardBase: React.FC<DashboardProps> = ({
         </div>
 
         <div className="md:col-span-4 space-y-6">
-          <StreakCard isAuthenticated={isAuthenticated} />
-          <StudyStatsCard isAuthenticated={isAuthenticated} />
+          <StreakCard />
+          <StudyStatsCard />
           <RecentMistakesCard onPracticeSession={onPracticeMistakes} />
-          <AchievementsCard isAuthenticated={isAuthenticated} />
+          <AchievementsCard />
           <FocusTimer />
         </div>
       </div>

@@ -188,7 +188,6 @@ export const AppContent: React.FC<AppContentProps> = ({
         switch (view) {
             case 'dashboard':
                 return <ErrorBoundary fallbackTitle="儀表板發生錯誤"><Dashboard
-                    questions={state.quizPoolQuestions}
                     mistakeLog={state.mistakeLog}
                     banks={state.banks}
                     folders={state.folders}
@@ -203,7 +202,6 @@ export const AppContent: React.FC<AppContentProps> = ({
                     onDeleteFolder={actions.handleDeleteFolder}
                     onMoveBank={actions.handleMoveBank}
                     onBatchDelete={actions.handleBatchDelete}
-                    isAuthenticated={!!user}
                     chunkedPractice={{
                       activeSessions: chunkedPractice.activeSessions,
                       chunkSizeOptions: chunkedPractice.chunkSizeOptions,

@@ -27,26 +27,23 @@ export const ChallengeModal: React.FC<ChallengeModalProps> = ({
   const [step, setStep] = useState(1);
 
   useEffect(() => {
-    if (isOpen) {
-      loadData();
-    }
-  }, [isOpen]);
+    if (!isOpen) return;
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const { friends } = await getFriendsAndInbox();
-      setFriends(friends.filter((f) => f.status === 'accepted'));
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const { friends } = await getFriendsAndInbox();
+        setFriends(friends.filter((friend) => friend.status === 'accepted'));
+        setBanks(await repository.getBanks());
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      // Load my banks
-      const myBanks = await repository.getBanks();
-      setBanks(myBanks);
-    } catch (error) {
-      console.error('Error loading data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    void loadData();
+  }, [isOpen, repository]);
 
   const handleSendChallenge = async () => {
     if (!selectedFriend || !selectedBank) return;

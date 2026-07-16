@@ -81,13 +81,3 @@ export const unlockLocalAchievement = async (achievementId: string): Promise<voi
     console.error('[Achievements] Failed to unlock local achievement:', e);
   }
 };
-
-/**
- * Check if achievement is unlocked
- */
-export const isAchievementUnlocked = (
-  achievementId: string,
-  unlockedIds: string[]
-): boolean => {
-  return unlockedIds.includes(achievementId);
-};

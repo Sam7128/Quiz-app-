@@ -73,7 +73,7 @@ describe('syncLocalToCloud', () => {
     mocks.from.mockImplementation((table: string) => {
       if (table === 'banks') {
         return {
-          insert: function(payload: any) {
+          insert: function(payload: { title?: string } | Array<{ title?: string }>) {
             return {
               select: () => ({
                 single: async () => {
@@ -91,7 +91,7 @@ describe('syncLocalToCloud', () => {
       }
       if (table === 'questions') {
         return {
-          upsert: async (toUpsert: any) => {
+          upsert: async (toUpsert: Array<{ bank_id?: string }>) => {
             const bankId = toUpsert?.[0]?.bank_id;
             if (bankId === 'cloud-bank-3') {
               return { error: { message: 'Upsert rate limit reached' } };

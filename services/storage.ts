@@ -27,6 +27,8 @@ export const STORAGE_KEYS = {
   BGM_ENABLED: 'mindspark_bgm_enabled',
   SFX_ENABLED: 'mindspark_sfx_enabled',
   BATTLE_STATE: 'mindspark_battle_state',
+  /** V1 legacy source stays read-only; new writes use V2. */
+  BATTLE_STATE_V2: 'mindspark_battle_state_v2',
   THEME: 'mindspark_theme',
 };
 
@@ -43,7 +45,7 @@ export const getUserSettings = (): UserSettings => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
     return data ? JSON.parse(data) : DEFAULT_SETTINGS;
-  } catch (e) {
+  } catch {
     return DEFAULT_SETTINGS;
   }
 };
@@ -56,7 +58,7 @@ export const getQuizSession = (): SavedQuizProgress | null => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.QUIZ_SESSION);
     return data ? JSON.parse(data) : null;
-  } catch (e) {
+  } catch {
     return null;
   }
 };
@@ -200,38 +202,7 @@ export const abandonPracticeSession = (sessionId: string): void => {
   clearChunkDraftsForSession(sessionId);
 };
 
-export const markPracticeSessionDirty = (sessionId: string, message?: string): void => {
-  const next = getAllPracticeSessions().map((session) => {
-    if (session.id !== sessionId) return session;
-    return {
-      ...session,
-      dirty: true,
-      retryCount: (session.retryCount ?? 0) + 1,
-      lastSyncError: message,
-      updatedAt: Date.now(),
-    };
-  });
-  persistPracticeSessions(next);
-};
-
-export const clearPracticeSessionDirty = (sessionId: string): void => {
-  const next = getAllPracticeSessions().map((session) => {
-    if (session.id !== sessionId) return session;
-    return {
-      ...session,
-      dirty: false,
-      retryCount: 0,
-      lastSyncError: undefined,
-    };
-  });
-  persistPracticeSessions(next);
-};
-
-export const getDirtyPracticeSessions = (): ChunkedPracticeSession[] => {
-  return getAllPracticeSessions().filter((session) => session.dirty === true);
-};
-
-export const getChunkDraftStorageKey = (sessionId: string, chunkIndex: number): string => {
+const getChunkDraftStorageKey = (sessionId: string, chunkIndex: number): string => {
   return `${STORAGE_KEYS.CHUNK_DRAFT_PREFIX}:${sessionId}:${chunkIndex}`;
 };
 
@@ -269,7 +240,7 @@ const cleanOldestChunkDraft = (): boolean => {
                 oldestKey = key;
               }
             }
-          } catch (e) {
+          } catch {
             oldestKey = key;
             break;
           }
@@ -408,12 +379,12 @@ export const getBankFolderMap = (): Record<string, string | null> => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.FOLDER_MAP);
     return data ? JSON.parse(data) : {};
-  } catch (e) {
+  } catch {
     return {};
   }
 };
 
-export const saveBankFolderMap = (map: Record<string, string | null>) => {
+const saveBankFolderMap = (map: Record<string, string | null>) => {
   localStorage.setItem(STORAGE_KEYS.FOLDER_MAP, JSON.stringify(map));
 };
 
@@ -435,12 +406,12 @@ export const getFolders = (): Folder[] => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.FOLDERS);
     return data ? JSON.parse(data) : [];
-  } catch (e) {
+  } catch {
     return [];
   }
 };
 
-export const saveFolders = (folders: Folder[]) => {
+const saveFolders = (folders: Folder[]) => {
   localStorage.setItem(STORAGE_KEYS.FOLDERS, JSON.stringify(folders));
 };
 
@@ -504,7 +475,7 @@ export const getBanksMeta = (): BankMetadata[] => {
       return [];
     }
     return JSON.parse(data);
-  } catch (e) {
+  } catch {
     return [];
   }
 };
@@ -533,7 +504,7 @@ export const deleteBank = (bankId: string) => {
   localStorage.removeItem(STORAGE_KEYS.BANK_PREFIX + bankId);
 };
 
-export const moveBankToFolder = (bankId: string, folderId: string | undefined) => {
+const moveBankToFolder = (bankId: string, folderId: string | undefined) => {
   const banks = getBanksMeta();
   const updatedBanks = banks.map(b => {
     if (b.id === bankId) {
@@ -565,7 +536,7 @@ export const getQuestions = (bankId: string): Question[] => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.BANK_PREFIX + bankId);
     return data ? JSON.parse(data) : [];
-  } catch (e) {
+  } catch {
     return [];
   }
 };
@@ -592,7 +563,7 @@ export const getMistakeLog = (): MistakeLog => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.MISTAKES);
     return data ? JSON.parse(data) : {};
-  } catch (e) {
+  } catch {
     return {};
   }
 };
@@ -631,7 +602,7 @@ export const getRecentMistakeSessions = (): RecentMistakeSession[] => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.RECENT_MISTAKES);
     return data ? JSON.parse(data) : [];
-  } catch (e) {
+  } catch {
     return [];
   }
 };

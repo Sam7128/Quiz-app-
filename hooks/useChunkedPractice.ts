@@ -36,7 +36,6 @@ interface ChunkRuntimeProgress {
   currentQuestionIndex: number;
   score: number;
   wrongQuestionIds: string[];
-  pendingSkill: string | null;
 }
 
 interface UseChunkedPracticeOptions {
@@ -296,7 +295,6 @@ export const useChunkedPractice = ({
           currentQuestionIndex: draft.currentQuestionIndex,
           score: draft.score,
           wrongQuestionIds: draft.wrongQuestionIds,
-          pendingSkill: draft.pendingSkill,
         }
       : null;
 
@@ -412,7 +410,6 @@ export const useChunkedPractice = ({
       currentQuestionIndex: progress.currentQuestionIndex,
       score: progress.score,
       wrongQuestionIds: progress.wrongQuestionIds,
-      pendingSkill: progress.pendingSkill,
       updatedAt: Date.now(),
     });
   }, []);

@@ -3,13 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import useSound from 'use-sound';
 import { Question } from '../types';
 import {
-  getMistakeLog,
-  getQuizSession,
-  saveQuizSession,
-  clearQuizSession,
   getUserSettings
 } from '../services/storage';
-import { Lightbulb, CheckCircle, XCircle, ArrowRight, CheckSquare, Square, Volume2, VolumeX, Swords, Trophy } from 'lucide-react';
+import { Lightbulb, CheckCircle, XCircle, ArrowRight, CheckSquare, Square, Volume2, VolumeX, Trophy } from 'lucide-react';
 import { AIHelper } from './AIHelper';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useBattleSystem } from '../hooks/useBattleSystem';
@@ -41,6 +37,13 @@ const QUIZ_CARD_ANIM = {
   shake: (feedback: 'none' | 'correct' | 'incorrect') => ({ rotateZ: feedback === 'incorrect' ? [0, -1, 1, -1, 1, 0] : 0 })
 };
 
+const createAnswerEventId = (): string => {
+  if (typeof globalThis.crypto?.randomUUID === 'function') {
+    return globalThis.crypto.randomUUID();
+  }
+  return `answer-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+};
+
 const QuizCardComponent: React.FC<QuizCardProps> = ({
   question,
   currentIndex,
@@ -55,7 +58,6 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [showHint, setShowHint] = useState(false);
   const [isAnswered, setIsAnswered] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   const [feedback, setFeedback] = useState<'none' | 'correct' | 'incorrect'>('none');
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -70,6 +72,8 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
   const restModalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const explanationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isSubmittingRef = useRef(false);
+  const lastChunkBoundaryRef = useRef<string | null>(null);
+  const lastGameModeRef = useRef<boolean | null>(null);
 
   const { unlockedIds } = useAchievements();
 
@@ -96,25 +100,43 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
   // 戰鬥系統 Hook
   const {
     battleState,
+    isInitialized,
     triggerAnswer,
     startBattle,
+    endBattle,
     resetForNewChunk,
-    onAnimationComplete,
-    hasPendingSkill,
-    currentSkillTier,
+    activePresentationEvent,
+    completePresentationEvent,
   } = useBattleSystem();
 
-  // 初始化戰鬥
+  const chunkBoundaryKey = chunkMeta
+    ? `${chunkMeta.sessionId}:${chunkMeta.chunkIndex}`
+    : 'single';
+  const hasChunkMeta = chunkMeta !== undefined;
+
+  // 初始化／停止戰鬥；只用穩定 chunk token，避免 rerender 重置。
   useEffect(() => {
-    if (!gameMode) return;
-    if (chunkMeta) {
-      resetForNewChunk();
+    if (!isInitialized) return;
+
+    if (!gameMode) {
+      const shouldEndBattle = lastGameModeRef.current !== false
+        || (isInitialized && battleState.isActive);
+      lastGameModeRef.current = false;
+      lastChunkBoundaryRef.current = null;
+      if (shouldEndBattle) endBattle();
       return;
     }
-    if (!battleState.isActive) {
+
+    lastGameModeRef.current = true;
+    if (lastChunkBoundaryRef.current === chunkBoundaryKey) return;
+    lastChunkBoundaryRef.current = chunkBoundaryKey;
+
+    if (hasChunkMeta) {
+      resetForNewChunk();
+    } else if (!battleState.isActive) {
       startBattle();
     }
-  }, [battleState.isActive, chunkMeta, gameMode, resetForNewChunk, startBattle]);
+  }, [battleState.isActive, chunkBoundaryKey, endBattle, gameMode, hasChunkMeta, isInitialized, resetForNewChunk, startBattle]);
 
   // Placeholder sound paths - users should put actual files in public/sounds/
   const [playCorrect] = useSound('/sounds/correct.mp3', { volume: 0.5, soundEnabled });
@@ -139,13 +161,12 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr;
-  }, [question.id]); // Use question.id as trigger to shuffle only on new question
+  }, [question.options]);
 
   useEffect(() => {
     setSelectedOptions([]);
     setShowHint(false);
     setIsAnswered(false);
-    setIsSubmitting(false);
     isSubmittingRef.current = false;
     setShowExplanation(false);
     setFeedback('none');
@@ -191,17 +212,15 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
   };
 
   const submitAnswer = (selection: string[]) => {
-    // 加上同步 useRef 鎖與 React state 鎖，防止快速雙擊/重複提交答案
+    // 同步鎖防止快速雙擊／重複提交答案。
     if (isSubmittingRef.current || isAnswered) return;
     isSubmittingRef.current = true;
-    setIsSubmitting(true);
 
     try {
       // 防護：如果沒有選擇任何選項，不提交答案
       if (selection.length === 0) {
         console.warn('[QuizCard] submitAnswer called with empty selection, ignoring.');
         isSubmittingRef.current = false;
-        setIsSubmitting(false);
         return;
       }
 
@@ -219,7 +238,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
 
       // 觸發戰鬥動畫
       if (gameMode) {
-        triggerAnswer(isCorrect);
+        triggerAnswer(isCorrect, createAnswerEventId());
       }
 
       const answerToPass = isMultiple ? selection : selection[0];
@@ -246,7 +265,6 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
     } finally {
       // 確保不論成功與否，在 finally 中釋放提交鎖，徹底消除永久死鎖隱患
       isSubmittingRef.current = false;
-      setIsSubmitting(false);
     }
   };
 
@@ -352,10 +370,11 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
       </div>
 
       {/* 戰鬥場景 */}
-      {gameMode && battleState.isActive && (
+      {gameMode && (battleState.isActive || battleState.failure || activePresentationEvent !== null) && (
         <BattleArena
           battleState={battleState}
-          onAnimationComplete={onAnimationComplete}
+          activeEvent={activePresentationEvent}
+          onPresentationComplete={completePresentationEvent}
         />
       )}
 

@@ -56,7 +56,7 @@ export const getFriendsAndInbox = async (): Promise<{
   return { friends, inbox };
 };
 
-export const getSharedBanks = async (
+const getSharedBanks = async (
   status: 'pending' | 'accepted' | 'rejected' = 'pending'
 ): Promise<SharedBankWithSender[]> => {
   const userId = await requireUserId();
@@ -158,4 +158,3 @@ export const setSharedBankStatus = async (
 
   if (error) throw error;
 };
-

@@ -5,7 +5,6 @@ import {
   STORAGE_KEYS,
   getAllPracticeSessions,
   replaceAllPracticeSessions,
-  savePracticeSession as saveLocalPracticeSession,
   clearChunkDraftsForSession,
   getBanksMeta,
   saveBanksMeta
@@ -54,6 +53,7 @@ export const runWithSyncLock = async <T>(
       return await cb();
     } finally {
       const current = localStorage.getItem(fallbackKey);
+      // eslint-disable-next-line security/detect-possible-timing-attacks -- tab-local lock token is not secret material.
       if (current === token) {
         localStorage.removeItem(fallbackKey);
       }
@@ -222,7 +222,7 @@ const removeDirtyBank = (bankId: string) => {
   }
 };
 
-export const retryCleanupDirtyBanks = async (): Promise<void> => {
+const retryCleanupDirtyBanks = async (): Promise<void> => {
   try {
     const raw = localStorage.getItem('mindspark_dirty_banks');
     if (!raw) return;
@@ -280,7 +280,7 @@ export const retryCleanupDirtyBanks = async (): Promise<void> => {
             remaining.push(bankId);
           }
         }
-      } catch (e) {
+      } catch {
         remaining.push(bankId);
       }
     }
@@ -845,33 +845,6 @@ export const saveCloudSpacedRepetition = async (item: SpacedRepetitionItem): Pro
 
   if (error) {
     console.error('Error saving spaced repetition data:', error);
-    return false;
-  }
-  return true;
-};
-
-export const batchSaveCloudSpacedRepetition = async (items: SpacedRepetitionItem[]): Promise<boolean> => {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
-
-  const toUpsert = items.map(item => ({
-    user_id: user.id,
-    question_id: item.questionId,
-    easiness_factor: item.easinessFactor,
-    interval: item.interval,
-    repetitions: item.repetitions,
-    next_review_date: item.nextReviewDate,
-    last_review_date: item.lastReviewDate || null
-  }));
-
-  const { error } = await supabase
-    .from('question_progress')
-    .upsert(toUpsert, {
-      onConflict: 'user_id,question_id'
-    });
-
-  if (error) {
-    console.error('Error batch saving spaced repetition data:', error);
     return false;
   }
   return true;

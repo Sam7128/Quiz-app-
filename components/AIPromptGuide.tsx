@@ -64,7 +64,6 @@ const AIPromptGuideComponent: React.FC = () => {
   };
 
   const getGraphPromptText = () => {
-    const dirLabel = configGraph.direction === 'LR' ? '由左至右 (LR)' : '由上而下 (TD)';
     const langLabel = configGraph.lang === 'zh-TW' ? '繁體中文' : 'English';
 
     if (configGraph.mode === 'convert') {

@@ -28,7 +28,6 @@ interface UseQuizEngineOptions {
     currentQuestionIndex: number;
     score: number;
     wrongQuestionIds: string[];
-    pendingSkill: string | null;
   }) => void;
 }
 
@@ -91,7 +90,6 @@ export const useQuizEngine = ({
         currentQuestionIndex: quizState.currentQuestionIndex,
         score: quizState.score,
         wrongQuestionIds: quizState.wrongQuestionIds,
-        pendingSkill: null,
       });
     }
   }, [onChunkDraftUpdate, quizState]);
@@ -148,7 +146,7 @@ export const useQuizEngine = ({
       setPendingSession(session);
       setShowResumePrompt(true);
     }
-  }, [loading]);
+  }, [loading, quizState.activeQuestions.length]);
 
   const dismissResumePrompt = useCallback(() => {
     clearQuizSession();

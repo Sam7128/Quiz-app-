@@ -5,12 +5,8 @@ import { useAchievements } from '../hooks/useAchievements';
 import { motion } from 'framer-motion';
 import { AchievementsModal } from './AchievementsModal';
 
-interface AchievementsCardProps {
-  isAuthenticated: boolean;
-}
-
-export const AchievementsCard: React.FC<AchievementsCardProps> = ({ isAuthenticated }) => {
-  const { unlockedIds, loading } = useAchievements();
+export const AchievementsCard: React.FC = () => {
+  const { unlockedIds } = useAchievements();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const totalAchievements = ACHIEVEMENTS.length;
   const unlockedCount = unlockedIds.length;

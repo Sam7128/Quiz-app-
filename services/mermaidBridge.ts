@@ -320,22 +320,32 @@ interface ParsedEdge {
 function parseEdgeLine(line: string): ParsedEdge | null {
   // Match: A <--> B, A -->|label| B, A --> B, A --- B
   // Nodes may have inline definitions like A[text], B(text), C{text}
-  const patterns: { re: RegExp; arrowType: 'arrow' | 'none' | 'both' }[] = [
-    { re: /^(.+?)\s*<-->\s*(?:\|([^|]*)\|)?\s*(.+)$/, arrowType: 'both' },
-    { re: /^(.+?)\s*-->\s*(?:\|([^|]*)\|)?\s*(.+)$/, arrowType: 'arrow' },
-    { re: /^(.+?)\s*---\s*(?:\|([^|]*)\|)?\s*(.+)$/, arrowType: 'none' },
+  const arrows: { token: string; arrowType: 'arrow' | 'none' | 'both' }[] = [
+    { token: '<-->', arrowType: 'both' },
+    { token: '-->', arrowType: 'arrow' },
+    { token: '---', arrowType: 'none' },
   ];
 
-  for (const { re, arrowType } of patterns) {
-    const m = line.match(re);
-    if (m) {
-      const sourceRaw = m[1].trim();
-      const targetRaw = m[3].trim();
+  for (const { token, arrowType } of arrows) {
+    const arrowIndex = line.indexOf(token);
+    if (arrowIndex <= 0) continue;
+
+    const sourceRaw = line.slice(0, arrowIndex).trim();
+    let targetRaw = line.slice(arrowIndex + token.length).trim();
+    let label: string | undefined;
+    if (targetRaw.startsWith('|')) {
+      const labelEnd = targetRaw.indexOf('|', 1);
+      if (labelEnd < 0) return null;
+      label = targetRaw.slice(1, labelEnd).trim() || undefined;
+      targetRaw = targetRaw.slice(labelEnd + 1).trim();
+    }
+
+    if (sourceRaw && targetRaw) {
       const source = stripNodeShape(sourceRaw);
       const target = stripNodeShape(targetRaw);
       return {
         source, target,
-        label: m[2]?.trim() || undefined,
+        label,
         arrowType,
         sourceNodeDef: parseNodeDef(sourceRaw) ?? undefined,
         targetNodeDef: parseNodeDef(targetRaw) ?? undefined,

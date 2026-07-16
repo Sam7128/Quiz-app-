@@ -60,12 +60,6 @@ export const updateCloudStreak = async (): Promise<boolean> => {
   return true;
 };
 
-interface LocalStreakData {
-  currentStreak: number;
-  longestStreak: number;
-  lastStudyDate: string | null;
-}
-
 /**
  * Get local streak data (guest mode)
  */
@@ -76,7 +70,7 @@ export const getLocalStreak = (): StreakData => {
       return { currentStreak: 0, longestStreak: 0, lastStudyDate: null };
     }
     return JSON.parse(data);
-  } catch (e) {
+  } catch {
     return { currentStreak: 0, longestStreak: 0, lastStudyDate: null };
   }
 };

@@ -3,6 +3,9 @@
 > 狀態：美術方向與動作演出參考素材，尚未接入正式遊戲。
 > 基準風格：高清像素 JRPG、暖橘火光、冷紫地下城陰影、清晰側視戰鬥輪廓。
 
+完整的未來升格路線、驗收條件與新生成來源稿清單請見：
+`docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md`。
+
 ## 素材清單
 
 | 檔案 | 用途 |
@@ -17,6 +20,18 @@
 | `07-elemental-vfx-language.png` | 火、冰、雷的投射物、命中、光環及地面殘留 |
 | `08-environment-fx-layers.png` | 霧、火星、碎石、裂地、速度線與角色陰影 |
 | `09-battle-hud-presentation.png` | HP、連擊、Boss 登場與技能名稱的畫面層級參考 |
+
+## Production Source v2
+
+`production-source-v2/` 保存 2026-07-16 新生成的非覆蓋式生產來源稿：
+
+- 勇者、普通怪物、菁英／法師、火龍 Boss 動作 atlas。
+- 火／冰／雷四階段 VFX atlas。
+- 九技能招牌關鍵幀 atlas。
+- 八類環境 overlay atlas。
+- 每組同時保存原始色鍵檔與透明 PNG；透明檔四角 alpha 已驗證為 0。
+
+這些檔案仍需切格、修邊、補幀、pivot 對齊及 runtime bytes 驗證，不得直接加入正式 asset registry。
 
 ## 後續切圖原則
 

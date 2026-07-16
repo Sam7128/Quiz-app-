@@ -8,11 +8,8 @@
 /** 技能等級 */
 export type SkillTier = 'basic' | 'intermediate' | 'advanced' | 'ultimate' | 'epic' | 'legendary';
 
-/** 技能動畫類型 */
-type SkillAnimationType = 'css' | 'lottie' | 'sequence' | 'video';
-
 /** 技能動畫元素類型 */
-export type SkillElement = 'fire' | 'ice' | 'lightning' | 'void' | 'holy' | 'cosmic';
+type SkillElement = 'fire' | 'ice' | 'lightning' | 'void' | 'holy' | 'cosmic';
 
 /** 技能定義 */
 export interface Skill {
@@ -20,73 +17,226 @@ export interface Skill {
   name: string;
   tier: SkillTier;
   element: SkillElement;
-  animationType: SkillAnimationType;
-  assetPath: string;
-  duration: number; // milliseconds
   description: string;
 }
 
-/** 技能觸發閾值配置 */
-interface SkillThreshold {
-  tier: SkillTier;
-  requiredStreak: number;
+/** 戰鬥資料 registry */
+export interface BattleRegistry {
+  monsters: readonly Monster[];
+  skills: readonly Skill[];
 }
 
-/** 預設技能觸發閾值 */
-const SKILL_THRESHOLDS: SkillThreshold[] = [
-  { tier: 'basic', requiredStreak: 5 },
-  { tier: 'intermediate', requiredStreak: 10 },
-  { tier: 'advanced', requiredStreak: 20 },
-  { tier: 'ultimate', requiredStreak: 30 },
-  { tier: 'epic', requiredStreak: 40 },
-  { tier: 'legendary', requiredStreak: 50 },
-];
+/** 可注入亂數來源 */
+export interface BattleRandomSource {
+  next: () => number;
+}
+
+/** 可注入識別碼產生器 */
+export interface BattleIdFactory {
+  create: (prefix: string) => string;
+}
+
+/** 可注入時鐘 */
+export interface BattleClock {
+  now: () => number;
+}
+
+/** 純引擎 runtime 依賴 */
+export interface BattleEngineDependencies {
+  rng: BattleRandomSource;
+  idFactory: BattleIdFactory;
+  clock: BattleClock;
+  registry: BattleRegistry;
+  heroMaxHp?: number;
+  critChance?: number;
+  critMultiplier?: number;
+  /** Hook 內存冪等集合；不進 durable snapshot */
+  processedEventIds?: ReadonlySet<string>;
+}
+
+/** 單一待生成遭遇 */
+export interface EncounterSchedule {
+  nextEncounterKind: MonsterDifficulty | null;
+  lastEliteMilestone: number;
+  lastBossMilestone: number;
+}
+
+/** 可持久化、與 UI 無關的戰鬥進度 */
+export interface BattleProgressState {
+  schemaVersion: 2;
+  battleId: string;
+  sessionId: string;
+  heroHp: number;
+  heroMaxHp: number;
+  shield: number;
+  currentMonsterId: string | null;
+  currentMonsterHp: number;
+  currentMonsterMaxHp: number;
+  streak: number;
+  maxStreak: number;
+  questionsAnswered: number;
+  monstersDefeated: number;
+  seenMonsters: string[];
+  encounterSchedule: EncounterSchedule;
+  isActive: boolean;
+}
+
+/** 已確認答案事件 */
+export interface BattleAnswerEvent {
+  eventId: string;
+  correlationId: string;
+  isCorrect: boolean;
+  createdAt: number;
+}
+
+/** 戰鬥失敗碼 */
+type BattleFailureCode =
+  | 'MONSTER_UNAVAILABLE'
+  | 'INVALID_STATE'
+  | 'INVALID_ANSWER'
+  | 'PERSISTENCE_UNAVAILABLE';
+
+/** 可復原的 typed failure */
+export interface BattleFailure {
+  code: BattleFailureCode;
+  message: string;
+  recoverable: true;
+}
+
+/** 呈現事件種類 */
+export type BattlePresentationEventKind =
+  | 'hero_attack'
+  | 'monster_attack'
+  | 'skill_cast'
+  | 'monster_defeat'
+  | 'hero_defeat'
+  | 'monster_spawn'
+  | 'boss_entrance'
+  | 'settle';
+
+/** 呈現 phase */
+export type BattlePresentationPhase =
+  | 'idle'
+  | 'anticipation'
+  | 'travel'
+  | 'impact'
+  | 'hurt'
+  | 'defeat'
+  | 'entrance'
+  | 'spawn'
+  | 'settle'
+  | 'fallback';
+
+/** 動畫時序設定 */
+export interface MotionProfile {
+  anticipationMs: number;
+  travelMs: number;
+  impactMs: number;
+  settleMs: number;
+  safetyDeadlineMs: number;
+  reducedMotionMs: number;
+}
+
+/** 呈現事件 payload */
+export interface BattlePresentationPayload {
+  damage: number;
+  baseDamage: number;
+  isCrit: boolean;
+  multiplier: number;
+  shieldAbsorbed: number;
+  element?: SkillElement;
+  skillId?: string;
+  skillName?: string;
+  monsterId?: string;
+  monsterDifficulty?: MonsterDifficulty;
+  fallback?: boolean;
+}
+
+/** 單一有序戰鬥呈現事件 */
+export interface BattlePresentationEvent {
+  eventId: string;
+  correlationId: string;
+  sequence: number;
+  kind: BattlePresentationEventKind;
+  actorId: string;
+  targetId: string | null;
+  phase: BattlePresentationPhase;
+  durationProfile: MotionProfile;
+  payload: BattlePresentationPayload;
+}
+
+/** Presenter 接受的完成訊號；實際去重與推進只由 scheduler 執行。 */
+export type PresentationCompletionCause = 'ended' | 'error' | 'timeout' | 'manual';
+
+/** 純轉移輸出 */
+export interface BattleTransitionResult {
+  nextState: BattleProgressState;
+  presentationEvents: BattlePresentationEvent[];
+  diagnostics: BattleFailure[];
+}
+
+/** 怪物解析結果；不可用時不回傳 undefined */
+export interface MonsterResolution {
+  monster: Monster | null;
+  seenMonsters: string[];
+  difficulty: MonsterDifficulty | null;
+  failure?: BattleFailure;
+}
+
+/** runtime asset 類型 */
+export type BattleAssetKind =
+  | 'character'
+  | 'skillIcon'
+  | 'projectile'
+  | 'impact'
+  | 'background'
+  | 'video'
+  | 'audio';
+
+type BattleAssetAction = 'idle' | 'anticipate' | 'attack' | 'hurt' | 'defeat' | 'cast' | 'victory';
+type BattleAssetStatus = 'approved' | 'fallback' | 'draft';
+
+export interface BattleAssetEntry {
+  id: string;
+  src: string;
+  kind: BattleAssetKind;
+  action?: BattleAssetAction;
+  fallbackId: string | null;
+  status: BattleAssetStatus;
+  sourceNote: string;
+  usageNote: string;
+  width?: number;
+  height?: number;
+  anchor?: { x: number; y: number };
+  facing?: 'left' | 'right';
+  visualScale?: number;
+  opaque?: boolean;
+}
+
+export interface BattleAssetRegistry {
+  assets: readonly BattleAssetEntry[];
+}
 
 // ==================== 怪物系統 ====================
 
 /** 怪物難度等級 */
-export type MonsterDifficulty = 'normal' | 'elite' | 'boss';
+type MonsterDifficulty = 'normal' | 'elite' | 'boss';
 
 /** 怪物定義 */
 export interface Monster {
   id: string;
   name: string;
   difficulty: MonsterDifficulty;
-  imagePath: string;
-  hurtImagePath: string;
-  attackImagePath: string;
   maxHp: number;
   attackPower: number;
   attackDialogues: string[];
   hurtDialogues: string[];
   defeatDialogues: string[];
-  visualScale?: number;
 }
 
 // ==================== 主角系統 ====================
 
 // ==================== 戰鬥狀態 ====================
-
-/** 戰鬥動作類型 */
-export type BattleActionType =
-  | 'idle'
-  | 'hero_attack'
-  | 'hero_hurt'
-  | 'monster_attack'
-  | 'monster_hurt'
-  | 'skill_cast'
-  | 'victory'
-  | 'defeat'
-  | 'stage_transition';
-
-/** 當前進行中的動畫 */
-export interface ActiveAnimation {
-  type: BattleActionType;
-  skill?: Skill;
-  dialogue?: string;
-  startTime: number;
-  duration: number;
-}
 
 /** 戰鬥狀態 */
 export interface BattleState {
@@ -108,31 +258,18 @@ export interface BattleState {
   monstersDefeated: number;
   /** 已作答題數 (用於 Boss 出場判定) */
   questionsAnswered: number;
-  /** 剩餘怪物池 (用於不重複隨機) */
-  monsterPool: string[];
   /** 已出現過的怪物 (用於重置) */
   seenMonsters: string[];
-  /** 待觸發的技能 */
-  pendingSkill: Skill | null;
-  /** 當前動畫 */
-  currentAnimation: ActiveAnimation | null;
-  /** 上一個動作 */
-  lastAction: BattleActionType;
   /** 戰鬥是否進行中 */
   isActive: boolean;
-  /** 當前對話氣泡內容 */
-  currentDialogue: {
-    speaker: 'hero' | 'monster';
-    text: string;
-  } | null;
-  /** 上一次造成的傷害 (用於 UI 顯示) */
-  lastDamage: number;
-  /** 上一次攻擊是否暴擊 */
-  isLastHitCrit: boolean;
+  /** V2 durable state；舊 caller 可不提供 */
+  progress?: BattleProgressState;
+  /** 可復原引擎錯誤 */
+  failure?: BattleFailure;
 }
 
 /** 暴擊判定結果 */
-export interface CritResult {
+interface CritResult {
   isCrit: boolean;
   multiplier: number;
 }
@@ -142,7 +279,15 @@ export interface DamageResult {
   baseDamage: number;
   critResult: CritResult;
   finalDamage: number;
-  shieldAbsorbed?: number;
+}
+
+/** 引擎傷害輸入 */
+export interface BattleDamageInput {
+  monster: Monster;
+  streak: number;
+  skill?: Skill | null;
+  critChance?: number;
+  critMultiplier?: number;
 }
 
 /** 戰鬥狀態初始值 */
@@ -156,15 +301,8 @@ export const INITIAL_BATTLE_STATE: BattleState = {
   currentMonster: null,
   monstersDefeated: 0,
   questionsAnswered: 0,
-  monsterPool: [],
   seenMonsters: [],
-  pendingSkill: null,
-  currentAnimation: null,
-  lastAction: 'idle',
   isActive: false,
-  currentDialogue: null,
-  lastDamage: 0,
-  isLastHitCrit: false,
 };
 
 /**
@@ -174,15 +312,15 @@ export function isBattleState(value: unknown): value is BattleState {
   if (typeof value !== 'object' || value === null) return false;
   const s = value as Record<string, unknown>;
   return (
-    typeof s.streak === 'number' && s.streak >= 0 &&
-    typeof s.maxStreak === 'number' && s.maxStreak >= 0 &&
-    typeof s.heroHp === 'number' && s.heroHp <= 200 &&
-    typeof s.heroMaxHp === 'number' &&
-    typeof s.monsterHp === 'number' &&
-    typeof s.monsterMaxHp === 'number' &&
-    typeof s.monstersDefeated === 'number' && s.monstersDefeated >= 0 &&
-    typeof s.questionsAnswered === 'number' && s.questionsAnswered >= 0 &&
-    Array.isArray(s.seenMonsters) &&
+    typeof s.streak === 'number' && Number.isFinite(s.streak) && s.streak >= 0 &&
+    typeof s.maxStreak === 'number' && Number.isFinite(s.maxStreak) && s.maxStreak >= 0 &&
+    typeof s.heroHp === 'number' && Number.isFinite(s.heroHp) && s.heroHp >= 0 && s.heroHp <= 200 &&
+    typeof s.heroMaxHp === 'number' && Number.isFinite(s.heroMaxHp) && s.heroMaxHp > 0 &&
+    typeof s.monsterHp === 'number' && Number.isFinite(s.monsterHp) && s.monsterHp >= 0 &&
+    typeof s.monsterMaxHp === 'number' && Number.isFinite(s.monsterMaxHp) && s.monsterMaxHp > 0 &&
+    typeof s.monstersDefeated === 'number' && Number.isFinite(s.monstersDefeated) && s.monstersDefeated >= 0 &&
+    typeof s.questionsAnswered === 'number' && Number.isFinite(s.questionsAnswered) && s.questionsAnswered >= 0 &&
+    Array.isArray(s.seenMonsters) && s.seenMonsters.every(id => typeof id === 'string') &&
     typeof s.isActive === 'boolean'
   );
 }
@@ -198,19 +336,20 @@ export interface UseBattleSystemReturn {
   /** 戰鬥系統狀態是否已初始化完成 (防篡改驗證完畢) */
   isInitialized: boolean;
   /** 觸發答題動作 */
-  triggerAnswer: (isCorrect: boolean) => void;
+  triggerAnswer: (isCorrect: boolean, answerEventId?: string) => void;
   /** 開始戰鬥 */
   startBattle: () => void;
   /** 結束戰鬥 */
   endBattle: () => void;
   /** 開始新階段時重置戰鬥 */
   resetForNewChunk: () => void;
-  /** 動畫完成回調 */
-  onAnimationComplete: () => void;
-  /** 檢查是否有技能待觸發 */
-  hasPendingSkill: boolean;
-  /** 當前連擊達到的技能等級 */
-  currentSkillTier: SkillTier | null;
+  /** Presenter 唯一 active event；UI 不再從 BattleState 反推動畫。 */
+  activePresentationEvent: BattlePresentationEvent | null;
+  /** 將媒體／動畫訊號交回 presenter 的 event-ID gate。 */
+  completePresentationEvent: (
+    eventId: string,
+    cause: PresentationCompletionCause,
+  ) => boolean;
 }
 
 /** 進度持久化資料結構 */
@@ -220,7 +359,6 @@ export interface SavedQuizProgress {
   currentIndex: number;
   score: number;
   wrongQuestionIds: string[];
-  battleState?: Partial<BattleState>;
   savedAt: number;
 }
 
@@ -266,7 +404,6 @@ export interface ChunkDraftState {
   currentQuestionIndex: number;
   score: number;
   wrongQuestionIds: string[];
-  pendingSkill: string | null;
   updatedAt: number;
 }
 // ==================== 用戶設定 ====================

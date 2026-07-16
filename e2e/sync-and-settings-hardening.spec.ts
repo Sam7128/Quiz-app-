@@ -6,7 +6,7 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
 
     test('同步容錯與重試機制：全部同步失敗，重試後完全成功', async ({ page }) => {
         let shouldFail = true;
-        const cloudBanks: any[] = [];
+        const cloudBanks: Array<{ id: string; title: string; description: string }> = [];
 
         // 1. 初始化本地資料 (兩個本地題庫)
         await page.addInitScript(() => {

@@ -16,13 +16,16 @@
 | 挑戰服務 | `challenges.ts` | 排行榜查詢（Manual Join 策略避免 PostgREST 400） |
 | Supabase 客戶端 | `supabase.ts` | Supabase SDK 初始化 + 社交查詢 |
 | Beta 功能 | `betaFeature.ts` | Beta 功能開關管理 |
+| 戰鬥引擎 | `battle/battleEngine.ts` | 純 damage／streak／encounter transition，注入 RNG／clock／ID |
+| 戰鬥持久化 | `battle/battlePersistence.ts` | V1 唯讀遷移、V2 canonical envelope、ordered write queue |
 
 ## localStorage Key 前綴對照
 
 所有 key 以 `mindspark_` 為前綴：
 - `mindspark_banks` — 題庫陣列
 - `mindspark_recent_mistakes` — 最近 5 次錯誤（FIFO）
-- `mindspark_battle_state` — 戰鬥全狀態
+- `mindspark_battle_state` — 戰鬥 V1 legacy source（唯讀）
+- `mindspark_battle_state_v2` — durable battle snapshot（唯一新寫入 key）
 - `mindspark_quiz_session` — 進行中的測驗
 - `mindspark_practice_sessions` — 分階段練習 session 陣列（含 dirty/retry）
 - `mindspark_chunk_draft:<sessionId>:<chunkIndex>` — 分階段進行中草稿

@@ -1,6 +1,6 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { ChunkDraftState } from '../../types/battleTypes';
-import { saveChunkDraft, getChunkDraft, getChunkDraftStorageKey } from '../../services/storage';
+import { saveChunkDraft, getChunkDraft } from '../../services/storage';
 
 describe('saveChunkDraft version guard and quota recovery', () => {
   beforeEach(() => {
@@ -19,7 +19,6 @@ describe('saveChunkDraft version guard and quota recovery', () => {
       currentQuestionIndex: 5,
       score: 4,
       wrongQuestionIds: ['q-1'],
-      pendingSkill: null,
       updatedAt: 1000,
     };
 
@@ -35,7 +34,6 @@ describe('saveChunkDraft version guard and quota recovery', () => {
       currentQuestionIndex: 5,
       score: 4,
       wrongQuestionIds: ['q-1'],
-      pendingSkill: null,
       updatedAt: 2000,
     };
     saveChunkDraft(existing);
@@ -47,7 +45,6 @@ describe('saveChunkDraft version guard and quota recovery', () => {
       currentQuestionIndex: 4,
       score: 3,
       wrongQuestionIds: [],
-      pendingSkill: null,
       updatedAt: 1500, // 1.5s is older than 2.0s
     };
     saveChunkDraft(older);
@@ -62,7 +59,6 @@ describe('saveChunkDraft version guard and quota recovery', () => {
       currentQuestionIndex: 6,
       score: 5,
       wrongQuestionIds: ['q-1', 'q-2'],
-      pendingSkill: null,
       updatedAt: 2500, // 2.5s is newer
     };
     saveChunkDraft(newer);
@@ -78,7 +74,6 @@ describe('saveChunkDraft version guard and quota recovery', () => {
       currentQuestionIndex: 5,
       score: 4,
       wrongQuestionIds: ['q-1'],
-      pendingSkill: null,
       updatedAt: 5000000,
     };
     saveChunkDraft(existing);
@@ -90,7 +85,6 @@ describe('saveChunkDraft version guard and quota recovery', () => {
       currentQuestionIndex: 2,
       score: 1,
       wrongQuestionIds: [],
-      pendingSkill: null,
       updatedAt: 5000000 - (oneHourMs + 1000), // rewound by > 1 hour
     };
     saveChunkDraft(rewoundDraft);
@@ -107,7 +101,6 @@ describe('saveChunkDraft version guard and quota recovery', () => {
       currentQuestionIndex: 1,
       score: 0,
       wrongQuestionIds: [],
-      pendingSkill: null,
       updatedAt: 1000,
     };
     const draftMid: ChunkDraftState = {
@@ -116,7 +109,6 @@ describe('saveChunkDraft version guard and quota recovery', () => {
       currentQuestionIndex: 2,
       score: 1,
       wrongQuestionIds: [],
-      pendingSkill: null,
       updatedAt: 2000,
     };
     const draftNew: ChunkDraftState = {
@@ -125,7 +117,6 @@ describe('saveChunkDraft version guard and quota recovery', () => {
       currentQuestionIndex: 3,
       score: 2,
       wrongQuestionIds: [],
-      pendingSkill: null,
       updatedAt: 3000,
     };
 
@@ -150,7 +141,6 @@ describe('saveChunkDraft version guard and quota recovery', () => {
       currentQuestionIndex: 4,
       score: 3,
       wrongQuestionIds: [],
-      pendingSkill: null,
       updatedAt: 4000,
     };
 

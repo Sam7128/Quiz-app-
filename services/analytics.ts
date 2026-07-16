@@ -32,6 +32,11 @@ export const recordStudySession = async (
     .eq('session_date', today)
     .limit(1);
 
+  if (fetchError) {
+    console.error('Error fetching study session:', fetchError);
+    return false;
+  }
+
   const existing = sessions?.[0];
 
   if (existing) {
@@ -195,7 +200,7 @@ const getLocalStudySessions = (): LocalStudySession[] => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.STUDY_SESSIONS);
     return data ? JSON.parse(data) : [];
-  } catch (e) {
+  } catch {
     return [];
   }
 };

@@ -4,18 +4,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // Mock howler before import
 const howlConstructorMock = vi.fn();
 const howlPlayMock = vi.fn();
-const howlUnloadMock = vi.fn();
 
 vi.mock('howler', () => {
   return {
     Howl: class {
-      constructor(...args: any[]) {
+      constructor(...args: unknown[]) {
         howlConstructorMock(...args);
       }
       play = howlPlayMock;
       stop = vi.fn();
       playing = vi.fn(() => false);
-      unload = howlUnloadMock;
     }
   };
 });
@@ -28,27 +26,45 @@ describe('useSoundEffects Hook', () => {
     vi.clearAllMocks();
   });
 
-  it('scenario 1 & 2 & 3: howler integration lifecycle', () => {
+  it('initializes shared Howl instances and plays the mapped event cue', () => {
     const { result } = renderHook(() => useSoundEffects());
 
-    // Scenario 1: initSounds after mount should construct Howl instances
     expect(howlConstructorMock).toHaveBeenCalled();
 
-    // Scenario 2: playAttackSfx should call Howl.play
     act(() => {
-      result.current.playAttackSfx();
+      result.current.playBattleCue('hero_attack', 'lifecycle-event');
     });
     expect(howlPlayMock).toHaveBeenCalled();
 
-    // Scenario 3: unloadSfx should call Howl.unload
-    act(() => {
-      result.current.unloadSfx();
-    });
-    expect(howlUnloadMock).toHaveBeenCalled();
-
-    // Re-init calls Howl again
     vi.clearAllMocks();
     renderHook(() => useSoundEffects());
-    expect(howlConstructorMock).toHaveBeenCalled();
+    expect(howlConstructorMock).not.toHaveBeenCalled();
+  });
+
+  it('dedupes a cue per event and respects sound-off', () => {
+    const { result } = renderHook(() => useSoundEffects());
+
+    act(() => {
+      result.current.playBattleCue('hero_attack', 'event-1');
+      result.current.playBattleCue('hero_attack', 'event-1');
+      result.current.playBattleCue('hero_attack', 'event-2');
+    });
+    expect(howlPlayMock).toHaveBeenCalledTimes(2);
+
+    localStorage.setItem('mindspark_sfx_enabled', 'false');
+    const muted = renderHook(() => useSoundEffects());
+    act(() => muted.result.current.playBattleCue('hero_attack', 'event-muted'));
+    expect(howlPlayMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('maps the approved fire skill cue and leaves unapproved elements silent', () => {
+    const { result } = renderHook(() => useSoundEffects());
+
+    act(() => {
+      result.current.playBattleCue('skill_cast', 'fire-event', 'fire');
+      result.current.playBattleCue('skill_cast', 'ice-event', 'ice');
+    });
+
+    expect(howlPlayMock).toHaveBeenCalledOnce();
   });
 });

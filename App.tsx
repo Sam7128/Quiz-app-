@@ -1,6 +1,5 @@
 import React, { useReducer, useCallback, useEffect, useRef, useState } from 'react';
 import { AppView, BankMetadata } from './types';
-import { MistakeDetail } from './types/battleTypes';
 import { nukeAllBanks, saveGameMode } from './services/storage';
 import { useAuth } from './contexts/AuthContext';
 import { useRepository } from './contexts/RepositoryContext';
@@ -34,7 +33,6 @@ const App: React.FC = () => {
       currentQuestionIndex: number;
       score: number;
       wrongQuestionIds: string[];
-      pendingSkill: string | null;
     }) => void;
   } | null>(null);
 
@@ -68,7 +66,6 @@ const App: React.FC = () => {
     currentQuestionIndex: number;
     score: number;
     wrongQuestionIds: string[];
-    pendingSkill: string | null;
   }) => {
     chunkedPracticeRef.current?.updateChunkDraft(payload);
   }, []);

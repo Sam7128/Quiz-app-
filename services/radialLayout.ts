@@ -1,5 +1,4 @@
 import { type Edge as RFEdge, type Node as RFNode } from '@xyflow/react';
-import { resetClassicNodeColors } from '@/utils/graphColorHelper';
 
 const BASE_RING_RADIUS = 240;
 const NODE_ARC_GAP = 190;
@@ -200,6 +199,3 @@ export function applyRadialLayoutPreservingSticky(nodes: RFNode[], edges: RFEdge
     return position ? { ...node, position } : node;
   });
 }
-
-/** @deprecated Use resetClassicNodeColors from utils/graphColorHelper. */
-export const applyClassicColoring = resetClassicNodeColors;

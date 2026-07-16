@@ -1,16 +1,20 @@
 import React from 'react';
 import { render, act, fireEvent } from '@testing-library/react';
-import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, afterEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { FocusTimer } from '../../components/FocusTimer';
 
+interface AudioContextProbe {
+  state: AudioContextState;
+}
+
 describe('FocusTimer AudioContext lifecycle', () => {
-  let closeMock: any;
-  let audioContextInstance: any;
+  let closeMock: Mock<() => Promise<void>>;
+  let audioContextInstance: AudioContextProbe | null;
 
   beforeEach(() => {
     vi.useFakeTimers();
     closeMock = vi.fn(async () => {
-      audioContextInstance.state = 'closed';
+      if (audioContextInstance) audioContextInstance.state = 'closed';
     });
 
     // Mock AudioContext
@@ -36,16 +40,18 @@ describe('FocusTimer AudioContext lifecycle', () => {
       }
       get currentTime() { return 0; }
       get destination() { return {}; }
-    } as any;
+    } as unknown as typeof AudioContext;
 
     audioContextInstance = null;
     const OriginalAudioContext = window.AudioContext;
     window.AudioContext = class extends OriginalAudioContext {
       constructor() {
         super();
+        // The test double needs the constructed instance for assertions.
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         audioContextInstance = this;
       }
-    } as any;
+    } as unknown as typeof AudioContext;
   });
 
   afterEach(() => {

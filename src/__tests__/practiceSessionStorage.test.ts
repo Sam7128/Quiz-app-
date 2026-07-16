@@ -54,15 +54,17 @@ describe('practice session storage', () => {
     activeLocks = new Set<string>();
     Object.defineProperty(navigator, 'locks', {
       value: {
-        request: async (name: string, opts: any, cb?: any) => {
-          const options = typeof opts === 'object' ? opts : {};
-          const callback = typeof opts === 'function' ? opts : cb;
+        request: async (
+          name: string,
+          options: LockOptions,
+          callback: (lock: Lock | null) => Promise<unknown>,
+        ) => {
           if (options.ifAvailable && activeLocks.has(name)) {
             return await callback(null);
           }
           activeLocks.add(name);
           try {
-            return await callback({ name });
+            return await callback({ name, mode: options.mode ?? 'exclusive' });
           } finally {
             activeLocks.delete(name);
           }
@@ -73,8 +75,7 @@ describe('practice session storage', () => {
   });
 
   afterEach(() => {
-    // @ts-ignore
-    delete navigator.locks;
+    Reflect.deleteProperty(navigator, 'locks');
   });
 
   it('enforces guest active FIFO and total retention limits', async () => {
@@ -167,7 +168,6 @@ describe('practice session storage', () => {
       currentQuestionIndex: 4,
       score: 4,
       wrongQuestionIds: [],
-      pendingSkill: null,
       updatedAt: Date.now(),
     });
 
@@ -184,8 +184,8 @@ describe('practice session storage', () => {
   it('concurrent calls return EMPTY_SYNC_RESULT and release lock', async () => {
     supabaseMocks.getUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
     
-    let resolveSelect: any;
-    const selectPromise = new Promise((resolve) => {
+    let resolveSelect: (() => void) | undefined;
+    const selectPromise = new Promise<void>((resolve) => {
       resolveSelect = resolve;
     });
 
@@ -202,7 +202,7 @@ describe('practice session storage', () => {
     const secondResult = await syncLocalPracticeSessions();
     expect(secondResult).toEqual({ uploaded: 0, skipped: 0, dirty: 0 });
 
-    resolveSelect({ data: [], error: null });
+    resolveSelect?.();
     await firstSyncPromise;
 
     const selectMock2 = vi.fn(() => ({
@@ -225,7 +225,6 @@ describe('practice session storage', () => {
       currentQuestionIndex: 5,
       score: 5,
       wrongQuestionIds: [],
-      pendingSkill: null,
       updatedAt: Date.now(),
     });
 

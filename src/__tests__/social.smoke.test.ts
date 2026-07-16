@@ -60,11 +60,15 @@ const mock = vi.hoisted(() => {
     error: null,
   }));
 
-  const rpc = vi.fn(async (name: string, params?: Record<string, any>) => {
+  const rpc = vi.fn(async (name: string, params?: {
+    p_challenge_id?: string;
+    p_score?: number;
+    [key: string]: unknown;
+  }) => {
     if (name === 'submit_challenge_score' && params) {
       const { p_challenge_id, p_score } = params;
       const challenge = state.challenges.find((c) => c.id === p_challenge_id);
-      if (challenge) {
+      if (challenge && typeof p_score === 'number') {
         if (state.currentUserId === challenge.challenger_id) {
           challenge.challenger_score = p_score;
         } else if (state.currentUserId === challenge.opponent_id) {
@@ -388,4 +392,3 @@ describe('social and challenge smoke flow', () => {
     expect(mock.state.friendships.length).toBe(0);
   });
 });
-

@@ -11,6 +11,8 @@
 | `json-import.spec.ts` | 題庫 JSON 匯入流程 |
 | `quiz-flow.spec.ts` | 測驗開始 → 答題 → 完成 |
 | `mindspark.spec.ts` | 完整 App 流程（含遊戲模式） |
+| `battle-flow.spec.ts` | 戰鬥 streak／錯答／Boss／Game Mode／chunk 邊界 |
+| `battle-assets.spec.ts` | runtime image dimensions／alpha／format browser gate |
 
 ## 慣例
 - E2E 只覆蓋關鍵使用者旅程

@@ -18,9 +18,7 @@ vi.mock('../../services/supabase', () => ({
 import {
   sendFriendRequest,
   acceptFriendRequest,
-  removeFriend,
-  shareBank,
-  setSharedBankStatus
+  shareBank
 } from '../../services/socialService';
 
 describe('SocialService Friendships & Sharing System', () => {

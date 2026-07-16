@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Send, Users, Search, Check, Loader2, BookOpen, Share2 } from 'lucide-react';
+import { X, Send, Loader2, BookOpen, Share2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useRepository } from '../contexts/RepositoryContext';
 import { useToast } from '../contexts/ToastContext';

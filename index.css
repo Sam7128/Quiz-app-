@@ -25,8 +25,8 @@
   --color-cyan-400: #22d3ee;
   --color-cyan-500: #06b6d4;
 
-  --background-image-dungeon: url('/battle/dungeon_bg.png');
-  --background-image-dungeon-page: url('/battle/dungeon_page_bg.png');
+  --background-image-dungeon: url('/battle/dungeon_bg.webp');
+  --background-image-dungeon-page: url('/battle/dungeon_page_bg.webp');
   --background-image-glass-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
   --background-image-mesh-gradient: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
   --background-image-mesh-light: radial-gradient(at 0% 0%, hsla(253,16%,93%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,90%,1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,90%,1) 0, transparent 50%);

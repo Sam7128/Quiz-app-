@@ -3,11 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { TrendingUp, Target, Clock, Calendar } from 'lucide-react';
 import { useStudyStats } from '../hooks/useStudyStats';
 
-interface StudyStatsCardProps {
-  isAuthenticated: boolean;
-}
-
-export const StudyStatsCard: React.FC<StudyStatsCardProps> = ({ isAuthenticated }) => {
+export const StudyStatsCard: React.FC = () => {
   const { stats, dailyStats, loading } = useStudyStats();
 
   if (loading) {

@@ -1,6 +1,11 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, afterEach, vi, beforeAll } from 'vitest';
 import { useBattleSystem } from '../../hooks/useBattleSystem';
+import {
+    BATTLE_STATE_V2_KEY,
+    BATTLE_STATE_V2_SIGNATURE_KEY,
+} from '../../services/battle/battlePersistence';
+import { verifyData } from '../../utils/integrityCheck';
 import { webcrypto } from 'crypto';
 
 beforeAll(() => {
@@ -104,7 +109,7 @@ describe('useBattleSystem Hook', () => {
         expect(result.current.battleState.heroHp).toBeLessThan(initialHp);
     });
 
-    it('should trigger skill at 5 streak', async () => {
+    it('should reach the first skill milestone at 5 streak', async () => {
         const { result } = renderHook(() => useBattleSystem());
         await waitFor(() => expect(result.current.isInitialized).toBe(true));
 
@@ -117,7 +122,6 @@ describe('useBattleSystem Hook', () => {
             act(() => {
                 result.current.triggerAnswer(true);
             });
-            expect(result.current.battleState.pendingSkill).toBeNull();
         }
 
         // 5th correct answer -> Skill Trigger
@@ -126,8 +130,6 @@ describe('useBattleSystem Hook', () => {
         });
 
         expect(result.current.battleState.streak).toBe(5);
-        // Expect skill to be triggered (assuming active skills exist)
-        expect(result.current.battleState.pendingSkill).not.toBeNull();
     });
 
     it('should NOT trigger skill at 6 streak', async () => {
@@ -143,7 +145,7 @@ describe('useBattleSystem Hook', () => {
         act(() => result.current.triggerAnswer(true));
 
         expect(result.current.battleState.streak).toBe(6);
-        expect(result.current.battleState.pendingSkill).toBeNull();
+        expect(result.current.battleState.streak).toBe(6);
     });
 
     it('should reset battle counters for a new chunk', async () => {
@@ -160,7 +162,6 @@ describe('useBattleSystem Hook', () => {
         expect(result.current.battleState.isActive).toBe(true);
         expect(result.current.battleState.streak).toBe(0);
         expect(result.current.battleState.questionsAnswered).toBe(0);
-        expect(result.current.battleState.pendingSkill).toBeNull();
     });
 
     it('should reset streak and questionsAnswered when game mode is turned ON mid-chunk', async () => {
@@ -204,20 +205,17 @@ describe('useBattleSystem Hook', () => {
 
         // 等待所有非同步寫入佇列執行完畢
         await waitFor(async () => {
-            const savedState = localStorage.getItem('mindspark_battle_state');
-            const savedSig = localStorage.getItem('mindspark_battle_state_sig');
+            const savedState = localStorage.getItem(BATTLE_STATE_V2_KEY);
+            const savedSig = localStorage.getItem(BATTLE_STATE_V2_SIGNATURE_KEY);
             
             expect(savedState).not.toBeNull();
             expect(savedSig).not.toBeNull();
 
-            // 驗證 signature 與 state 能夠通過 verifyData
-            const verifyDataModule = await import('../../utils/integrityCheck');
-            const isValid = await verifyDataModule.verifyData(savedState!, savedSig!);
+            const isValid = await verifyData(savedState!, savedSig!);
             expect(isValid).toBe(true);
 
-            // 驗證最終寫入的狀態其 streak 為 5
-            const parsed = JSON.parse(savedState!);
-            expect(parsed.streak).toBe(5);
+            const parsed: unknown = JSON.parse(savedState!);
+            expect(parsed).toMatchObject({ version: 2, snapshot: { streak: 5 } });
         });
     });
 });

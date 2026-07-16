@@ -79,7 +79,7 @@ title: 忽略 YAML frontmatter
         md += `- 節點 ${i}\n`;
       }
 
-      const { nodes, edges, errors } = parseMarkdownToGraph(md);
+      const { nodes, errors } = parseMarkdownToGraph(md);
       expect(nodes).toHaveLength(GRAPH_LIMITS.MAX_NODES); // 200
       expect(errors).toHaveLength(1);
       expect(errors[0]).toContain(`節點數量超過最大限制 (${GRAPH_LIMITS.MAX_NODES})`);

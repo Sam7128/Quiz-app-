@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RotateCcw, Home, CheckCircle, XCircle, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
+import { RotateCcw, Home, CheckCircle, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Question } from '../types';
 import { isMultipleAnswer } from '../utils/typeGuards';

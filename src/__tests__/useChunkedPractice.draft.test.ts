@@ -111,7 +111,6 @@ describe('useChunkedPractice draft lifecycle', () => {
         currentQuestionIndex: 2,
         score: 2,
         wrongQuestionIds: ['q-4'],
-        pendingSkill: null,
       });
     });
 
@@ -159,7 +158,6 @@ describe('useChunkedPractice draft lifecycle', () => {
       currentQuestionIndex: 3,
       score: 3,
       wrongQuestionIds: ['q-2'],
-      pendingSkill: null,
       updatedAt: Date.now(),
     };
     saveChunkDraft(manualDraft);
@@ -185,7 +183,6 @@ describe('useChunkedPractice draft lifecycle', () => {
       currentQuestionIndex: number;
       score: number;
       wrongQuestionIds: string[];
-      pendingSkill: string | null;
     }
 
     const useChunkedResumeHarness = () => {
@@ -308,7 +305,6 @@ describe('useChunkedPractice draft lifecycle', () => {
       currentQuestionIndex: 5,
       score: 5,
       wrongQuestionIds: [],
-      pendingSkill: null,
       updatedAt: Date.now()
     });
 

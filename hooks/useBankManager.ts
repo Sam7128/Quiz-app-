@@ -7,8 +7,7 @@ import {
   getBankFolderMap,
   getBanksMeta,
   getFolders,
-  setCurrentBankId,
-  STORAGE_KEYS
+  setCurrentBankId
 } from '../services/storage';
 import { IStorageRepository } from '../services/repository';
 import { useConfirm } from './useConfirm';

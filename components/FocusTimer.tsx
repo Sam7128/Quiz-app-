@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, RotateCcw, Settings, Volume2, VolumeX } from 'lucide-react';
 
 interface FocusTimerProps {

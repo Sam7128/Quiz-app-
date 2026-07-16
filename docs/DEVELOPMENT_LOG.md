@@ -1,5 +1,54 @@
 # Development Log
 
+## 2026-07-16 [Visual Production Planning] "Battle Art & Animation Upgrade Plan"
+### 🎨 準備未來戰鬥內容全面升格來源包
+- **範圍澄清**：確認 `battle-system-quality-overhaul` 已完成 runtime 架構與現有素材品質門檻，但全角色逐動作、九技能完整 VFX、環境 layer 與完整音效組仍屬未來內容製作。
+- **新來源稿**：使用 Codex 內建 `imagegen`，依既有 roster／action／VFX reference boards 生成 hero、normal monsters、elite／wizard、dragon、elemental VFX、signature skills、environment overlays 共 7 組 production-source atlas。
+- **透明後製**：每組保留原始色鍵 PNG，另以 `remove_chroma_key.py` 產生 alpha PNG；7 個透明檔皆為 32-bit ARGB 且四角 alpha=0，未覆蓋 `public/battle/` 或加入 runtime registry。
+- **升格計畫**：新增 `docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md`，定義角色／技能矩陣、切圖與 pivot、幀數、音效缺口、五階段 roadmap、效能／無障礙 gate、YAGNI 邊界與可重用生成提示詞。
+- **文件修正**：更新素材 manifest、docs index，並移除 `components/AGENTS.md` 仍指向已刪除 legacy battle components 的過期索引。
+
+## 2026-07-16 [Final Audit Remediation] "Battle System Quality Overhaul"
+### ✅ 交叉審計、YAGNI／Dead Code 清理與最終驗證
+- **交叉審計**：以 `openspec-verify-change`、`ponytail-audit`、`ponytail-debt` 逐項核對另一位 AI 的 v1 報告；有效的 C-01～C-03、W-03～W-06 全部修復，W-02 保留規格允許的 missing-cue no-op 並補上已核准 fire cue。
+- **單一路徑**：刪除 `AttackEffect`、`FireballAttack`、`IceArrowAttack`、`SkillAnimation`、`DamageNumber` 與 legacy presentation adapter；`useBattleSystem` 只負責 pure engine commit、V2 persistence 與 presenter enqueue，`BattleArena` 只消費 active event。
+- **Presenter／Arena**：補齊 explicit phase scheduler、single compare-and-complete gate、defeat→spawn identity order、empty-registry safe UI、action→idle fallback、stable particle geometry、WebM cleanup 與 reduced-motion parity。
+- **資料與音效**：移除 draft／quiz legacy battle fields、domain media path 與 dead unload API；fire skill cue 以 event ID 去重，共用 Howl 建立／播放失敗皆安全 no-op。
+- **全庫清理**：Knip 零 findings；移除 dead exports/types/helpers、根目錄 `constants.ts`、冗餘 `@types/dompurify`，加入實際直接使用的 `@tiptap/extension-underline`；Mermaid unsafe regex 改為線性 parser，lint 從 96 warnings 清至 0。
+- **驗證**：`npx tsc --noEmit`、`npm run lint`（0/0）、47 files／301 unit tests、Knip、25-entry asset validator、production build、OpenSpec strict validation 全通過。直接 Chromium gate 驗證 20 images dimensions/alpha 與 25 題 public battle flow。
+- **Runner 限制**：Playwright CLI 在本 Windows/Codex 環境卡於 worker/webServer teardown；改用 `webapp-testing` server helper 後 56 秒完成同等 Chromium 驗證並正常停止伺服器。產品流程未失敗，環境限制記入 MEMORY。
+- **報告**：最終交叉審計與修復證據位於 `openspec/changes/battle-system-quality-overhaul/AUDIT_REPORT.md` v2.0；未執行 archive、commit 或 push。
+
+## 2026-07-15 [Planning] "Battle System & Presentation Quality Overhaul"
+### ⚔️ 完成戰鬥升級計畫與雙審查收旂
+- **實證盤點**：使用 codebase-memory-mcp、專案記憶及 targeted source audit 核實 battle Hook／Arena／SkillAnimation 耦合、stale closure、虛設 monsterPool、Boss milestone 容錯、動畫多重 completion owner、未使用 CustomEvent、素材尺寸／alpha／影片體積、reduced-motion／a11y／測試缺口；沒有把既有 timer cleanup 或 QuizCard double-submit 防護誤報成未實作。
+- **架構決定**：保留純 battle engine、durable/presentation 分離與單一 completion owner；hidden 直接 cancel-to-latest-durable；Encounter 只保留單一 pending kind，Boss milestone 可 supersede 尚未生成的 Elite，不新增遭遇 queue。
+- **資料安全**：舊 `mindspark_battle_state` 永遠只讀，V2 只寫 `mindspark_battle_state_v2`，直接消除舊 PWA 分頁覆寫新格式的競態；因舊 key 本身可回退，刪除額外 backup key／TTL。Integrity envelope 僅定位為意外損壞偵測。
+- **Ponytail 簡化**：以 Node 標準庫、browser cache／`Image.decode()`、既有 Playwright Canvas 與 `useSoundEffects` 取代 `sharp`、自製 loader cache、contact-sheet/perceptual-hash 工具、第二 audio controller 與固定六元件抽象。未核准新美術使用現有 fallback，完整 roster promotion 另案。
+- **驗證收旂**：將 114 tasks 減為 52，移除測試掃描測試、手動 mutation、1 小時 soak、500/1800 題、跨硬體 FPS/LCP/heap hard gate 與大型 screenshot matrix；保留可重現 bytes、media cleanup、quiz continuity、公開 UI 10 題與 3 個 visual baselines。
+- **審查結果**：`review-check` Round 1 找到 2 CRITICAL／7 WARNING，Ponytail 審查找到 4 CRITICAL／4 WARNING；修訂後 Round 2 兩位獨立審查員皆 `PASS`，未解決 CRITICAL／WARNING 與過度工程發現均為 0。
+- **產物與範圍**：proposal、3 delta specs、design、52-task plan、stress-test resolution 與精簡 benchmark 已同步；本輪只修改規劃，未修改 production battle code 或 runtime assets。
+
+## 2026-07-15 [Implementation] "Battle System Quality Overhaul Apply"
+### ⚔️ 純引擎、V2 持久化與單一演出生命週期
+- **Type-first engine**：新增 `services/battle/battleEngine.ts` 與完整 battle domain types；RNG、clock、ID、registry 可注入，統一 damage／crit／shield／attackPower、skill milestone、seen-monster rotation 與單一 pending encounter。Boss milestone 覆蓋尚未生成的 Elite。
+- **Hook 邊界**：`useBattleSystem` 現為 engine commit + ordered V2 persistence + `useBattlePresentation` adapter；QuizCard 保留同步 submission lock，答案確認後才建立 event ID；chunk 使用 `sessionId:chunkIndex`，Game Mode OFF cancel-to-settle 並保留 V2 durable snapshot。
+- **Persistence**：新增 canonical `mindspark_battle_state_v2`。V1 `mindspark_battle_state` 只讀遷移，不被覆寫；snapshot 排除 presentation、dialogue、coordinates、timers、audio 與 processed-event Set；tamper、unknown version、rapid write、identical bytes 均有隔離測試。
+- **Presenter／Arena**：新增 single active event queue、ID compare-and-complete gate、hidden/unmount/game-off/chunk cancellation、safe deadline 與 reduced-motion deadline；BattleArena 保留 public entry，加入 semantic HP progressbar、文字 live region、arena-relative ResizeObserver anchors、local fallback 與 typed sound cue dedupe。
+- **素材**：新增 readonly `constants/battleAssetRegistry.ts` 與 Node validator；目前 25 個 runtime asset 通過存在性、格式、fallback、bytes budget、initial critical image budget。runtime 圖片最佳化為 WebP；三支原有高階影片以 Chromium MediaRecorder 轉為真 WebM，未引入 sharp、cache service 或第二 audio controller。
+- **驗證**：`npm test -- --run` 47 files／296 tests、`npx tsc --noEmit`、`npm run lint`（0 errors／95 existing warnings）、`npm run battle:assets`（25 assets）、`npm run build` 全過；不再以 lint suppression 取代 GraphErrorCode 相容 alias。
+- **瀏覽器 gate**：Playwright canvas dimensions/alpha 通過；冷啟動禁止 WebM/技能資產，initial WebP request bytes 實測 338,080–344,570；pending Elite 只在演出 settle 後預載一張。
+- **E2E／benchmark**：battle-flow 相關 cold entry、preload、streak、Boss、錯答、fallback、toggle、chunk 全過；10 題 chunk UI、30 次 presenter enqueue/cancel、media timeout/unmount cleanup 全過。一次性 `desktop-normal.png`、`mobile-boss.png`、`reduced-motion-fallback.png` 已人工檢閱。
+- **全庫 E2E 邊界**：完整 41 tests 執行時，既有 knowledge-graph 31-node count 與 sync/settings modal 測試失敗／timeout；battle scope 不受影響，未擴大修復範圍。
+- **保留接口**：`BattleArena` public entry、`BattleState` legacy fields、AttackEffect/FireballAttack/IceArrowAttack/SkillAnimation consumer paths 保留；8.1/8.2 legacy leaf cleanup 等待零 consumer 證據與相容接口決策。
+
+## 2026-07-15 [OpenSpec Verification] "Battle System Quality Overhaul"
+### 🔎 逐 requirement 對照結果
+- **PASS**：1.1–7.7、8.3–8.5 均有代碼與測試證據；`openspec status --change battle-system-quality-overhaul --json` 顯示 artifacts 完整。
+- **CRITICAL / 未結案**：8.1、8.2 仍有 active/approved component consumers；直接刪除會破壞既有 `BattleArena`／presentation extension contract，故不擅自刪除。
+- **WARNING**：完整全庫 E2E 的既有 knowledge-graph 31-node count 與 sync/settings modal timeout 仍未修復；battle scope 聚焦 E2E 全過。
+- **SUGGESTION**：另開 legacy cleanup change，先建立新 public adapter 的 consumer migration 與 code-graph 零 consumer 證據，再清理 leaf/dead export；完成後重跑 8.6。
+
 ## 2026-07-15 [Feature Hotfix] "Knowledge Graph Progressive Branch Exploration"
 ### 🌿 將逐步探索改為真正的階層分支展開
 - **根因**：原本的 `visibleNodes` 只對所有節點做 `map`，逐步探索只改變節點內文的 `expandLevel`，沒有根據邊的階層隱藏子節點。

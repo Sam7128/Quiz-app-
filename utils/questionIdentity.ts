@@ -1,5 +1,5 @@
 import type { Question } from '../types';
-import { generateUUID, isUuid } from './uuid';
+import { generateUUID } from './uuid';
 
 export interface ImportAnalysis {
   rawCount: number;
@@ -258,5 +258,4 @@ export const ensureStableQuestionId = (question: Question): Question => {
     id: generateUUID(),
   });
 };
-
 

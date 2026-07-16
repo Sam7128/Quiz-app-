@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ClipboardList, Trash2, ChevronDown, ChevronUp, Play, X, Clock } from 'lucide-react';
+import { ClipboardList, Trash2, ChevronDown, ChevronUp, Play, Clock } from 'lucide-react';
 import { RecentMistakeSession, MistakeDetail } from '../types/battleTypes';
 import { useRepository } from '../contexts/RepositoryContext';
 import { useConfirm } from '../hooks/useConfirm';

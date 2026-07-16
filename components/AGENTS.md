@@ -17,12 +17,10 @@
 - **RestBreakModal.tsx**: 疲勞偵測休息提示
 
 ### 戰鬥系統元件
-- **BattleArena.tsx**: 戰鬥畫面主容器（Underground 主題）
-- **FireballAttack.tsx**: 火球軌跡 + 爆炸動畫
-- **IceArrowAttack.tsx**: 冰箭投射動畫
-- **AttackEffect.tsx**: 傷害指示器覆蓋層
-- **DamageNumber.tsx**: 浮動傷害數字
-- **SkillAnimation.tsx**: 技能觸發視覺效果
+- **BattleArena.tsx**: 戰鬥畫面主容器（Underground 主題）；只消費 presentation event，不擁有 damage/timer 規則
+- **BattleSkillOverlay.tsx**: 由 presentation event 驅動的唯一技能視覺覆蓋層；負責 CSS／image／WebM media completion 與 cleanup
+
+戰鬥 runtime media 必須透過 `constants/battleAssetRegistry.ts`；禁止 data URL、遠端素材與 BattleArena unmount 時全域 `unloadSfx()`。
 
 ### 知識圖元件 (Beta)
 - **KnowledgeGraphEditor.tsx**: ReactFlow 編輯器（需 Beta 功能開關）

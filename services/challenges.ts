@@ -1,8 +1,6 @@
 import { supabase } from './supabase';
-import { Question } from '../types';
-import { getCloudQuestions } from './cloudStorage';
 
-export interface Challenge {
+interface Challenge {
   id: string;
   challengerId: string;
   opponentId: string;
@@ -188,5 +186,3 @@ export const getMyChallenges = async (): Promise<ChallengeWithDetails[]> => {
     bankName: bankMap.get(item.bank_id)
   }));
 };
-
-

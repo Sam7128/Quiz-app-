@@ -1,5 +1,12 @@
 import { test, expect } from '@playwright/test';
 
+interface E2EQuestion {
+    question: string;
+    answer: string;
+}
+
+type E2EWindow = Window & { __E2E_QUESTIONS__?: E2EQuestion[] };
+
 test.describe('安全審計與壓測 E2E 測試', () => {
 
     test('1. 高頻連點防護壓測：1 秒內連點 20 次，僅 1 次生效，且出錯時鎖自動釋放', async ({ page }) => {
@@ -67,9 +74,7 @@ test.describe('安全審計與壓測 E2E 測試', () => {
         });
 
         // 3. 攔截 RPC submit_challenge_score 讓它返回 500
-        let rpcCalled = false;
         await page.route('**/rpc/submit_challenge_score', async (route) => {
-            rpcCalled = true;
             await route.fulfill({
                 status: 500,
                 contentType: 'application/json',
@@ -109,7 +114,7 @@ test.describe('安全審計與壓測 E2E 測試', () => {
             localStorage.setItem(`mindspark_bank_${bankId}`, JSON.stringify(questions));
             localStorage.setItem('mindspark_current_bank_id', bankId);
             // 存入 window 供 E2E 測試讀取以應對 random 隨機題目順序
-            (window as any).__E2E_QUESTIONS__ = questions;
+            (window as E2EWindow).__E2E_QUESTIONS__ = questions;
             // 開啟遊戲模式
             localStorage.setItem('mindspark_settings', JSON.stringify({
                 gameMode: true,
@@ -131,8 +136,8 @@ test.describe('安全審計與壓測 E2E 測試', () => {
         await page.evaluate(() => {
             const h2 = document.querySelector('h2');
             const questionText = h2 ? h2.textContent?.trim() : '';
-            const questions = (window as any).__E2E_QUESTIONS__;
-            const q = questions.find((item: any) => item.question === questionText);
+            const questions = (window as E2EWindow).__E2E_QUESTIONS__ ?? [];
+            const q = questions.find((item) => item.question === questionText);
             if (!q) throw new Error('Could not find question in E2E: ' + questionText);
 
             const buttons = document.querySelectorAll('.space-y-1 button');
@@ -154,8 +159,8 @@ test.describe('安全審計與壓測 E2E 測試', () => {
         await page.evaluate(() => {
             const h2 = document.querySelector('h2');
             const questionText = h2 ? h2.textContent?.trim() : '';
-            const questions = (window as any).__E2E_QUESTIONS__;
-            const q = questions.find((item: any) => item.question === questionText);
+            const questions = (window as E2EWindow).__E2E_QUESTIONS__ ?? [];
+            const q = questions.find((item) => item.question === questionText);
             if (!q) throw new Error('Could not find question in E2E: ' + questionText);
 
             const buttons = document.querySelectorAll('.space-y-1 button');
@@ -172,12 +177,13 @@ test.describe('安全審計與壓測 E2E 測試', () => {
         // 刷新頁面
         await page.reload();
 
-        // 檢查 localStorage 中的 battle state 沒有被清空 (如果簽名校驗失敗，useBattleSystem 會將其 removeItem 導致 isActive 變回初始 false)
-        const battleStateStr = await page.evaluate(() => localStorage.getItem('mindspark_battle_state'));
+        // 檢查 V2 battle snapshot 沒有被清空；V1 legacy key 只讀不再由新版寫入。
+        const battleStateStr = await page.evaluate(() => localStorage.getItem('mindspark_battle_state_v2'));
         expect(battleStateStr).not.toBeNull();
         
-        const battleState = JSON.parse(battleStateStr!);
-        expect(battleState.isActive).toBe(true);
-        expect(battleState.streak).toBeGreaterThanOrEqual(1);
+        const battleEnvelope = JSON.parse(battleStateStr!);
+        expect(battleEnvelope.version).toBe(2);
+        expect(battleEnvelope.snapshot.isActive).toBe(true);
+        expect(battleEnvelope.snapshot.streak).toBeGreaterThanOrEqual(1);
     });
 });

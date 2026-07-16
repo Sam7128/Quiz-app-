@@ -2,11 +2,7 @@ import React from 'react';
 import { Flame, Target } from 'lucide-react';
 import { useStreak } from '../hooks/useStreak';
 
-interface StreakCardProps {
-  isAuthenticated: boolean;
-}
-
-export const StreakCard: React.FC<StreakCardProps> = ({ isAuthenticated }) => {
+export const StreakCard: React.FC = () => {
   const { streak, loading } = useStreak();
 
   if (loading) {

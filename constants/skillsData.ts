@@ -3,7 +3,7 @@
  * Skills Database
  */
 
-import { Skill, SkillTier, SkillElement } from '../types/battleTypes';
+import { Skill, SkillTier } from '../types/battleTypes';
 
 // ==================== 初級技能 (5連) ====================
 
@@ -13,9 +13,6 @@ const BASIC_SKILLS: Skill[] = [
         name: '火球術',
         tier: 'basic',
         element: 'fire',
-        animationType: 'css',
-        assetPath: '/battle/skills/fireball.png',
-        duration: 1200,
         description: '基礎的火焰魔法，射出一顆燃燒的火球'
     },
     {
@@ -23,9 +20,6 @@ const BASIC_SKILLS: Skill[] = [
         name: '冰霜箭',
         tier: 'basic',
         element: 'ice',
-        animationType: 'css',
-        assetPath: '/battle/skills/ice_arrow.png',
-        duration: 1000,
         description: '冰冷的箭矢穿透敵人'
     },
     {
@@ -33,9 +27,6 @@ const BASIC_SKILLS: Skill[] = [
         name: '落雷',
         tier: 'basic',
         element: 'lightning',
-        animationType: 'css',
-        assetPath: '/battle/skills/thunder_bolt.png',
-        duration: 800,
         description: '從天而降的雷電'
     },
 ];
@@ -48,9 +39,6 @@ const INTERMEDIATE_SKILLS: Skill[] = [
         name: '烈焰風暴',
         tier: 'intermediate',
         element: 'fire',
-        animationType: 'css',
-        assetPath: '/battle/skills/flame_storm.png',
-        duration: 1800,
         description: '召喚熊熊烈焰席捲戰場'
     },
     {
@@ -58,9 +46,6 @@ const INTERMEDIATE_SKILLS: Skill[] = [
         name: '冰封結界',
         tier: 'intermediate',
         element: 'ice',
-        animationType: 'css',
-        assetPath: '/battle/skills/ice_barrier.png',
-        duration: 1500,
         description: '極寒的冰霜凍結一切'
     },
     {
@@ -68,9 +53,6 @@ const INTERMEDIATE_SKILLS: Skill[] = [
         name: '雷神之錘',
         tier: 'intermediate',
         element: 'lightning',
-        animationType: 'css',
-        assetPath: '/battle/skills/thunder_hammer.png',
-        duration: 1600,
         description: '巨大的雷錘從天砸下'
     },
 ];
@@ -83,9 +65,6 @@ const ADVANCED_SKILLS: Skill[] = [
         name: '隕石衝擊',
         tier: 'advanced',
         element: 'fire',
-        animationType: 'css',
-        assetPath: '/battle/skills/meteor_strike.png',
-        duration: 2500,
         description: '召喚燃燒的隕石撞擊大地'
     },
     {
@@ -93,9 +72,6 @@ const ADVANCED_SKILLS: Skill[] = [
         name: '絕對零度',
         tier: 'advanced',
         element: 'ice',
-        animationType: 'css',
-        assetPath: '/battle/skills/absolute_zero.png',
-        duration: 2200,
         description: '將周圍溫度降至絕對零度'
     },
     {
@@ -103,9 +79,6 @@ const ADVANCED_SKILLS: Skill[] = [
         name: '審判之雷',
         tier: 'advanced',
         element: 'lightning',
-        animationType: 'css',
-        assetPath: '/battle/skills/judgment_thunder.png',
-        duration: 2400,
         description: '神聖的雷電審判一切'
     },
 ];
@@ -118,9 +91,6 @@ const ULTIMATE_SKILLS: Skill[] = [
         name: '時空裂隙',
         tier: 'ultimate',
         element: 'void',
-        animationType: 'video',
-        assetPath: '/battle/videos/skill_void.webm',
-        duration: 5000,
         description: '撕裂時空，將敵人吸入虛無'
     },
 ];
@@ -133,9 +103,6 @@ const EPIC_SKILLS: Skill[] = [
         name: '終焉審判',
         tier: 'epic',
         element: 'holy',
-        animationType: 'video',
-        assetPath: '/battle/videos/skill_judgment.webm',
-        duration: 6000,
         description: '召喚神聖的審判之力'
     },
 ];
@@ -148,9 +115,6 @@ const LEGENDARY_SKILLS: Skill[] = [
         name: '創世破滅',
         tier: 'legendary',
         element: 'cosmic',
-        animationType: 'video',
-        assetPath: '/battle/videos/skill_apocalypse.webm',
-        duration: 8000,
         description: '宇宙級別的毀滅之力'
     },
 ];
@@ -158,7 +122,7 @@ const LEGENDARY_SKILLS: Skill[] = [
 // ==================== 技能查詢工具 ====================
 
 /** 所有技能合集 */
-const ALL_SKILLS: Skill[] = [
+export const ALL_SKILLS: Skill[] = [
     ...BASIC_SKILLS,
     ...INTERMEDIATE_SKILLS,
     ...ADVANCED_SKILLS,
@@ -168,7 +132,7 @@ const ALL_SKILLS: Skill[] = [
 ];
 
 /** 根據等級獲取技能池 */
-function getSkillsByTier(tier: SkillTier): Skill[] {
+export function getSkillsByTier(tier: SkillTier): Skill[] {
     switch (tier) {
         case 'basic':
             return BASIC_SKILLS;
@@ -185,15 +149,6 @@ function getSkillsByTier(tier: SkillTier): Skill[] {
         default:
             return [];
     }
-}
-
-/** 從技能池中隨機選擇一個技能 */
-export function getRandomSkill(tier: SkillTier): Skill | null {
-    const skills = getSkillsByTier(tier);
-    if (skills.length === 0) return null;
-
-    const index = Math.floor(Math.random() * skills.length);
-    return skills[index];
 }
 
 /** 根據連擊數獲取應觸發的技能等級 */

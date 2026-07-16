@@ -1,6 +1,6 @@
 # Docs Index
 
-- Updated: `2026-07-15 11:09`
+- Updated: `2026-07-16 18:18`
 - Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs.
 
 ## archive
@@ -34,6 +34,7 @@
 
 ## root
 - `battle-state-diagram.md` - Battle System State Diagram
+- `BATTLE_ART_ANIMATION_UPGRADE_PLAN.md` - 戰鬥美術、動畫、特效與音效全面升級計畫
 - `DEVELOPMENT_LOG.md` - Development Log
 - `goal_audit_prompt.md` - MindSpark 全方位架構與安全性窮盡審計 `/goal` 提示詞模板
 - `knowledge-graph-exploration-notes-2026-03-08.md` - 知識圖 / 視覺化筆記功能探索整理

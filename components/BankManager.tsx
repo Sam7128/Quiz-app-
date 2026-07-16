@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Question, BankMetadata } from '../types';
 import { Upload, Download, Trash2, AlertCircle, Plus, FileJson, FileText, Check, FolderOpen, Loader2, Sparkles, FileType, PencilLine, Save, X } from 'lucide-react';
 import { useRepository } from '../contexts/RepositoryContext';
@@ -263,9 +263,16 @@ const BankManagerComponent: React.FC<BankManagerProps> = ({
     explanation: question.explanation ?? '',
   });
 
+  const refreshBanks = useCallback(async () => {
+    setLoading(true);
+    const latestBanks = await repository.getBanks();
+    setBanks(latestBanks);
+    setLoading(false);
+  }, [repository]);
+
   useEffect(() => {
     void refreshBanks();
-  }, [repository]);
+  }, [refreshBanks]);
 
   useEffect(() => {
     if (!editingQuestionId) return;
@@ -276,13 +283,6 @@ const BankManagerComponent: React.FC<BankManagerProps> = ({
       setQuestionDraft(null);
     }
   }, [currentQuestions, editingQuestionId]);
-
-  const refreshBanks = async () => {
-    setLoading(true);
-    const latestBanks = await repository.getBanks();
-    setBanks(latestBanks);
-    setLoading(false);
-  };
 
   const handleCreateBank = async () => {
     if (!newBankName.trim()) return;
