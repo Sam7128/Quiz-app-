@@ -166,8 +166,7 @@ describe('Challenger 1: useGraphCodeMode Heuristics and Edge Cases', () => {
     expect(currentNotesDict['原概念']).toBe('這是原概念的筆記');
   });
 
-  it('挑戰：同名重複節點在 newInfos 中是否使用遞增 node-* ID 而不是隨機新 UUID，且存在潛在 ID 重複衝突風險', () => {
-    // 假設舊節點中有一個節點 ID 為 "node-3"
+  it('新增節點時維持 ID 唯一且不複製既有 node-3', () => {
     const initialNodes: RFNode[] = [
       { id: 'node-1', position: { x: 10, y: 10 }, data: { title: '概念 A', color: 'blue', fontSize: 'md' }, type: 'concept' },
       { id: 'node-3', position: { x: 20, y: 20 }, data: { title: '概念 B', color: 'green', fontSize: 'md' }, type: 'concept' }
@@ -187,34 +186,16 @@ describe('Challenger 1: useGraphCodeMode Heuristics and Edge Cases', () => {
       useGraphCodeMode(mockGraph, currentNodes, currentEdges, currentNotesDict, setNodes, setEdges, setNotesDict)
     );
 
-    // 在 Markdown 中，原本有概念 A 且新寫了兩個新概念：概念 C 和概念 D
-    // 生成時新節點 parsed ID 序列為: node-1 (概念 A), node-2 (概念 C), node-3 (概念 D)
     const newMarkdown = '# 概念圖\n- 概念 A\n- 概念 C\n- 概念 D';
 
     act(() => {
       result.current.handleCodeChange(newMarkdown);
     });
 
-    // 匹配分析：
-    // - "概念 A" 成功精確匹配到舊 "概念 A" (ID: "node-1")
-    // - "概念 C" 沒匹配到，ID 保持 "node-2"
-    // - "概念 D" 沒匹配到，ID 保持 "node-3"
-    // 但此時，如果舊的 "概念 B" (ID: "node-3") 因 Levenshtein 距離不符（與概念 C 距離 > 2，概念 D 距離 > 2）沒被匹配，
-    // 它應該要被移除。但在本次還原後：
-    // 新的 restored 列表是否包含了多個 ID 相同的節點？
     const ids = currentNodes.map(n => n.id);
-    const idCounts = ids.reduce((acc, id) => {
-      acc[id] = (acc[id] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
 
-    // 如果 "node-3" 出現次數大於 1，說明發生了 ID 衝突崩潰！
-    // 讓我們印出資訊或直接寫 assert。
-    console.log('Restored Node IDs:', ids);
-    console.log('ID counts:', idCounts);
-    
-    // 這裡我們會驗證這是否發生了衝突
-    // 如果發生了衝突，這證實了我們的 Hypothesis！
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids.filter(id => id === 'node-3')).toHaveLength(1);
   });
 
   it('挑戰：同名重複節點在不同路徑下的筆記共享缺陷與改名級聯刪除缺陷', () => {

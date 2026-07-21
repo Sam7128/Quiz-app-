@@ -2,52 +2,30 @@
 
 > 文件版本：v1.0  
 > 建立日期：2026-07-16  
-> 適用專案：MindSpark Quiz App  
-> 建議未來 OpenSpec change：`battle-content-production-overhaul`  
-> 本文件性質：內容製作與接入計畫；不是「已接入正式 runtime」的聲明
+> 適用專案：MindSpark Quiz > 本文件性質：戰鬥視覺升級計畫與資產狀態矩陣 (2026-07-20 battle-visual-upgrade 已將 26 個動作、12 個 VFX phase、9 個技能圖、5 個環境層及 12 音效接入 runtime，其餘保留為 source-only)
 
 ## 1. 結論先行
 
-目前的戰鬥程式架構、事件生命週期、持久化、資產登錄表與既有 runtime 素材品質門檻已完成升級，但「全角色逐動作動畫、每個技能的獨特完整演出、環境分層動態、完整音效組」尚未全部製作並接入。
+目前的戰鬥程式架構、事件生命週期、持久化、資產登錄表與既有 runtime 素材品質門檻已完成升級，並透過 `battle-visual-upgrade` 變更計畫將 26 個動作、12 個元素 VFX phase、9 個獨特技能關鍵幀圖片、5 個環境 overlay 以及 12 個 typed audio cue 切片轉檔並升格接入正式 runtime (`public/battle/`)。
 
-本輪已額外準備一組 `production-source-v2` 美術來源包，補齊未來最重要的視覺生產起點：
-
-- 勇者 6 種動作來源稿。
-- 史萊姆、蝙蝠、哥布林各 4 種動作來源稿。
-- 獸人、骷髏戰士、骷髏法師各 4 種動作來源稿。
-- 火龍 Boss 6 種動作來源稿。
-- 火、冰、雷各 4 階段的通用 VFX 來源稿。
-- 9 個既有技能的招牌關鍵幀來源稿。
-- 8 類環境覆蓋層來源稿。
-
-這些圖片已完成色鍵去背並保存透明 PNG，但仍屬「可切片、可補幀、可交給動畫師或後續 AI 流程使用的來源稿」。在完成本文的切圖、動作一致性、尺寸、效能與瀏覽器驗收前，不得加入 `constants/battleAssetRegistry.ts` 或覆蓋 `public/battle/` 正式資產。
+本輪準備的 `production-source-v2` 美術來源包已部分升格，未進入 runtime 的 7 項資產（`hero:victory`、`skeleton_wizard:cast`、`dragon_fire:fire-breath`、`environment-rubble`、`environment-ice-motes`、`environment-sparks`、`battle_victory.ogg`）保留為 source-only 供未來擴充使用。
 
 ## 2. 已完成與尚未完成的邊界
 
 ### 2.1 已完成
 
 - `constants/battleAssetRegistry.ts` 是唯一正式 runtime media manifest。
-- `BattleArena` 只消費 active presentation event。
-- `BattleSkillOverlay` 是目前唯一技能覆蓋層與 media completion 路徑。
-- 目前 25 個正式 runtime assets 已通過存在性、格式、fallback 與 bytes 驗證。
-- 既有角色及怪物都有可用的 idle 圖。
-- 9 個一般／中階／高階技能已有圖示或 projectile 圖。
-- 3 個大招已有 WebM。
-- BGM 與共用攻擊 cue 可用，缺少 cue 時會安全 no-op。
-- 10 張前期概念板已定義統一的高清像素 JRPG 方向。
-- 本輪新增 7 張透明 production-source atlas，並保留 7 張原始色鍵圖。
+- `battle-visual-upgrade` 升格之 26 個角色／怪物動作 (hero 4, slime 3, bat 3, goblin 3, orc 3, skeleton warrior 3, skeleton wizard 3, dragon 4)。
+- 12 個通用元素 phase (fire, ice, lightning × charge, travel, impact, residue)。
+- 9 個獨特技能圖片 (fireball, flame_storm, meteor_strike, ice_arrow, ice_barrier, absolute_zero, thunder_bolt, thunder_hammer, judgment_thunder)。
+- 5 個環境 overlay (fog, embers, shockwave, speed-lines, shadow)。
+- 12 個 typed audio cue (hit_basic, hit_critical, shield_absorb, monster_defeat, monster_spawn, boss_entrance, fire/ice/lightning cast & impact)。
 
-### 2.2 尚未完成
+### 2.2 尚未完成 (留待未來擴充)
 
-- 正式角色 sprite 仍多數只有 idle，缺少逐角色 `attack`、`cast`、`hurt`、`defeat`、`victory`、`entrance` 動作資產。
-- 新來源稿尚未拆成獨立 frame／cell，也尚未建立 animation metadata。
-- 目前角色動作 fallback 仍會回到 idle；這是安全降級，不是完整動畫。
-- 9 個技能尚未各自具備完整的 charge → travel → impact → residue 動畫序列。
-- 只有 3 個大招有 WebM；其餘技能主要依 CSS、圖示與共用效果演出。
-- 環境尚未形成可分別開關、可降級的 fog／ember／rubble／shadow 等正式 layer。
-- 音效仍以共用攻擊 cue 為主，尚無完整的命中、暴擊、護盾、生成、倒下、Boss 登場及元素專屬聲音組。
-- 尚未建立多場景或多 biome 背景輪替；目前仍以 dungeon 背景為主。
-- 尚未完成全裝置的 frame pacing、GPU fill-rate 與低階行動裝置壓力驗證。
+- `hero:victory`、`skeleton_wizard:cast`、`dragon_fire:fire-breath` 等姿勢尚未接入事件消費者，保留於 source-only。
+- `rubble`、`ice-motes`、`sparks` 等微粒環境層尚未啟用。
+- 更多場景或多 biome 背景輪替（目前維持 dungeon 主題）。
 
 ## 3. 本輪新增的美術來源包
 
@@ -55,13 +33,13 @@
 
 | 最終透明檔 | 原始色鍵檔 | 尺寸 | 最終大小 | 內容 | 狀態 |
 |---|---|---:|---:|---|---|
-| `hero-actions.png` | `hero-actions-source.png` | 1920×819 | 707,533 B | idle、attack、cast、hurt、victory、defeat | 已生成／待切圖與補幀 |
-| `normal-monster-actions.png` | `normal-monster-actions-source.png` | 1448×1086 | 923,364 B | slime、bat、goblin，各 4 動作 | 已生成／待切圖與補幀 |
-| `elite-monster-actions.png` | `elite-monster-actions-source.png` | 1086×1448 | 1,144,329 B | orc、skeleton warrior、skeleton wizard，各 4 動作 | 已生成／待切圖與補幀 |
-| `dragon-actions.png` | `dragon-actions-source.png` | 2172×724 | 1,119,511 B | entrance、idle、attack、fire breath、hurt、defeat | 已生成／待切圖與補幀 |
-| `elemental-vfx.png` | `elemental-vfx-source.png` | 1536×1024 | 1,474,232 B | 火／冰／雷 charge、travel、impact、residue | 已生成／待切圖與動畫化 |
-| `signature-skills.png` | `signature-skills-source.png` | 1254×1254 | 1,667,935 B | 9 技能招牌關鍵幀 | 已生成／待切圖與差異化動畫 |
-| `environment-overlays.png` | `environment-overlays-source.png` | 1536×1024 | 511,396 B | fog、embers、rubble、shockwave、ice motes、sparks、speed lines、shadow | 已生成／待切圖與透明度 QA |
+| `hero-actions.png` | `hero-actions-source.png` | 1920×819 | 707,533 B | idle、attack、cast、hurt、victory、defeat | 4 動作已升格 Runtime (R)，victory 為 Source-only (S) |
+| `normal-monster-actions.png` | `normal-monster-actions-source.png` | 1448×1086 | 923,364 B | slime、bat、goblin，各 4 動作 | 9 動作已升格 Runtime (R) |
+| `elite-monster-actions.png` | `elite-monster-actions-source.png` | 1086×1448 | 1,144,329 B | orc、skeleton warrior、skeleton wizard，各 4 動作 | 8 動作已升格 Runtime (R)，wizard cast 為 Source-only (S) |
+| `dragon-actions.png` | `dragon-actions-source.png` | 2172×724 | 1,119,511 B | entrance、idle、attack、fire breath、hurt、defeat | 4 動作已升格 Runtime (R)，fire breath 為 Source-only (S) |
+| `elemental-vfx.png` | `elemental-vfx-source.png` | 1536×1024 | 1,474,232 B | 火／冰／雷 charge、travel、impact、residue | 12 phase 已升格 Runtime (R) |
+| `signature-skills.png` | `signature-skills-source.png` | 1254×1254 | 1,667,935 B | 9 技能招牌關鍵幀 | 9 技能圖片已升格 Runtime (R) |
+| `environment-overlays.png` | `environment-overlays-source.png` | 1536×1024 | 511,396 B | fog、embers、rubble、shockwave、ice motes、sparks、speed lines、shadow | 5 類已升格 Runtime (R)，3 類為 Source-only (S) |
 
 ### 3.1 已執行的來源包 QA
 

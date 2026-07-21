@@ -1,5 +1,33 @@
 # Development Log
 
+## 2026-07-20 [Final Audit Remediation] "Battle Visual Upgrade"
+### ✅ OpenSpec／Ponytail／Dead Code 自動修復閉環
+- **交叉審計**：依 `openspec-verify-change` 逐項核對 38/38 tasks、7 個 capability、design 與 runtime consumer；修正二審報告的 atlas 轉置與 skill image 尺寸誤判，最終 0 個未解決 CRITICAL／WARNING。
+- **YAGNI 收斂**：私有化並收窄 asset action；移除 dead `victory`／runtime metadata／全 approved status／單一欄位 registry interface／skill icon cast action／一項式 BGM path map／不可達 Sparkles，registry 淨減 251 行。
+- **真實 metadata**：以 Chromium 解碼結果統一 Hero 320×819、Normal／Elite 362×362、Dragon 362×724、Skill 418×418；E2E 現在嚴格比對所有宣告 dimensions，不再依 promoted note 跳過。
+- **規格與無障礙**：elite atlas 統一為 3×4；tasks／benchmark 改用真實可執行證據；reduced-motion shockwave／speed-lines 為靜態終態。
+- **測試品質**：移除 runtime／E2E debug logs；Graph collision 測試加入真實 assertion；修正 pending-elite E2E 的錯誤時序，使案例在 milestone 保留現有怪時驗證 settle 後預載。
+- **最終門檻**：TypeScript、ESLint 0/0、Knip 0、79-entry asset validator、47 files／319 Vitest、production build、7/7 Chromium（1.4m）與 `git diff --check` 全通過。Ponytail debt 維持 2 筆具 2026-10-01 trigger 的既有 KnowledgeGraph 債務，0 筆無 trigger。
+- **報告**：最終證據寫入 `openspec/changes/battle-visual-upgrade/audit-report.md` v2.0；未執行 archive、commit 或 push。
+
+## 2026-07-20 [Implementation Complete] "Battle Visual Upgrade"
+### ⚔️ 完成全角色動作、技能 VFX、環境 Layer 與音效升格接入
+- **型別與規格**：擴充 `BattleAssetAction` (加入 `entrance`)、`BattleAssetKind` (加入 `environment`) 與 12 值 `BattleSoundCue`；所有 validator 與 registry maps 維持嚴格 exhaustive，`npx tsc --noEmit` exit code 0。
+- **資產切片與轉檔**：使用 `scripts/prepareBattleVisualAssets.ts` (Node 22 + `pngjs` + Playwright Chromium Canvas) 將 7 組 source-v2 atlas 切片去背轉檔為透明 WebP。共升格 26 個角色動作、12 個元素特效 phase、9 個獨特技能圖片、5 個環境 overlay 與 12 個 OggS 音效 cue；7 個未接入 consumer 之項目保留為 source-only。
+- **Registry & Validator**：更新 `constants/battleAssetRegistry.ts` 與 `scripts/validateBattleAssets.ts`，加入嚴格 byte budget、OggS header、orphan check 與 metadata 一致性驗證；`npm run battle:assets` 驗證全數通過。
+- **角色與技能消費**：`BattleArena.tsx` 支持 boss entrance 及 26 個動作映射與 grounding shadow；`BattleSkillOverlay.tsx` 整合 4 階段元素 VFX (charge/travel/impact/residue) 與 9 招牌技能獨特關鍵幀圖片，保留 WebM/reduced-motion 與 multi-tier scaling。
+- **環境與音效**：`BattleArena.tsx` 整合 fog、embers、shockwave、speed-lines 與 shadow (node count ≤ 4, hidden/unmount 停止)；`useSoundEffects.ts` 依 `BattlePresentationEvent` 實現 typed cue dedupe 與 single active Howl reset。
+- **品質門檻驗證**：TypeScript、Vitest 單元測試、ESLint (0 error / 0 warning)、Vite production build 以及 Playwright Chromium WebP canvas decode 驗證全數通過。
+
+## 2026-07-20 [Plan Review] "Battle Visual Upgrade"
+### 🔎 三輪獨立審查與 Ponytail 收斂
+- **原始 8 項**：重新核對既有 runtime 後，原始 1 CRITICAL／2 HIGH／3 MEDIUM／2 LOW 全數修復或以現況證據反駁；保留完整 resolution table，沒有把既有 `CharacterSprite` fallback、presentation queue 或 WebP baseline 誤當缺口。
+- **審查迭代**：`review-check` Round 1 兩位 reviewer 均 BLOCKED；Round 2 補出 phase audio 接線、唯一 registry、Howl handle、source-only ID 與 atlas 命名問題；Round 3 兩位獨立 reviewer 均 `PASS`，結果為 0 CRITICAL／0 WARNING／0 refutation objection。
+- **Ponytail 簡化**：刪除自製 RIFF/WebP metadata parser、Long Task gate、2 小時 soak、假 Mobile Safari、audio-to-ear、固定 FPS、telemetry、第二 scheduler/audio controller/path manifest、preloader/fallback manager；最終兩位 reviewer 均判定 `Lean already. Ship.`。
+- **單一路徑**：資產工具只使用 Node 22、既有 `pngjs` 與 Playwright Chromium Canvas；音效路徑只由 `BATTLE_ASSET_REGISTRY` 的 `cue-<BattleSoundCue>` entry 取得，`BattleArena` 既有 effects 負責 phase 呼叫與 cleanup。
+- **範圍封閉**：計畫固定為 26 個 action、12 個共享元素 phase、9 個 unique skill image、5 個 environment image、12 個 cue；七個無 consumer 項目維持 source-only。實作任務由 69 項收斂為 38 項。
+- **驗證**：`openspec status --change battle-visual-upgrade --json` 顯示 proposal／design／specs／tasks 全部 done；本輪只修改規劃與文件，production code、runtime assets 與 OpenSpec implementation checkboxes 均未變更。
+
 ## 2026-07-16 [Visual Production Planning] "Battle Art & Animation Upgrade Plan"
 ### 🎨 準備未來戰鬥內容全面升格來源包
 - **範圍澄清**：確認 `battle-system-quality-overhaul` 已完成 runtime 架構與現有素材品質門檻，但全角色逐動作、九技能完整 VFX、環境 layer 與完整音效組仍屬未來內容製作。
@@ -1040,3 +1068,8 @@ CREATE TABLE IF NOT EXISTS public.practice_sessions (
   - Identified persistent memory consumption by global `Howl` singleton audio cache objects initialized in `useSoundEffects.ts`.
 - **Audit Report V2**: Documented all findings, severities, replication paths, and side-by-side code diffs in `docs/SECURITY_AND_ARCHITECTURE_AUDIT_REPORT_V2.md`.
 - **Note**: Per user instructions, no actual source code modifications were committed to the repository. All original source files remain unaltered.
+## 2026-07-20 [Battle Visual Upgrade] Battle audio cue assets
+### 🔊 Audio assets
+- Added 13 CC0 OGG battle cues under `public/sounds/battle/`, mapped to the `battle-visual-upgrade` implementation plan names.
+- Source: OpenGameArt Sound Effects Pack 2, whose source page identifies the pack as CC0 and provides OGG files.
+- Validated all 13 files are non-empty and begin with the `OggS` container signature.

@@ -4,6 +4,7 @@ import { BATTLE_ASSET_REGISTRY } from '../constants/battleAssetRegistry';
 interface BrowserAssetProbe {
   id: string;
   src: string;
+  kind: string;
   width: number | undefined;
   height: number | undefined;
   opaque: boolean | undefined;
@@ -14,12 +15,21 @@ interface BrowserAssetResult extends BrowserAssetProbe {
   actualHeight: number;
   hasTransparentPixel: boolean;
   hasOpaquePixel: boolean;
+  cornersAlphaZero: boolean;
+  cornerAlphas: number[];
 }
 
 test('Battle image registry passes browser dimensions and alpha validation', async ({ page }) => {
   const imageAssets: BrowserAssetProbe[] = BATTLE_ASSET_REGISTRY.assets
     .filter(asset => asset.kind !== 'video' && asset.kind !== 'audio')
-    .map(({ id, src, width, height, opaque }) => ({ id, src, width, height, opaque }));
+    .map(({ id, src, kind, width, height, opaque }) => ({
+      id,
+      src,
+      kind,
+      width,
+      height,
+      opaque,
+    }));
 
   await page.goto('/');
   const results = await page.evaluate(async (assets): Promise<BrowserAssetResult[]> => {
@@ -46,12 +56,25 @@ test('Battle image registry passes browser dimensions and alpha validation', asy
           if (hasTransparentPixel && hasOpaquePixel) break;
         }
 
+        const w = canvas.width;
+        const h = canvas.height;
+        const cornerTopLeftAlpha = pixels[3];
+        const cornerTopRightAlpha = pixels[((w - 1) * 4) + 3];
+        const cornerBottomLeftAlpha = pixels[((h - 1) * w * 4) + 3];
+        const cornerBottomRightAlpha = pixels[(((h - 1) * w + (w - 1)) * 4) + 3];
+        const cornersAlphaZero = cornerTopLeftAlpha === 0
+          && cornerTopRightAlpha === 0
+          && cornerBottomLeftAlpha === 0
+          && cornerBottomRightAlpha === 0;
+
         resolve({
           ...asset,
           actualWidth: image.naturalWidth,
           actualHeight: image.naturalHeight,
           hasTransparentPixel,
           hasOpaquePixel,
+          cornersAlphaZero,
+          cornerAlphas: [cornerTopLeftAlpha, cornerTopRightAlpha, cornerBottomLeftAlpha, cornerBottomRightAlpha],
         });
       };
       image.onerror = () => reject(new Error(`Image failed to load: ${asset.src}`));
@@ -62,13 +85,22 @@ test('Battle image registry passes browser dimensions and alpha validation', asy
   }, imageAssets);
 
   for (const result of results) {
-    expect(result.actualWidth, result.id).toBe(result.width);
-    expect(result.actualHeight, result.id).toBe(result.height);
+    expect(result.actualWidth, result.id).toBeGreaterThan(0);
+    expect(result.actualHeight, result.id).toBeGreaterThan(0);
+    if (result.width !== undefined) {
+      expect(result.actualWidth, result.id).toBe(result.width);
+    }
+    if (result.height !== undefined) {
+      expect(result.actualHeight, result.id).toBe(result.height);
+    }
     if (result.opaque) {
       expect(result.hasTransparentPixel, result.id).toBe(false);
     } else {
       expect(result.hasTransparentPixel, result.id).toBe(true);
       expect(result.hasOpaquePixel, result.id).toBe(true);
+      if (result.kind === 'projectile' || result.kind === 'impact' || result.kind === 'environment' || result.kind === 'skillIcon') {
+        expect(result.cornersAlphaZero, `${result.id} corners: ${JSON.stringify(result.cornerAlphas)}`).toBe(true);
+      }
     }
   }
 });

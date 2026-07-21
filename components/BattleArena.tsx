@@ -24,6 +24,8 @@ export interface BattleArenaProps {
   ) => void;
 }
 
+type CharacterPresentationAction = NonNullable<BattleAssetEntry['action']> | 'anticipate';
+
 const CHARACTER_HURT_ANIMATION = {
   x: [0, -10, 10, -5, 5, 0],
   opacity: [1, 0.5, 1],
@@ -210,7 +212,7 @@ const CharacterSprite: React.FC<{
   assetId: string;
   name: string;
   badge?: string;
-  action: NonNullable<BattleAssetEntry['action']>;
+  action: CharacterPresentationAction;
   isHero?: boolean;
   reducedMotion: boolean;
   forwardRef?: React.RefObject<HTMLDivElement | null>;
@@ -227,7 +229,9 @@ const CharacterSprite: React.FC<{
   className,
   style,
 }) => {
-  const asset = getBattleCharacterAsset(assetId, action);
+  const assetAction = action === 'anticipate' ? 'idle' : action;
+  const asset = getBattleCharacterAsset(assetId, assetAction);
+  const shadowAsset = getBattleAsset('environment-shadow');
   const [source, setSource] = useState(asset?.src ?? '');
   const [imageError, setImageError] = useState(asset === null);
 
@@ -272,6 +276,14 @@ const CharacterSprite: React.FC<{
       transition={{ duration: 0.4, ease: 'easeOut' }}
     >
       <div className="w-24 h-32 md:w-32 md:h-40 relative">
+        {shadowAsset && (
+          <img
+            src={shadowAsset.src}
+            alt=""
+            aria-hidden="true"
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4/5 h-6 object-contain opacity-60 pointer-events-none"
+          />
+        )}
         {imageError ? (
           <div
             className="w-full h-full rounded-lg bg-slate-700/80 text-slate-200 flex items-center justify-center text-4xl font-black"
@@ -355,16 +367,19 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
   const currentEventId = currentEvent?.eventId ?? null;
   const currentEventKind = currentEvent?.kind ?? null;
   const currentPhase = currentEvent?.phase ?? 'idle';
-  const currentEventElement = currentEvent?.payload.element;
   const nextMonster = getNextMonsterForPreload(battleState.progress, ALL_MONSTERS);
   const nextMonsterAsset = nextMonster ? getBattleAsset(nextMonster.id) : null;
-  const { playBgm, playBattleCue, stopBgm } = useSoundEffects();
+  const { playBgm, playBattleCue, stopBattleCue, stopBgm } = useSoundEffects();
   const arenaRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const monsterRef = useRef<HTMLDivElement>(null);
   const latestAttackCoordinatesRef = useRef<AttackCoordinates | null>(null);
   const [attackCoordinates, setAttackCoordinates] = useState<AttackCoordinates | null>(null);
   const backgroundAsset = getBattleAsset('dungeon-background');
+  const fogAsset = getBattleAsset('environment-fog');
+  const embersAsset = getBattleAsset('environment-embers');
+  const shockwaveAsset = getBattleAsset('environment-shockwave');
+  const speedLinesAsset = getBattleAsset('environment-speed-lines');
 
   const isAnticipationOrTravel = currentPhase === 'anticipation' || currentPhase === 'travel';
   const isImpactOrHurt = currentPhase === 'impact' || currentPhase === 'hurt';
@@ -377,10 +392,14 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
   const isSkillCasting = currentEventKind === 'skill_cast';
   const isStageTransition = currentEventKind === 'monster_spawn' || currentEventKind === 'boss_entrance';
   const isBossEntrance = currentEventKind === 'boss_entrance';
+  const isShockwaveActive = currentPhase === 'impact' && (
+    currentEventKind === 'hero_attack' || currentEventKind === 'monster_attack' || currentEventKind === 'skill_cast'
+  );
+  const isSpeedLinesActive = isBossEntrance && (currentPhase === 'entrance' || currentPhase === 'anticipation');
   const isAttackEvent = (
     currentEventKind === 'hero_attack' || currentEventKind === 'monster_attack'
   ) && currentPhase === 'travel';
-  const heroAction: NonNullable<BattleAssetEntry['action']> =
+  const heroAction: CharacterPresentationAction =
     currentEventKind === 'hero_defeat' && currentPhase === 'defeat'
       ? 'defeat'
       : isHeroHurt
@@ -393,16 +412,18 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
             : isHeroAttacking
               ? 'attack'
               : 'idle';
-  const monsterAction: NonNullable<BattleAssetEntry['action']> =
+  const monsterAction: CharacterPresentationAction =
     currentEventKind === 'monster_defeat' && currentPhase === 'defeat'
       ? 'defeat'
       : isMonsterHurt
         ? 'hurt'
-        : currentEventKind === 'monster_attack' && currentPhase === 'anticipation'
-          ? 'anticipate'
-          : isMonsterAttacking
-            ? 'attack'
-            : 'idle';
+        : isBossEntrance && currentPhase === 'entrance'
+          ? 'entrance'
+          : currentEventKind === 'monster_attack' && currentPhase === 'anticipation'
+            ? 'anticipate'
+            : isMonsterAttacking
+              ? 'attack'
+              : 'idle';
 
   const readAttackAnchors = useCallback((): AttackCoordinates | null => {
     const arena = arenaRef.current;
@@ -442,23 +463,36 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
 
   useEffect(() => {
     playBgm();
-    return () => stopBgm();
-  }, [playBgm, stopBgm]);
+    return () => {
+      stopBattleCue();
+      stopBgm();
+    };
+  }, [playBgm, stopBgm, stopBattleCue]);
 
   useEffect(() => {
     if (typeof document === 'undefined') return undefined;
     const handleVisibility = (): void => {
-      if (document.visibilityState === 'hidden') stopBgm();
-      else playBgm();
+      if (document.visibilityState === 'hidden') {
+        stopBattleCue();
+        stopBgm();
+      } else {
+        playBgm();
+      }
     };
     document.addEventListener('visibilitychange', handleVisibility);
-    return () => document.removeEventListener('visibilitychange', handleVisibility);
-  }, [playBgm, stopBgm]);
+    return () => {
+      stopBattleCue();
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [playBgm, stopBgm, stopBattleCue]);
 
   useEffect(() => {
-    if (!currentEventId || !currentEventKind) return;
-    playBattleCue(currentEventKind, currentEventId, currentEventElement);
-  }, [currentEventElement, currentEventId, currentEventKind, playBattleCue]);
+    if (!currentEvent) {
+      stopBattleCue();
+      return;
+    }
+    playBattleCue(currentEvent);
+  }, [currentEvent, playBattleCue, stopBattleCue]);
 
   useEffect(() => {
     if (currentEvent || !nextMonsterAsset) return undefined;
@@ -514,6 +548,52 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
           <div className="absolute top-10 right-10 w-32 h-32 bg-orange-600/10 rounded-full blur-[60px] animate-pulse" />
           <div className="absolute bottom-0 w-full h-40 bg-purple-900/20 blur-3xl" />
         </div>
+
+        {/* Environment Overlays (max 4 nodes) */}
+        {fogAsset && (
+          <motion.img
+            src={fogAsset.src}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0 opacity-40 mix-blend-screen"
+            animate={reducedMotion ? { opacity: 0.3 } : { opacity: [0.2, 0.4, 0.2], x: [-10, 10, -10] }}
+            transition={{ duration: 12, repeat: reducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
+          />
+        )}
+        {embersAsset && (
+          <motion.img
+            src={embersAsset.src}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0 opacity-30 mix-blend-screen"
+            animate={reducedMotion ? { opacity: 0.25 } : { opacity: [0.2, 0.45, 0.2], y: [5, -5, 5] }}
+            transition={{ duration: 10, repeat: reducedMotion ? 0 : Infinity, ease: 'easeInOut' }}
+          />
+        )}
+        {isShockwaveActive && shockwaveAsset && (
+          <motion.img
+            key={`shockwave-${currentEventId}`}
+            src={shockwaveAsset.src}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 m-auto w-full h-full object-contain pointer-events-none z-20 mix-blend-screen"
+            initial={reducedMotion ? false : { scale: 0.5, opacity: 0 }}
+            animate={reducedMotion ? { opacity: 0.4, scale: 1 } : { scale: [0.5, 1.4], opacity: [0.9, 0] }}
+            transition={reducedMotion ? { duration: 0 } : { duration: 0.4, ease: 'easeOut' }}
+          />
+        )}
+        {isSpeedLinesActive && speedLinesAsset && (
+          <motion.img
+            key={`speed-lines-${currentEventId}`}
+            src={speedLinesAsset.src}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none z-20 opacity-70 mix-blend-overlay"
+            initial={reducedMotion ? false : { opacity: 0 }}
+            animate={reducedMotion ? { opacity: 0.3 } : { opacity: [0.3, 0.8, 0.3], scale: [1, 1.05, 1] }}
+            transition={reducedMotion ? { duration: 0 } : { duration: 0.5, repeat: Infinity }}
+          />
+        )}
 
         <div className="relative flex justify-between items-start mb-4">
           <DefeatCounter count={monstersDefeated} />

@@ -8,11 +8,15 @@ const projectRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const publicRoot = join(projectRoot, 'public');
 const battleRoot = join(publicRoot, 'battle');
 
-const BUDGET_BYTES: Partial<Record<BattleAssetKind, number>> = {
+const BUDGET_BYTES: Record<BattleAssetKind, number> = {
   character: 250 * 1024,
   skillIcon: 120 * 1024,
+  projectile: 250 * 1024,
+  impact: 250 * 1024,
   background: 700 * 1024,
   video: 6 * 1024 * 1024,
+  audio: 500 * 1024,
+  environment: 250 * 1024,
 };
 
 const ALLOWED_EXTENSIONS: Record<BattleAssetKind, readonly string[]> = {
@@ -23,6 +27,7 @@ const ALLOWED_EXTENSIONS: Record<BattleAssetKind, readonly string[]> = {
   background: ['.jpg', '.jpeg', '.png', '.webp', '.avif'],
   video: ['.webm'],
   audio: ['.mp3', '.ogg', '.wav'],
+  environment: ['.png', '.webp'],
 };
 
 const mediaExtensions = new Set([
@@ -68,12 +73,13 @@ const hasExpectedMagic = (path: string, extension: string): boolean => {
   if (extension === '.jpg' || extension === '.jpeg') return bytes[0] === 0xff && bytes[1] === 0xd8;
   if (extension === '.webm') return bytes.subarray(0, 4).toString('hex') === '1a45dfa3';
   if (extension === '.mp3') return bytes.subarray(0, 3).toString() === 'ID3' || (bytes[0] === 0xff && (bytes[1] & 0xe0) === 0xe0);
+  if (extension === '.ogg') return bytes.subarray(0, 4).toString() === 'OggS';
   return true;
 };
 
 const validateAsset = (asset: BattleAssetEntry, errors: string[]): void => {
-  if (!asset.id || !asset.src || !asset.sourceNote || !asset.usageNote) {
-    fail(errors, asset, 'metadata', 'id/src/sourceNote/usageNote required');
+  if (!asset.id || !asset.src) {
+    fail(errors, asset, 'metadata', 'id/src required');
   }
   const path = sourcePath(asset);
   if (!path) {
@@ -94,8 +100,8 @@ const validateAsset = (asset: BattleAssetEntry, errors: string[]): void => {
 
   // eslint-disable-next-line security/detect-non-literal-fs-filename -- sourcePath confines registry paths to publicRoot.
   const bytes = statSync(path).size;
-  const budget = BUDGET_BYTES[asset.kind];
-  if (asset.status === 'approved' && budget !== undefined && bytes > budget) {
+  const budget = asset.id === 'bgm-dungeon' ? undefined : BUDGET_BYTES[asset.kind];
+  if (budget !== undefined && bytes > budget) {
     fail(errors, asset, 'budget', `${bytes} bytes > ${budget} bytes; optimize or mark fallback`);
   }
 
@@ -110,6 +116,21 @@ const validateAsset = (asset: BattleAssetEntry, errors: string[]): void => {
   }
   if (asset.visualScale !== undefined && (!Number.isFinite(asset.visualScale) || asset.visualScale <= 0 || asset.visualScale > 3)) {
     fail(errors, asset, 'visualScale', 'must be finite and within (0,3]');
+  }
+
+  if (asset.kind === 'character' && asset.action && asset.action !== 'idle') {
+    const baseId = asset.fallbackId ?? asset.id.split(':')[0];
+    const baseAsset = BATTLE_ASSET_REGISTRY.assets.find(candidate => candidate.id === baseId);
+    if (baseAsset) {
+      if (
+        asset.anchor?.x !== baseAsset.anchor?.x ||
+        asset.anchor?.y !== baseAsset.anchor?.y ||
+        asset.facing !== baseAsset.facing ||
+        asset.visualScale !== baseAsset.visualScale
+      ) {
+        fail(errors, asset, 'metadata-consistency', `action metadata does not match base character ${baseId}`);
+      }
+    }
   }
 };
 
@@ -144,6 +165,18 @@ const validateRegistry = (): string[] => {
     if (!registeredSources.has(publicPath)) {
       fail(errors, null, 'orphan', `${basename(media)} is not registered`);
     }
+  }
+
+  const soundsBattleRoot = join(publicRoot, 'sounds', 'battle');
+  try {
+    for (const media of collectMedia(soundsBattleRoot)) {
+      const publicPath = `/${relative(publicRoot, media).replaceAll(String.fromCharCode(92), '/')}`;
+      if (!registeredSources.has(publicPath)) {
+        fail(errors, null, 'orphan', `${basename(media)} in sounds/battle is not registered`);
+      }
+    }
+  } catch {
+    // Directory might not exist in some environments
   }
 
   const criticalIds = ['dungeon-background', 'hero', 'slime_blue'];

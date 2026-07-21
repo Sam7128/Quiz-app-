@@ -1,6 +1,6 @@
 # 戰鬥視覺升級前期素材包
 
-> 狀態：美術方向與動作演出參考素材，尚未接入正式遊戲。
+> 狀態：26 個角色動作、12 個元素特效 phase、9 個獨特技能圖片、5 個環境 overlay 與 12 個音效 cue 已完成切圖轉檔並正式接入正式遊戲 runtime；未使用的 7 個姿勢與素材保留為 source-only。
 > 基準風格：高清像素 JRPG、暖橘火光、冷紫地下城陰影、清晰側視戰鬥輪廓。
 
 完整的未來升格路線、驗收條件與新生成來源稿清單請見：
@@ -47,3 +47,38 @@
 - 工具：Codex 內建 image generation
 - 類型：`stylized-concept`／`ui-mockup`
 - 共同限制：無商標、無浮水印、無額外角色、保持一致像素密度。
+
+## Runtime Assets Manifest (battle-visual-upgrade)
+
+### Promoted Runtime Assets
+1. **Character Actions (26 WebPs)**:
+   - Hero (4): `hero:attack`, `hero:cast`, `hero:hurt`, `hero:defeat`
+   - Slime Blue (3): `slime_blue:attack`, `slime_blue:hurt`, `slime_blue:defeat`
+   - Bat Shadow (3): `bat_shadow:attack`, `bat_shadow:hurt`, `bat_shadow:defeat`
+   - Goblin Green (3): `goblin_green:attack`, `goblin_green:hurt`, `goblin_green:defeat`
+   - Orc Berserker (3): `orc_berserker:attack`, `orc_berserker:hurt`, `orc_berserker:defeat`
+   - Skeleton Warrior (3): `skeleton_warrior:attack`, `skeleton_warrior:hurt`, `skeleton_warrior:defeat`
+   - Skeleton Wizard (3): `skeleton_wizard:attack`, `skeleton_wizard:hurt`, `skeleton_wizard:defeat`
+   - Dragon Fire (4): `dragon_fire:entrance`, `dragon_fire:attack`, `dragon_fire:hurt`, `dragon_fire:defeat`
+2. **Elemental VFX Phases (12 WebPs)**:
+   - Fire (4): `vfx-fire-charge`, `vfx-fire-travel`, `vfx-fire-impact`, `vfx-fire-residue`
+   - Ice (4): `vfx-ice-charge`, `vfx-ice-travel`, `vfx-ice-impact`, `vfx-ice-residue`
+   - Lightning (4): `vfx-lightning-charge`, `vfx-lightning-travel`, `vfx-lightning-impact`, `vfx-lightning-residue`
+3. **Signature Skill Images (9 WebPs)**:
+   - `fireball`, `flame_storm`, `meteor_strike`
+   - `ice_arrow`, `ice_barrier`, `absolute_zero`
+   - `thunder_bolt`, `thunder_hammer`, `judgment_thunder`
+4. **Environment Overlays (5 WebPs)**:
+   - `environment-fog`, `environment-embers`, `environment-shockwave`, `environment-speed-lines`, `environment-shadow`
+5. **Audio Cues (12 Oggs)**:
+   - `cue-hit_basic`, `cue-hit_critical`, `cue-shield_absorb`, `cue-monster_defeat`, `cue-monster_spawn`, `cue-boss_entrance`
+   - `cue-skill_fire_cast`, `cue-skill_fire_impact`, `cue-skill_ice_cast`, `cue-skill_ice_impact`, `cue-skill_lightning_cast`, `cue-skill_lightning_impact`
+
+### Source-Only Exclusions (7 items)
+1. `hero:victory` (`public/battle/hero_victory.webp` - Not promoted)
+2. `skeleton_wizard:cast` (`public/battle/monsters/skeleton_wizard_cast.webp` - Not promoted)
+3. `dragon_fire:fire-breath` (`public/battle/monsters/dragon_fire_breath.webp` - Not promoted)
+4. `environment-rubble` (`public/battle/environment/rubble.webp` - Not promoted)
+5. `environment-ice-motes` (`public/battle/environment/ice_motes.webp` - Not promoted)
+6. `environment-sparks` (`public/battle/environment/sparks.webp` - Not promoted)
+7. `battle_victory.ogg` (`assets-prep/battle-visual-upgrade/audio-source/battle_victory.ogg` - Retained in prep)

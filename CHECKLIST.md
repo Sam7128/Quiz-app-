@@ -3,6 +3,16 @@
 此文件用於追蹤專案開發進度、待辦事項與已完成項目。
 
 ## 🟡 進行中 (In Progress)
+- [x] **[Plan Review]** `battle-visual-upgrade` 開發計畫迭代審查與 YAGNI 簡化
+    - [x] 打包 proposal／delta specs／design／tasks／stress-test-report／benchmark-harness 與程式現況證據
+    - [x] 依 `review-check` 派發兩位獨立審查員並彙總 canonical issues
+    - [x] 依 `ponytail`／`ponytail-review` 刪除兩週內無實體消費者的擴充點與非必要抽象
+    - [x] 修訂 artifacts 後反覆審查，直到 CRITICAL／WARNING 與過度工程發現為 0
+    - [x] 驗證 OpenSpec 一致性，並同步開發日誌與必要的專案記憶
+- [x] **[Battle Audio Assets]** 取得並驗證 `battle-visual-upgrade` 所需 13 個 CC0 `.ogg` 音效 cue
+    - [x] 從 OpenGameArt 的 CC0 Sound Effects Pack 2 下載 OGG 音效包
+    - [x] 依計畫用途挑選、重新命名並放入 `public/sounds/battle/`
+    - [x] 驗證 13 個檔案均存在、非空且具 OggS 標頭
 - [x] **[Battle Content Production Plan]** 戰鬥美術、動畫、特效與音效未來全面升級計畫
     - [x] 盤點正式 runtime、前期概念板與仍缺少的角色／技能／環境／音效內容
     - [x] 生成 7 組 `production-source-v2` 候選 atlas，保留原始色鍵與透明 PNG
@@ -223,6 +233,15 @@
     - [x] 清理稽核報告中屬實的 `any` 型別破口
     - [x] 移除 reducer 內的 gameMode 持久化副作用
     - [x] 補強 QuizCard 延遲計時器卸載清理
+
+## 🔵 本輪最終審計與自動修復（battle-visual-upgrade）
+
+- [x] 讀取 `MEMORY.md`、OpenSpec artifacts、既有 `audit-report.md` 與三個指定技能規則
+- [x] 依 `openspec-verify-change` 獨立核對完整性、正確性與設計一致性
+- [x] 執行 `ponytail-audit` 與 `ponytail-debt`，確認過度工程、死代碼與債務標記
+- [x] 分派實作子代理完成已確認修復，並通過聚焦與完整自動化驗證
+- [x] 重跑兩項 Ponytail 審計至可修範圍 0 問題
+- [x] 更新 OpenSpec 審計報告、`docs/DEVELOPMENT_LOG.md` 與必要專案記憶
 
 ## 📝 備註 (Notes)
 - 已完成 App 组件的徹底瘦身，後續新增視圖請優先於 `AppContent.tsx` 進行註冊。

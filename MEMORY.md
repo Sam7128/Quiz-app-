@@ -27,19 +27,13 @@
 
 <!-- BEGIN AUTO-GENERATED: MEMORY MAP -->
 ## Auto-Generated Memory Map
-- Refreshed: `2026-07-16 20:13`
+- Refreshed: `2026-07-20 17:11`
 - Project root: `C:\Users\user\Desktop\Quiz-app-`
 
 ### Key Files
-- [PATH-001] `AGENTS.md`
-- [PATH-002] `MEMORY.md`
-- [PATH-003] `README.md`
-- [PATH-004] `CHECKLIST.md`
-- [PATH-005] `package.json`
-- [PATH-006] `tsconfig.json`
-- [PATH-007] `docs/INDEX.md`
-- [PATH-008] `App.tsx`
-- [PATH-009] `eslint.config.js`
+- [PATH-001] `AGENTS.md` | [PATH-002] `MEMORY.md` | [PATH-003] `README.md`
+- [PATH-004] `CHECKLIST.md` | [PATH-005] `package.json` | [PATH-006] `tsconfig.json`
+- [PATH-007] `docs/INDEX.md` | [PATH-008] `App.tsx` | [PATH-009] `dashboard.png` | [PATH-010] `eslint.config.js`
 
 ### Module Index
 | ID | Path | Local AGENTS | Purpose | Tags |
@@ -60,16 +54,17 @@
 ### OpenSpec Snapshot
 - Main specs: `openspec/specs/`
 - Active changes: none.
-- Archived: `24`
-- [OS-ARC-001] `openspec/changes/archive/2026-07-14-knowledge-graph-v2-upgrade/` (proposal, design, tasks, specs:5)
-- [OS-ARC-002] `openspec/changes/archive/2026-07-16-battle-system-quality-overhaul/` (proposal, design, tasks, specs:4)
-- [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2)
-- [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks)
-- [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)
+- Archived: 25
+- [OS-ARC-001] `2026-07-16-battle-system-quality-overhaul/` (proposal, design, tasks, specs:4)
+- [OS-ARC-002] `2026-07-20-battle-visual-upgrade/` (proposal, design, tasks, specs:7)
+- [OS-ARC-003] `enhance-quiz-experience/` (proposal, design, tasks, specs:2)
+- [OS-ARC-004] `quiz-ux-enhancement/` (proposal, tasks)
+- [OS-ARC-005] `supabase-cloud-sync/` (proposal, tasks)
 
 ### Nested AGENTS
-- [AG-001] `components/AGENTS.md` | [AG-002] `constants/AGENTS.md` | [AG-003] `contexts/AGENTS.md`
-- [AG-004] `e2e/AGENTS.md` | [AG-005] `hooks/AGENTS.md` | [AG-006] `openspec/AGENTS.md`
+- [AG-001] `components/AGENTS.md` | [AG-002] `constants/AGENTS.md`
+- [AG-003] `contexts/AGENTS.md` | [AG-004] `e2e/AGENTS.md`
+- [AG-005] `hooks/AGENTS.md` | [AG-006] `openspec/AGENTS.md`
 - [AG-007] `services/AGENTS.md` | [AG-008] `src/__tests__/AGENTS.md`
 <!-- END AUTO-GENERATED: MEMORY MAP -->
 
@@ -132,6 +127,8 @@
 - [FACT-065] Battle final verify 2026-07-16: 47 tests/301, tsc, build, 25 assets, Knip, lint 0 errors/warnings pass; Chromium 20 image dim/alpha + 25-answer flow.
 - [FACT-066] Legacy renderers/state adapters removed; `BattleSkillOverlay`+`useBattlePresentation` only completion path. Evidence: `openspec/changes/battle-system-quality-overhaul/AUDIT_REPORT.md` v2.0.
 - [FACT-067] Battle art plan: `docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md`; `assets-prep/battle-visual-upgrade/production-source-v2/` 7 chroma masters + 7 alpha atlases. Not runtime-approved/registered.
+- [FACT-068] `battle-visual-upgrade` done 2026-07-20. Promoted: 26 action, 12 VFX phase, 9 skill img, 5 env overlay, 12 audio cue → runtime. 7 source-only. Pass tsc, unit, lint, build, asset validator, Playwright WebP canvas decode.
+- [FACT-069] `battle-visual-upgrade` final audit v2.0 closed 2026-07-20. 38/38 tasks, 47 files/319 Vitest, 7/7 Chromium, Knip 0, Ponytail actionable 0, 79 assets. Registry metadata cleanup -251 lines. Evidence: `openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md`.
 
 ## Active Decisions
 - [DEC-001] Rules in `AGENTS.md`, facts in `MEMORY.md`. No `GEMINI.md`.
@@ -146,7 +143,9 @@
 - [DEC-010] `applyDagreLayout` deprecated alias until 2026-10-01; new callers use `applyAutoLayout`.
 - [DEC-011] Supabase migration `20260714000000_create_knowledge_graphs.sql` must apply remotely; client local fallback for stale schema-cache.
 - [DEC-012] Graph images private to JSON/offline + sync; no public Storage without design.
-- [DEC-013] `battle-system-quality-overhaul` archived (`openspec/changes/archive/2026-07-16-battle-system-quality-overhaul/`). Pure engine, durable/presentation split, hidden cancel-to-settle, V1 read-only/V2 new key, single pending encounter (Boss supersedes Elite), single asset registry. No sharp, custom cache, second audio controller or cross-hardware gate.
+- [DEC-013] `battle-system-quality-overhaul` archived. Pure engine, durable/presentation split, hidden cancel-to-settle, V1 read-only/V2 new key, single pending encounter (Boss supersedes Elite), single asset registry. No sharp, custom cache, second audio controller or cross-hardware gate.
+- [DEC-014] Battle visual: Node 22 + `pngjs` + Playwright Canvas. Audio: `cue-<BattleSoundCue>` registry-only. No custom WebP parsers, second lifecycle owners, telemetry, preload/fallback managers, generic perf frameworks.
+- [DEC-015] Battle asset registry: runtime lookup only. Provenance in manifest; UI-only states do not widen `BattleAssetAction`; BGM+cues resolve from same registry.
 
 ## Hotspots
 - [HOT-001] `App.tsx` & `vite.config.ts`: Chunking & providers.
@@ -179,7 +178,7 @@
 - [RISK-003] MCP config script permissions.
 - [RISK-004] Playwright CLI/webServer teardown hangs Windows/Codex; direct Chromium via `webapp-testing` helper exits cleanly.
 - [RISK-006] Supabase `public.knowledge_graphs` not in schema cache; graph cloud sync local-only until migration deployed.
-- [RISK-007] `production-source-v2` battle atlases are key-pose sources, not shippable sprites; need slicing, cleanup, alignment, frame production, browser QA.
+- [RISK-007] 7 unused source-only items: `hero:victory`, `skeleton_wizard:cast`, `dragon_fire:fire-breath`, `environment-rubble`, `environment-ice-motes`, `environment-sparks`, `battle_victory.ogg`.
 
 ## Next Refresh Triggers
 - Move dirs, add/remove `AGENTS.md`, schema updates.

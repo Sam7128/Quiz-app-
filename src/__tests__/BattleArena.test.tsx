@@ -1,14 +1,27 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BATTLE_MOTION_PROFILES } from '../../services/battle/battleEngine';
 import { BattlePresentationEvent, BattleState, INITIAL_BATTLE_STATE } from '../../types/battleTypes';
 import { BattleArena } from '../../components/BattleArena';
 import { DEFAULT_BATTLE_REGISTRY } from '../../services/battle/battleEngine';
 
+const { reducedMotionMock } = vi.hoisted(() => ({
+  reducedMotionMock: vi.fn(() => false),
+}));
+
+vi.mock('framer-motion', async () => {
+  const actual = await vi.importActual<typeof import('framer-motion')>('framer-motion');
+  return {
+    ...actual,
+    useReducedMotion: reducedMotionMock,
+  };
+});
+
 vi.mock('../../hooks/useSoundEffects', () => ({
   useSoundEffects: () => ({
     playBgm: vi.fn(),
     playBattleCue: vi.fn(),
+    stopBattleCue: vi.fn(),
     stopBgm: vi.fn(),
   }),
 }));
@@ -20,7 +33,7 @@ const createEvent = (): BattlePresentationEvent => ({
   kind: 'hero_attack',
   actorId: 'hero',
   targetId: 'slime_blue',
-  phase: 'anticipation',
+  phase: 'travel',
   durationProfile: BATTLE_MOTION_PROFILES.hero_attack,
   payload: {
     damage: 12,
@@ -43,6 +56,10 @@ const createState = (): BattleState => {
 };
 
 describe('BattleArena', () => {
+  beforeEach(() => {
+    reducedMotionMock.mockReturnValue(false);
+  });
+
   it('exposes semantic HP progress bars and one live event message', () => {
     render(
       <BattleArena
@@ -125,11 +142,13 @@ describe('BattleArena', () => {
       />
     );
 
-    expect(screen.getByAltText(defeated.name)).not.toBeNull();
+    const defeatedImg = screen.getByAltText(defeated.name) as HTMLImageElement;
+    expect(defeatedImg).not.toBeNull();
+    expect(defeatedImg.src).toContain('/battle/monsters/slime_blue_defeat.webp');
     expect(screen.queryByAltText(nextMonster.name)).toBeNull();
   });
 
-  it('announces a bounded boss entrance with a visible title', () => {
+  it('announces a bounded boss entrance with a visible title and entrance action asset', () => {
     const boss = DEFAULT_BATTLE_REGISTRY.monsters.find(monster => monster.difficulty === 'boss');
     if (!boss) throw new Error('Expected a boss fixture');
     const bossEvent: BattlePresentationEvent = {
@@ -160,5 +179,162 @@ describe('BattleArena', () => {
 
     expect(screen.getByText(`BOSS 來襲：${boss.name}`)).not.toBeNull();
     expect(screen.getByText(`${boss.name} · BOSS`)).not.toBeNull();
+    const bossImg = screen.getByAltText(boss.name) as HTMLImageElement;
+    expect(bossImg.src).toContain('/battle/monsters/dragon_fire_entrance.webp');
+  });
+
+  it('renders correct action assets for hero attack, cast, hurt, and defeat', () => {
+    const baseState = createState();
+
+    // Hero Attack (travel phase)
+    const { rerender } = render(
+      <BattleArena
+        battleState={baseState}
+        activeEvent={{ ...createEvent(), kind: 'hero_attack', phase: 'travel' }}
+        onPresentationComplete={vi.fn()}
+      />
+    );
+    const heroAttackImg = screen.getByAltText('勇者') as HTMLImageElement;
+    expect(heroAttackImg.src).toContain('/battle/hero_attack.webp');
+
+    // Hero Cast (travel phase)
+    rerender(
+      <BattleArena
+        battleState={baseState}
+        activeEvent={{ ...createEvent(), kind: 'skill_cast', phase: 'travel' }}
+        onPresentationComplete={vi.fn()}
+      />
+    );
+    const heroCastImg = screen.getByAltText('勇者') as HTMLImageElement;
+    expect(heroCastImg.src).toContain('/battle/hero_cast.webp');
+
+    // Hero Hurt (impact phase during monster attack)
+    rerender(
+      <BattleArena
+        battleState={baseState}
+        activeEvent={{ ...createEvent(), kind: 'monster_attack', phase: 'impact' }}
+        onPresentationComplete={vi.fn()}
+      />
+    );
+    const heroHurtImg = screen.getByAltText('勇者') as HTMLImageElement;
+    expect(heroHurtImg.src).toContain('/battle/hero_hurt.webp');
+
+    // Hero Defeat (defeat phase)
+    rerender(
+      <BattleArena
+        battleState={baseState}
+        activeEvent={{ ...createEvent(), kind: 'hero_defeat', phase: 'defeat' }}
+        onPresentationComplete={vi.fn()}
+      />
+    );
+    const heroDefeatImg = screen.getByAltText('勇者') as HTMLImageElement;
+    expect(heroDefeatImg.src).toContain('/battle/hero_defeat.webp');
+  });
+
+  it('renders correct action assets for monster attack, hurt, and defeat', () => {
+    const baseState = createState();
+    const monsterName = baseState.currentMonster!.name;
+
+    // Monster Attack (travel phase)
+    const { rerender } = render(
+      <BattleArena
+        battleState={baseState}
+        activeEvent={{ ...createEvent(), kind: 'monster_attack', phase: 'travel' }}
+        onPresentationComplete={vi.fn()}
+      />
+    );
+    const monsterAttackImg = screen.getByAltText(monsterName) as HTMLImageElement;
+    expect(monsterAttackImg.src).toContain('/battle/monsters/slime_blue_attack.webp');
+
+    // Monster Hurt (impact phase during hero attack)
+    rerender(
+      <BattleArena
+        battleState={baseState}
+        activeEvent={{ ...createEvent(), kind: 'hero_attack', phase: 'impact' }}
+        onPresentationComplete={vi.fn()}
+      />
+    );
+    const monsterHurtImg = screen.getByAltText(monsterName) as HTMLImageElement;
+    expect(monsterHurtImg.src).toContain('/battle/monsters/slime_blue_hurt.webp');
+
+    // Monster Defeat (defeat phase)
+    rerender(
+      <BattleArena
+        battleState={baseState}
+        activeEvent={{ ...createEvent(), kind: 'monster_defeat', phase: 'defeat' }}
+        onPresentationComplete={vi.fn()}
+      />
+    );
+    const monsterDefeatImg = screen.getByAltText(monsterName) as HTMLImageElement;
+    expect(monsterDefeatImg.src).toContain('/battle/monsters/slime_blue_defeat.webp');
+  });
+
+  it('uses idle assets during anticipation without falling back other action assets', () => {
+    const baseState = createState();
+    const monsterName = baseState.currentMonster!.name;
+    const { rerender } = render(
+      <BattleArena
+        battleState={baseState}
+        activeEvent={{ ...createEvent(), kind: 'hero_attack', phase: 'anticipation' }}
+        onPresentationComplete={vi.fn()}
+      />
+    );
+
+    expect((screen.getByAltText('勇者') as HTMLImageElement).src).toContain('/battle/hero.webp');
+
+    rerender(
+      <BattleArena
+        battleState={baseState}
+        activeEvent={{ ...createEvent(), kind: 'monster_attack', phase: 'anticipation' }}
+        onPresentationComplete={vi.fn()}
+      />
+    );
+
+    expect((screen.getByAltText(monsterName) as HTMLImageElement).src)
+      .toContain('/battle/monsters/slime_blue.webp');
+
+    rerender(
+      <BattleArena
+        battleState={baseState}
+        activeEvent={{ ...createEvent(), kind: 'monster_attack', phase: 'travel' }}
+        onPresentationComplete={vi.fn()}
+      />
+    );
+
+    expect((screen.getByAltText(monsterName) as HTMLImageElement).src)
+      .toContain('/battle/monsters/slime_blue_attack.webp');
+  });
+
+  it('mounts reduced-motion shockwave and speed lines at their static final state', () => {
+    reducedMotionMock.mockReturnValue(true);
+    const baseState = createState();
+    const { rerender } = render(
+      <BattleArena
+        battleState={baseState}
+        activeEvent={{ ...createEvent(), kind: 'hero_attack', phase: 'impact' }}
+        onPresentationComplete={vi.fn()}
+      />
+    );
+
+    const shockwave = document.querySelector<HTMLImageElement>(
+      'img[src$="/battle/environment/shockwave.webp"]',
+    );
+    expect(shockwave).not.toBeNull();
+    expect(shockwave?.style.opacity).not.toBe('0');
+    expect(shockwave?.style.transform).not.toContain('0.5');
+
+    rerender(
+      <BattleArena
+        battleState={baseState}
+        activeEvent={{ ...createEvent(), kind: 'boss_entrance', phase: 'entrance' }}
+        onPresentationComplete={vi.fn()}
+      />
+    );
+
+    const speedLines = document.querySelector<HTMLImageElement>(
+      'img[src$="/battle/environment/speed_lines.webp"]',
+    );
+    expect(speedLines).not.toBeNull();
+    expect(speedLines?.style.opacity).not.toBe('0');
   });
 });

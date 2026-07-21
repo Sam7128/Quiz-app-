@@ -1,14 +1,14 @@
 {
   "project_root": "C:\\Users\\user\\Desktop\\Quiz-app-",
-  "built_at": "2026-07-16T12:13:11+00:00",
+  "built_at": "2026-07-20T09:11:52+00:00",
   "file_hashes": {
     "AGENTS.md": "7b2f18a58a46d59ef8d0463288c73719eb8ec2e19c4fef8fded5875e52724c8c",
-    "CHECKLIST.md": "88065f14e6d9077e602b7efe2e34cdd28d73e02a2906498d6d0fd503d8ec7d58",
-    "MEMORY.md": "d41bdbcf3ed1bbdd6d55f35e675e1214101cd527dd359b3349b7daf05d87d7a8",
+    "CHECKLIST.md": "6293f47b41a2305cf6d4762c3e7e00458103fabd016ff05433fcd63d4ae845ec",
+    "MEMORY.md": "39a939fb4cea6323610a87e06341d98d191beaf8609853b479a2c0899a6d4569",
     "README.md": "33820d726f48318f91d139f20624c26a8f3a23d79c42ec666c269c915fe25924",
-    "docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md": "560a7e3f660f10825dfdc674bdfce8c60519c628378d62d5598fd53715862384",
-    "docs/DEVELOPMENT_LOG.md": "67ff1a3ef406b0625745d70ccc64bdedc7e1f4df6ad7f9c726287c284361de9b",
-    "docs/INDEX.md": "1698f2a703d69b3cf7d9e06d9a8a93c5349f965b7728b3376189f14084601ef0",
+    "docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md": "77de776158af49da4809c31a6940d5aa4fc4eeec1975af9f798df30ebb65de02",
+    "docs/DEVELOPMENT_LOG.md": "49f5f5332d4518cd3c556f52e7fe16235ee6ec1766f51556abdf2b087b1c426a",
+    "docs/INDEX.md": "6fac45eac800e03594aa6667fa73144e8a649173cf09831b18fc0c8adff7685c",
     "docs/SECURITY_AND_ARCHITECTURE_AUDIT_REPORT_V2.md": "d04b816f7eb21cea541aafd683aa424eadb9c13fb6112e580a3f9d7372fb86b5",
     "docs/SECURITY_AND_LOGIC_AUDIT_REPORT.md": "6b068d1aa0ac196fe1401f7063c84a98d73fe8b8fc19f648fe41b67e02e8a7cc",
     "docs/SECURITY_LIMITATIONS.md": "727fffa5e7afeb75fb1d04c858fe7bfede38a54dbbfe7917e6aa55cdd21a0393",
@@ -205,6 +205,19 @@
     "openspec/changes/archive/2026-07-16-battle-system-quality-overhaul/specs/battle-presentation/spec.md": "a32e7aaa8e4f1d91acd1f3395782e859850da43292865d4a78e1537451698a39",
     "openspec/changes/archive/2026-07-16-battle-system-quality-overhaul/stress-test-report.md": "2a5d81bf16d06480d54e9880cdd76b2e0d588f244000f0c4bbb8caf3984c56ee",
     "openspec/changes/archive/2026-07-16-battle-system-quality-overhaul/tasks.md": "0194207e13906324a4527599e970b5a2cec98a07b0f8ee0c9f4b6a1c35362c0d",
+    "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md": "dbf129d823a4fee8df60d5a1ced3a2f312b19dd0648276abc80d109a554407cd",
+    "openspec/changes/archive/2026-07-20-battle-visual-upgrade/benchmark-harness.md": "de3405a838d0ef146d78f0e0199eee5509fd67e41440570a241b8b6390d63212",
+    "openspec/changes/archive/2026-07-20-battle-visual-upgrade/design.md": "5edf516fc1fffbbe6d454ae7205a6561bedf5b9b36104c78479578195598cccf",
+    "openspec/changes/archive/2026-07-20-battle-visual-upgrade/proposal.md": "44f7fef54bc31a7588e68d87a474cf721cf56bd99e07770e111ad66e20ea8ddb",
+    "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md": "b48fa02270efb774bacaeeb4f0ff8e5ef6f1a666e4fc2870b4442e88dd4cca21",
+    "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md": "ec8eed8342fb816b21bf8896c35ecd9d65b3d34280ab868b6ba62fc4e42c2845",
+    "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-character-actions/spec.md": "eabcea555b32309af2821751c5fb874fc8b061ceed84dbf3d643dc58dab80511",
+    "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-environment-presentation/spec.md": "010e29d5ff17831fb2db4aada18058eb977b29862842096009ee2e4a5a374b01",
+    "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-mode/spec.md": "7305cb7cffd65d7d169730336138b50bce3a6cf2bbddd0111046dcea0ff1cde6",
+    "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-skill-vfx-library/spec.md": "ba8e09f16e6812f4a6be755a39fd860a5af1655fdb96c474a86a8c924534577c",
+    "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/skill-effects-engine/spec.md": "521c054460a73a00149ad1e1bc20e62578380f22f09dbc23aa41e69fc6fb90a1",
+    "openspec/changes/archive/2026-07-20-battle-visual-upgrade/stress-test-report.md": "6ea747380c3e558dd6d4543db2e9a8c9168c463e811ca4972bccdbc92226e340",
+    "openspec/changes/archive/2026-07-20-battle-visual-upgrade/tasks.md": "771893b829c66b28c4c5f91b97598c7f0cd77b79f630c22706a48f76759c4c9a",
     "openspec/changes/archive/enhance-quiz-experience/design.md": "dbb5784fc8a800c7d2c8e243963d7dee934aa7d3275c9604f6c90f93f81764ef",
     "openspec/changes/archive/enhance-quiz-experience/proposal.md": "0bb7f494748e205b5c47438aa7089eea592cfe4ee1614f3d91aa6a333bc211ec",
     "openspec/changes/archive/enhance-quiz-experience/specs/config-quiz-size/spec.md": "a7eb590a7f74b6f01cdc01d75cfe65d41c6ebf45ebba50b83e5c1451440a1354",
@@ -249,7 +262,7 @@
     "openspec/specs/touch-device-ux/spec.md": "1c1fd06ce623e6b0f5ccf850a87cf5f0685470e662b38360b5113b8ba0d0751f",
     "openspec/specs/vercel-security-headers/spec.md": "8bf34cb966d2512c33c617a5f7dbe63d3e8f7c2eeb8843b8a8cd3e7e2c8cce53"
   },
-  "entry_count": 3384,
+  "entry_count": 3517,
   "entries": [
     {
       "path": "AGENTS.md",
@@ -319,7 +332,7 @@
       "heading": "開發進度檢查清單 (Development Checklist) > 🟡 進行中 (In Progress)",
       "category": "source-doc",
       "scope": "source",
-      "text": "- [x] **[Battle Content Production Plan]** 戰鬥美術、動畫、特效與音效未來全面升級計畫\n    - [x] 盤點正式 runtime、前期概念板與仍缺少的角色／技能／環境／音效內容\n    - [x] 生成 7 組 `production-source-v2` 候選 atlas，保留原始色鍵與透明 PNG\n    - [x] 驗證透明輸出為 32-bit ARGB、四角 alpha=0，且未接入正式 registry\n    - [x] 產出詳細 Markdown 計畫，含素材矩陣、升格步驟、驗收 gate、YAGNI 邊界與重用提示詞\n- [x] **[Independent Final Audit]** `battle-system-quality-overhaul` 最終獨立審計與修復\n    - [x] 依 `openspec-verify-change` 核對 proposal／specs／design／tasks 與實作\n    - [x] 依 `ponytail-audit` 執行全庫過度工程與死代碼審計；Knip 零項\n    - [x] 依 `ponytail-debt` 盤點技術債標記、上限與升級觸發條件（2 markers／0 no-trigger）\n    - [x] 交叉驗證 v1 報告、修復有效缺陷並產出 v2 Markdown 報告\n- [x] **[OpenSpec Planning]** 戰鬥系統與視覺演出全面品質升級 `battle-system-quality-overhaul`\n    - [x] 以 codebase-memory-mcp／專案記憶核實現況、耦合與問題真實性\n    - [x] 建立 proposal、delta specs、design、tasks 完整規劃產物\n    - [x] 將大任務拆分成初階執行者可完成的小任務與逐步自動驗證\n    - [x] 定義資料安全、動畫生命週期、效能、無障礙與回滾邊界\n    - [x] 驗證 OpenSpec artifacts 完整且達到 apply-ready\n- [ ] **[Battle UX Discovery]** 戰鬥視覺升級前期討論與素材準備\n    - [x] 盤點戰鬥元件、動畫事件與現有圖像資產\n    - [x] 定義高清像素 JRPG 候選美術方向\n    - [x] 建立怪物／技能素材需求清單與生成規格\n    - [x] 產出角色陣容與動作參考板\n    - [x] 產出技能圖示與元素特效參考板\n    - [x] 產出戰場環境特效與 HUD 演出參考板\n    - [x] 完成前期素材包索引，等待使用者檢閱（不修改正式戰鬥功能）"
+      "text": "- [x] **[Plan Review]** `battle-visual-upgrade` 開發計畫迭代審查與 YAGNI 簡化\n    - [x] 打包 proposal／delta specs／design／tasks／stress-test-report／benchmark-harness 與程式現況證據\n    - [x] 依 `review-check` 派發兩位獨立審查員並彙總 canonical issues\n    - [x] 依 `ponytail`／`ponytail-review` 刪除兩週內無實體消費者的擴充點與非必要抽象\n    - [x] 修訂 artifacts 後反覆審查，直到 CRITICAL／WARNING 與過度工程發現為 0\n    - [x] 驗證 OpenSpec 一致性，並同步開發日誌與必要的專案記憶\n- [x] **[Battle Audio Assets]** 取得並驗證 `battle-visual-upgrade` 所需 13 個 CC0 `.ogg` 音效 cue\n    - [x] 從 OpenGameArt 的 CC0 Sound Effects Pack 2 下載 OGG 音效包\n    - [x] 依計畫用途挑選、重新命名並放入 `public/sounds/battle/`\n    - [x] 驗證 13 個檔案均存在、非空且具 OggS 標頭\n- [x] **[Battle Content Production Plan]** 戰鬥美術、動畫、特效與音效未來全面升級計畫\n    - [x] 盤點正式 runtime、前期概念板與仍缺少的角色／技能／環境／音效內容\n    - [x] 生成 7 組 `production-source-v2` 候選 atlas，保留原始色鍵與透明 PNG\n    - [x] 驗證透明輸出為 32-bit ARGB、四角 alpha=0，且未接入正式 registry\n    - [x] 產出詳細 Markdown 計畫，含素材矩陣、升格步驟、驗收 gate、YAGNI 邊界與重用提示詞\n- [x] **[Independent Final Audit]** `battle-system-quality-overhaul` 最終獨立審計與修復\n    - [x] 依 `openspec-verify-change` 核對 proposal／specs／design／tasks 與實作\n    - [x] 依 `ponytail-audit` 執行全庫過度工程與死代碼審計；Knip 零項\n    - [x] 依 `ponytail-debt` 盤點技術債標記、上限與升級觸發條件（2 markers／0 no-trigger）\n    - [x] 交叉驗證 v1 報告、修復有效缺陷並產出 v2 Markdown 報告\n- [x] **[OpenSpec Planning]** 戰鬥系統與視覺演出全面品質升級 `battle-system-quality-overhaul`\n    - [x] 以 codebase-memory-mcp／專案記憶核實現況、耦合與問題真實性\n    - [x] 建立 proposal、delta specs、design、tasks 完整規劃產物\n    - [x] 將大任務拆分成初階執行者可完成的小任務與逐步自動驗證\n    - [x] 定義資料安全、動畫生命週期、效能、無障礙與回滾邊界\n    - [x] 驗證 OpenSpec artifacts 完整且達到 apply-ready\n- [ ] **[Battle UX Discovery]** 戰鬥視覺升級前期討論與素材準備\n    - [x] 盤點戰鬥元件、動畫事件與現有圖像資產\n    - [x] 定義高清像素 JRPG 候選美術方向\n    - [x] 建立怪物／技能素材需求清單與生成規格\n    - [x] 產出角色陣容與動作參考板\n    - [x] 產出技能圖示與元素特效參考板\n    - [x] 產出戰場環境特效與 HUD 演出參考板\n    - [x] 完成前期素材包索引，等待使用者檢閱（不修改正式戰鬥功能）"
     },
     {
       "path": "CHECKLIST.md",
@@ -400,6 +413,13 @@
     },
     {
       "path": "CHECKLIST.md",
+      "heading": "開發進度檢查清單 (Development Checklist) > 🔵 本輪最終審計與自動修復（battle-visual-upgrade）",
+      "category": "source-doc",
+      "scope": "source",
+      "text": "- [x] 讀取 `MEMORY.md`、OpenSpec artifacts、既有 `audit-report.md` 與三個指定技能規則\n- [x] 依 `openspec-verify-change` 獨立核對完整性、正確性與設計一致性\n- [x] 執行 `ponytail-audit` 與 `ponytail-debt`，確認過度工程、死代碼與債務標記\n- [x] 分派實作子代理完成已確認修復，並通過聚焦與完整自動化驗證\n- [x] 重跑兩項 Ponytail 審計至可修範圍 0 問題\n- [x] 更新 OpenSpec 審計報告、`docs/DEVELOPMENT_LOG.md` 與必要專案記憶"
+    },
+    {
+      "path": "CHECKLIST.md",
       "heading": "開發進度檢查清單 (Development Checklist) > 📝 備註 (Notes)",
       "category": "source-doc",
       "scope": "source",
@@ -438,7 +458,7 @@
       "heading": "MEMORY.md > Auto-Generated Memory Map",
       "category": "memory",
       "scope": "memory",
-      "text": "- Refreshed: `2026-07-16 20:13`\n- Project root: `C:\\Users\\user\\Desktop\\Quiz-app-`"
+      "text": "- Refreshed: `2026-07-20 17:11`\n- Project root: `C:\\Users\\user\\Desktop\\Quiz-app-`"
     },
     {
       "path": "MEMORY.md",
@@ -459,7 +479,7 @@
       "heading": "MEMORY.md > Auto-Generated Memory Map > OpenSpec Snapshot",
       "category": "memory",
       "scope": "memory",
-      "text": "- Main specs: `openspec/specs/`\n- Active changes: none detected.\n- Archived changes: `24`\n- [OS-ARC-001] `openspec/changes/archive/2026-07-14-knowledge-graph-v2-upgrade/` (proposal, design, tasks, specs:5)\n- [OS-ARC-002] `openspec/changes/archive/2026-07-16-battle-system-quality-overhaul/` (proposal, design, tasks, specs:4)\n- [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2)\n- [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks)\n- [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)"
+      "text": "- Main specs: `openspec/specs/`\n- Active changes: none detected.\n- Archived changes: `25`\n- [OS-ARC-001] `openspec/changes/archive/2026-07-16-battle-system-quality-overhaul/` (proposal, design, tasks, specs:4)\n- [OS-ARC-002] `openspec/changes/archive/2026-07-20-battle-visual-upgrade/` (proposal, design, tasks, specs:7)\n- [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2)\n- [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks)\n- [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)"
     },
     {
       "path": "MEMORY.md",
@@ -473,63 +493,63 @@
       "heading": "MEMORY.md > Stable Facts (part 1)",
       "category": "fact",
       "scope": "memory",
-      "text": "- [FACT-010] Keys: `mindspark_` prefix; data safety on migration.\n- [FACT-011] Questions in Cloud. SM-2/mistakes in localStorage.\n- [FACT-012] Graph workspace fully functional + unit tested.\n- [FACT-013] `.project-memory/project_memory_mcp_entry.py` exposes memory tools.\n- [FACT-014] Dedupe by `sourceQuestionKey` / `sourceFingerprint`.\n- [FACT-015] Delete question cleans SM-2, mistakes, active session.\n- [FACT-016] Import UI summary before apply.\n- [FACT-017] Import modes: `append` (default), `merge`, `replace`.\n- [FACT-018] Practice draft: `mindspark_chunk_draft:<sessionId>:<chunkIndex>`.\n- [FACT-019] Practice sync: LWW. Offline dirty fallback cache.\n- [FACT-020] App + Quiz engine callbacks: `useCallback` prevent race conditions.\n- [FACT-021] Cloud save cleans practice cache (`removePracticeSessionCache`).\n- [FACT-022] Git: exclude `node_modules` + reserved names (e.g., `nul`).\n- [FACT-023] Validate AI config via localStorage schema check.\n- [FACT-024] Cloud empty checks before local sync prevent overwrite.\n- [FACT-025] Dynamic HMAC-SHA256 integrity, no local salt.\n- [FACT-026] Reset battle state on out-of-range bounds.\n- [FACT-027] DB RPC `submit_challenge_score` resolves score winner.\n- [FACT-028] Dead code scan: `npx -y knip --reporter compact`.\n- [FACT-029] Code Hygiene spec: delete dead code, narrow export scopes.\n- [FACT-030] Concurrency: `runWithSyncLock` (Web Locks + localStorage fallback).\n- [FACT-031] FocusTimer: close AudioContext via `activeAudioContextsRef` on unmount.\n- [FACT-032] Keyboard shortcuts: `handlersRef` pattern, empty deps `[]`.\n- [FACT-033] Offline writes: `mindspark_dirty_banks` cleared on cloud sync success.\n- [FACT-034] GraphStorage: length limits, HTML escape, concat migration, fail-fast, Blob checks.\n- [FACT-035] GraphLayout & Bridge: subtree-sector radial layout + density-aware rings; sticky/image nodes preserve positions; MD parser, Nd > 12 auto-expand.\n- [FACT-036] GraphUI: sticky limit (20), TipTap HTML note, unmount auto-flush, B"
+      "text": "- [FACT-010] Keys `mindspark_` prefix. Data safety on migration.\n- [FACT-011] Cloud questions. SM-2/mistakes localStorage.\n- [FACT-012] Graph workspace functional + unit tested.\n- [FACT-013] `.project-memory/project_memory_mcp_entry.py` memory tools.\n- [FACT-014] Dedupe by `sourceQuestionKey` / `sourceFingerprint`.\n- [FACT-015] Delete question cleans SM-2, mistakes, session.\n- [FACT-016] Import UI summary before apply.\n- [FACT-017] Import modes: `append` (default), `merge`, `replace`.\n- [FACT-018] Practice draft: `mindspark_chunk_draft:<sessionId>:<chunkIndex>`.\n- [FACT-019] Practice sync: LWW. Offline dirty fallback cache.\n- [FACT-020] App + Quiz engine callbacks: `useCallback` prevent race.\n- [FACT-021] Cloud save cleans practice cache (`removePracticeSessionCache`).\n- [FACT-022] Git exclude `node_modules` + reserved names (`nul`).\n- [FACT-023] Validate AI config via localStorage schema check.\n- [FACT-024] Cloud empty checks prevent local overwrite.\n- [FACT-025] Dynamic HMAC-SHA256 integrity, no local salt.\n- [FACT-026] Reset battle on out-of-range bounds.\n- [FACT-027] DB RPC `submit_challenge_score` resolves score winner.\n- [FACT-028] Dead code scan: `npx -y knip --reporter compact`.\n- [FACT-029] Code Hygiene: delete dead code, narrow exports.\n- [FACT-030] Concurrency: `runWithSyncLock` (Web Locks + localStorage fallback).\n- [FACT-031] FocusTimer: close AudioContext via `activeAudioContextsRef` on unmount.\n- [FACT-032] Keyboard: `handlersRef`, empty deps `[]`.\n- [FACT-033] Offline writes: `mindspark_dirty_banks` cleared on sync success.\n- [FACT-034] GraphStorage: length limits, HTML escape, concat migration, fail-fast, Blob checks.\n- [FACT-035] GraphLayout+Bridge: subtree-sector radial + density-aware rings; sticky/image preserve positions; MD parser, Nd > 12 auto-expand.\n- [FACT-036] GraphUI: sticky limit 20, TipTap HTML note, unmount auto-flush, Base64 intercept, orphaned notes reconnect.\n- [FACT-037] Workspace: scroll sync, Fullscreen Recovery on load error, v"
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Stable Facts (part 2)",
       "category": "fact",
       "scope": "memory",
-      "text": "ase64 intercept, orphaned notes reconnect.\n- [FACT-037] Workspace: scroll sync, Fullscreen Recovery on fatal load error, visual/code split, MD serialization/restoration.\n- [FACT-038] Rule 11: Mark `openspec/changes/<name>/tasks.md` `[x]` before completion.\n- [FACT-039] AI Prompts & Mermaid Import: AIPromptGuide supports Quiz + Graph tabs. GraphEditor import modal shows syntax limits + conversion prompt copy.\n- [FACT-040] KG V2: Ancestor Path + Heuristic Levenshtein ≤2 matching, no UUID in MD.\n- [FACT-041] Graph images: safe external http/https URLs + up to 4 standalone PNG/JPEG/WebP uploads; compressed to bounded WebP data URLs inside graph JSON; reuse graph cloud sync (no public Storage bucket).\n- [FACT-042] Cloud sync: ConfirmDialog conflict resolution + save copy + online retry.\n- [FACT-043] 3 core Hooks: `useGraphState`, `useGraphCodeMode`, `useGraphStorage`.\n- [FACT-044] GraphErrorCode + GraphWarningCode enums; graphUtils, MermaidModal extracted; Hooks <150 lines; GraphCodeEditor amber rename hint banner.\n- [FACT-045] `runHeuristicNodeMatching` extracted to `graphUtils.ts`; `useGraphCodeMode.ts` shrunk to 104 lines; all `: any` removed from challenger tests.\n- [FACT-046] `graphCloudStorage.ts` LWW sync + `mindspark_dirty_graphs` queue; autosave upload + 2-layer ConfirmDialog conflict resolution; online auto-retry; beta gate removed.\n- [FACT-047] V1 audit fixes: schema v3 + migration, canonical GraphErrorCode, URL validation, dark-mode default solid.\n- [FACT-048] Editor: 3 Hooks + DropNodeMenu (concept/rounded/diamond/sticky). Drag-create checks MAX_NODES/MAX_EDGES.\n- [FACT-049] Six branch-coherent presets via `constants/graphThemes.ts` + `utils/graphColorHelper.ts`; sticky/image nodes preserved; radial moves concept nodes only; solid bg uses `${color}CC`.\n- [FACT-050] MD bridge uses `:` ancestor path separator. Levenshtein ≤2 heuristic + duplicate-path first-match tested. UI rename-warning shown. No UUID in MD.\n- [FACT-051] `uploadGraphToCloudSafely` compares c"
+      "text": "isual/code split, MD serialize/restore.\n- [FACT-038] Rule 11: Mark `openspec/changes/<name>/tasks.md` `[x]` before complete.\n- [FACT-039] AI Prompts+Mermaid Import: AIPromptGuide Quiz+Graph tabs. GraphEditor import shows syntax limits + conversion prompt copy.\n- [FACT-040] KG V2: Ancestor Path + Levenshtein ≤2 matching, no UUID in MD.\n- [FACT-041] Graph images: safe http/https URLs + 4 standalone PNG/JPEG/WebP uploads; compressed to WebP data URLs inside JSON; reuse graph cloud sync (no public Storage).\n- [FACT-042] Cloud sync: ConfirmDialog conflict resolution + save copy + online retry.\n- [FACT-043] 3 core Hooks: `useGraphState`, `useGraphCodeMode`, `useGraphStorage`.\n- [FACT-044] GraphErrorCode+GraphWarningCode enums; graphUtils, MermaidModal extracted; Hooks <150 lines; GraphCodeEditor amber rename hint.\n- [FACT-045] `runHeuristicNodeMatching` in `graphUtils.ts`; `useGraphCodeMode.ts` 104 lines; all `: any` removed from challenger tests.\n- [FACT-046] `graphCloudStorage.ts` LWW sync + `mindspark_dirty_graphs` queue; autosave upload + 2-layer ConfirmDialog; online retry; beta gate removed.\n- [FACT-047] V1 audit fixes: schema v3 + migration, canonical GraphErrorCode, URL validation, dark-mode solid default.\n- [FACT-048] Editor: 3 Hooks + DropNodeMenu (concept/rounded/diamond/sticky). Drag-create checks MAX_NODES/MAX_EDGES.\n- [FACT-049] 6 branch-coherent presets via `constants/graphThemes.ts` + `utils/graphColorHelper.ts`; sticky/image preserved; radial moves concept only; solid bg `${color}CC`.\n- [FACT-050] MD bridge uses `:` ancestor path separator. Levenshtein ≤2 + duplicate-path first-match tested. UI rename-warning. No UUID in MD.\n- [FACT-051] `uploadGraphToCloudSafely` compares cloud timestamp before upsert. Conflict marks dirty. Supabase migration + RLS in `supabase/migrations/`.\n- [FACT-052] 2026-07-14 KG UX hotfix: 41 tests/261, tsc zero, Vite build pass, UX + 31-node no-overlap Playwright.\n- [FACT-053] 5 graph specs synced to `openspec/specs/`. V1 audit to"
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Stable Facts (part 3)",
       "category": "fact",
       "scope": "memory",
-      "text": "loud timestamp before upsert. Conflict marks dirty. Supabase migration + RLS in `supabase/migrations/`.\n- [FACT-052] 2026-07-14 KG UX hotfix verification: 41 test files / 261 tests, tsc zero, Vite build passed, plus focused UX and 31-node no-overlap Playwright tests.\n- [FACT-053] 5 graph capability specs synced to `openspec/specs/`. V1 audit artifacts moved to `docs/audits/knowledge-graph-v2-upgrade/`.\n- [FACT-054] Canonical auto-layout: `applyAutoLayout`. Deprecated `applyDagreLayout` alias. `useGraphConflictResolver` in `useGraphStorage`. `setCodeErrors` dead export removed. ConceptNode shape guard.\n- [FACT-055] Graph cloud fallback: `PGRST205`/missing `knowledge_graphs` disables cloud sync for session, preserves local graphs, deduplicates same-user in-flight sync requests.\n- [FACT-056] Node handle click opens `NodeQuickMenu` (edit, 8 shapes, add child, delete); drag-to-blank uses `DropNodeMenu`.\n- [FACT-057] Free layout permits concept dragging; radial layout applies subtree-aware auto-placement, locks concepts, keeps sticky/image draggable.\n- [FACT-058] Self-loop/dangling edges removed during normalization after one-time raw backup at `mindspark_graphs_backup_pre_v3_cleanup`.\n- [FACT-059] Supabase JS 2.110.5 required for Auth Web Locks orphan-lock recovery; Node engine >=22. `runWithSyncLock` returns native lock Promise so AbortError observable.\n- [FACT-060] KG shapes: hexagon uses SVG polygon with complete stroke; cloud uses SVG path with multiple lobes. Progressive reading cycles L1/L2/L3 via `hooks/graphStateUtils.ts`.\n- [FACT-061] KG progressive reading branch-based: `hooks/graphStateUtils.ts` exposes root-plus-direct-child visibility + per-node branch toggling; `GraphEditor.tsx` filters hidden descendant nodes/edges while preserving full graph in state.\n- [FACT-062] Battle apply: `services/battle/battleEngine.ts` is pure and injectable; `useBattleSystem` owns latest-state commit, V2 ordered persistence and `useBattlePresentation` enqueue only.\n- [FACT-063] "
+      "text": " `docs/audits/knowledge-graph-v2-upgrade/`.\n- [FACT-054] Canonical layout: `applyAutoLayout`. Deprecated `applyDagreLayout` alias. `useGraphConflictResolver`. `setCodeErrors` dead export removed.\n- [FACT-055] Graph cloud fallback: `PGRST205`/missing `knowledge_graphs` disables sync, preserves local, dedupes in-flight.\n- [FACT-056] Node click opens `NodeQuickMenu` (edit, 8 shapes, add child, delete); drag-to-blank `DropNodeMenu`.\n- [FACT-057] Free layout: concept draggable. Radial: subtree auto-placement, concepts locked, sticky/image draggable.\n- [FACT-058] Self-loop/dangling edges removed after one-time backup at `mindspark_graphs_backup_pre_v3_cleanup`.\n- [FACT-059] Supabase JS 2.110.5 for Auth Web Locks orphan recovery; Node >=22. `runWithSyncLock` returns native Promise.\n- [FACT-060] KG shapes: hexagon SVG polygon, cloud SVG path multi-lobe. Progressive L1/L2/L3 via `hooks/graphStateUtils.ts`.\n- [FACT-061] KG progressive reading branch-based: `hooks/graphStateUtils.ts` root+direct-child visibility + per-node toggle; `GraphEditor.tsx` filters hidden descendants.\n- [FACT-062] Battle engine: `services/battle/battleEngine.ts` pure+injectable. `useBattleSystem` owns commit, V2 persistence, `useBattlePresentation` enqueue.\n- [FACT-063] Battle V2: `mindspark_battle_state` legacy read-only. New writes to `mindspark_battle_state_v2`. No presentation/transient in snapshot.\n- [FACT-064] Battle runtime media: `constants/battleAssetRegistry.ts` single manifest. 25-entry WebP/WebM pass validation.\n- [FACT-065] Battle final verify 2026-07-16: 47 tests/301, tsc, build, 25 assets, Knip, lint 0 errors/warnings pass; Chromium 20 image dim/alpha + 25-answer flow.\n- [FACT-066] Legacy renderers/state adapters removed; `BattleSkillOverlay`+`useBattlePresentation` only completion path. Evidence: `openspec/changes/battle-system-quality-overhaul/AUDIT_REPORT.md` v2.0.\n- [FACT-067] Battle art plan: `docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md`; `assets-prep/battle-visual-upgrade/production-"
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Stable Facts (part 4)",
       "category": "fact",
       "scope": "memory",
-      "text": "Battle V2: `mindspark_battle_state` is legacy read-only; new writes use canonical durable `mindspark_battle_state_v2`; presentation/transient data stays out of snapshot.\n- [FACT-064] Battle runtime media: `constants/battleAssetRegistry.ts` is the only manifest; current local WebP/WebM assets pass 25-entry existence/format/bytes validation.\n- [FACT-065] Battle final verification 2026-07-16: 47 test files / 301 tests, tsc, build, 25-entry assets, Knip and full lint (0 errors / 0 warnings) pass; direct Chromium verifies 20 image dimension/alpha checks and a 25-answer battle flow.\n- [FACT-066] Battle legacy renderers/state adapters and cross-module pending battle fields are removed; `BattleSkillOverlay` plus `useBattlePresentation` is the only presentation completion path. Final evidence: `openspec/changes/battle-system-quality-overhaul/AUDIT_REPORT.md` v2.0.\n- [FACT-067] Battle art production plan: `docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md`; `assets-prep/battle-visual-upgrade/production-source-v2/` holds 7 generated chroma masters plus 7 transparent alpha source atlases for future slicing/animation. They are intentionally not runtime-approved or registered."
+      "text": "source-v2/` 7 chroma masters + 7 alpha atlases. Not runtime-approved/registered.\n- [FACT-068] `battle-visual-upgrade` completed on 2026-07-20. Promoted 26 character actions, 12 element-phase VFX, 9 unique skill images, 5 environment overlays, and 12 typed audio cues to runtime. 7 unused items retained as source-only. Pass tsc, unit tests, lint, build, asset validator, and Playwright WebP canvas decode.\n- [FACT-069] `battle-visual-upgrade` final audit v2.0 closed on 2026-07-20 with 38/38 tasks, 47 files/319 Vitest, 7/7 Chromium, Knip 0, Ponytail actionable 0, and 79 validated assets. Registry runtime-only metadata cleanup removed 251 lines; final evidence is `openspec/changes/battle-visual-upgrade/audit-report.md`."
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Active Decisions",
       "category": "decision",
       "scope": "memory",
-      "text": "- [DEC-001] Rules in `AGENTS.md`, facts in `MEMORY.md`. No `GEMINI.md`.\n- [DEC-002] Components ban direct Storage/Supabase access. Use services/hooks.\n- [DEC-003] Local wrapper `.project-memory/` preferred over global.\n- [DEC-004] `vite.config.ts`: React+Recharts+Framer in `vendor-ui-core` chunk.\n- [DEC-005] Build: `vite build`. Avoid Windows path permission issues.\n- [DEC-006] Ban `any` in Storage/JSON parse. Use `unknown` + Type Guards.\n- [DEC-007] E2E: click custom Confirm buttons, no `window.alert` listeners.\n- [DEC-008] KG layout uses radial algorithm only; dagre dependency removed.\n- [DEC-009] Autosave cloud: `uploadGraphToCloudSafely`, never silently overwrite newer timestamps.\n- [DEC-010] `applyDagreLayout` kept as deprecated alias until 2026-10-01; new callers use `applyAutoLayout`.\n- [DEC-011] Supabase migration `20260714000000_create_knowledge_graphs.sql` must be applied remotely for graph cloud sync; client local-only fallback for stale schema-cache envs.\n- [DEC-012] Uploaded graph images stay private to graph JSON/offline storage + existing graph sync; no public Storage bucket without privacy/capacity design.\n- [DEC-013] `battle-system-quality-overhaul` 已歸檔 (`openspec/changes/archive/2026-07-16-battle-system-quality-overhaul/`)。純 battle engine、durable/presentation 分離、hidden cancel-to-settle、V1 唯讀/V2 新 key、單一 pending encounter（Boss supersedes Elite）、唯一 runtime asset registry。無 sharp、自製 asset cache、第二 audio controller 或跨硬體 hard gate。"
+      "text": "- [DEC-001] Rules in `AGENTS.md`, facts in `MEMORY.md`. No `GEMINI.md`.\n- [DEC-002] Components ban direct Storage/Supabase. Use services/hooks.\n- [DEC-003] Local `.project-memory/` preferred over global.\n- [DEC-004] `vite.config.ts`: React+Recharts+Framer in `vendor-ui-core` chunk.\n- [DEC-005] Build: `vite build`. Avoid Windows path permission issues.\n- [DEC-006] Ban `any`. Use `unknown` + Type Guards.\n- [DEC-007] E2E: click custom Confirm buttons, no `window.alert`.\n- [DEC-008] KG radial layout only; dagre removed.\n- [DEC-009] Autosave: `uploadGraphToCloudSafely`, never overwrite newer timestamps.\n- [DEC-010] `applyDagreLayout` deprecated alias until 2026-10-01; new callers use `applyAutoLayout`.\n- [DEC-011] Supabase migration `20260714000000_create_knowledge_graphs.sql` must apply remotely; client local fallback for stale schema-cache.\n- [DEC-012] Graph images private to JSON/offline + sync; no public Storage without design.\n- [DEC-013] `battle-system-quality-overhaul` archived (`openspec/changes/archive/2026-07-16-battle-system-quality-overhaul/`). Pure engine, durable/presentation split, hidden cancel-to-settle, V1 read-only/V2 new key, single pending encounter (Boss supersedes Elite), single asset registry. No sharp, custom cache, second audio controller or cross-hardware gate.\n- [DEC-014] Planned battle visual promotion uses only Node 22 + existing `pngjs` + Playwright Canvas. Audio paths remain registry-only (`cue-<BattleSoundCue>`), BattleArena reuses existing phase/visibility effects, and the plan forbids custom WebP parsers, second lifecycle owners, telemetry, preload/fallback managers, and generic performance frameworks.\n- [DEC-015] Battle asset registry contains only runtime lookup metadata. Provenance/usage notes live in the asset manifest; UI-only presentation states do not widen `BattleAssetAction`; BGM and cues resolve from the same registry."
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Hotspots",
       "category": "hotspot",
       "scope": "memory",
-      "text": "- [HOT-001] `App.tsx` & `vite.config.ts`: Chunking & providers.\n- [HOT-002] Storage schemas: backward compatibility.\n- [HOT-003] RPG battle system vs Quiz engine sync.\n- [HOT-004] Graph components & storage files.\n- [HOT-005] Stable ID generation during JSON/AI import.\n- [HOT-006] Practice sessions state recovery lifecycle.\n- [HOT-007] Cloud sync concurrency.\n- [HOT-008] Git: Vercel fail if `node_modules` committed."
+      "text": "- [HOT-001] `App.tsx` & `vite.config.ts`: Chunking & providers.\n- [HOT-002] Storage schemas: backward compatibility.\n- [HOT-003] RPG battle vs Quiz engine sync.\n- [HOT-004] Graph components & storage.\n- [HOT-005] Stable ID generation during JSON/AI import.\n- [HOT-006] Practice session state recovery.\n- [HOT-007] Cloud sync concurrency.\n- [HOT-008] Git: Vercel fail if `node_modules` committed."
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Search Recipes",
       "category": "search-recipe",
       "scope": "memory",
-      "text": "- [RG-001] `rg -n \"mindspark_\" services hooks components`\n- [RG-002] `rg -n \"useBattleSystem|battle\" hooks components`\n- [RG-003] `rg -n \"graph|KnowledgeGraph\" components services`\n- [RG-004] `rg -n \"Supabase|cloudStorage\" contexts services`\n- [RG-005] `rg -n \"sourceQuestionKey|sourceFingerprint\" components services`\n- [RG-006] `rg -n \"planQuestionImport|importMode\" components`\n- [RG-007] `rg -n \"useChunkedPractice\" App.tsx hooks`\n- [RG-008] `rg -n \"\\\"build\\\"|vite\" package.json`\n- [RG-009] `npx -y knip --reporter compact`\n- [RG-010] `rg -n \"schemaVersion|backgroundOpacity|layoutMode\" types services components hooks`"
+      "text": "- [RG-001] `rg -n \"mindspark_\" services hooks components`\n- [RG-002] `rg -n \"useBattleSystem|battle\" hooks components`\n- [RG-003] `rg -n \"graph|KnowledgeGraph\" components services`\n- [RG-004] `rg -n \"Supabase|cloudStorage\" contexts services`\n- [RG-005] `rg -n \"sourceQuestionKey|sourceFingerprint\" components services`\n- [RG-006] `rg -n \"planQuestionImport|importMode\" components`\n- [RG-007] `rg -n \"useChunkedPractice\" App.tsx hooks`\n- [RG-008] `rg -n \"\\\"build\\\"|vite\" package.json`\n- [RG-009] `npx -y knip --reporter compact`\n- [RG-010] `rg -n \"schemaVersion|backgroundOpacity|layoutMode\" types services components hooks`\n- [RG-011] `rg -n \"battle-visual-upgrade|BattleSoundCue|environment\" openspec/changes/battle-visual-upgrade types constants components hooks`"
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Archive Index",
       "category": "memory",
       "scope": "memory",
-      "text": "- [DOC-001] `docs/INDEX.md`: index file."
+      "text": "- [DOC-001] `docs/INDEX.md`: index."
     },
     {
       "path": "MEMORY.md",
       "heading": "MEMORY.md > Open Risks",
       "category": "risk",
       "scope": "memory",
-      "text": "- [RISK-001] DEVELOPMENT_LOG.md: format cleanup.\n- [RISK-002] `vite.config.ts` chunk sizes.\n- [RISK-003] permissions for local MCP config script.\n- [RISK-004] Playwright CLI worker/webServer teardown can hang this Windows/Codex runner; direct Chromium through the `webapp-testing` server helper passes and exits cleanly.\n- [RISK-006] Supabase project `public.knowledge_graphs` not exposed in schema cache; graph cloud sync local-only until migration deployed.\n- [RISK-007] `production-source-v2` battle atlases are key-pose sources, not shippable sprite animations; require cell slicing, edge cleanup, pivot alignment, frame production, bytes/decode and browser QA before registry promotion."
+      "text": "- [RISK-001] DEVELOPMENT_LOG.md format cleanup.\n- [RISK-002] `vite.config.ts` chunk sizes.\n- [RISK-003] MCP config script permissions.\n- [RISK-004] Playwright CLI/webServer teardown hangs Windows/Codex; direct Chromium via `webapp-testing` helper exits cleanly.\n- [RISK-006] Supabase `public.knowledge_graphs` not in schema cache; graph cloud sync local-only until migration deployed.\n- [RISK-007] `production-source-v2` battle atlases promoted 26 actions, 12 VFX phases, 9 skill images, 5 overlays, and 12 audio cues to runtime. 7 unused items (`hero:victory`, `skeleton_wizard:cast`, `dragon_fire:fire-breath`, `environment-rubble`, `environment-ice-motes`, `environment-sparks`, `battle_victory.ogg`) remain source-only."
     },
     {
       "path": "MEMORY.md",
@@ -564,35 +584,35 @@
       "heading": "戰鬥美術、動畫、特效與音效全面升級計畫",
       "category": "archive-doc",
       "scope": "archive",
-      "text": "> 文件版本：v1.0  \n> 建立日期：2026-07-16  \n> 適用專案：MindSpark Quiz App  \n> 建議未來 OpenSpec change：`battle-content-production-overhaul`  \n> 本文件性質：內容製作與接入計畫；不是「已接入正式 runtime」的聲明"
+      "text": "> 文件版本：v1.0  \n> 建立日期：2026-07-16  \n> 適用專案：MindSpark Quiz > 本文件性質：戰鬥視覺升級計畫與資產狀態矩陣 (2026-07-20 battle-visual-upgrade 已將 26 個動作、12 個 VFX phase、9 個技能圖、5 個環境層及 12 音效接入 runtime，其餘保留為 source-only)"
     },
     {
       "path": "docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md",
       "heading": "戰鬥美術、動畫、特效與音效全面升級計畫 > 1. 結論先行",
       "category": "archive-doc",
       "scope": "archive",
-      "text": "目前的戰鬥程式架構、事件生命週期、持久化、資產登錄表與既有 runtime 素材品質門檻已完成升級，但「全角色逐動作動畫、每個技能的獨特完整演出、環境分層動態、完整音效組」尚未全部製作並接入。\n\n本輪已額外準備一組 `production-source-v2` 美術來源包，補齊未來最重要的視覺生產起點：\n\n- 勇者 6 種動作來源稿。\n- 史萊姆、蝙蝠、哥布林各 4 種動作來源稿。\n- 獸人、骷髏戰士、骷髏法師各 4 種動作來源稿。\n- 火龍 Boss 6 種動作來源稿。\n- 火、冰、雷各 4 階段的通用 VFX 來源稿。\n- 9 個既有技能的招牌關鍵幀來源稿。\n- 8 類環境覆蓋層來源稿。\n\n這些圖片已完成色鍵去背並保存透明 PNG，但仍屬「可切片、可補幀、可交給動畫師或後續 AI 流程使用的來源稿」。在完成本文的切圖、動作一致性、尺寸、效能與瀏覽器驗收前，不得加入 `constants/battleAssetRegistry.ts` 或覆蓋 `public/battle/` 正式資產。"
+      "text": "目前的戰鬥程式架構、事件生命週期、持久化、資產登錄表與既有 runtime 素材品質門檻已完成升級，並透過 `battle-visual-upgrade` 變更計畫將 26 個動作、12 個元素 VFX phase、9 個獨特技能關鍵幀圖片、5 個環境 overlay 以及 12 個 typed audio cue 切片轉檔並升格接入正式 runtime (`public/battle/`)。\n\n本輪準備的 `production-source-v2` 美術來源包已部分升格，未進入 runtime 的 7 項資產（`hero:victory`、`skeleton_wizard:cast`、`dragon_fire:fire-breath`、`environment-rubble`、`environment-ice-motes`、`environment-sparks`、`battle_victory.ogg`）保留為 source-only 供未來擴充使用。"
     },
     {
       "path": "docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md",
       "heading": "戰鬥美術、動畫、特效與音效全面升級計畫 > 2. 已完成與尚未完成的邊界 > 2.1 已完成",
       "category": "archive-doc",
       "scope": "archive",
-      "text": "- `constants/battleAssetRegistry.ts` 是唯一正式 runtime media manifest。\n- `BattleArena` 只消費 active presentation event。\n- `BattleSkillOverlay` 是目前唯一技能覆蓋層與 media completion 路徑。\n- 目前 25 個正式 runtime assets 已通過存在性、格式、fallback 與 bytes 驗證。\n- 既有角色及怪物都有可用的 idle 圖。\n- 9 個一般／中階／高階技能已有圖示或 projectile 圖。\n- 3 個大招已有 WebM。\n- BGM 與共用攻擊 cue 可用，缺少 cue 時會安全 no-op。\n- 10 張前期概念板已定義統一的高清像素 JRPG 方向。\n- 本輪新增 7 張透明 production-source atlas，並保留 7 張原始色鍵圖。"
+      "text": "- `constants/battleAssetRegistry.ts` 是唯一正式 runtime media manifest。\n- `battle-visual-upgrade` 升格之 26 個角色／怪物動作 (hero 4, slime 3, bat 3, goblin 3, orc 3, skeleton warrior 3, skeleton wizard 3, dragon 4)。\n- 12 個通用元素 phase (fire, ice, lightning × charge, travel, impact, residue)。\n- 9 個獨特技能圖片 (fireball, flame_storm, meteor_strike, ice_arrow, ice_barrier, absolute_zero, thunder_bolt, thunder_hammer, judgment_thunder)。\n- 5 個環境 overlay (fog, embers, shockwave, speed-lines, shadow)。\n- 12 個 typed audio cue (hit_basic, hit_critical, shield_absorb, monster_defeat, monster_spawn, boss_entrance, fire/ice/lightning cast & impact)。"
     },
     {
       "path": "docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md",
-      "heading": "戰鬥美術、動畫、特效與音效全面升級計畫 > 2. 已完成與尚未完成的邊界 > 2.2 尚未完成",
+      "heading": "戰鬥美術、動畫、特效與音效全面升級計畫 > 2. 已完成與尚未完成的邊界 > 2.2 尚未完成 (留待未來擴充)",
       "category": "archive-doc",
       "scope": "archive",
-      "text": "- 正式角色 sprite 仍多數只有 idle，缺少逐角色 `attack`、`cast`、`hurt`、`defeat`、`victory`、`entrance` 動作資產。\n- 新來源稿尚未拆成獨立 frame／cell，也尚未建立 animation metadata。\n- 目前角色動作 fallback 仍會回到 idle；這是安全降級，不是完整動畫。\n- 9 個技能尚未各自具備完整的 charge → travel → impact → residue 動畫序列。\n- 只有 3 個大招有 WebM；其餘技能主要依 CSS、圖示與共用效果演出。\n- 環境尚未形成可分別開關、可降級的 fog／ember／rubble／shadow 等正式 layer。\n- 音效仍以共用攻擊 cue 為主，尚無完整的命中、暴擊、護盾、生成、倒下、Boss 登場及元素專屬聲音組。\n- 尚未建立多場景或多 biome 背景輪替；目前仍以 dungeon 背景為主。\n- 尚未完成全裝置的 frame pacing、GPU fill-rate 與低階行動裝置壓力驗證。"
+      "text": "- `hero:victory`、`skeleton_wizard:cast`、`dragon_fire:fire-breath` 等姿勢尚未接入事件消費者，保留於 source-only。\n- `rubble`、`ice-motes`、`sparks` 等微粒環境層尚未啟用。\n- 更多場景或多 biome 背景輪替（目前維持 dungeon 主題）。"
     },
     {
       "path": "docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md",
       "heading": "戰鬥美術、動畫、特效與音效全面升級計畫 > 3. 本輪新增的美術來源包",
       "category": "archive-doc",
       "scope": "archive",
-      "text": "位置：`assets-prep/battle-visual-upgrade/production-source-v2/`\n\n| 最終透明檔 | 原始色鍵檔 | 尺寸 | 最終大小 | 內容 | 狀態 |\n|---|---|---:|---:|---|---|\n| `hero-actions.png` | `hero-actions-source.png` | 1920×819 | 707,533 B | idle、attack、cast、hurt、victory、defeat | 已生成／待切圖與補幀 |\n| `normal-monster-actions.png` | `normal-monster-actions-source.png` | 1448×1086 | 923,364 B | slime、bat、goblin，各 4 動作 | 已生成／待切圖與補幀 |\n| `elite-monster-actions.png` | `elite-monster-actions-source.png` | 1086×1448 | 1,144,329 B | orc、skeleton warrior、skeleton wizard，各 4 動作 | 已生成／待切圖與補幀 |\n| `dragon-actions.png` | `dragon-actions-source.png` | 2172×724 | 1,119,511 B | entrance、idle、attack、fire breath、hurt、defeat | 已生成／待切圖與補幀 |\n| `elemental-vfx.png` | `elemental-vfx-source.png` | 1536×1024 | 1,474,232 B | 火／冰／雷 charge、travel、impact、residue | 已生成／待切圖與動畫化 |\n| `signature-skills.png` | `signature-skills-source.png` | 1254×1254 | 1,667,935 B | 9 技能招牌關鍵幀 | 已生成／待切圖與差異化動畫 |\n| `environment-overlays.png` | `environment-overlays-source.png` | 1536×1024 | 511,396 B | fog、embers、rubble、shockwave、ice motes、sparks、speed lines、shadow | 已生成／待切圖與透明度 QA |"
+      "text": "位置：`assets-prep/battle-visual-upgrade/production-source-v2/`\n\n| 最終透明檔 | 原始色鍵檔 | 尺寸 | 最終大小 | 內容 | 狀態 |\n|---|---|---:|---:|---|---|\n| `hero-actions.png` | `hero-actions-source.png` | 1920×819 | 707,533 B | idle、attack、cast、hurt、victory、defeat | 4 動作已升格 Runtime (R)，victory 為 Source-only (S) |\n| `normal-monster-actions.png` | `normal-monster-actions-source.png` | 1448×1086 | 923,364 B | slime、bat、goblin，各 4 動作 | 9 動作已升格 Runtime (R) |\n| `elite-monster-actions.png` | `elite-monster-actions-source.png` | 1086×1448 | 1,144,329 B | orc、skeleton warrior、skeleton wizard，各 4 動作 | 8 動作已升格 Runtime (R)，wizard cast 為 Source-only (S) |\n| `dragon-actions.png` | `dragon-actions-source.png` | 2172×724 | 1,119,511 B | entrance、idle、attack、fire breath、hurt、defeat | 4 動作已升格 Runtime (R)，fire breath 為 Source-only (S) |\n| `elemental-vfx.png` | `elemental-vfx-source.png` | 1536×1024 | 1,474,232 B | 火／冰／雷 charge、travel、impact、residue | 12 phase 已升格 Runtime (R) |\n| `signature-skills.png` | `signature-skills-source.png` | 1254×1254 | 1,667,935 B | 9 技能招牌關鍵幀 | 9 技能圖片已升格 Runtime (R) |\n| `environment-overlays.png` | `environment-overlays-source.png` | 1536×1024 | 511,396 B | fog、embers、rubble、shockwave、ice motes、sparks、speed lines、shadow | 5 類已升格 Runtime (R)，3 類為 Source-only (S) |"
     },
     {
       "path": "docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md",
@@ -831,6 +851,27 @@
       "category": "archive-doc",
       "scope": "archive",
       "text": "最值得先做的不是再生成更多概念圖，而是把本輪來源稿升格成小而完整的 production slice：\n\n1. 切出 hero、slime、dragon 的 attack/hurt/defeat，先驗證整條 action registry → presenter → arena 路徑。\n2. 用 Fireball、Ice Barrier、Judgment Thunder 各代表 projectile、defense、full-impact 三種技能形態。\n3. 補齊 hit、crit、shield、defeat、spawn、Boss entrance 六個 P0 cue。\n4. 通過 mobile、reduced-motion、hidden/unmount 與 bytes gate 後，再批次升格其他角色及技能。\n\n這個順序可以最快驗證素材管線與實際觀感，同時避免一次切完所有圖片後才發現 pivot、時序或下載策略不適用。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-20 [Final Audit Remediation] \"Battle Visual Upgrade\" > ✅ OpenSpec／Ponytail／Dead Code 自動修復閉環",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **交叉審計**：依 `openspec-verify-change` 逐項核對 38/38 tasks、7 個 capability、design 與 runtime consumer；修正二審報告的 atlas 轉置與 skill image 尺寸誤判，最終 0 個未解決 CRITICAL／WARNING。\n- **YAGNI 收斂**：私有化並收窄 asset action；移除 dead `victory`／runtime metadata／全 approved status／單一欄位 registry interface／skill icon cast action／一項式 BGM path map／不可達 Sparkles，registry 淨減 251 行。\n- **真實 metadata**：以 Chromium 解碼結果統一 Hero 320×819、Normal／Elite 362×362、Dragon 362×724、Skill 418×418；E2E 現在嚴格比對所有宣告 dimensions，不再依 promoted note 跳過。\n- **規格與無障礙**：elite atlas 統一為 3×4；tasks／benchmark 改用真實可執行證據；reduced-motion shockwave／speed-lines 為靜態終態。\n- **測試品質**：移除 runtime／E2E debug logs；Graph collision 測試加入真實 assertion；修正 pending-elite E2E 的錯誤時序，使案例在 milestone 保留現有怪時驗證 settle 後預載。\n- **最終門檻**：TypeScript、ESLint 0/0、Knip 0、79-entry asset validator、47 files／319 Vitest、production build、7/7 Chromium（1.4m）與 `git diff --check` 全通過。Ponytail debt 維持 2 筆具 2026-10-01 trigger 的既有 KnowledgeGraph 債務，0 筆無 trigger。\n- **報告**：最終證據寫入 `openspec/changes/battle-visual-upgrade/audit-report.md` v2.0；未執行 archive、commit 或 push。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-20 [Implementation Complete] \"Battle Visual Upgrade\" > ⚔️ 完成全角色動作、技能 VFX、環境 Layer 與音效升格接入",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **型別與規格**：擴充 `BattleAssetAction` (加入 `entrance`)、`BattleAssetKind` (加入 `environment`) 與 12 值 `BattleSoundCue`；所有 validator 與 registry maps 維持嚴格 exhaustive，`npx tsc --noEmit` exit code 0。\n- **資產切片與轉檔**：使用 `scripts/prepareBattleVisualAssets.ts` (Node 22 + `pngjs` + Playwright Chromium Canvas) 將 7 組 source-v2 atlas 切片去背轉檔為透明 WebP。共升格 26 個角色動作、12 個元素特效 phase、9 個獨特技能圖片、5 個環境 overlay 與 12 個 OggS 音效 cue；7 個未接入 consumer 之項目保留為 source-only。\n- **Registry & Validator**：更新 `constants/battleAssetRegistry.ts` 與 `scripts/validateBattleAssets.ts`，加入嚴格 byte budget、OggS header、orphan check 與 metadata 一致性驗證；`npm run battle:assets` 驗證全數通過。\n- **角色與技能消費**：`BattleArena.tsx` 支持 boss entrance 及 26 個動作映射與 grounding shadow；`BattleSkillOverlay.tsx` 整合 4 階段元素 VFX (charge/travel/impact/residue) 與 9 招牌技能獨特關鍵幀圖片，保留 WebM/reduced-motion 與 multi-tier scaling。\n- **環境與音效**：`BattleArena.tsx` 整合 fog、embers、shockwave、speed-lines 與 shadow (node count ≤ 4, hidden/unmount 停止)；`useSoundEffects.ts` 依 `BattlePresentationEvent` 實現 typed cue dedupe 與 single active Howl reset。\n- **品質門檻驗證**：TypeScript、Vitest 單元測試、ESLint (0 error / 0 warning)、Vite production build 以及 Playwright Chromium WebP canvas decode 驗證全數通過。"
+    },
+    {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-20 [Plan Review] \"Battle Visual Upgrade\" > 🔎 三輪獨立審查與 Ponytail 收斂",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- **原始 8 項**：重新核對既有 runtime 後，原始 1 CRITICAL／2 HIGH／3 MEDIUM／2 LOW 全數修復或以現況證據反駁；保留完整 resolution table，沒有把既有 `CharacterSprite` fallback、presentation queue 或 WebP baseline 誤當缺口。\n- **審查迭代**：`review-check` Round 1 兩位 reviewer 均 BLOCKED；Round 2 補出 phase audio 接線、唯一 registry、Howl handle、source-only ID 與 atlas 命名問題；Round 3 兩位獨立 reviewer 均 `PASS`，結果為 0 CRITICAL／0 WARNING／0 refutation objection。\n- **Ponytail 簡化**：刪除自製 RIFF/WebP metadata parser、Long Task gate、2 小時 soak、假 Mobile Safari、audio-to-ear、固定 FPS、telemetry、第二 scheduler/audio controller/path manifest、preloader/fallback manager；最終兩位 reviewer 均判定 `Lean already. Ship.`。\n- **單一路徑**：資產工具只使用 Node 22、既有 `pngjs` 與 Playwright Chromium Canvas；音效路徑只由 `BATTLE_ASSET_REGISTRY` 的 `cue-<BattleSoundCue>` entry 取得，`BattleArena` 既有 effects 負責 phase 呼叫與 cleanup。\n- **範圍封閉**：計畫固定為 26 個 action、12 個共享元素 phase、9 個 unique skill image、5 個 environment image、12 個 cue；七個無 consumer 項目維持 source-only。實作任務由 69 項收斂為 38 項。\n- **驗證**：`openspec status --change battle-visual-upgrade --json` 顯示 proposal／design／specs／tasks 全部 done；本輪只修改規劃與文件，production code、runtime assets 與 OpenSpec implementation checkboxes 均未變更。"
     },
     {
       "path": "docs/DEVELOPMENT_LOG.md",
@@ -1666,11 +1707,18 @@
       "text": " Per user instructions, no actual source code modifications were committed to the repository. All original source files remain unaltered."
     },
     {
+      "path": "docs/DEVELOPMENT_LOG.md",
+      "heading": "Development Log > 2026-07-20 [Battle Visual Upgrade] Battle audio cue assets > 🔊 Audio assets",
+      "category": "archive-doc",
+      "scope": "archive",
+      "text": "- Added 13 CC0 OGG battle cues under `public/sounds/battle/`, mapped to the `battle-visual-upgrade` implementation plan names.\n- Source: OpenGameArt Sound Effects Pack 2, whose source page identifies the pack as CC0 and provides OGG files.\n- Validated all 13 files are non-empty and begin with the `OggS` container signature."
+    },
+    {
       "path": "docs/INDEX.md",
       "heading": "Docs Index",
       "category": "archive-index",
       "scope": "archive",
-      "text": "- Updated: `2026-07-16 20:13`\n- Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs."
+      "text": "- Updated: `2026-07-20 17:11`\n- Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs."
     },
     {
       "path": "docs/INDEX.md",
@@ -20081,6 +20129,902 @@
       "category": "openspec-task",
       "scope": "openspec",
       "text": "- [x] 8.1 新 presenter 覆蓋後刪除 legacy `AttackEffect`/`FireballAttack`/`IceArrowAttack`/`SkillAnimation` active paths、`battle:damage`、不存在 MP4、dynamic Tailwind 與 render-time random；只保留有 consumer 的 leaf。\n- [x] 8.2 移除 dead types/config/exports與無 consumer media；先以 code graph/targeted `rg` 證明零 consumer，不刪不確定所有權的素材。\n- [x] 8.3 執行 `npx tsc --noEmit`、`npm run lint`、`npm test -- --run`、battle E2E、asset validation 與 `npm run build`；不得 `.skip/.only` 或放寬全域 threshold。\n- [x] 8.4 更新 `MEMORY.md`、`docs/DEVELOPMENT_LOG.md`、必要時 `docs/INDEX.md`，記錄 V2 key、engine/presenter邊界與精簡決策。\n- [x] 8.5 將 `CHECKLIST.md` 與本 tasks 實際完成狀態同步；只有有驗證證據的 task 標 `[x]`。\n- [x] 8.6 使用 OpenSpec verify 逐 requirement 對照實作與測試；所有 critical/high finding 關閉後才結案。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "✅ Battle Visual Upgrade — 三審自動修復閉環（v2.0）",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> **最終審計員**: Codex（二審交叉驗證與自動修復）  \n> **日期**: 2026-07-20  \n> **結論**: **PASS — 0 個未解決 CRITICAL／WARNING／可執行 Ponytail 問題**  \n> **範圍**: OpenSpec verify、Ponytail audit/debt、Knip、靜態檢查、全量單測、production build、Chromium E2E"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "✅ Battle Visual Upgrade — 三審自動修復閉環（v2.0） > 最終結果",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| 維度 | 結果 | 證據 |\n|---|---:|---|\n| OpenSpec 完整性 | ✅ | `38/38` tasks `[x]`；proposal/design/specs/tasks 全為 `done`，`isComplete: true` |\n| OpenSpec 正確性／一致性 | ✅ | 需求、design、registry、validator、consumer 與測試逐項核對，原 W-1 與錯誤尺寸推論均已修正 |\n| Ponytail audit | ✅ 0 | 已刪除無 consumer metadata／flag／interface／action 與重複路徑表；無剩餘可執行過度工程發現 |\n| Ponytail debt | ✅ | `2 markers, 0 with no trigger`；兩筆皆為既有 KnowledgeGraph 相容性債務，2026-10-01 到期，非本變更新增 |\n| Dead code | ✅ 0 | `npx -y knip --reporter compact --no-progress` exit 0、無輸出 |\n| Debug／型別殘留 | ✅ 0 | 變更範圍無 `debugger`、runtime `console.log`、`any`；僅保留 CLI 成功摘要輸出 |\n| 自動化驗證 | ✅ | 47 files／319 Vitest、7/7 Chromium、TypeScript、ESLint、asset validator、build、diff check 全通過 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "✅ Battle Visual Upgrade — 三審自動修復閉環（v2.0） > 已完成修復",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "1. **型別與 YAGNI 收斂**\n   - `BattleAssetAction` 收窄為真正有素材 consumer 的 action，移除未實作的 `victory`；UI-only `anticipate` 改為 `BattleArena` 私有 presentation state，lookup 明確使用 `idle`。\n   - 移除單一實作／單一欄位的 `BattleAssetRegistry` interface、全為 `approved` 的 dead `status` flag、無 runtime consumer 的 `sourceNote`／`usageNote`，以及 skill icon 上無消費者的 `action: 'cast'`。\n   - registry 因上述清理縮減 **251 行**；來源／授權資訊仍由既有 `assets-prep/battle-visual-upgrade/ASSET_MANIFEST.md` 保存。\n2. **單一資料來源與不可達碼**\n   - BGM 路徑直接由 registry 取得，移除一項式 `SOUND_PATHS` 重複表。\n   - 刪除 `BattleSkillOverlay` 永遠不可達的 Sparkles fallback 分支。\n   - 新增 `battle:prepare` package script，讓資產 CLI 與其既有 `pngjs` 依賴成為明確可追蹤入口。\n3. **素材 metadata 與規格真實性**\n   - 依 Chromium 實際解碼修正 promoted image metadata：Hero `320×819`、Normal／Elite `362×362`、Dragon `362×724`、Skill icons（含 fallback）`418×418`。\n   - E2E 不再以 `sourceNote`／promoted 標記略過尺寸檢查；所有宣告尺寸的圖均做嚴格相等驗證。\n   - `elite-monster-actions.png` 在 design/spec/tasks 統一為實際的 `3×4`（3 欄角色、4 列動作）。\n   - 將 tasks／benchmark 中不存在的 per-character overlay、failing fixture 與 60-event smoke 證據改為實際可執行的來源 atlas pair、unit 與 Chromium gates。\n4. **無障礙、測試與調試清理**\n   - reduced-motion 下 shockwave／speed-lines 直接呈現靜態終態，不再播放短暫 scale／opacity 動畫。\n   - 移除 FocusTimer、bank manager 與 E2E 的殘留 debug forwarding／`console.log`。\n   - 原本只有輸出、沒有 assertion 的 Graph ID collision 測試改為實際唯一性與 `node-3` 斷言。\n   - 修正 pending-elite E2E 的錯誤時序假設：第 5 題使用錯答保留當前怪，讓 `elite` pending 在演出 settle 後可被預載；正答會在同一次 engine transition 擊殺並立即消費 pending，不能拿來驗證此路徑。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "✅ Battle Visual Upgrade — 三審自動修復閉環（v2.0） > 對既有二審報告的交叉結論",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- **採納並修復**：W-1、P-1、P-2、P-5。\n- **更正**：S-1 判定實體 `fireball.webp` 為 `500×500` 不正確；Chromium 解碼證明實檔及所有 skill icons 均為 `418×418`，已同步全部 metadata。\n- **不採納 P-3**：為兩個局部 warning set 抽出 `warnOnce` 只會新增跨模組抽象，沒有淨簡化收益。\n- **不採納 P-4**：以 LRU 取代四行 bounded `Set` 會增加抽象與狀態面積，違反本次 YAGNI 目標。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "✅ Battle Visual Upgrade — 三審自動修復閉環（v2.0） > 最終驗證證據",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| 命令／Gate | 結果 |\n|---|---|\n| `openspec status --change battle-visual-upgrade --json` | exit 0；四項 artifacts `done`、`isComplete: true`（PostHog 網路 flush 警告不影響狀態） |\n| `npx tsc --noEmit` | exit 0 |\n| `npm run lint` | exit 0；0 errors／0 warnings |\n| `npm test -- --run` | **47 files／319 tests passed** |\n| `npm run battle:assets` | **79 registered assets passed** |\n| `npm run battle:prepare -- slice` | **7 atlases sliced** |\n| `npm run build` | exit 0；3179 modules transformed（僅既有 vendor chunk size warning） |\n| `npx -y knip --reporter compact --no-progress` | exit 0；0 findings |\n| Playwright Chromium（`battle-assets` + `battle-flow`） | **7/7 passed（1.4m）**；helper 正常停止 port 5200 server |\n| `git diff --check` | exit 0 |\n\n本變更已符合 archive 前的實作與品質門檻；本輪依使用者範圍未執行 archive、commit 或 push。\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯）",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> 下列內容是第二位 AI 的修復前快照；其中 warning／suggestion 已由上方 v2.0 閉環結果取代。\n\n> **審計員**: 獨立第二位高階 AI (Claude Opus 4.6 Thinking)\n> **日期**: 2026-07-20\n> **變更名稱**: `battle-visual-upgrade`\n> **審計範圍**: OpenSpec 實作驗證 + Ponytail 過度工程審計 + 技術債帳簿\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯） > Part 1: OpenSpec 實作驗證 (opsx-verify) > Summary Scorecard",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| 維度 | 狀態 |\n|------|------|\n| **完整性** | ✅ 34/34 tasks `[x]`，所有 capability 均有實作 |\n| **正確性** | ✅ 7/7 design decisions 均有對應實作；所有 non-goal 排除項均已遵守 |\n| **一致性** | ⚠️ 2 項次要文件/代碼不一致 |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯） > Part 1: OpenSpec 實作驗證 (opsx-verify) > ✅ 完整性 (Completeness)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "**Task Completion**: 34/34 (`[x]`)，zero incomplete。\n\n**Spec Coverage**:\n- `battle-character-actions`: ✅ 26 action entries 已登錄，hero 4 actions + 6 monsters × 3 actions + dragon 4 actions = 26\n- `battle-skill-vfx-library`: ✅ 12 VFX entries + 9 skill icon overrides + `SkillVfxRenderer` 局部元件\n- `battle-environment-presentation`: ✅ 5 environment entries + BattleArena 直接渲染 4 overlay + CharacterSprite shadow\n- `battle-audio-cue-library`: ✅ 12 cue entries + typed `BattleSoundCue` union + `mapEventToCue` + dedupe + latest-wins\n- `battle-asset-pipeline`: ✅ `prepareBattleVisualAssets.ts` 7 atlas map + slice/promote\n- `battle-mode` (modified): ✅ `entrance` added to `BattleAssetAction`, `environment` added to `BattleAssetKind`\n- `skill-effects-engine` (modified): ✅ `SkillVfxRenderer` in `BattleSkillOverlay.tsx`\n\n**Source-Only Exclusions (0.3 checklist)**: ✅ 全部 7 項確認排除：\n- `hero:victory` — not in registry ✅\n- `skeleton_wizard:cast` — not in registry ✅\n- `dragon_fire:fire-breath` — not in registry, marked `excluded: true` in atlas map ✅\n- `environment-rubble`, `environment-ice-motes`, `environment-sparks` — not in registry, marked `excluded: true` ✅\n- `battle_victory.ogg` — not in registry, task 1.6 confirms moved to `assets-prep/` ✅\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯） > Part 1: OpenSpec 實作驗證 (opsx-verify) > ✅ 正確性 (Correctness)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "**Design Decision Adherence**:\n\n| Decision | 遵守狀態 | 證據 |\n|----------|----------|------|\n| **D1**: 只發布有 consumer 的角色動作 | ✅ | [BattleArena.tsx:399-423](file:///c:/Users/user/Desktop/Quiz-app-/components/BattleArena.tsx#L399-L423) heroAction/monsterAction mapping 精確對應 |\n| **D2**: 12 元素 phase + 9 unique skill 圖 | ✅ | [BattleSkillOverlay.tsx:63-153](file:///c:/Users/user/Desktop/Quiz-app-/components/BattleSkillOverlay.tsx#L63-L153) `SkillVfxRenderer` 實作完整 |\n| **D3**: Environment image overlay | ✅ | [BattleArena.tsx:549-593](file:///c:/Users/user/Desktop/Quiz-app-/components/BattleArena.tsx#L549-L593) fog/embers/shockwave/speed-lines，最多 4 nodes |\n| **D4**: Phase-aware cue mapping | ✅ | [useSoundEffects.ts:40-69](file:///c:/Users/user/Desktop/Quiz-app-/hooks/useSoundEffects.ts#L40-L69) 精確匹配 design 表 |\n| **D5**: 固定用途資產準備 | ✅ | [prepareBattleVisualAssets.ts](file:///c:/Users/user/Desktop/Quiz-app-/scripts/prepareBattleVisualAssets.ts) 7 atlas, 2 commands |\n| **D6**: 瀏覽器原生載入 + 既有 fallback | ✅ | CharacterSprite `onError` fallback、SkillVfxRenderer 的 fallback chain |\n| **D7**: 驗證分離但不建框架 | ✅ | [validateBattleAssets.ts](file:///c:/Users/user/Desktop/Quiz-app-/scripts/validateBattleAssets.ts) 覆蓋全部規則 |\n\n**Non-Goal Compliance** (確認未違反):\n- ❌ 無第二 asset registry ✅\n- ❌ 無 fallback manager / preload service ✅\n- ❌ 無 audio pool / priority queue ✅\n- ❌ 無 DOM particle generator ✅\n- ❌ 無新 dependency（檢查 `package.json` 無新增）✅\n- ❌ 無 telemetry service ✅\n- ❌ 無 BattleEnvironmentLayer 檔案 ✅\n- ❌ 無 benchmark framework ✅\n\n**Test Coverage**:\n- [battleAssetRegistry.test.ts](file:///c:/Users/user/Desktop/Quiz-app-/src/__tests__/battleAssetRegistry.test.ts): 精確 79 entries、26 actions、12 VFX、5 env、12 audio、7 exclusions、metadata 一致性、budget、format magic ✅\n- [useSoundEffects.test.ts](file:///c:/Users/user/Desktop/Quiz-app-/src/__tests__/useSoundEffects.test.ts): cue mapping、dedupe、latest-wins、unmount cleanup、sfx toggle ✅\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯） > Part 1: OpenSpec 實作驗證 (opsx-verify) > ⚠️ 一致性 (Coherence) > WARNING W-1: Design D5 Atlas Layout 文件與代碼不一致",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "**文件** ([design.md:106](file:///c:/Users/user/Desktop/Quiz-app-/openspec/changes/battle-visual-upgrade/design.md#L106)):\n> `elite-monster-actions.png` `4 × 3` 每列 orc / warrior / wizard；每欄 idle, attack-or-cast, hurt, defeat\n\n**代碼** ([prepareBattleVisualAssets.ts:56-72](file:///c:/Users/user/Desktop/Quiz-app-/scripts/prepareBattleVisualAssets.ts#L56-L72)):\n```typescript\n'elite-monster-actions.png': {\n    cols: 3,  // ← design says 4\n    rows: 4,  // ← design says 3\n```\n\nAtlas map 使用 `cols: 3, rows: 4` (3 columns × 4 rows)，而 design 說 `4 × 3`。代碼中的 cell layout 顯示每 column 為一個角色（orc、warrior、wizard），每 row 為 idle/attack/hurt/defeat。這與 design 中的「每列角色、每欄動作」意義相同，但維度標註是轉置的。\n\n> **影響**: 此為純文件問題，不影響功能（atlas 已成功 slice/promote 且測試通過）。但若未來有人依照 design 文件重新製作 atlas，會產生混淆。\n>\n> **建議**: 更新 `design.md` D5 table 的 elite-monster-actions 行為 `3 × 4`，或在 atlas map 旁加註說明列/欄代表什麼。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯） > Part 1: OpenSpec 實作驗證 (opsx-verify) > ⚠️ 一致性 (Coherence) > SUGGESTION S-1: `skill-fallback` 和 `fireball` 共享同一 `src` 路徑",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "[battleAssetRegistry.ts:707-731](file:///c:/Users/user/Desktop/Quiz-app-/constants/battleAssetRegistry.ts#L707-L731):\n- `skill-fallback` → `src: '/battle/skills/fireball.webp'`, `width: 418, height: 418`\n- `fireball` → `src: '/battle/skills/fireball.webp'`, `width: 500, height: 500`\n\n兩個 entry 指向同一個實體檔案但宣稱不同 dimensions。這意味著 `fireball.webp` 被 promote 後覆蓋了原有的舊 fireball.webp (418×418)，但 `skill-fallback` entry 的 width/height 沒有同步更新。\n\n> **影響**: `skill-fallback` 的 dimensions 記錄過時但目前無任何 consumer 使用這些 dimensions（只用 `src`），因此不影響 runtime 行為。\n>\n> **建議**: 將 `skill-fallback` 的 `width/height` 更新為 `500 × 500` 以保持 metadata 準確，或在 `sourceNote` 加註 dimensions 為歷史遺留值。\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯） > Part 2: Ponytail 過度工程審計 (ponytail-audit)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> 範圍: 本次變更涉及的所有檔案 — `battleAssetRegistry.ts`, `battleTypes.ts`, `BattleArena.tsx`, `BattleSkillOverlay.tsx`, `useSoundEffects.ts`, `validateBattleAssets.ts`, `prepareBattleVisualAssets.ts` 及對應測試。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯） > Part 2: Ponytail 過度工程審計 (ponytail-audit) > Findings (按削減量排序) (part 1)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| # | Tag | 標的 | 替代方案 | 位置 |\n|---|-----|------|---------|------|\n| P-1 | `yagni:` | `BattleAssetAction` 的 `'victory'` union member | 無 runtime consumer、無 registry entry、無 atlas promote。刪除此值可將 union 縮減為 7 成員，並消除未來維護者誤以為 victory 已實作的困惑。 | [battleTypes.ts:197](file:///c:/Users/user/Desktop/Quiz-app-/types/battleTypes.ts#L197) |\n| P-2 | `yagni:` | `BattleAssetAction` 的 `'anticipate'` union member | 只在 `BattleArena.tsx` 的 `CharacterSprite` 內部做動畫切換使用，但 **registry 中沒有任何 `anticipate` action entry**。`anticipate` 用於觸發 anticipation 動畫 variant 而非載入對應圖片——此值不應屬於 `BattleAssetAction`（它是 asset-centric type），而是 UI animation state。 | [battleTypes.ts:197](file:///c:/Users/user/Desktop/Quiz-app-/types/battleTypes.ts#L197), [BattleArena.tsx:259](file:///c:/Users/user/Desktop/Quiz-app-/components/BattleArena.tsx#L259) |\n| P-3 | `shrink:` | `reportedActionFallbacks` + `reportedImageErrors` 兩個模組級 `Set` | 兩個 dev-only dedupe sets 模式完全相同：module-level `Set<string>` + dev guard + conditional add + log。可統一為一個工具函式 `warnOnce(tag, key, msg)` 消除重複（約 -12 行）。 | [battleAssetRegistry.ts:1042](file:///c:/Users/user/Desktop/Quiz-app-/constants/battleAssetRegistry.ts#L1042), [BattleArena.tsx:52](file:///c:/Users/user/Desktop/Quiz-app-/components/BattleArena.tsx#L52) |\n| P-4 | `shrink:` | `playedEventCuesRef` 的手動 bounded eviction | 手動 eviction `if (size > 512) delete oldest` 可用一個 fixed-capacity LRU 或直接依 `eventId` 遞增特性只保留近 N 個，簡化控制流。目前實作正確但 ad-hoc。 | [useSoundEffects.ts:199-202](file:///c:/Users/user/Desktop/Quiz-app-/hooks/useSoundEffects.ts#L199-L202) |\n| P-5 | `yagni:` | `BattleAssetEntry` 的 `sourceNote` + `usageNote` 必填欄位 | 這兩個欄位只在 validator 中檢查 `.length > 0`，不在 runtime 使用。79 entries × 2 欄位 = 158 個純文件字串佔據了 registry 約 ~30% 的行數。它們的用途可被 `// comment` 取代。但 validator 有對應的 metadata 檢查規則，所以這更多是 **設計品味** 問題而非 bug。 | [battleAssetRegistry.ts](file:///c:/Users/user/Desktop/Quiz-app-/constants/battleAssetRegistry.ts) 全檔 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯） > Part 2: Ponytail 過度工程審計 (ponytail-audit) > Findings (按削減量排序) (part 2)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "**淨評估**: `net: -15~25 lines, -0 deps possible.` 整體極為精簡。在審計的 7 個檔案中，沒有找到：無第二實作的 interface、factory with one product、single-caller wrapper、dead flags、hand-rolled stdlib、或不必要的 dependency。\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯） > Part 3: Ponytail 技術債帳簿 (ponytail-debt) > Scan Results",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "搜尋範圍: 全專案 `*.ts`, `*.tsx`, `*.js`, `*.jsx`, `*.css` 中的 `// ponytail:` 或 `# ponytail:` 標記。\n\n| # | 檔案 | 行 | 簡化內容 | Ceiling | Upgrade Trigger | 屬本次變更? |\n|---|------|-----|---------|---------|-----------------|------------|\n| D-1 | [NodeEditPanel.tsx:245](file:///c:/Users/user/Desktop/Quiz-app-/components/KnowledgeGraph/NodeEditPanel.tsx#L245) | 245 | retain fontWeight beside canonical bold for schema-v2 readers | 2026-10-01 migration window | schema-v2 migration | ❌ |\n| D-2 | [graphUtils.ts:89](file:///c:/Users/user/Desktop/Quiz-app-/components/KnowledgeGraph/graphUtils.ts#L89) | 89 | retain compatibility alias for external graph utility API | 2026-10-01 migration window | external API migration | ❌ |\n\n**結論**: `2 markers, 0 with no trigger.` 兩個標記均位於 KnowledgeGraph 模組，**不屬於本次 battle-visual-upgrade 變更**。本次變更未新增任何 `ponytail:` 技術債標記。✅\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯） > Part 4: 綜合缺陷清單 > 🔴 CRITICAL — 無",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "無 CRITICAL 等級問題。所有 tasks 完成、所有 requirements 實作、所有 non-goals 遵守。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯） > Part 4: 綜合缺陷清單 > 🟡 WARNING (2)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| ID | 描述 | 建議修復 |\n|----|------|---------|\n| **W-1** | Design D5 的 `elite-monster-actions.png` 維度標註為 `4×3`，但代碼實作為 `cols: 3, rows: 4`（轉置）。 | 更新 [design.md:106](file:///c:/Users/user/Desktop/Quiz-app-/openspec/changes/battle-visual-upgrade/design.md#L106) 為 `3 × 4`。 |\n| **P-1** | `BattleAssetAction` 包含 `'victory'` 成員但無任何 runtime consumer、registry entry 或 atlas promote。此為 YAGNI 的典型案例。 | 從 [battleTypes.ts:197](file:///c:/Users/user/Desktop/Quiz-app-/types/battleTypes.ts#L197) 移除 `'victory'`，或加上 `ponytail:` 標記說明其保留理由（如預計在下一輪 change 中實作）。 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯） > Part 4: 綜合缺陷清單 > 🔵 SUGGESTION (4)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| ID | 描述 | 建議修復 |\n|----|------|---------|\n| **P-2** | `'anticipate'` 是 UI animation state 而非 asset action，不該屬於 `BattleAssetAction` type。 | 若 anticipate 永遠不需要對應的 registry image，考慮拆為獨立的 `CharacterAnimationState` type。但目前 `getBattleCharacterAsset` 會優雅 fallback 到 idle，所以不阻塞。 |\n| **P-3** | 兩個 dev-only dedupe set 模式重複。 | 提取 `warnOnce(tag, key, msg)` 工具函式，約可消除 ~12 行重複。 |\n| **S-1** | `skill-fallback` 的 dimensions (418×418) 與實際檔案 (500×500, 被 fireball promote 覆蓋) 不一致。 | 更新 `skill-fallback` 的 width/height 為 500。 |\n| **P-5** | `sourceNote`/`usageNote` 佔 registry ~30% 行數但非 runtime 使用。 | 設計品味問題，不強制。可考慮移至 JSDoc 或外部 manifest 文件。 |\n\n---"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md",
+      "heading": "🔍 歷史二審報告（修復前，保留供交叉追溯） > Final Assessment",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> **✅ No critical issues. 2 warning(s) to consider. Ready for archive (with noted improvements).**\n\n本次 `battle-visual-upgrade` 變更在實作完整性、設計遵從度和代碼精簡度方面表現**優異**。以下是審計數據摘要：\n\n- **34/34** tasks 完成\n- **7/7** design decisions 正確遵從\n- **0** 個被禁止的抽象層（第二 registry/scheduler/telemetry/preload service 等）被引入\n- **0** 個新外部依賴\n- **79** 個 registry entries 全部有對應的真實檔案\n- **7** 個 source-only exclusion 全部正確排除\n- 測試覆蓋了 registry 精確計數、metadata 一致性、format magic、budget、cue mapping/dedupe/latest-wins 和 unmount cleanup\n- Ponytail 審計僅發現 **5 個微觀級** 過度工程信號，其中最大的 (`'victory'` YAGNI) 只影響 1 行\n- 技術債帳簿中 **0 個標記屬於本次變更**\n\n此變更可安全歸檔。建議在歸檔前處理 W-1（文件不一致）和 P-1（victory YAGNI）。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/benchmark-harness.md",
+      "heading": "Minimal Verification Harness: battle-visual-upgrade",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> 本文件不是可擴充 benchmark framework；它只把本 change 的 requirement scenarios 對應到既有命令與一個 bounded browser smoke。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/benchmark-harness.md",
+      "heading": "Minimal Verification Harness: battle-visual-upgrade > 1. Existing tools only",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| 工作 | 既有能力 | 禁止新增 |\n|---|---|---|\n| PNG grid / alpha | Node 22 + `pngjs` | `tsx`, Sharp, ImageMagick, FFmpeg |\n| WebP encode / decode / alpha | 既有 Playwright Chromium + Canvas | 自製 WebP decoder |\n| Audio lifecycle | 既有 Howler | 第二 audio pool/controller |\n| Animation lifecycle | 既有 `useBattlePresentation` | 第二 scheduler/timer queue |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/benchmark-harness.md",
+      "heading": "Minimal Verification Harness: battle-visual-upgrade > 2. Requirement-linked checks",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Requirement | Executable check | Pass condition |\n|---|---|---|\n| Fixed seven-atlas map | `npm run battle:prepare -- slice` | 7 個 grid 可整除，且每張 atlas 的 first/last declared cell 均輸出 |\n| Runtime asset integrity | `npm run battle:assets` | registry、path、magic、bytes、metadata、fallback、orphan、12 Ogg 全通過 |\n| Browser decode / alpha | existing Playwright battle asset spec | 所有新增 WebP decode；natural dimensions > 0；四角 alpha=0 |\n| Character action / fallback | BattleArena Vitest + one routed 404 | required action 不用 idle；404/decode error 回既有 fallback |\n| Skill phase / reduced motion | BattleSkillOverlay Vitest | phase mapping、unique impact、ultimate、reduced-motion、missing asset 全通過 |\n| Cue mapping / no lock | useSoundEffects Vitest + BattleArena integration | registry-only path；cast/impact phase flow；crit/shield；dedupe；`{howl,soundId}` stop→play；hidden/unmount；missing Ogg |\n| Environment ceiling / occlusion | one Playwright battle flow | arena environment images ≤ 4；mobile quiz UI 可讀可點；reduced-motion 無快速動畫 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/benchmark-harness.md",
+      "heading": "Minimal Verification Harness: battle-visual-upgrade > 3. Bounded lifecycle evidence",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "不建立自訂事件產生器；使用現有可執行測試組合提供 bounded 證據：\n\n- `BattleSkillOverlay` Vitest 覆蓋 rapid queued event 與 media fallback。\n- `useBattlePresentation` Vitest 覆蓋 hidden cancel-to-settle。\n- `useSoundEffects` Vitest 覆蓋 latest-wins、explicit stop 與 unmount cleanup。\n- Playwright battle flow 驗證 active environment image nodes ≤ 4，並以 route abort 驗證 media error 不阻塞流程。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/benchmark-harness.md",
+      "heading": "Minimal Verification Harness: battle-visual-upgrade > 4. Deliberately omitted",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "- 2 小時 soak、heap snapshot 報表 schema。\n- 「Playwright Mobile Safari」宣稱；device emulation 不等於 Safari engine。\n- audio play-to-ear latency；headless CI 無法量測實際聽覺輸出。\n- 固定 60 FPS / CPU 百分比跨硬體 gate。\n- 未由 requirement 支持且容易受 CI 噪音影響的 Long Task 閾值。\n- generic runner、adapter、plugin、telemetry backend。\n\n如未來有第二套素材包或真實 production performance regression，再從實際數據新增專用 gate；本 change 不預建接口。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/design.md",
+      "heading": "Context",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "`battle-system-quality-overhaul` 已提供本次內容升格所需的 runtime 基礎：\n\n- `BATTLE_ASSET_REGISTRY` 是唯一正式 media manifest，現有 25 個資產。\n- `getBattleCharacterAsset(id, action)` 已先查 `<id>:<action>`，不存在時回到 idle。\n- `CharacterSprite` 已處理 `<img onError>`，可回到 entry 的 `fallbackId` 或安全 placeholder。\n- `useBattlePresentation` 已擁有 queue、phase timer、safety timer、hidden cancel 與 unmount cleanup；不得建立第二 scheduler。\n- `BattleSkillOverlay` 是技能 media 的唯一 render/completion 路徑。\n- `useSoundEffects` 是唯一 audio controller；`BattlePresentationEvent` 已包含 `phase`，payload 已包含 `isCrit`、`shieldAbsorbed`、`element` 與 `skillId`。\n- 專案要求 Node >= 22，已有 `pngjs`、Playwright、Howler；沒有 `tsx`、Sharp、`cwebp`、ImageMagick 或 FFmpeg。\n\n目前 13 個候選 `.ogg` 已存在於 `public/sounds/battle/`，但 `battle_victory.ogg` 沒有對應的 presentation event。它在本 change 中移回 `assets-prep/` 保留，不加入 runtime registry。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/design.md",
+      "heading": "Goals / Non-Goals",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "**Goals:**\n\n1. 只為現有 presentation event 能消費的角色動作發布 runtime asset。\n2. 以 12 張元素 phase 圖 + 9 張獨特 skill 圖，讓 9 個技能可辨識。\n3. 以最多 4 個 environment image overlay 增加深度，不建立粒子系統。\n4. 以既有 event + phase 精確播放 12 個 cue，且任何時刻只有一個短 SFX。\n5. 以固定 atlas map、既有依賴與可重跑命令完成切圖、WebP 升格及驗證。\n6. media error、reduced-motion、hidden/unmount 與快速事件仍由既有 lifecycle 安全收斂。\n\n**Non-Goals:**\n\n- 不發布 `hero:victory`、`skeleton_wizard:cast`、`dragon_fire:fire-breath`、`environment-rubble`、`environment-ice-motes`、`environment-sparks` 或 `battle_victory.ogg`；目前沒有 runtime event consumer。\n- 不建立 Canvas/WebGL 粒子引擎、DOM particle generator、camera system 或 biome system。\n- 不建立第二 asset registry、fallback manager、preload service、audio pool、priority queue、presentation scheduler 或 telemetry service。\n- 不新增圖片處理 dependency 或要求全域 CLI。\n- 不承諾舊版瀏覽器相容層；專案正式 runtime 已使用 WebP，本 change 不改變 browser baseline。\n- 不建立通用 benchmark framework、2 小時 soak harness 或跨硬體固定 FPS gate。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/design.md",
+      "heading": "Decisions > D1: 只發布有 consumer 的角色動作",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "沿用 `<characterId>:<action>` 組合鍵與現有 fallback：\n\n| 角色 | 本次新增 runtime action |\n|---|---|\n| `hero` | `attack`, `cast`, `hurt`, `defeat` |\n| `slime_blue`, `bat_shadow`, `goblin_green` | `attack`, `hurt`, `defeat` |\n| `orc_berserker`, `skeleton_warrior`, `skeleton_wizard` | `attack`, `hurt`, `defeat` |\n| `dragon_fire` | `entrance`, `attack`, `hurt`, `defeat` |\n\n`heroAction` 已能產生 attack/cast/hurt/defeat；`monsterAction` 已能產生 attack/hurt/defeat，只需把 `boss_entrance` + `entrance` phase 映射到 `entrance`。現有 `BattleArena` 已先以 `activeEvent.payload.monsterId` 解析 `eventMonster`，再 fallback 到 durable monster；defeat identity 只需 regression test，不新增 state 或實作分支。`hero:victory`、`skeleton_wizard:cast` 與 `dragon_fire:fire-breath` 沒有事件來源，保留 source cell 即可。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/design.md",
+      "heading": "Decisions > D2: 12 張元素 phase + 9 張獨特 skill 圖",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "不為 9 個技能複製 36 張 phase 圖。新增 12 個元素 phase entries：\n\n```text\nvfx-fire-{charge|travel|impact|residue}\nvfx-ice-{charge|travel|impact|residue}\nvfx-lightning-{charge|travel|impact|residue}\n```\n\n`signature-skills.png` 的 9 個 cell 覆蓋現有 9 個 skill ID 的圖片，因此不增加第二份 skill registry。`BattleSkillOverlay` 內的局部 `SkillVfxRenderer` 直接使用：\n\n- `event.payload.element` 選元素 phase entry。\n- `event.phase` 選 charge / travel-or-establish / impact / residue。\n- `ALL_SKILLS.find(skill.id === skillId)` 取得 tier，不建立新的 JSON/TS config。\n- impact 同時顯示現有 skill ID 的獨特圖片，確保同元素三個 tier 仍可辨識。\n- ultimate/epic/legendary 保留既有 WebM + still fallback。\n\nRenderer 是 `BattleSkillOverlay.tsx` 內的局部函式元件，沒有自己的 timer、queue 或 completion owner。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/design.md",
+      "heading": "Decisions > D3: Environment 直接使用 image overlay",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "- grounding shadow 放在 `CharacterSprite` 的定位容器內，跟隨角色，不新增跨元件座標同步。\n- fog、embers 是各一張 image；正常模式可使用慢速 `transform/opacity`，reduced-motion 下保持靜態或隱藏。\n- shockwave 只在 attack/skill impact 顯示；speed lines 只在 boss entrance 顯示。\n- `BattleArena` 直接渲染這 4 個 overlay，不新增 `BattleEnvironmentLayer` 檔案。\n- 瀏覽器會原生節流 hidden tab 的 CSS animation；同時既有 `useBattlePresentation` 在 hidden 時取消 active event，因此不新增 visibility listener。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/design.md",
+      "heading": "Decisions > D4: Phase-aware cue mapping，單一 active SFX",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "新增 `BattleSoundCue` 精確 union，包含 12 個實際 cue。12 個 registry entry 使用 `cue-<BattleSoundCue>` ID；`useSoundEffects` 以 ``getBattleAsset(`cue-${cue}`)`` 取得唯一正式路徑，刪除硬編碼路徑的 `SOUND_CUE_PATHS`，不建立第二 manifest。`playBattleCue(event)` 直接使用既有 event：\n\n| event / phase | payload 條件 | cue |\n|---|---|---|\n| `hero_attack` / `impact` | `isCrit` | `hit_critical`，否則 `hit_basic` |\n| `monster_attack` / `impact` | `shieldAbsorbed > 0` | `shield_absorb`，否則 `hit_basic` |\n| `skill_cast` / `anticipation` | `element` | `<element>_cast` |\n| `skill_cast` / `impact` | `element` | `<element>_impact` |\n| `monster_defeat` / `defeat` | — | `monster_defeat` |\n| `monster_spawn` / `spawn` | — | `monster_spawn` |\n| `boss_entrance` / `entrance` | — | `boss_entrance` |\n\n`BattleArena` 現有 active-event effect 改為依賴完整 `activeEvent`（包含 phase），每次 phase 變更呼叫 `playBattleCue(activeEvent)`；active event 清空時呼叫 `stopBattleCue()`。既有 visibility effect 在 hidden 分支同時停止 BGM 與 battle cue，其 cleanup 也停止 battle cue；不增加 listener 或 lifecycle owner。\n\n去重鍵為 `<eventId>:<phase>:<cue>`。hook 只保存一個 `{ howl, soundId } | null` ref；播放新短 cue 前呼叫 `previous.howl.stop(previous.soundId)`，再保存新播放結果。這個 latest-wins 規則自然讓 boss entrance 取代先前 hit，且沒有計數器、TTL、pool abstraction 或永久鎖死狀態。\n\nHowler 的 `onloaderror` / `onplayerror` 僅 `console.warn` + no-op。專案沒有既有 telemetry sink，本 change 不建立一個。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/design.md",
+      "heading": "Decisions > D5: 一支固定用途資產準備腳本",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "`scripts/prepareBattleVisualAssets.ts` 只處理這 7 張已知 atlas，使用一個不匯出的 readonly literal map：\n\n| atlas | columns × rows | row-major 內容 |\n|---|---:|---|\n| `hero-actions.png` | `6 × 1` | idle, attack, cast, hurt, victory, defeat |\n| `normal-monster-actions.png` | `4 × 3` | 每列 slime / bat / goblin；每欄 idle, attack, hurt, defeat |\n| `elite-monster-actions.png` | `3 × 4` | 每欄 orc / warrior / wizard；每列 idle, attack, hurt, defeat |\n| `dragon-actions.png` | `6 × 1` | entrance, idle, attack, fire-breath, hurt, defeat |\n| `elemental-vfx.png` | `4 × 3` | 每列 fire / ice / lightning；每欄 charge, travel, impact, residue |\n| `signature-skills.png` | `3 × 3` | 每列 fire / ice / lightning；每欄 basic, intermediate, advanced |\n| `environment-overlays.png` | `4 × 2` | fog, embers, rubble, shockwave / ice-motes, sparks, speed-lines, shadow |\n\n腳本只提供 `slice` 與 `promote` 兩個固定命令：\n\n- `slice`：用既有 `pngjs` 驗證 PNG、四角 alpha、可整除 grid，輸出無損 PNG cell 供人工修邊／pivot QA。\n- `promote`：用既有 Playwright Chromium Canvas 將已核准 cell 轉為透明 WebP，僅複製 D1–D3 列出的 runtime consumer assets；精確排除 `hero:victory`、`skeleton_wizard:cast`、`dragon_fire:fire-breath`、`environment-rubble`、`environment-ice-motes` 與 `environment-sparks`。\n\n執行方式統一為 `node --experimental-strip-types ...`，不使用 `npx tsx`。Master PNG 永遠留在 `assets-prep/`。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/design.md",
+      "heading": "Decisions > D6: 使用瀏覽器原生載入與既有 fallback",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "不新增 action preloader 或 timeout wrapper。原生 `<img>` 依需求載入，`CharacterSprite` 在 decode/HTTP 失敗時沿用既有 `onError` fallback；技能／environment 圖失敗時只隱藏該裝飾並保留文字、icon 或既有 CSS fallback。既有 next-monster idle preload 不擴充成 service。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/design.md",
+      "heading": "Decisions > D7: 驗證責任分開但不建框架",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "- `validateBattleAssets.ts`：registry existence、magic bytes、bytes、路徑、action metadata 一致性、fallback、orphan，以及 `public/sounds/battle` 的 OggS/bytes。\n- Playwright：瀏覽器實際 decode、natural dimensions、透明角落、action/phase 切換、missing-media fallback、mobile/reduced-motion/hidden 行為。\n- 單元測試：cue mapping/dedupe/latest-wins、registry lookup、現有 presentation queue/safety deadline。\n\n不嘗試以 Node validator 重做完整 WebP pixel decoder，也不建立 CDP benchmark runner。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/design.md",
+      "heading": "Risks / Trade-offs",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "| 風險 | 最小緩解 |\n|---|---|\n| source cell 有比例漂移或 despill | source/cleaned atlas pair 比對 + 人工 gate；不合格 cell 不 promote |\n| 共用元素 phase 使同元素技能相似 | impact 疊加 9 張獨特 skill 圖；browser screenshot gate |\n| action asset 首次顯示稍有延遲 | 瀏覽器保留既有 image 直到新 source decode；失敗走現有 fallback，不新增 preload service |\n| WebP 編碼依賴 Chromium | Playwright 已是既有 E2E dependency；乾淨 checkout 使用同一 browser toolchain |\n| 新音效中斷前一 cue | 這是刻意的 bounded policy，優先保證不堆疊、不鎖死與答題清晰度 |\n| fog/embers 影響低階裝置 | 只有兩個 image layer；reduced-motion 關閉動態，無 DOM particle generator |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/design.md",
+      "heading": "Migration / Rollback",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "不修改 BattleState 或 localStorage schema。部署順序：\n\n1. 先更新 `types/battleTypes.ts` 並執行 `npx tsc --noEmit`。\n2. 切片、人工 QA、promote；尚未登錄的檔案不進 runtime。\n3. 更新同一 registry、validator 與測試。\n4. 更新 BattleArena、BattleSkillOverlay、useSoundEffects。\n5. 執行單元、asset validation、build 與一組 Playwright battle flow。\n\n回滾只需移除新增 registry entries／component 分支並還原 9 個 skill icon 檔；既有 idle、CSS/icon fallback、WebM 與 presenter 不受影響。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/design.md",
+      "heading": "Explicitly Rejected During Review",
+      "category": "openspec-design",
+      "scope": "openspec",
+      "text": "- 新 telemetry service：無既有 sink，也不是本 change 的產品需求。\n- WebP feature-detection framework：正式 runtime 已使用 WebP，沒有新增 browser baseline。\n- preload timeout / dynamic import recovery：本設計沒有 dynamic import，原生 image + onError 已涵蓋失敗。\n- VFX JSON config、effect DTO、provider、adapter：`ALL_SKILLS`、event payload 與 registry 已是唯一資料來源。\n- voice counter + TTL、priority queue：單一 active cue 的 `stop → play` 更短且不會洩漏。\n- 2 小時 soak、Mobile Safari emulation、audio-to-ear latency、固定 60 FPS／Long Task 閾值：不可由目前 CI 穩定驗證，改用可重現的 bounded lifecycle smoke。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/proposal.md",
+      "heading": "Why",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "`battle-system-quality-overhaul` 已完成戰鬥引擎、presentation queue、持久化與單一 asset registry，但正式內容仍只有角色 idle 圖、共用攻擊 cue，以及以靜態 icon 為主的技能演出。角色在 attack / hurt / defeat 事件仍大量 fallback 到 idle，9 個一般／中階／高階技能缺少可辨識的動態差異，戰場與聲音回饋也偏薄弱。\n\n本輪已有 `production-source-v2` 美術來源包與 13 個 `.ogg` 候選音效。計畫只升格目前事件模型可實際消費的內容；沒有 runtime consumer 的 `hero:victory`、`skeleton_wizard:cast`、`dragon_fire:fire-breath`、三個未採用 environment cells 與 `battle_victory.ogg` 保留在 `assets-prep/`，不先擴充正式介面。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/proposal.md",
+      "heading": "What Changes",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- **角色動作資產**：勇者新增 attack / cast / hurt / defeat；7 隻怪物新增 attack / hurt / defeat；火龍 Boss 額外新增 entrance。沿用 `<characterId>:<action>` 查詢與既有 idle / `<img onError>` fallback。\n- **技能 VFX 差異化**：火／冰／雷各共用 charge / travel / impact / residue 四張 phase 素材，並在 impact 疊加 9 張既有 skill ID 對應的獨特關鍵幀，使 9 個技能可辨識而不建立 36 份重複 phase 資產。3 個 ultimate 繼續使用既有 WebM。\n- **環境層次**：shadow 放在既有 `CharacterSprite` 內；fog、embers、shockwave、speed lines 直接由 `BattleArena` 渲染為最多 4 個 image overlay。不存在 DOM particle generator、第二 timer 或第二 scheduler。\n- **12 個有 consumer 的音效 cue**：接入 hit / crit / shield / defeat / spawn / boss entrance 與火／冰／雷 cast + impact。`BattleArena` 既有 active-event effect 在每次 phase 變更時把完整 event 交給 `useSoundEffects`；每次新短音效停止上一個短音效，避免自訂 voice counter、priority queue 與背景休眠鎖死。\n- **固定用途資產準備與驗證**：以 Node 22 原生 TypeScript strip、既有 `pngjs` 與 Playwright/Chromium Canvas 處理 7 張已知 atlas；不新增 `tsx`、Sharp、ImageMagick、FFmpeg 或通用 asset-pipeline framework。\n- **型別與 registry 擴充**：`BattleAssetAction` 增加 `entrance`、`BattleAssetKind` 增加 `environment`、新增精確的 `BattleSoundCue` union；所有 runtime media 繼續使用既有 `BATTLE_ASSET_REGISTRY`。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/proposal.md",
+      "heading": "Capabilities > New Capabilities",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- `battle-character-actions`: 有 runtime event consumer 的角色動作、fallback、anchor 與 defeat/spawn identity ordering\n- `battle-skill-vfx-library`: 3 組元素 phase 素材 + 9 張獨特技能關鍵幀、tier scale、reduced-motion\n- `battle-environment-presentation`: 最多 4 個 image overlay、角色 shadow、mobile occlusion 與 reduced-motion\n- `battle-audio-cue-library`: 12 個 typed cue、event/phase dedupe、單一 active SFX、failure no-op\n- `battle-asset-pipeline`: 7 張固定 atlas map、一次性 slice/promote、registry/bytes/decode gate"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/proposal.md",
+      "heading": "Capabilities > Modified Capabilities",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- `battle-mode`: `BattleAssetAction` 支援 `entrance`；`BattleAssetKind` 支援 `environment`；`CharacterSprite` 消費有實體事件來源的 action assets\n- `skill-effects-engine`: `BattleSkillOverlay` 直接依既有 presentation phase 顯示 element phase + unique skill image"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/proposal.md",
+      "heading": "Impact",
+      "category": "openspec-proposal",
+      "scope": "openspec",
+      "text": "- **Types**: `types/battleTypes.ts`\n- **Constants**: `constants/battleAssetRegistry.ts`、既有 `constants/skillsData.ts`（僅重用 `ALL_SKILLS`，不新增第二份 skill config）\n- **Components**: `components/BattleArena.tsx`、`components/BattleSkillOverlay.tsx`\n- **Hooks**: `hooks/useSoundEffects.ts`；`hooks/useBattlePresentation.ts` 不建立替代品\n- **Scripts**: 一支固定用途的 `scripts/prepareBattleVisualAssets.ts`；擴充既有 `scripts/validateBattleAssets.ts`\n- **Assets**: `public/battle/characters/`、`public/battle/vfx/`、`public/battle/environment/`、`public/sounds/battle/`\n- **Tests**: 聚焦 registry、BattleArena、BattleSkillOverlay、useSoundEffects 與既有 Playwright battle flow\n- **Dependencies**: 不新增外部依賴、audio controller、animation queue、asset registry、telemetry service 或 benchmark framework"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Fixed seven-atlas source map",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "資產準備腳本 SHALL 只處理本 change 的 7 張已知 atlas，並以單一 readonly literal map 使用實際檔名：`hero-actions.png` `6×1`、`normal-monster-actions.png` `4×3`、`elite-monster-actions.png` `3×4`（欄依序為 orc / warrior / wizard，列依序為 idle / attack / hurt / defeat）、`dragon-actions.png` `6×1`、`elemental-vfx.png` `4×3`、`signature-skills.png` `3×3`、`environment-overlays.png` `4×2`。系統 SHALL NOT 建立 alias、自動推斷 grid 或提供 plugin/adapter 介面。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Fixed seven-atlas source map > Scenario: Every atlas uses its declared grid",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 執行 `prepareBattleVisualAssets.ts slice`\n- **THEN** 每張來源圖的 width/height 可被其 columns/rows 整除\n- **AND** 第一格與最後合法格均可輸出"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Fixed seven-atlas source map > Scenario: Invalid grid fails before writes",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 任一來源圖尺寸無法被宣告 grid 整除\n- **THEN** 腳本以非零 exit code 結束\n- **AND** 不寫入該 atlas 的任何 cell"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Existing-toolchain promotion flow",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "source atlas SHALL 經 slice → manual clean/pivot review → promote 流程升格。腳本 SHALL 以 Node 22 `--experimental-strip-types` 執行，使用既有 `pngjs` 與 Playwright Chromium Canvas；SHALL NOT 要求 `tsx`、Sharp、ImageMagick、FFmpeg 或未宣告的全域 CLI。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Existing-toolchain promotion flow > Scenario: Slice to lossless review cells",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 執行 slice 命令\n- **THEN** `pngjs` 產出透明 PNG cells 到 `assets-prep/battle-visual-upgrade/sliced/`\n- **AND** 檢查來源 PNG magic bytes 與四角 alpha 為 0"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Existing-toolchain promotion flow > Scenario: Promote approved runtime cells",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 已核准 cell 執行 promote 命令\n- **THEN** Playwright Chromium Canvas 輸出透明 WebP 到既定 `public/` 路徑\n- **AND** `hero:victory`、`skeleton_wizard:cast`、`dragon_fire:fire-breath`、`environment-rubble`、`environment-ice-motes`、`environment-sparks` 與 `battle_victory.ogg` 不被發布"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Extended registry validator",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "`scripts/validateBattleAssets.ts` SHALL 驗證新增資產的存在性、magic bytes、bytes、fallback、orphan、路徑格式，以及同角色 action 的 anchor / facing / visualScale 一致性。`public/sounds/battle/` SHALL 納入同一 validator 的 OggS、bytes 與 orphan 檢查。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Extended registry validator > Scenario: Character metadata mismatch",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `hero:attack` 的 anchor / facing / visualScale 與 `hero` idle 不一致\n- **THEN** validator 以非零 exit code 報告 consistency 錯誤"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Extended registry validator > Scenario: Battle sound is invalid",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** registry 中的 `.ogg` 檔不存在、為空或無 OggS header\n- **THEN** validator 以非零 exit code 報告 audio 格式錯誤"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Bytes budgets",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "approved 資產 SHALL 遵守：character / projectile / impact / environment ≤ 250KB、skillIcon ≤ 120KB、background ≤ 700KB、audio cue ≤ 500KB。首屏必要資產（hero idle + current monster idle + dungeon background）總和 SHALL ≤ 1.5MB；action/VFX/audio 不列入首屏。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Bytes budgets > Scenario: Oversized environment image",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** approved `environment-fog` 大於 250KB\n- **THEN** validator 報告 budget 超標"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Bytes budgets > Scenario: Critical first-screen budget",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** validator 計算 hero + slime_blue + dungeon-background\n- **THEN** 總 bytes 不超過 1.5MB"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Browser decode and alpha gate",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "Playwright asset test SHALL 以瀏覽器實際 decode 所有新增 WebP，檢查 natural dimensions > 0，並以 Canvas 驗證四角 alpha 為 0。Node validator SHALL NOT 重做通用 WebP pixel decoder。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-asset-pipeline/spec.md",
+      "heading": "ADDED Requirements > Requirement: Browser decode and alpha gate > Scenario: WebP cannot decode",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** Chromium 無法 decode 任一新增 WebP\n- **THEN** Playwright 測試失敗並列出 registry asset ID"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Twelve cues with current consumers",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "系統 SHALL 提供 12 個有既有 presentation event consumer 的 cue：`hit_basic`、`hit_critical`、`shield_absorb`、`monster_defeat`、`monster_spawn`、`boss_entrance`，以及 fire / ice / lightning 的 cast + impact。`battle_victory` SHALL 保留於 source 區而不進 runtime registry，直到存在 victory event。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Twelve cues with current consumers > Scenario: Critical hit cue",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `hero_attack` event 進入 impact 且 `isCrit === true`\n- **THEN** 播放 `hit_critical.ogg`"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Twelve cues with current consumers > Scenario: Shield cue",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `monster_attack` event 進入 impact 且 `shieldAbsorbed > 0`\n- **THEN** 播放 `shield_absorb.ogg`"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Twelve cues with current consumers > Scenario: Element cast and impact cues",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** fire `skill_cast` event 進入 anticipation\n- **THEN** 播放 `skill_fire_cast.ogg`\n- **AND WHEN** 同 event 進入 impact\n- **THEN** 播放 `skill_fire_impact.ogg`"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Typed mapping through the only registry and controller",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "cue ID SHALL 使用 `BattleSoundCue` union，正式 registry ID SHALL 為 `cue-<BattleSoundCue>`。`useSoundEffects` SHALL 以既有 `getBattleAsset` 取得路徑並刪除硬編碼路徑的 `SOUND_CUE_PATHS`；cue 只由既有 `playBattleCue(event)` 播放。mapping SHALL 直接讀取 `BattlePresentationEvent.kind`、`phase` 與既有 payload；SHALL NOT 建立第二 manifest、audio controller 或 audio choreography state machine。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Typed mapping through the only registry and controller > Scenario: Unsupported event phase is a no-op",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** event / phase 沒有對應 cue\n- **THEN** `playBattleCue` 不播放且不改變戰鬥流程"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Event-phase deduplicate",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "`BattleArena` 既有 active-event effect SHALL 在完整 `activeEvent`（包含 phase）變更時呼叫 `playBattleCue(event)`。相同 `<eventId>:<phase>:<cue>` SHALL 只播放一次，避免 React re-render 重播；同 event 的合法 cast 與 impact cue SHALL 各播放一次。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Event-phase deduplicate > Scenario: Duplicate impact render",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 相同 impact phase 被 render 兩次\n- **THEN** 第二次 cue 呼叫為 no-op"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Single active short cue",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "同一時間 SHALL 最多有一個 battle short SFX。hook SHALL 只保存 `{ howl, soundId } | null`；播放新 cue 前 SHALL 呼叫 `previous.howl.stop(previous.soundId)`，再播放新 cue。SHALL NOT 使用 active counter、TTL、priority queue 或自訂 pool。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Single active short cue > Scenario: Boss entrance replaces hit",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** hit cue 尚在播放且 boss entrance cue 到達\n- **THEN** hit 被停止\n- **AND** boss entrance 立即成為唯一 active short cue"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Single active short cue > Scenario: Hidden or unmount stops active cue",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** battle page hidden 或 BattleArena unmount\n- **THEN** `BattleArena` 既有 visibility effect／cleanup 呼叫同一 `stopBattleCue()`，active short cue 被停止\n- **AND** 回到頁面後沒有洩漏的 slot/counter 狀態"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Missing audio fails soft",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "constructor、load、play 或 autoplay 失敗 SHALL `console.warn` + no-op，不得中斷答題。專案沒有既有 telemetry sink，本 requirement SHALL NOT 新增 telemetry service。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-audio-cue-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Missing audio fails soft > Scenario: Missing Ogg",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** cue 路徑無法載入\n- **THEN** 記錄 warning\n- **AND** presentation event 仍由既有 scheduler 正常完成"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-character-actions/spec.md",
+      "heading": "ADDED Requirements > Requirement: Action registration uses existing registry",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "每個新增角色動作 SHALL 以 `<characterId>:<action>` 註冊到既有 `BATTLE_ASSET_REGISTRY`；idle 維持 `<characterId>`。系統 SHALL NOT 建立第二份 character manifest。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-character-actions/spec.md",
+      "heading": "ADDED Requirements > Requirement: Action registration uses existing registry > Scenario: Hero attack lookup",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 查詢 `getBattleCharacterAsset('hero', 'attack')`\n- **THEN** 返回 kind=`character`、action=`attack` 的 `hero:attack`"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-character-actions/spec.md",
+      "heading": "ADDED Requirements > Requirement: Action registration uses existing registry > Scenario: Missing action keeps existing fallback",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 查詢沒有 entry 的 action 或 action WebP decode 失敗\n- **THEN** 使用既有 idle / `onError` fallback\n- **AND** 不建立新的 fallback manager"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-character-actions/spec.md",
+      "heading": "ADDED Requirements > Requirement: Runtime-consumed action set",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "勇者 SHALL 新增 attack / cast / hurt / defeat。每隻普通與菁英怪物 SHALL 新增 attack / hurt / defeat。`dragon_fire` SHALL 額外新增 entrance。`hero:victory`、`skeleton_wizard:cast` 與 `dragon_fire:fire-breath` SHALL NOT 在本 change 發布，因目前沒有 presentation event consumer。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-character-actions/spec.md",
+      "heading": "ADDED Requirements > Requirement: Runtime-consumed action set > Scenario: Required actions do not fallback",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 現有 presentation event 產生上述 action\n- **THEN** 每個 action 都返回對應 entry 而非 idle"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-character-actions/spec.md",
+      "heading": "ADDED Requirements > Requirement: Runtime-consumed action set > Scenario: Source-only pose remains out of runtime",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 檢查 runtime registry\n- **THEN** 不存在 `hero:victory`、`skeleton_wizard:cast` 或 `dragon_fire:fire-breath`"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-character-actions/spec.md",
+      "heading": "ADDED Requirements > Requirement: Visual metadata consistency",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "同一角色 action entries SHALL 與其 idle entry 使用相同 anchor、facing 與 visualScale。實際檔案 SHALL 為透明 WebP、≤ 250KB、可由 Chromium decode 且四角 alpha 為 0。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-character-actions/spec.md",
+      "heading": "ADDED Requirements > Requirement: Visual metadata consistency > Scenario: Metadata consistency",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** validator 檢查同一角色全部 action entries\n- **THEN** anchor / facing / visualScale 與 idle 完全一致"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-character-actions/spec.md",
+      "heading": "ADDED Requirements > Requirement: Defeat identity remains until spawn",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "現有 `BattleArena` 已優先解析 `activeEvent.payload.monsterId`；`monster_defeat` event SHALL 繼續使用該 monster ID 顯示其 defeat asset，直到後續 `monster_spawn` / `boss_entrance` 開始。這是 regression requirement，不新增 state machine 或 identity state。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-character-actions/spec.md",
+      "heading": "ADDED Requirements > Requirement: Defeat identity remains until spawn > Scenario: Defeated monster remains visible",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** defeat event active 但 durable state 已準備下一隻怪物\n- **THEN** CharacterSprite 仍顯示被擊敗 monster 的 defeat asset"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-environment-presentation/spec.md",
+      "heading": "ADDED Requirements > Requirement: Shadow stays inside CharacterSprite",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "每個角色 SHALL 在 `CharacterSprite` 定位容器內顯示靜態 grounding shadow，使 shadow 原生跟隨角色移動。SHALL NOT 建立跨元件座標同步。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-environment-presentation/spec.md",
+      "heading": "ADDED Requirements > Requirement: Shadow stays inside CharacterSprite > Scenario: Shadow follows attack transform",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** CharacterSprite 因 attack transform 移動\n- **THEN** shadow 與同一定位容器一起移動"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-environment-presentation/spec.md",
+      "heading": "ADDED Requirements > Requirement: At most four arena image overlays",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "`BattleArena` SHALL 直接渲染最多 4 個 environment image overlay：fog、embers、shockwave、speed lines。系統 SHALL NOT 產生 DOM particles 或建立獨立 environment scheduler。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-environment-presentation/spec.md",
+      "heading": "ADDED Requirements > Requirement: At most four arena image overlays > Scenario: Overlay node ceiling",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 所有環境效果條件同時成立\n- **THEN** environment image overlay 節點不超過 4"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-environment-presentation/spec.md",
+      "heading": "ADDED Requirements > Requirement: Existing phase controls event overlays",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "shockwave SHALL 只在 attack/skill impact 顯示；speed lines SHALL 只在 boss entrance 顯示。效果生命週期 SHALL 由既有 `BattlePresentationEvent.phase` 控制，不建立 timer。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-environment-presentation/spec.md",
+      "heading": "ADDED Requirements > Requirement: Existing phase controls event overlays > Scenario: Shockwave phase",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** attack event 進入 impact\n- **THEN** 顯示 shockwave\n- **AND** 離開 impact 後移除"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-environment-presentation/spec.md",
+      "heading": "ADDED Requirements > Requirement: Quiz content remains unobstructed",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "environment overlay z-index SHALL 低於題目、選項與 HP UI，且 pointer-events SHALL 為 none。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-environment-presentation/spec.md",
+      "heading": "ADDED Requirements > Requirement: Quiz content remains unobstructed > Scenario: Mobile readability",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** mobile viewport 同時顯示 fog、embers 與 attack overlay\n- **THEN** 題目與選項仍可讀、可點擊"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-environment-presentation/spec.md",
+      "heading": "ADDED Requirements > Requirement: Reduced-motion environment",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "reduced-motion 下 SHALL 停用 fog/embers 的位移及所有 shockwave/speed-lines 動畫；靜態 shadow 保留。hidden 時沿用瀏覽器 CSS 節流與既有 presentation cancel，SHALL NOT 新增 visibility listener。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-environment-presentation/spec.md",
+      "heading": "ADDED Requirements > Requirement: Reduced-motion environment > Scenario: Reduced motion",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** `prefers-reduced-motion` 啟用\n- **THEN** environment 沒有快速位移或閃爍\n- **AND** 答題與 presentation completion 不受影響"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-mode/spec.md",
+      "heading": "MODIFIED Requirements > Requirement: Battle asset unions cover immediate consumers",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "`BattleAssetAction` SHALL 增加 `'entrance'`；`BattleAssetKind` SHALL 增加 `'environment'`。兩者 SHALL 在任何 registry/component 邏輯前先定義並通過 `npx tsc --noEmit`。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-mode/spec.md",
+      "heading": "MODIFIED Requirements > Requirement: Battle asset unions cover immediate consumers > Scenario: Entrance character entry compiles",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** dragon entry 使用 kind=`character`、action=`entrance`\n- **THEN** TypeScript 編譯通過"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-mode/spec.md",
+      "heading": "MODIFIED Requirements > Requirement: Battle asset unions cover immediate consumers > Scenario: Environment entry compiles",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** fog entry 使用 kind=`environment`\n- **THEN** TypeScript 編譯通過且 validator 有對應副檔名／bytes 規則"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-mode/spec.md",
+      "heading": "MODIFIED Requirements > Requirement: Character lookup supports entrance",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "`getBattleCharacterAsset` SHALL 支援 `entrance` 並維持既有 idle fallback。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-mode/spec.md",
+      "heading": "MODIFIED Requirements > Requirement: Character lookup supports entrance > Scenario: Dragon entrance",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 查詢 `getBattleCharacterAsset('dragon_fire', 'entrance')`\n- **THEN** 返回 `dragon_fire:entrance`"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-mode/spec.md",
+      "heading": "ADDED Requirements > Requirement: CharacterSprite consumes current action assets",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "CharacterSprite SHALL 根據既有 heroAction / monsterAction 顯示 registry action asset。`boss_entrance` + `entrance` phase SHALL 映射 monsterAction=`entrance`；其他既有 attack/cast/hurt/defeat mapping 保持單一來源。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-mode/spec.md",
+      "heading": "ADDED Requirements > Requirement: CharacterSprite consumes current action assets > Scenario: Boss entrance sprite",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** boss entrance event 進入 entrance phase\n- **THEN** dragon image src 使用 `dragon_fire:entrance`"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-mode/spec.md",
+      "heading": "ADDED Requirements > Requirement: CharacterSprite consumes current action assets > Scenario: Broken action image",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** action image HTTP/decode 失敗\n- **THEN** 既有 CharacterSprite `onError` fallback 回到 idle 或安全 placeholder"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-skill-vfx-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Shared element phases plus unique skill image",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "9 個 basic/intermediate/advanced 技能 SHALL 使用其元素的 4 張共用 phase VFX，並在 impact 顯示該 skill ID 的獨特圖片。系統 SHALL NOT 為 9 個技能複製 36 張 phase 資產或建立第二份 skill config。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-skill-vfx-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Shared element phases plus unique skill image > Scenario: Same-element skills remain distinct",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** Fireball、Flame Storm、Meteor Strike 進入 impact\n- **THEN** 三者可共用 fire impact layer\n- **AND** 各自顯示不同的 skill image"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-skill-vfx-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Twelve phase assets use canonical IDs",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "registry SHALL 包含 `vfx-<element>-<phase>` 12 個 entries，其中 element 為 fire/ice/lightning，phase 為 charge/travel/impact/residue。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-skill-vfx-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Twelve phase assets use canonical IDs > Scenario: Fire phase lookup",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 查詢 `vfx-fire-charge`、`vfx-fire-travel`、`vfx-fire-impact`、`vfx-fire-residue`\n- **THEN** 各返回 projectile 或 impact asset"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-skill-vfx-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Existing presentation phase drives VFX",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "anticipation SHALL 顯示 charge，travel SHALL 顯示 travel/establish，impact SHALL 顯示 impact + unique skill image，settle SHALL 顯示 residue。Renderer SHALL NOT 建立 timer 或 completion queue。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-skill-vfx-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Existing presentation phase drives VFX > Scenario: Flame Storm establish phase",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** Flame Storm 進入 travel\n- **THEN** 共用 fire travel image 以場域 establish 方式呈現\n- **AND** 不建立 projectile timer"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-skill-vfx-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Existing skill tier controls scale",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "Renderer SHALL 以既有 `ALL_SKILLS` 取得 tier：basic 小面積、intermediate 加入場域、advanced 可全屏 emphasis。SHALL NOT 新增 JSON config、DTO、provider 或 adapter。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-skill-vfx-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Existing skill tier controls scale > Scenario: Tier scale differs",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** basic 與 advanced skill 使用相同元素 phase\n- **THEN** 其尺寸／emphasis 仍依既有 tier 不同"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-skill-vfx-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Ultimate and reduced-motion fallbacks remain",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "ultimate/epic/legendary SHALL 維持既有 WebM + still fallback。reduced-motion 下 basic/intermediate/advanced SHALL 只顯示名稱、獨特 skill image 與短淡入，不使用快速位移或 flash。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/battle-skill-vfx-library/spec.md",
+      "heading": "ADDED Requirements > Requirement: Ultimate and reduced-motion fallbacks remain > Scenario: Reduced-motion skill",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** reduced-motion 且 skill event 觸發\n- **THEN** 顯示名稱 + skill image 短淡入\n- **AND** event 仍由既有 scheduler 完成"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/skill-effects-engine/spec.md",
+      "heading": "MODIFIED Requirements > Requirement: BattleSkillOverlay renders phase VFX in its existing path",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "`BattleSkillOverlay` SHALL 在同一 component file 內使用局部 `SkillVfxRenderer`，依 active `BattlePresentationEvent` 查詢元素 phase 與 unique skill asset。SHALL NOT 新增獨立 component file、timer、queue 或 media completion owner。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/skill-effects-engine/spec.md",
+      "heading": "MODIFIED Requirements > Requirement: BattleSkillOverlay renders phase VFX in its existing path > Scenario: Fireball phase rendering",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** Fireball event phase 依序為 anticipation / travel / impact / settle\n- **THEN** 同一 overlay 依序顯示 fire charge / travel / impact / residue\n- **AND** impact 同時顯示 Fireball 的 unique image"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/skill-effects-engine/spec.md",
+      "heading": "MODIFIED Requirements > Requirement: BattleSkillOverlay renders phase VFX in its existing path > Scenario: Missing VFX stays usable",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** phase asset 或 unique skill image 無法 decode\n- **THEN** overlay 使用既有 icon/CSS/Sparkles fallback\n- **AND** 不阻塞 presentation completion"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/skill-effects-engine/spec.md",
+      "heading": "MODIFIED Requirements > Requirement: Existing scheduler remains sole phase owner",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "VFX SHALL 只讀取 `event.phase`；完成、timeout、hidden 與 unmount SHALL 繼續由 `useBattlePresentation` 現有路徑管理。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/specs/skill-effects-engine/spec.md",
+      "heading": "MODIFIED Requirements > Requirement: Existing scheduler remains sole phase owner > Scenario: Rapid queued events",
+      "category": "openspec-spec",
+      "scope": "openspec",
+      "text": "- **WHEN** 兩個 skill events 快速 enqueue\n- **THEN** 第二個只在既有 scheduler 啟用後渲染\n- **AND** 不存在第二個動畫 queue"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/stress-test-report.md",
+      "heading": "Stress Test Resolution: battle-visual-upgrade",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "> Original stress test: 2026-07-20  \n> Plan review: `review-check` + `ponytail` + `ponytail-review`  \n> Current unresolved findings: **0**"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/stress-test-report.md",
+      "heading": "Stress Test Resolution: battle-visual-upgrade > 1. Original findings",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "原始壓測共 8 項：1 CRITICAL / 2 HIGH / 3 MEDIUM / 2 LOW。逐項重新核對 artifacts 與程式現況後，結果如下。\n\n| ID | Original severity | Final status | Resolution |\n|---|---|---|---|\n| D4-001 | CRITICAL | fixed by simplification | 刪除 active voice counter / TTL；只保存 `{ howl, soundId }` 並對原 Howl instance `stop → play`，hidden/unmount 也 stop，因此沒有可洩漏的 slot。 |\n| D2-001 | HIGH | refuted + covered | `CharacterSprite` 已有原生 `<img onError>` fallback；計畫不重建 fallback，只補 action URL 404/decode error 測試。 |\n| D8-001 | HIGH | refuted (YAGNI) | 專案沒有 telemetry sink，建立服務會擴張範圍；保留 validator + `console.warn` + browser fault injection。若未來採用正式 telemetry 再接入。 |\n| D1-001 | MEDIUM | fixed by simplification | 單一 active cue 使後到的 boss entrance 自然停止先前 hit；不需要 priority queue。 |\n| D10-001 | MEDIUM | refuted | 現有正式角色、技能與背景已使用 WebP；本 change 不改 browser baseline，不新增全域 feature-detection framework。 |\n| D5-001 | MEDIUM | refuted | 設計沒有 dynamic import；原生 image loading + 已存在的 CharacterSprite fallback 足夠，且明確刪除 preload timeout/service。 |\n| D9-001 | LOW | fixed by reuse | `SkillVfxRenderer` 留在既有 `BattleSkillOverlay.tsx`，直接重用 `ALL_SKILLS`、event payload/phase 與 registry；不建 JSON config/provider/DTO。 |\n| D3-001 | LOW | refuted + covered | `useBattlePresentation` 已序列化 event，並有 phase/safety timers；新增 rapid queued event 測試，不加 `layoutId` 或第二 queue。 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/stress-test-report.md",
+      "heading": "Stress Test Resolution: battle-visual-upgrade > 2. Review-check canonical issues (part 1)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "三輪兩位獨立 reviewer 的重複發現已合併；主代理另補上 VFX 數量、無 consumer action 與 Ponytail 簡化問題。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/stress-test-report.md",
+      "heading": "Stress Test Resolution: battle-visual-upgrade > 2. Review-check canonical issues (part 2)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Canonical issue | Initial severity | Final status | Artifact change |\n|---|---|---|---|\n| C-01 資產流程依賴不存在的 `tsx`/Sharp/global CLI | CRITICAL | fixed | Node 22 strip + existing `pngjs` + Playwright Canvas；沒有新 dependency。 |\n| C-02 atlas grid 模糊／方向錯誤 | WARNING | fixed | design/spec/tasks 明列 7 個 `columns × rows` 與 row-major 內容。 |\n| C-03 `BattleAssetKind` 無 environment、validator 不掃 sounds | WARNING | fixed | type-first 增加 `environment`；同一 validator 掃 `public/battle` + `public/sounds/battle`。 |\n| C-04 phase audio 在 tasks 沒有資料流 | WARNING | fixed | `playBattleCue(event)` 直接讀既有 `event.phase` 與 payload；event/phase/cue 去重。 |\n| C-05 重複 presentation/audio lifecycle | WARNING | fixed | 禁止第二 scheduler、counter、TTL、pool、visibility timer；延用 presenter + Howler。 |\n| C-06 重複 fallback/preloader | WARNING | fixed | 保留 CharacterSprite onError 與既有 next-monster idle preload；無 manager/service。 |\n| C-07 9 技能四階段需求只配置 12 張元素圖 | CRITICAL | fixed | 契約改為 12 張共用元素 phase + 9 張 unique impact image，tasks/IDs/renderer 一致。 |\n| C-08 hero victory、wizard cast、dragon fire-breath 無 event consumer | WARNING | fixed | source-only，不發布、不登錄；proposal/spec/design/tasks 一致。 |\n| C-09 generic benchmark 不可穩定執行 | WARNING | fixed | 改為 requirement-linked checks + 現有 bounded lifecycle tests（rapid queue、hidden cancel、latest-wins/unmount、environment ceiling/media abort）；刪除 2h soak、假 Safari、audio-to-ear、固定 FPS。 |\n| C-10 validator 宣稱與現況能力不一致 | WARNING | fixed | Node 做 magic/bytes/metadata；Playwright 做 decode/pixel alpha；責任明確。 |\n| C-11 自製 RIFF/WebP metadata parser 重複瀏覽器能力 | WARNING | fixed | 移除 parser task；Node 只驗 magic/bytes，尺寸與 alpha 交由 Chromium Canvas。 |\n| C-12 Long Task 200ms gate 無 requirement 且易受 CI 噪音影響 | WARNING | fixed | smoke 只驗證 node/cue ceiling 與 lifecycle cleanup。 |\n| C-13 phase-aware audio 無明確 runtime 呼叫端／cleanup 接線 | CRITICAL | fixed | `BattleArena` 既有 active-event/visibility effects 接 `playBattleCue(full event)` 與 `stopBattleCue()`；無新 listener。 |\n| C-14 audio registry 與硬編碼 path map 形成雙重來源 | CRITICAL | fixed | 移除"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/stress-test-report.md",
+      "heading": "Stress Test Resolution: battle-visual-upgrade > 2. Review-check canonical issues (part 3)",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": " `SOUND_CUE_PATHS`；`cue-<BattleSoundCue>` 只由 `getBattleAsset` 取路徑。 |\n| C-15 跨 Howl 只保存數字 soundId 無法正確停止 | WARNING | fixed | 單一 `{ howl, soundId } | null` ref；播放前對原 instance stop。 |\n| C-16 source-only 清單與 atlas 實際 cell 不一致 | WARNING | fixed | 精確列出 3 個 pose、3 個 environment cell 與 `battle_victory.ogg`，registry/pipeline tests 共用 ID 集合。 |\n| C-17 defeat identity requirement 缺實作對應 | WARNING | refuted + covered | 現有 `BattleArena` 已優先使用 `activeEvent.payload.monsterId`；任務明定 regression-only，不新增 state。 |\n| C-18 固定 atlas 使用不同別名 | WARNING | fixed | design/spec/tasks 統一使用 7 個實際檔名，不新增 alias。 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/stress-test-report.md",
+      "heading": "Stress Test Resolution: battle-visual-upgrade > 3. Traceability after revision",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Goal | Spec | Design | Tasks | Verification |\n|---|---|---|---|---|\n| 26 個有 consumer 的角色 action | character-actions + battle-mode | D1 | 0–3 | registry + BattleArena unit + routed media error |\n| 9 技能差異化 | skill-vfx + skill-effects | D2 | 1, 2, 4 | overlay unit + Chromium screenshots/decode |\n| bounded environment | environment-presentation | D3 | 2, 3, 5 | node ceiling + mobile/reduced-motion flow |\n| 12 個 cue 且不堆疊／鎖死 | audio-cue-library | D4 | 0, 2, 6 | mapping/dedupe/stop→play/hidden tests |\n| 可重跑資產升格 | asset-pipeline | D5, D7 | 1, 2, 7 | fixed map + validator + browser decode/alpha |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/stress-test-report.md",
+      "heading": "Stress Test Resolution: battle-visual-upgrade > 4. Final risk register",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "沒有未解決 CRITICAL / WARNING。保留的已知 trade-offs 均已寫入 `design.md`：\n\n- 不合格 source cell 不 promote；不以程式硬補美術品質。\n- skill phase 由元素共用，差異靠 unique impact image + existing tier。\n- short SFX 採 latest-wins，刻意避免混音器與 voice pool。\n- 效能以可重現 bounded smoke 與 node/cue ceiling 判定，不宣稱 Long Task 或跨硬體固定 FPS gate。\n\n若 implementation 改變上述邊界，必須重新進行 plan review；目前計畫已可進入 implementation。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/stress-test-report.md",
+      "heading": "Stress Test Resolution: battle-visual-upgrade > 5. Review rounds",
+      "category": "openspec-doc",
+      "scope": "openspec",
+      "text": "| Round | Reviewer A | Reviewer B | Outcome |\n|---|---|---|---|\n| 1 | BLOCKED | BLOCKED | 修正工具鏈、atlas、registry、phase flow 與重複 lifecycle。 |\n| 2 | BLOCKED | PASS | 補齊 audio runtime caller/cleanup、唯一 path source、Howl instance handle、精確 source-only IDs；再刪 RIFF parser 與 Long Task gate。 |\n| 3 | PASS | PASS | 0 CRITICAL、0 WARNING、0 refutation objection；兩位 Ponytail 結論皆為 `Lean already. Ship.`。 |"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/tasks.md",
+      "heading": "0. Type-first 與範圍鎖定",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 0.1 在 `types/battleTypes.ts` 將 `'entrance'` 加入 `BattleAssetAction`、`'environment'` 加入 `BattleAssetKind`，並新增 12 值的 `BattleSoundCue` union。**驗證**：只改型別後執行 `npx tsc --noEmit`，exit code 0。\n- [x] 0.2 在既有 validator 的 exhaustive kind maps 補上 `environment` 與 audio budget，使 0.1 不留下未處理 union branch。**驗證**：`npm run battle:assets` 對現有 25 個 registry entries 仍通過。\n- [x] 0.3 建立本 change 的 runtime 清單：26 個 action、12 個元素 phase、9 個覆蓋既有 skill ID 的 unique image、5 個 environment image、12 個 audio cue；精確排除 `hero:victory`、`skeleton_wizard:cast`、`dragon_fire:fire-breath`、`environment-rubble`、`environment-ice-motes`、`environment-sparks`、`battle_victory.ogg`。**驗證**：清單同時出現在 `ASSET_MANIFEST.md`，且後續 registry 測試使用相同 ID 集合。\n\n> **邊界**：完成 0.1 的型別檢查後才修改 registry/component/hook 邏輯。不得新增第二份 registry、DTO、provider 或 adapter。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/tasks.md",
+      "heading": "1. 固定用途資產準備",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 1.1 建立單一 `scripts/prepareBattleVisualAssets.ts`，內含以 7 個實際檔名為 key 的不匯出 readonly map：`hero-actions.png` `6×1`、`normal-monster-actions.png` `4×3`、`elite-monster-actions.png` `3×4`（欄為 orc / warrior / wizard，列為 idle / attack / hurt / defeat）、`dragon-actions.png` `6×1`、`elemental-vfx.png` `4×3`、`signature-skills.png` `3×3`、`environment-overlays.png` `4×2`。只支援 `slice` / `promote` 兩個固定命令。**驗證**：`npm run battle:prepare -- slice` 可執行；package/lockfile 無新增依賴。\n- [x] 1.2 在 `slice` 使用既有 `pngjs` 驗證 PNG magic bytes、grid 可整除與四角 alpha=0，再輸出全部 lossless PNG cells。**驗證**：`npm run battle:prepare -- slice` exit code 0，七張 atlas 的宣告 cells（包含各自第一格與最後格）均輸出至 `assets-prep/battle-visual-upgrade/sliced/`。\n- [x] 1.3 目視比對 `production-source-v2/*-source.png` 與同名 cleaned atlas pair，檢查 despill、裁切與 pivot；不另產每角色 overlay comparison。**驗證**：七組 source/cleaned atlas pair 保留為人工 QA 證據，不合格 cell 維持 source-only 且未進入 promote allowlist。\n- [x] 1.4 在 `promote` 使用既有 Playwright Chromium Canvas 將已核准 cell 轉為透明 WebP；不使用 `npx tsx`、Sharp 或全域圖片 CLI。**驗證**：乾淨環境只靠既有 `npm install` + Playwright browser 即可產生 RIFF/WEBP 檔。\n- [x] 1.5 Promote 26 個有 consumer 的 action 與 12 個 element phase；用 9 個 signature cells 覆蓋現有 9 個 basic/intermediate/advanced skill 路徑；promote fog/embers/shockwave/speed-lines/shadow。**驗證**：輸出 ID 與 0.3 清單完全一致，七個 source-only ID/file 均未輸出。\n- [x] 1.6 將 `battle_victory.ogg` 移回 `assets-prep/battle-visual-upgrade/audio-source/`，其餘 12 個 cue 保留於 `public/sounds/battle/`。**驗證**：runtime sound 目錄只有 12 個 OggS 檔且均非空。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/tasks.md",
+      "heading": "2. Registry 與 validator",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 2.1 在同一 `BATTLE_ASSET_REGISTRY` 登錄 26 個 action entries；所有 entry 的 anchor/facing/visualScale 複製各自 idle metadata。**驗證**：`getBattleCharacterAsset` 對 required actions 不 fallback；source-only actions 不存在。\n- [x] 2.2 登錄 12 個 `vfx-<element>-<phase>` entries；9 個 skill IDs 維持原 ID，只更新核准圖片。**驗證**：每個 element × phase lookup 唯一且 kind 為 `projectile` 或 `impact`。\n- [x] 2.3 登錄 5 個 `environment` 與 12 個 `audio` entries；audio ID 固定為 `cue-<BattleSoundCue>`，路徑只存在 registry。**驗證**：TypeScript exhaustive maps 與 `npm run battle:assets` 通過。\n- [x] 2.4 擴充 `validateBattleAssets.ts`：action metadata 一致性、character/action 路徑、environment/projectile/impact/audio bytes、OggS、`public/sounds/battle` orphan。保留既有 `public/battle` recursive orphan；不建立第二 validator。**驗證**：`npm run battle:assets` 對目前 registry、runtime 路徑與 orphan 集合執行全部規則並通過；聚焦 registry 測試覆蓋 fallback、尺寸一致性與 source-only exclusions。\n- [x] 2.5 更新 `battleAssetRegistry.test.ts` 驗證精確 action/VFX/environment/audio ID 清單、fallback graph、metadata 一致性與 0.3 的七個 source-only exclusions。**驗證**：聚焦測試通過。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/tasks.md",
+      "heading": "3. 角色動作消費",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 3.1 在 `BattleArena.tsx` 現有 `monsterAction` mapping 加入 `boss_entrance` + `entrance` phase → `entrance`；保留既有 attack/cast/hurt/defeat mapping，不新增 action state machine。**驗證**：boss entrance 使用 `dragon_fire:entrance`。\n- [x] 3.2 保留 `CharacterSprite` 現有 `<img onError>` fallback，只在同一處加入 grounding shadow；不新增 fallback manager 或 preload service。**驗證**：action URL 404/decode error 回 idle，shadow 跟隨 sprite transform。\n- [x] 3.3 補 `BattleArena` regression tests：hero attack/cast/hurt/defeat、monster attack/hurt/defeat、boss entrance，以及既有 `activeEvent.payload.monsterId` 在 durable monster 已切換時仍顯示被擊敗角色。不得為 identity 新增 state 或實作分支。**驗證**：聚焦 Vitest 通過。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/tasks.md",
+      "heading": "4. 技能 VFX",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 4.1 在 `BattleSkillOverlay.tsx` 同檔新增局部 `SkillVfxRenderer`；直接使用 `event.phase`、`event.payload.element`、既有 registry 與 `ALL_SKILLS`。不得建立新 component file、timer、queue、JSON config 或 DTO。**驗證**：`npx tsc --noEmit` 通過。\n- [x] 4.2 實作 phase mapping：anticipation=charge、travel=travel/establish、impact=element impact + unique skill image、settle=residue；basic/intermediate/advanced 只用既有 tier 調整 scale/emphasis。**驗證**：同元素三個 tier 在 impact 顯示不同 skill image。\n- [x] 4.3 保留 ultimate/epic/legendary WebM path；reduced-motion 顯示名稱 + unique image 短淡入；缺 phase/skill image 時用既有 icon/CSS/Sparkles fallback。**驗證**：media error 與 reduced-motion 都能由既有 scheduler settle。\n- [x] 4.4 更新 `BattleSkillOverlay.test.tsx`：四 phase、三 tier、ultimate、reduced-motion、missing media、rapid queued event。**驗證**：無第二 timer/queue，聚焦測試通過。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/tasks.md",
+      "heading": "5. Environment overlays",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 5.1 在 `BattleArena.tsx` 直接渲染 fog、embers、shockwave、speed-lines，全部 `pointer-events: none` 且 z-index 低於 quiz UI；不新增 `BattleEnvironmentLayer` 檔案。**驗證**：任何狀態 environment image nodes ≤ 4。\n- [x] 5.2 只用既有 event.phase 控制 shockwave（attack/skill impact）與 speed-lines（boss entrance）；fog/embers 只做慢速 transform/opacity。不得新增 timer 或 visibility listener。**驗證**：離開相應 phase 後 event overlay 消失。\n- [x] 5.3 reduced-motion 停用快速 environment動畫並保留 shadow；補 mobile viewport 的可讀／可點擊測試。**驗證**：題目、選項、HP 不被遮擋。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/tasks.md",
+      "heading": "6. Typed battle audio",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 6.1 刪除硬編碼路徑的 `SOUND_CUE_PATHS`；既有 `initSounds` 對 cue 以 ``getBattleAsset(`cue-${cue}`)`` 取得唯一 registry 路徑並初始化 12 個 Howl，不建立第二 path map/controller。**驗證**：每個 typed cue 只解析到一個已登錄 Ogg。\n- [x] 6.2 將 `playBattleCue` 改接收完整 `BattlePresentationEvent`，依 design D4 table 映射 cue並以 `<eventId>:<phase>:<cue>` 去重；把 `BattleArena` 現有 active-event effect 改為在完整 event/phase 變更時呼叫它。**驗證**：整合測試證明同一 skill event 的 anticipation/impact 各只播放一次，另覆蓋 crit、shield、defeat/spawn/boss。\n- [x] 6.3 只保存 `{ howl, soundId } | null` active ref；新 cue 呼叫 `previous.howl.stop(previous.soundId)` 後再播放。`BattleArena` 的既有 visibility effect 在 hidden 時呼叫同 hook 的 `stopBattleCue()`，effect cleanup/unmount 也呼叫它；不新增 listener、counter、TTL、priority queue 或 pool。**驗證**：hidden/unmount 無 active cue，boss cue 取代 hit cue。\n- [x] 6.4 使用 Howler `onloaderror` / `onplayerror` console warn + no-op；不新增 telemetry service。**驗證**：missing file、constructor/play error 不阻塞 presentation 或答題。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/tasks.md",
+      "heading": "7. 可執行驗證",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 7.1 執行 `npm run battle:assets`。**驗證**：所有 registry entries、paths、magic、bytes、fallback、orphan 與 12 個 Ogg 通過。\n- [x] 7.2 執行 `npx tsc --noEmit`、聚焦 Vitest，再執行完整 `npm test`。**驗證**：全部 exit code 0，無 `.skip/.only`。\n- [x] 7.3 執行 `npm run lint` 與 `npm run build`。**驗證**：0 errors / 0 warnings；production build 通過。\n- [x] 7.4 更新既有 Playwright battle asset/flow 測試：Chromium 實際 decode 所有新增 WebP、natural dimensions > 0、Canvas 四角 alpha=0。**驗證**：資產 ID 可定位失敗檔。\n- [x] 7.5 使用 route abort 注入 action/VFX media error，不修改正式 registry source；驗證 idle/icon fallback、正常戰鬥流程、reduced-motion 與 mobile occlusion。**驗證**：Playwright 單一代表流程通過。\n- [x] 7.6 以既有 bounded tests 組合覆蓋生命週期：`BattleSkillOverlay` rapid queue、`useBattlePresentation` hidden cancel、`useSoundEffects` latest-wins/unmount，以及 Playwright environment nodes ≤ 4 + media route abort。**驗證**：上述 Vitest/Playwright cases 通過；不宣稱不存在的固定事件數，也不建立 Long Task/FPS gate、2 小時 soak、Mobile Safari emulation或自訂 benchmark runner。"
+    },
+    {
+      "path": "openspec/changes/archive/2026-07-20-battle-visual-upgrade/tasks.md",
+      "heading": "8. 文件與結案",
+      "category": "openspec-task",
+      "scope": "openspec",
+      "text": "- [x] 8.1 更新 `assets-prep/battle-visual-upgrade/ASSET_MANIFEST.md`：每個 cell 的 source-only/promoted 狀態與 runtime path。\n- [x] 8.2 更新 `docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md`：只把本 change 真正 promoted 的項目標為 runtime，保留未使用 pose 的 source 狀態。\n- [x] 8.3 更新 `docs/DEVELOPMENT_LOG.md`；若架構、entry point 或 durable constraint 有變，更新 `MEMORY.md`。\n- [x] 8.4 實作與所有 gate 完成後，將本 `tasks.md` 的完成項目標為 `[x]`；未完成項不得為結案而勾選。\n\n> **最終完成邊界**：無新 dependency、無第二 registry/audio controller/presentation scheduler/telemetry/benchmark framework；26 個 action、9 個技能差異化、最多 4 個 arena overlay 與 12 個 cue 都有現有 event consumer，並通過 TypeScript、validator、unit、lint、build 與代表性 Chromium flow。"
     },
     {
       "path": "openspec/changes/archive/enhance-quiz-experience/design.md",

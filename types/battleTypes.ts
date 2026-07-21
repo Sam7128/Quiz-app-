@@ -191,10 +191,24 @@ export type BattleAssetKind =
   | 'impact'
   | 'background'
   | 'video'
-  | 'audio';
+  | 'audio'
+  | 'environment';
 
-type BattleAssetAction = 'idle' | 'anticipate' | 'attack' | 'hurt' | 'defeat' | 'cast' | 'victory';
-type BattleAssetStatus = 'approved' | 'fallback' | 'draft';
+type BattleAssetAction = 'idle' | 'attack' | 'hurt' | 'defeat' | 'cast' | 'entrance';
+
+export type BattleSoundCue =
+  | 'hit_basic'
+  | 'hit_critical'
+  | 'shield_absorb'
+  | 'monster_defeat'
+  | 'monster_spawn'
+  | 'boss_entrance'
+  | 'skill_fire_cast'
+  | 'skill_fire_impact'
+  | 'skill_ice_cast'
+  | 'skill_ice_impact'
+  | 'skill_lightning_cast'
+  | 'skill_lightning_impact';
 
 export interface BattleAssetEntry {
   id: string;
@@ -202,19 +216,12 @@ export interface BattleAssetEntry {
   kind: BattleAssetKind;
   action?: BattleAssetAction;
   fallbackId: string | null;
-  status: BattleAssetStatus;
-  sourceNote: string;
-  usageNote: string;
   width?: number;
   height?: number;
   anchor?: { x: number; y: number };
   facing?: 'left' | 'right';
   visualScale?: number;
   opaque?: boolean;
-}
-
-export interface BattleAssetRegistry {
-  assets: readonly BattleAssetEntry[];
 }
 
 // ==================== 怪物系統 ====================

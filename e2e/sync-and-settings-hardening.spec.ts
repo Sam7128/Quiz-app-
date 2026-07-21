@@ -60,9 +60,7 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
         // 攔截 GET / POST 題庫
         await page.route('**/rest/v1/banks*', async (route) => {
             const method = route.request().method();
-            console.log(`[E2E Router 1] banks route request: ${method}`);
             if (method === 'GET') {
-                console.log(`[E2E Router 1] GET banks returning:`, JSON.stringify(cloudBanks));
                 await route.fulfill({
                     status: 200,
                     contentType: 'application/json',
@@ -70,7 +68,6 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
                 });
             } else if (method === 'POST') {
                 if (shouldFail) {
-                    console.log(`[E2E Router 1] POST banks failed simulated (shouldFail=true)`);
                     // 模擬全部失敗
                     await route.fulfill({
                         status: 500,
@@ -82,7 +79,6 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
                     const title = body?.title || 'Mocked Bank';
                     const newBank = { id: `cloud-${title.replace(/\s+/g, '-')}`, title, description: 'From local storage' };
                     cloudBanks.push(newBank);
-                    console.log(`[E2E Router 1] POST banks success, cloudBanks is now:`, JSON.stringify(cloudBanks));
                     await route.fulfill({
                         status: 201,
                         contentType: 'application/json',
@@ -94,7 +90,6 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
 
         await page.route('**/rest/v1/questions*', async (route) => {
             const method = route.request().method();
-            console.log(`[E2E Router 1] questions route request: ${method}`);
             if (method === 'POST') {
                 await route.fulfill({
                     status: 201,
@@ -112,8 +107,6 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
             }
         });
 
-        // 監聽瀏覽器主控台輸出，方便診斷
-        page.on('console', msg => console.log(`[Browser Console 1] ${msg.type()}: ${msg.text()}`));
 
         // 3. 前往頁面
         await page.goto('/');
@@ -125,12 +118,10 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
         const confirmBtn = page.locator('[data-confirm-dialog] button:has-text("確認")');
         await expect(confirmBtn).toBeVisible({ timeout: 15000 });
         await confirmBtn.click();
-        console.log('Clicked confirm sync modal button');
 
         // 驗證 Toast 顯示全部同步失敗
         const failedToast = page.locator('text=同步失敗！所有 2 個題庫同步失敗，請稍後重試。');
         await expect(failedToast).toBeVisible({ timeout: 15000 });
-        console.log('Verified all-failed toast');
 
         // 4. 重試：修改 shouldFail 為 false，並再次觸發同步 (重新整理/重新點擊題庫)
         shouldFail = false;
@@ -141,12 +132,10 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
         // 再次點擊 React Modal 中的「確認」同步按鈕 (因為這時雲端回傳依舊是空，再次彈出確認)
         await expect(confirmBtn).toBeVisible({ timeout: 15000 });
         await confirmBtn.click();
-        console.log('Clicked confirm sync modal button for retry');
 
         // 驗證 Toast 顯示同步完成
         const successToast = page.locator('text=同步完成！');
         await expect(successToast).toBeVisible({ timeout: 15000 });
-        console.log('Verified retry success toast');
     });
 
     test('同步容錯與重試機制：部分同步失敗，更新本地 metadata 的 cloudSyncedAt', async ({ page }) => {
@@ -195,7 +184,6 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
 
         await page.route('**/rest/v1/banks*', async (route) => {
             const method = route.request().method();
-            console.log(`[E2E Router 2] banks route request: ${method}`);
             if (method === 'GET') {
                 await route.fulfill({
                     status: 200,
@@ -222,7 +210,6 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
 
         await page.route('**/rest/v1/questions*', async (route) => {
             const method = route.request().method();
-            console.log(`[E2E Router 2] questions route request: ${method}`);
             if (method === 'POST') {
                 await route.fulfill({
                     status: 201,
@@ -240,8 +227,6 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
             }
         });
 
-        // 監聽瀏覽器主控台輸出，方便診斷
-        page.on('console', msg => console.log(`[Browser Console 2] ${msg.type()}: ${msg.text()}`));
 
         // 3. 前往頁面
         await page.goto('/');
@@ -250,18 +235,15 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
         const bankBtn = page.locator('button:visible', { hasText: '題庫' });
         await expect(bankBtn).toBeVisible({ timeout: 20000 });
         await bankBtn.click();
-        console.log('Clicked bank tab button');
 
         // 點擊 React Modal 中的「確認」同步按鈕
         const confirmBtn = page.locator('[data-confirm-dialog] button:has-text("確認")');
         await expect(confirmBtn).toBeVisible({ timeout: 15000 });
         await confirmBtn.click();
-        console.log('Clicked confirm sync modal button for partial sync');
 
         // 驗證 Toast 顯示部分成功警告
         const partialToast = page.locator('text=同步部分成功！1 個題庫同步成功，1 個失敗。');
         await expect(partialToast).toBeVisible({ timeout: 15000 });
-        console.log('Verified partial-success toast');
 
         // 4. 驗證本地 metadata，成功的題庫應打上 cloudSyncedAt，失敗的則沒有
         const localMetaAfter = await page.evaluate(() => {
@@ -276,7 +258,6 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
         expect(successBank.cloudSyncedAt).toBeDefined();
         expect(failedBank).toBeDefined();
         expect(failedBank.cloudSyncedAt).toBeUndefined();
-        console.log('Verified local storage retains both banks and updates cloudSyncedAt correctly');
     });
 
     test('損壞的 AI 設定容錯：當 localStorage 含有無效 JSON 時，設定頁面應可順利載入並自動回退為預設值', async ({ page }) => {
@@ -304,13 +285,11 @@ test.describe('同步與設定安全性強化 E2E 測試', () => {
         const apiKeyInput = page.locator('input[placeholder="AIza..."]');
         await expect(apiKeyInput).toBeVisible();
         await expect(apiKeyInput).toHaveValue('');
-        console.log('Verified AI key field falls back to empty string');
 
         // 7. 驗證 localStorage 中的壞資料已被清除
         const cleanConfig = await page.evaluate(() => {
             return localStorage.getItem('mindspark_ai_config');
         });
         expect(cleanConfig).toBeNull();
-        console.log('Verified corrupted AI config is cleared from localStorage');
     });
 });

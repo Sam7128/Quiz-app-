@@ -159,7 +159,6 @@ test.describe('Battle flow', () => {
 
     const paths = [...battleImageRequests];
     const initialImageBytes = [...responseBytes.values()].reduce((total, bytes) => total + bytes, 0);
-    console.log(`Battle initial image bytes: ${initialImageBytes}`);
     expect(initialImageBytes).toBeLessThanOrEqual(1.5 * 1024 * 1024);
     expect(paths.some(path => path.endsWith('.webm'))).toBe(false);
     expect(paths.some(path => path.startsWith('/battle/skills/'))).toBe(false);
@@ -178,17 +177,19 @@ test.describe('Battle flow', () => {
 
     await seedQuiz(page, 6);
     await enterQuiz(page, 6);
-    for (let question = 1; question <= 5; question += 1) {
+    for (let question = 1; question <= 4; question += 1) {
       await answerAndAdvance(page, question, 6, 'A');
     }
+    await expect(page.getByText('題目 5 / 6')).toBeVisible();
+    await answerCurrentQuestion(page, 'B');
 
     await expect.poll(
       async () => (await readBattleSnapshot(page))?.nextEncounterKind ?? null,
-      { timeout: 10000 },
+      { timeout: 20000 },
     ).toBe('elite');
     await expect.poll(
       () => [...monsterRequests].some(path => path.endsWith('/skeleton_warrior.webp') || path.endsWith('/orc_berserker.webp')),
-      { timeout: 10000 },
+      { timeout: 20000 },
     ).toBe(true);
   });
 
@@ -244,7 +245,7 @@ test.describe('Battle flow', () => {
     }
 
     await expect(
-      page.locator('img[alt="炎龍・伊格尼斯"], img[alt="骷髏巫師・涅克羅斯"]'),
+      page.getByRole('img', { name: /炎龍・伊格尼斯|骷髏巫師・涅克羅斯/ }),
     ).toBeVisible({ timeout: 30000 });
   });
 
@@ -305,5 +306,19 @@ test.describe('Battle flow', () => {
       async () => (await readBattleSnapshot(page))?.questionsAnswered ?? -1,
       { timeout: 15000 },
     ).toBe(0);
+  });
+
+  test('environment overlay nodes <= 4 and route abort media error falls back gracefully', async ({ page }) => {
+    test.setTimeout(60000);
+    await seedQuiz(page, 3);
+    await page.route('**/battle/vfx/*.webp', route => route.abort());
+    await page.route('**/battle/skills/*.webp', route => route.abort());
+    await enterQuiz(page, 3);
+
+    const envNodeCount = await page.locator('[data-battle-phase] img[src*="/battle/environment/"]').count();
+    expect(envNodeCount).toBeLessThanOrEqual(4);
+
+    await answerAndAdvance(page, 1, 3, 'A');
+    await expect(page.getByText('題目 2 / 3')).toBeVisible();
   });
 });

@@ -99,8 +99,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({ onSessionComplete }) => 
 
       // 追蹤此計時器，組件銷毀時可一併釋放
       audioTimersRef.current.push(timer);
-    } catch (e) {
-      console.log('Audio not supported', e);
+    } catch {
+      // Audio is optional; unsupported browsers keep the timer functional.
     }
   };
 

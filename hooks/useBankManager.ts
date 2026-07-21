@@ -45,7 +45,6 @@ export const useBankManager = ({
 
   const refreshBanksData = useCallback(async () => {
     if (isRefreshingRef.current) {
-      console.log('[BankManager] refreshBanksData already in progress, skipping');
       return [];
     }
     isRefreshingRef.current = true;

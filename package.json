@@ -14,6 +14,7 @@
     "lint": "eslint .",
     "test:unit": "vitest",
     "test:e2e": "playwright test",
+    "battle:prepare": "node --experimental-strip-types scripts/prepareBattleVisualAssets.ts",
     "battle:assets": "node --experimental-strip-types scripts/validateBattleAssets.ts"
   },
   "dependencies": {
@@ -43,6 +44,7 @@
     "@types/howler": "^2.2.12",
     "@types/jest": "^30.0.0",
     "@types/node": "^22.1.0",
+    "@types/pngjs": "^6.0.5",
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.0.0",
@@ -50,6 +52,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-security": "^3.0.1",
     "jsdom": "^27.4.0",
+    "pngjs": "^7.0.0",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.55.0",
