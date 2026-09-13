@@ -1,5 +1,15 @@
 # Development Log
 
+## 2026-09-13 [Inquisitor Deep Audit] "Ponytail Debt & Blast Radius Deep Audit"
+### 🔍 六大維度深度審計、連鎖因果鏈推導與技術債評估
+- **審計產出**：完成 [docs/reports/PONYTAIL_TECH_DEBT_AND_DEEP_AUDIT_2026_09_13.md](file:///c:/Users/user/Desktop/Quiz-app-/docs/reports/PONYTAIL_TECH_DEBT_AND_DEEP_AUDIT_2026_09_13.md)，覆蓋 Ponytail 技術債、持久化與同步、領域核心（RPG/Quiz/SM-2）、知識圖譜 v2、React 18 架構及自動化驗證。
+- **關鍵發現**：
+  - **CRITICAL** (2項)：`retryCleanupDirtyBanks` 遺漏 upsert 補傳導致雲端資料可能永久遺失；`syncLocalPracticeSessions` 1小時漂移判定誤殺離線進度並產生孤兒草稿。
+  - **HIGH** (4項)：`useQuizEngine.handleAnswer` 連按競態致分數污染與跳題；`NodeEditPanel` 跨節點 debounce 覆寫；`runWithSyncLock` LocalStorage Fallback TOCTOU 競態；`ConceptNode` memo 淺比對失效引發 O(N) 全量 Re-render。
+  - **Ponytail 債務**：`applyDagreLayout` 到期相容別名（零消費者可刪除）；`fontWeight` 舊格式相容層（需資料遷移後雙殺）。
+- **驗證指標**：TypeScript 0 error、Knip 0 issue、Vitest 319/319 passed、0 `any`。修正「DropNodeMenu 未拆檔」及「AudioContext 洩漏」等 2 項歷史誤判。
+- **改善計畫**：擬定 Immediate Wins (階段 A)、Surgical Fixes (階段 B)、Milestone Refactor (階段 C) 三階段落地藍圖。
+
 ## 2026-07-20 [Final Audit Remediation] "Battle Visual Upgrade"
 ### ✅ OpenSpec／Ponytail／Dead Code 自動修復閉環
 - **交叉審計**：依 `openspec-verify-change` 逐項核對 38/38 tasks、7 個 capability、design 與 runtime consumer；修正二審報告的 atlas 轉置與 skill image 尺寸誤判，最終 0 個未解決 CRITICAL／WARNING。

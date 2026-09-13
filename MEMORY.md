@@ -179,6 +179,10 @@
 - [RISK-004] Playwright CLI/webServer teardown hangs Windows/Codex; direct Chromium via `webapp-testing` helper exits cleanly.
 - [RISK-006] Supabase `public.knowledge_graphs` not in schema cache; graph cloud sync local-only until migration deployed.
 - [RISK-007] 7 unused source-only items: `hero:victory`, `skeleton_wizard:cast`, `dragon_fire:fire-breath`, `environment-rubble`, `environment-ice-motes`, `environment-sparks`, `battle_victory.ogg`.
+- [RISK-008] `cloudStorage.ts:retryCleanupDirtyBanks` lacks upsert retry; offline edits may permanently fail cloud sync if initial upsert fails.
+- [RISK-009] `cloudStorage.ts:syncLocalPracticeSessions` 1-hour clock drift threshold rolls back local session while leaving orphan chunk drafts.
+- [RISK-010] `hooks/useQuizEngine.ts:handleAnswer` Enter spam race condition causes duplicate score/mistake logs before React state flushes.
+- [RISK-011] `NodeEditPanel.tsx` 300ms debounce lacks nodeId dependency; rapid switching overwrites target node properties.
 
 ## Next Refresh Triggers
 - Move dirs, add/remove `AGENTS.md`, schema updates.
