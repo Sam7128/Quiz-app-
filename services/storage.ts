@@ -118,6 +118,7 @@ const enforceGuestPracticeSessionLimits = (sessions: ChunkedPracticeSession[]): 
     if (!target) continue;
     target.status = 'abandoned';
     target.updatedAt = Date.now() + index;
+    console.warn(`[PracticeSession] Active session limit exceeded (${PRACTICE_ACTIVE_LIMIT}). Marking session abandoned: ${targetId}`);
   }
 
   if (next.length <= PRACTICE_TOTAL_LIMIT) {
@@ -134,6 +135,7 @@ const enforceGuestPracticeSessionLimits = (sessions: ChunkedPracticeSession[]): 
     if (remaining <= PRACTICE_TOTAL_LIMIT) break;
     idsToRemove.add(session.id);
     remaining -= 1;
+    console.warn(`[PracticeSession] Total session limit exceeded (${PRACTICE_TOTAL_LIMIT}). Pruning session: ${session.id}`);
   }
 
   return sortSessionsByUpdatedAtDesc(next.filter((session) => !idsToRemove.has(session.id)));

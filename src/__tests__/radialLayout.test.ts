@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type Edge as RFEdge, type Node as RFNode } from '@xyflow/react';
-import { applyAutoLayout, applyDagreLayout } from '../../components/KnowledgeGraph/graphUtils';
+import { applyAutoLayout } from '../../components/KnowledgeGraph/graphUtils';
 import { applyRadialLayout, applyRadialLayoutPreservingSticky } from '../../services/radialLayout';
 
 function makeNode(id: string, type: RFNode['type'] = 'concept'): RFNode {
@@ -83,9 +83,9 @@ describe('Radial Layout Algorithm', () => {
     expect(result.find((node) => node.id === 'image')?.position).toEqual({ x: 99, y: 99 });
   });
 
-  it('keeps the compatibility layout alias delegated to applyAutoLayout', () => {
+  it('delegates applyAutoLayout to applyRadialLayout', () => {
     const nodes = [makeNode('root'), makeNode('child')];
     const edges: RFEdge[] = [{ id: 'edge', source: 'root', target: 'child' }];
-    expect(applyDagreLayout(nodes, edges)).toEqual(applyAutoLayout(nodes, edges));
+    expect(applyAutoLayout(nodes, edges)).toEqual(applyRadialLayout(nodes, edges));
   });
 });

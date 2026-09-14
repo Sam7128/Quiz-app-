@@ -8,7 +8,7 @@ interface NodeEditPanelProps {
   nodeId: string;
   data: GraphNodeData;
   nodeType: NodeShapeType | 'sticky' | 'image';
-  onUpdate: (nodeId: string, data: Partial<GraphNodeData>) => void;
+  onUpdate: (nodeId: string, data: Partial<GraphNodeData>, options?: { immediateSave?: boolean }) => void;
   onUpdateType: (nodeId: string, nodeType: NodeShapeType) => void;
   onClose: () => void;
   readOnly?: boolean;
@@ -45,10 +45,31 @@ export const NodeEditPanel: React.FC<NodeEditPanelProps> = ({
     }, 300);
   }, [onUpdate, nodeId]);
 
-  // Flush pending debounce on unmount
-  useEffect(() => () => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-  }, []);
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+      }
+      if (Object.keys(pendingUpdateRef.current).length > 0) {
+        onUpdate(nodeId, pendingUpdateRef.current, { immediateSave: true });
+        pendingUpdateRef.current = {};
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+      }
+      if (Object.keys(pendingUpdateRef.current).length > 0) {
+        onUpdate(nodeId, pendingUpdateRef.current);
+        pendingUpdateRef.current = {};
+      }
+    };
+  }, [nodeId, onUpdate]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value.slice(0, GRAPH_LIMITS.TITLE_MAX);

@@ -5,12 +5,12 @@ import {
   STORAGE_KEYS,
   getAllPracticeSessions,
   replaceAllPracticeSessions,
-  clearChunkDraftsForSession,
+  clearChunkDraft,
   getBanksMeta,
   saveBanksMeta
 } from './storage';
 import { ensureStableQuestionId, normalizeQuestionForPersistence } from '../utils/questionIdentity';
-import { ChunkedPracticeSession } from '../types/battleTypes';
+import { ChunkedPracticeSession, PracticeChunk } from '../types/battleTypes';
 
 // Circuit breaker for practice_sessions table missing (graceful degradation)
 let isCloudPracticeAvailable = true;
@@ -22,6 +22,18 @@ const FALLBACK_LOCK_KEY = 'mindspark_sync_lock_ts';
 
 const BANKS_SYNC_LOCK_NAME = 'mindspark_banks_sync';
 const BANKS_FALLBACK_LOCK_KEY = 'mindspark_banks_sync_lock_ts';
+
+const isAbortError = (err: unknown): boolean => {
+  if (!err) return false;
+  if (typeof err === 'object' && err !== null) {
+    const maybeMsg = (err as { message?: unknown }).message;
+    if (typeof maybeMsg === 'string' && (maybeMsg.includes('aborted') || maybeMsg.includes('AbortError'))) {
+      return true;
+    }
+  }
+  const msg = err instanceof Error ? err.message : String(err);
+  return msg.includes('aborted') || msg.includes('AbortError');
+};
 
 export const runWithSyncLock = async <T>(
   cb: () => Promise<T>,
@@ -41,13 +53,22 @@ export const runWithSyncLock = async <T>(
     const now = Date.now();
     if (raw) {
       const ts = parseInt(raw, 10);
-      if (!isNaN(ts) && now - ts < SYNC_LOCK_TIMEOUT_MS) {
-        throw new Error('Sync lock held');
+      if (!isNaN(ts)) {
+        if (now - ts < SYNC_LOCK_TIMEOUT_MS) {
+          throw new Error('Sync lock held');
+        }
+        console.warn(`[Sync] Detected expired fallback lock (held for ${now - ts}ms). Overriding lock.`);
       }
     }
     
-    const token = now.toString();
+    const token = `${now}_${Math.random().toString(36).slice(2)}`;
     localStorage.setItem(fallbackKey, token);
+
+    await new Promise((r) => setTimeout(r, 30 + Math.random() * 40));
+    // eslint-disable-next-line security/detect-possible-timing-attacks -- tab-local lock token is not secret material.
+    if (localStorage.getItem(fallbackKey) !== token) {
+      throw new Error('Sync lock held by another tab');
+    }
     
     try {
       return await cb();
@@ -91,8 +112,7 @@ export const getCloudBanks = async (): Promise<BankMetadata[]> => {
       .eq('user_id', user.id);
 
     if (error) {
-      const isAbort = error.message?.includes('aborted') || error.message?.includes('AbortError');
-      if (isAbort) {
+      if (isAbortError(error)) {
         console.info('Fetch cloud banks aborted gracefully.');
         return [];
       }
@@ -109,8 +129,7 @@ export const getCloudBanks = async (): Promise<BankMetadata[]> => {
       folderId: bank.folder_id ?? undefined
     }));
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'unknown';
-    if (message.includes('aborted') || message.includes('AbortError')) {
+    if (isAbortError(err)) {
       console.info('Fetch cloud banks aborted gracefully (exception).');
     } else {
       console.error('Unexpected error fetching cloud banks:', err);
@@ -222,7 +241,23 @@ const removeDirtyBank = (bankId: string) => {
   }
 };
 
-const retryCleanupDirtyBanks = async (): Promise<void> => {
+const mapQuestionToDbRow = (q: Question, bankId: string) => {
+  return {
+    id: normalizeToUuid(q.id),
+    bank_id: bankId,
+    original_question_id: q.original_question_id ?? null,
+    source_question_key: q.sourceQuestionKey ?? null,
+    source_fingerprint: q.sourceFingerprint ?? null,
+    question: q.question,
+    options: q.options,
+    answer: q.answer,
+    type: q.type,
+    hint: q.hint ?? null,
+    explanation: q.explanation ?? null
+  };
+};
+
+export const retryCleanupDirtyBanks = async (): Promise<void> => {
   try {
     const raw = localStorage.getItem('mindspark_dirty_banks');
     if (!raw) return;
@@ -236,10 +271,50 @@ const retryCleanupDirtyBanks = async (): Promise<void> => {
       if (typeof bankId !== 'string') continue;
       try {
         const localQuestionsRaw = localStorage.getItem(STORAGE_KEYS.BANK_PREFIX + bankId);
-        const localQuestions = localQuestionsRaw ? JSON.parse(localQuestionsRaw) : [];
+        // 快取缺失防護 (D7-001)：若 localQuestionsRaw === null，代表本地快取已被清除，記警告，將該 bankId 移出 dirty list 並 continue，嚴禁執行全量 delete
+        if (localQuestionsRaw === null) {
+          console.warn(`[CloudStorage] Local cache missing for dirty bank ${bankId}. Removing from dirty list without deleting cloud questions.`);
+          continue;
+        }
+
+        let localQuestions: Question[];
+        try {
+          localQuestions = JSON.parse(localQuestionsRaw);
+        } catch (parseErr) {
+          console.warn(`[CloudStorage] Corrupt local questions JSON for bank ${bankId}:`, parseErr);
+          remaining.push(bankId);
+          continue;
+        }
+
+        if (!Array.isArray(localQuestions)) {
+          console.warn(`[CloudStorage] Invalid local questions format for bank ${bankId}`);
+          remaining.push(bankId);
+          continue;
+        }
+
         if (localQuestions.length > 0) {
-          const keepIds = localQuestions.map((q: unknown) => normalizeToUuid(ensureStableQuestionId(q as Question).id));
-          const keepIdsSet = new Set(keepIds);
+          // 先補傳 upsert
+          const dedupedById = new Map<string, Question>();
+          localQuestions
+            .map((q) => normalizeQuestionForPersistence(ensureStableQuestionId(q)))
+            .forEach((q) => {
+              dedupedById.set(normalizeToUuid(q.id), q);
+            });
+          const normalized = Array.from(dedupedById.values());
+          const toUpsert = normalized.map((q) => mapQuestionToDbRow(q, bankId));
+
+          const { error: upsertError } = await supabase
+            .from('questions')
+            .upsert(toUpsert, { onConflict: 'id' });
+
+          if (upsertError) {
+            console.warn(`[CloudStorage] Retry upsert failed for bank ${bankId}:`, upsertError.message);
+            remaining.push(bankId);
+            continue;
+          }
+
+          // 清理孤兒題目
+          const keepIdsSet = new Set(toUpsert.map((r) => r.id));
           
           const { data: cloudQuestions, error: fetchError } = await supabase
             .from('questions')
@@ -247,6 +322,7 @@ const retryCleanupDirtyBanks = async (): Promise<void> => {
             .eq('bank_id', bankId);
             
           if (fetchError) {
+            console.warn(`[CloudStorage] Retry fetch cloud questions failed for bank ${bankId}:`, fetchError.message);
             remaining.push(bankId);
             continue;
           }
@@ -262,25 +338,32 @@ const retryCleanupDirtyBanks = async (): Promise<void> => {
               const { error: deleteError } = await supabase
                 .from('questions')
                 .delete()
-                .in('id', chunk);
+                .in('id', chunk)
+                .eq('bank_id', bankId);
               if (deleteError) {
+                console.warn(`[CloudStorage] Retry delete orphans failed for bank ${bankId}:`, deleteError.message);
                 hasError = true;
                 break;
               }
             }
             if (hasError) {
               remaining.push(bankId);
-            } else {
-              console.info(`Retry cleanup success for bank ${bankId}`);
+              continue;
             }
           }
+          console.info(`Retry cleanup success for bank ${bankId}`);
         } else {
-          const { error } = await supabase.from('questions').delete().eq('bank_id', bankId);
-          if (error) {
+          // 本地題庫合法為空陣列 []，執行全量 delete
+          const { error: deleteAllError } = await supabase.from('questions').delete().eq('bank_id', bankId);
+          if (deleteAllError) {
+            console.warn(`[CloudStorage] Retry delete all questions failed for bank ${bankId}:`, deleteAllError.message);
             remaining.push(bankId);
+            continue;
           }
+          console.info(`Retry cleanup delete all success for bank ${bankId}`);
         }
-      } catch {
+      } catch (bankErr) {
+        console.warn(`[CloudStorage] Unexpected error processing dirty bank ${bankId}:`, bankErr);
         remaining.push(bankId);
       }
     }
@@ -306,24 +389,9 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[], 
       dedupedById.set(normalizeToUuid(question.id), question);
     });
 
-  const normalized = Array.from(dedupedById.values()).map((q) => ({
-    ...q,
-    id: normalizeToUuid(q.id),
-  }));
+  const normalized = Array.from(dedupedById.values());
 
-  const toUpsert = normalized.map(q => ({
-    id: q.id,
-    bank_id: bankId,
-    original_question_id: q.original_question_id ?? null,
-    source_question_key: q.sourceQuestionKey ?? null,
-    source_fingerprint: q.sourceFingerprint ?? null,
-    question: q.question,
-    options: q.options,
-    answer: q.answer,
-    type: q.type,
-    hint: q.hint,
-    explanation: q.explanation
-  }));
+  const toUpsert = normalized.map(q => mapQuestionToDbRow(q, bankId));
 
   const { error: upsertError } = await supabase
     .from('questions')
@@ -335,7 +403,7 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[], 
   }
 
   // Cleanup rows that were removed locally: delete questions in this bank not in keep list.
-  const keepIds = Array.from(new Set(normalized.map((q) => q.id))).filter((id) => typeof id === 'string' && id.length > 0);
+  const keepIds = Array.from(new Set(toUpsert.map((q) => q.id))).filter((id) => typeof id === 'string' && id.length > 0);
 
   if (keepIds.length === 0) {
     if (!forceDeleteAll) {
@@ -378,7 +446,8 @@ export const saveCloudQuestions = async (bankId: string, questions: Question[], 
       const { error: deleteError } = await supabase
         .from('questions')
         .delete()
-        .in('id', chunk);
+        .in('id', chunk)
+        .eq('bank_id', bankId);
 
       if (deleteError) {
         console.warn('Cloud question cleanup failed (non-fatal):', deleteError.message);
@@ -527,8 +596,7 @@ export const getCloudPracticeSessions = async (): Promise<ChunkedPracticeSession
       .order('updated_at', { ascending: false });
 
     if (error) {
-      const isAbort = error.message?.includes('aborted') || error.message?.includes('AbortError');
-      if (isAbort) {
+      if (isAbortError(error)) {
         console.info('Fetch cloud practice sessions aborted gracefully.');
         return [];
       }
@@ -543,8 +611,7 @@ export const getCloudPracticeSessions = async (): Promise<ChunkedPracticeSession
     const rows = (data ?? []) as PracticeSessionRow[];
     return rows.map(fromPracticeSessionRow);
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'unknown';
-    if (message.includes('aborted') || message.includes('AbortError')) {
+    if (isAbortError(err)) {
       console.info('Fetch cloud practice sessions aborted gracefully (exception).');
     } else {
       console.error('Unexpected error fetching cloud practice sessions:', err);
@@ -623,6 +690,112 @@ export const abandonCloudPracticeSession = async (sessionId: string): Promise<vo
   }
 };
 
+const toValidScore = (s: unknown): number => {
+  if (typeof s !== 'number' || Number.isNaN(s) || s < 0) return 0;
+  return s;
+};
+
+const toValidTimestamp = (ts: unknown, fallback: number): number => {
+  if (typeof ts !== 'number' || Number.isNaN(ts) || ts <= 0) return fallback;
+  return ts;
+};
+
+export const mergeChunkedPracticeSessions = (
+  local: ChunkedPracticeSession,
+  cloud: ChunkedPracticeSession
+): ChunkedPracticeSession => {
+  const maxChunks = Math.max(local.chunks.length, cloud.chunks.length);
+  const mergedChunks: PracticeChunk[] = [];
+
+  for (let i = 0; i < maxChunks; i++) {
+    const lc = local.chunks[i];
+    const cc = cloud.chunks[i];
+
+    if (!lc && cc) {
+      mergedChunks.push(cc);
+      continue;
+    }
+    if (lc && !cc) {
+      mergedChunks.push(lc);
+      continue;
+    }
+
+    if (lc.status === 'completed' && cc.status !== 'completed') {
+      mergedChunks.push(lc);
+    } else if (cc.status === 'completed' && lc.status !== 'completed') {
+      mergedChunks.push(cc);
+    } else if (lc.status === 'completed' && cc.status === 'completed') {
+      const lcScore = toValidScore(lc.score);
+      const ccScore = toValidScore(cc.score);
+      const bestScore = Math.max(lcScore, ccScore);
+      const lcCompletedAt = toValidTimestamp(lc.completedAt, 0);
+      const ccCompletedAt = toValidTimestamp(cc.completedAt, 0);
+      const latestCompletedAt = Math.max(lcCompletedAt, ccCompletedAt) || undefined;
+      const lcStartedAt = toValidTimestamp(lc.startedAt, Infinity);
+      const ccStartedAt = toValidTimestamp(cc.startedAt, Infinity);
+      const earliestStartedAt = Math.min(lcStartedAt, ccStartedAt);
+
+      const baseChunk = lcScore > ccScore
+        ? lc
+        : ccScore > lcScore
+          ? cc
+          : lcCompletedAt >= ccCompletedAt
+            ? lc
+            : cc;
+
+      mergedChunks.push({
+        ...baseChunk,
+        score: bestScore,
+        completedAt: latestCompletedAt,
+        startedAt: earliestStartedAt === Infinity ? undefined : earliestStartedAt,
+      });
+    } else {
+      const lcScore = toValidScore(lc.score);
+      const ccScore = toValidScore(cc.score);
+      const lcHasProgress = lc.status === 'in_progress' || lcScore > 0 || (lc.wrongQuestionIds && lc.wrongQuestionIds.length > 0);
+      const ccHasProgress = cc.status === 'in_progress' || ccScore > 0 || (cc.wrongQuestionIds && cc.wrongQuestionIds.length > 0);
+
+      if (lcHasProgress && !ccHasProgress) {
+        mergedChunks.push(lc);
+      } else if (ccHasProgress && !lcHasProgress) {
+        mergedChunks.push(cc);
+      } else {
+        const safeLocalUpdated = toValidTimestamp(local.updatedAt, 0);
+        const safeCloudUpdated = toValidTimestamp(cloud.updatedAt, 0);
+        if (safeLocalUpdated >= safeCloudUpdated) {
+          mergedChunks.push(lc);
+        } else {
+          mergedChunks.push(cc);
+        }
+      }
+    }
+  }
+
+  const allCompleted = mergedChunks.length > 0 && mergedChunks.every((c) => c.status === 'completed');
+  const mergedStatus = allCompleted
+    ? 'completed'
+    : (local.status === 'abandoned' && cloud.status === 'abandoned')
+      ? 'abandoned'
+      : 'active';
+
+  const now = Date.now();
+  const safeLocalCreated = toValidTimestamp(local.createdAt, now);
+  const safeCloudCreated = toValidTimestamp(cloud.createdAt, now);
+  const safeLocalUpdated = toValidTimestamp(local.updatedAt, now);
+  const safeCloudUpdated = toValidTimestamp(cloud.updatedAt, now);
+
+  return {
+    ...local,
+    chunks: mergedChunks,
+    status: mergedStatus,
+    createdAt: Math.min(safeLocalCreated, safeCloudCreated),
+    updatedAt: Math.max(safeLocalUpdated, safeCloudUpdated),
+    dirty: false,
+    retryCount: 0,
+    lastSyncError: undefined,
+  };
+};
+
 export const syncLocalPracticeSessions = async (): Promise<PracticeSyncResult> => {
   if (!isCloudPracticeAvailable) return EMPTY_SYNC_RESULT;
 
@@ -648,8 +821,7 @@ export const syncLocalPracticeSessions = async (): Promise<PracticeSyncResult> =
 
       if (error) {
         // Gracefully handle abort errors
-        const isAbort = error.message?.includes('aborted') || error.message?.includes('AbortError');
-        if (isAbort) {
+        if (isAbortError(error)) {
           console.info('Fetch cloud practice sessions aborted gracefully.');
           return EMPTY_SYNC_RESULT;
         }
@@ -686,67 +858,123 @@ export const syncLocalPracticeSessions = async (): Promise<PracticeSyncResult> =
       // 處理本地的 sessions，並跟雲端做對比
       for (const localSession of localSessions) {
         const cloudSession = cloudMap.get(localSession.id);
-        
         const now = Date.now();
-        const driftThreshold = 60 * 60 * 1000; // 1 小時
-        let isLocalNewer = false;
 
         if (!cloudSession) {
-          isLocalNewer = true;
-        } else {
-          // 時鐘漂移與異常防護
-          const isLocalFuture = localSession.updatedAt > now + 5 * 60 * 1000;
-          const isLocalDriftedAhead = localSession.updatedAt - cloudSession.updatedAt > driftThreshold;
-          
-          if (isLocalFuture || isLocalDriftedAhead) {
-            console.warn(
-              `[Sync] Detected potential clock drift for session ${localSession.id}. ` +
-              `Local: ${new Date(localSession.updatedAt).toISOString()}, ` +
-              `Cloud: ${new Date(cloudSession.updatedAt).toISOString()}. Overriding with cloud version.`
-            );
-            isLocalNewer = false;
-          } else {
-            isLocalNewer = localSession.updatedAt > cloudSession.updatedAt;
-          }
-        }
-
-        if (!isLocalNewer) {
-          skipped += 1;
-          if (cloudSession) {
-            if (cloudSession.updatedAt > localSession.updatedAt) {
-              console.info(`[Sync] Cloud session is newer for ${localSession.id}. Overwriting local and clearing chunk drafts.`);
-              clearChunkDraftsForSession(cloudSession.id);
+          try {
+            await saveCloudPracticeSession({ ...localSession, userId: user.id, dirty: false, retryCount: 0, lastSyncError: undefined });
+            uploaded += 1;
+            updatedLocalSessions.push({
+              ...localSession,
+              userId: user.id,
+              dirty: false,
+              retryCount: 0,
+              lastSyncError: undefined
+            });
+          } catch (syncError) {
+            if (isAbortError(syncError)) {
+              console.info('Save cloud practice session aborted gracefully during sync.');
+              const dirtySession: ChunkedPracticeSession = {
+                ...localSession,
+                userId: user.id,
+                dirty: true,
+                retryCount: localSession.retryCount ?? 0,
+                lastSyncError: 'Aborted',
+              };
+              updatedLocalSessions.push(dirtySession);
+              dirtySessions.push(dirtySession);
+              continue;
             }
-            updatedLocalSessions.push(cloudSession);
-          } else {
-            updatedLocalSessions.push(localSession);
+
+            const message = syncError instanceof Error ? syncError.message : 'unknown sync error';
+            const dirtySession: ChunkedPracticeSession = {
+              ...localSession,
+              userId: user.id,
+              dirty: true,
+              retryCount: (localSession.retryCount ?? 0) + 1,
+              lastSyncError: message,
+            };
+            dirtySessions.push(dirtySession);
+            updatedLocalSessions.push(dirtySession);
           }
           continue;
         }
 
+        // 時鐘異常防護：本地時間領先現在 5 分鐘以上
+        const isLocalFuture = localSession.updatedAt > now + 5 * 60 * 1000;
+        if (isLocalFuture) {
+          console.warn(
+            `[Sync] Detected potential clock drift for session ${localSession.id}. ` +
+            `Local: ${new Date(localSession.updatedAt).toISOString()}, ` +
+            `Cloud: ${new Date(cloudSession.updatedAt).toISOString()}. Overriding with cloud version.`
+          );
+          cloudSession.chunks
+            .filter((c) => c.status === 'completed')
+            .forEach((c) => clearChunkDraft(cloudSession.id, c.index));
+          updatedLocalSessions.push(cloudSession);
+          skipped += 1;
+          continue;
+        }
+
+        // Chunk 級聯集合併 (Chunk-level Set Union Merge)
+        const mergedSession = mergeChunkedPracticeSessions(localSession, cloudSession);
+
+        const localCompletedCount = localSession.chunks.filter((c) => c.status === 'completed').length;
+        const cloudCompletedCount = cloudSession.chunks.filter((c) => c.status === 'completed').length;
+        const hasNewCompletedChunk = mergedSession.chunks.some(
+          (mc) => mc.status === 'completed' && cloudSession.chunks[mc.index]?.status !== 'completed'
+        );
+        const hasBetterChunkScore = mergedSession.chunks.some((mc) => {
+          const cc = cloudSession.chunks[mc.index];
+          return cc && toValidScore(mc.score) > toValidScore(cc.score);
+        });
+        const hasLocalProgress = mergedSession.chunks.some((mc) => {
+          const cc = cloudSession.chunks[mc.index];
+          return mc.status === 'in_progress' && cc?.status !== 'in_progress' && cc?.status !== 'completed';
+        });
+
+        let shouldUploadToCloud = false;
+        if (hasNewCompletedChunk || hasBetterChunkScore || hasLocalProgress) {
+          shouldUploadToCloud = true;
+        } else if (localCompletedCount > cloudCompletedCount) {
+          shouldUploadToCloud = true;
+        } else if (localCompletedCount === cloudCompletedCount) {
+          shouldUploadToCloud = localSession.updatedAt > cloudSession.updatedAt;
+        } else {
+          shouldUploadToCloud = false;
+        }
+
+        const targetSession = mergedSession;
+
+        // 精確草稿清理 (Chunk-specific Draft Reconcile)
+        targetSession.chunks
+          .filter((c) => c.status === 'completed')
+          .forEach((c) => clearChunkDraft(targetSession.id, c.index));
+
+        if (!shouldUploadToCloud) {
+          skipped += 1;
+          updatedLocalSessions.push(targetSession);
+          continue;
+        }
+
         try {
-          await saveCloudPracticeSession({ ...localSession, userId: user.id, dirty: false, retryCount: 0, lastSyncError: undefined });
+          await saveCloudPracticeSession({ ...mergedSession, userId: user.id, dirty: false, retryCount: 0, lastSyncError: undefined });
           uploaded += 1;
-          // 同步成功，在本地存檔為 dirty = false
           updatedLocalSessions.push({
-            ...localSession,
+            ...mergedSession,
             userId: user.id,
             dirty: false,
             retryCount: 0,
             lastSyncError: undefined
           });
         } catch (syncError) {
-          const message = syncError instanceof Error ? syncError.message : 'unknown sync error';
-          const isAbort = message.includes('aborted') || message.includes('AbortError');
-          
-          if (isAbort) {
+          if (isAbortError(syncError)) {
             console.info('Save cloud practice session aborted gracefully during sync.');
-            // 中斷時保留本地為 dirty 以供下次重試
             const dirtySession: ChunkedPracticeSession = {
-              ...localSession,
+              ...mergedSession,
               userId: user.id,
               dirty: true,
-              retryCount: localSession.retryCount ?? 0,
+              retryCount: mergedSession.retryCount ?? 0,
               lastSyncError: 'Aborted',
             };
             updatedLocalSessions.push(dirtySession);
@@ -754,11 +982,12 @@ export const syncLocalPracticeSessions = async (): Promise<PracticeSyncResult> =
             continue;
           }
 
+          const message = syncError instanceof Error ? syncError.message : 'unknown sync error';
           const dirtySession: ChunkedPracticeSession = {
-            ...localSession,
+            ...mergedSession,
             userId: user.id,
             dirty: true,
-            retryCount: (localSession.retryCount ?? 0) + 1,
+            retryCount: (mergedSession.retryCount ?? 0) + 1,
             lastSyncError: message,
           };
           dirtySessions.push(dirtySession);
@@ -782,11 +1011,11 @@ export const syncLocalPracticeSessions = async (): Promise<PracticeSyncResult> =
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'unknown';
-    if (message === 'Sync lock held') {
+    if (message.includes('Sync lock held')) {
       console.warn('[Sync] Sync lock held, skipping syncLocalPracticeSessions');
       return EMPTY_SYNC_RESULT;
     }
-    if (message.includes('aborted') || message.includes('AbortError')) {
+    if (isAbortError(err)) {
       console.info('Sync local practice sessions aborted gracefully.');
     } else {
       console.error('Unexpected error during syncLocalPracticeSessions:', err);

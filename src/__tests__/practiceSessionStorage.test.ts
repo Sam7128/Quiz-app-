@@ -100,6 +100,29 @@ describe('practice session storage', () => {
     expect(all.filter((session) => session.status === 'active').length).toBeLessThanOrEqual(5);
   });
 
+  it('logs console.warn with sessionId when active limit exceeded or total sessions pruned', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const repo = new LocalStorageRepository();
+
+    for (let index = 0; index < 6; index++) {
+      await repo.savePracticeSession(createSession(`active-warn-${index}`, 'active', Date.now() + index));
+    }
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('[PracticeSession] Active session limit exceeded (5). Marking session abandoned: active-warn-0')
+    );
+
+    for (let index = 0; index < 7; index++) {
+      await repo.savePracticeSession(createSession(`completed-warn-${index}`, 'completed', Date.now() + 100 + index));
+    }
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('[PracticeSession] Total session limit exceeded (10). Pruning session:')
+    );
+
+    warnSpy.mockRestore();
+  });
+
   it('skips outdated local session when cloud has newer version', async () => {
     const repo = new LocalStorageRepository();
     const local = createSession('session-1', 'active', Date.now() - 10_000);
@@ -238,7 +261,10 @@ describe('practice session storage', () => {
         bank_question_map: { 'bank-a': ['q-1', 'q-2'] },
         chunk_size: 20,
         question_ids: ['q-1', 'q-2'],
-        chunks: local.chunks,
+        chunks: [{
+          ...local.chunks[0],
+          status: 'completed',
+        }],
         status: 'active',
         created_at: new Date(local.createdAt).toISOString(),
         updated_at: new Date(local.updatedAt + 60_000).toISOString(),

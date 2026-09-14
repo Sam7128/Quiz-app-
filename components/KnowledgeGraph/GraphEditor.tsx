@@ -1,9 +1,10 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   ReactFlow,
   Controls,
   Background,
   type Edge as RFEdge,
+  type Node as RFNode,
   ReactFlowProvider,
   BackgroundVariant,
   useReactFlow,
@@ -68,14 +69,19 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
   const [theme, setTheme] = useState<GraphThemePresetId>(graph.theme);
   const [mermaidModal, setMermaidModal] = useState<'import' | 'export' | null>(null);
   const {
-    editMode, codeText, codeErrors, handleToggleEditMode, handleCodeChange
+    editMode, codeText, codeErrors, canSwitchToVisual, handleToggleEditMode, handleCodeChange
   } = useGraphCodeMode(graph, nodes, edges, notesDict, setNodes, setEdges, setNotesDict);
-  useGraphStorage(graph, nodes, edges, notesDict, readingMode, editMode, bgOpacity, layoutMode, theme);
+  const { flushSave } = useGraphStorage(graph, nodes, edges, notesDict, readingMode, editMode, bgOpacity, layoutMode, theme);
+  const nodesRef = useRef<RFNode[]>(nodes);
+  useEffect(() => {
+    nodesRef.current = nodes;
+  }, [nodes]);
+
   const isReadOnlyMode = readOnly || editMode === 'code';
-  const handleUpdateNodeData = useCallback((nodeId: string, dataUpdate: Partial<GraphNodeData>) => {
+  const handleUpdateNodeData = useCallback((nodeId: string, dataUpdate: Partial<GraphNodeData>, options?: { immediateSave?: boolean }) => {
     if (readOnly) return;
     if (dataUpdate.title !== undefined) {
-      const oldNode = nodes.find((n) => n.id === nodeId);
+      const oldNode = nodesRef.current.find((n: RFNode) => n.id === nodeId);
       const oldNodeData = oldNode?.data as Record<string, unknown> | undefined;
       const oldTitle = typeof oldNodeData?.title === 'string' ? oldNodeData.title : undefined;
       const newTitle = dataUpdate.title;
@@ -90,9 +96,14 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
         });
       }
     }
+    const nextNodes = nodesRef.current.map((n: RFNode) => n.id === nodeId ? { ...n, data: { ...n.data, ...dataUpdate } } : n);
+    nodesRef.current = nextNodes;
     pushState(nodes, edges);
-    setNodes((nds) => nds.map((n) => n.id === nodeId ? { ...n, data: { ...n.data, ...dataUpdate } } : n));
-  }, [readOnly, nodes, edges, pushState, setNodes]);
+    setNodes(nextNodes);
+    if (options?.immediateSave) {
+      flushSave(nextNodes);
+    }
+  }, [readOnly, nodes, edges, pushState, setNodes, flushSave]);
   const handleUpdateNodeType = useCallback((nodeId: string, nodeType: NodeShapeType) => {
     if (readOnly) return;
     pushState(nodes, edges);
@@ -222,7 +233,10 @@ const GraphEditorInner: React.FC<GraphEditorInnerProps> = ({ graph, onBack, isMo
 
       {!isMobile && (
         <GraphToolbar
-          readingMode={readingMode} editMode={editMode} onToggleEditMode={handleToggleEditMode}
+          readingMode={readingMode}
+          editMode={editMode}
+          canSwitchToVisual={canSwitchToVisual}
+          onToggleEditMode={handleToggleEditMode}
           onAddNode={handleAddNode} onAddSticky={handleAddSticky} onAddImage={handleAddImage} onDeleteSelected={handleDeleteSelected}
           onUndo={handleUndo} onRedo={handleRedo} canUndo={past.length > 0} canRedo={future.length > 0}
           onZoomIn={() => zoomIn()} onZoomOut={() => zoomOut()} onFitView={() => fitView({ padding: 0.2 })}

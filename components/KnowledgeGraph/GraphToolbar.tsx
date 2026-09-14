@@ -6,10 +6,12 @@ import {
 } from 'lucide-react';
 import type { ReadingMode, BackgroundOpacity, LayoutMode, GraphThemePresetId } from '@/types/graphTypes';
 import { GRAPH_THEME_PRESETS } from '@/constants/graphThemes';
+import { useToast } from '@/contexts/ToastContext';
 
 interface GraphToolbarProps {
   readingMode: ReadingMode;
   editMode: 'visual' | 'code';
+  canSwitchToVisual?: boolean;
   onToggleEditMode: () => void;
   onAddNode: () => void;
   onAddSticky: () => void;
@@ -42,6 +44,7 @@ interface GraphToolbarProps {
 export const GraphToolbar: React.FC<GraphToolbarProps> = ({
   readingMode,
   editMode,
+  canSwitchToVisual = true,
   onToggleEditMode,
   onAddNode,
   onAddSticky,
@@ -72,6 +75,7 @@ export const GraphToolbar: React.FC<GraphToolbarProps> = ({
 }) => {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [showThemes, setShowThemes] = useState(false);
+  const toast = useToast();
   return (
     <div className="flex items-center gap-1 p-2 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex-wrap">
       {/* Edit tools */}
@@ -169,13 +173,29 @@ export const GraphToolbar: React.FC<GraphToolbarProps> = ({
 
       {/* Edit Mode Toggle */}
       <button
-        onClick={onToggleEditMode}
+        type="button"
+        onClick={() => {
+          if (editMode === 'code' && canSwitchToVisual === false) {
+            toast.warning('請先修正語法錯誤再切換模式');
+            return;
+          }
+          onToggleEditMode();
+        }}
+        aria-disabled={editMode === 'code' && canSwitchToVisual === false}
         className={`flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-colors ml-1.5 ${
+          editMode === 'code' && canSwitchToVisual === false ? 'opacity-50 cursor-not-allowed' : ''
+        } ${
           editMode === 'code'
             ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
             : 'bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'
         }`}
-        title={editMode === 'code' ? '視覺編輯模式' : '代碼編輯模式'}
+        title={
+          editMode === 'code'
+            ? canSwitchToVisual === false
+              ? '請先修正語法錯誤再切換模式'
+              : '視覺編輯模式'
+            : '代碼編輯模式'
+        }
       >
         <Code size={14} />
         <span className="hidden sm:inline">{editMode === 'code' ? '代碼模式' : '視覺模式'}</span>

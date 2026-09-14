@@ -105,6 +105,12 @@ interface AppContentProps {
     repository: IStorageRepository;
 }
 
+const PAGE_TRANSITION_VARIANTS = {
+    initial: { opacity: 0, x: -50 },
+    animate: { opacity: 1, x: 0, transition: { duration: 0.5 } },
+    exit: { opacity: 0, x: 50, transition: { duration: 0.3 } }
+};
+
 export const AppContent: React.FC<AppContentProps> = ({
     user,
     loading,
@@ -126,12 +132,6 @@ export const AppContent: React.FC<AppContentProps> = ({
     }
 
     if (!user && !guestMode) return <Login onGuestMode={() => actions.dispatch({ type: 'set_guest_mode', guestMode: true })} />;
-
-    const animationVariants = {
-        initial: { opacity: 0, x: -50 },
-        animate: { opacity: 1, x: 0, transition: { duration: 0.5 } },
-        exit: { opacity: 0, x: 50, transition: { duration: 0.3 } }
-    };
 
     const renderContent = () => {
         if (view === 'quiz' || view === 'mistakes') {
@@ -297,7 +297,7 @@ export const AppContent: React.FC<AppContentProps> = ({
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={view}
-                        variants={animationVariants}
+                        variants={PAGE_TRANSITION_VARIANTS}
                         initial="initial"
                         animate="animate"
                         exit="exit"

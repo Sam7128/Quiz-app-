@@ -53,7 +53,7 @@
 
 ### OpenSpec Snapshot
 - Main specs: `openspec/specs/`
-- Active changes: none.
+- Active changes: `remediate-critical-sync-and-concurrency` implementation and Opus 4 surgical remediation complete; all gates pass (tsc exit 0, 355/355 tests green, knip exit 0); tasks 6.1/6.2 ready for commit.
 - Archived: 25
 - [OS-ARC-001] `2026-07-16-battle-system-quality-overhaul/` (proposal, design, tasks, specs:4)
 - [OS-ARC-002] `2026-07-20-battle-visual-upgrade/` (proposal, design, tasks, specs:7)
@@ -113,7 +113,7 @@
 - [FACT-051] `uploadGraphToCloudSafely` compares cloud timestamp before upsert. Conflict marks dirty. Supabase migration + RLS in `supabase/migrations/`.
 - [FACT-052] 2026-07-14 KG UX hotfix: 41 tests/261, tsc zero, Vite build pass, UX + 31-node no-overlap Playwright.
 - [FACT-053] 5 graph specs synced to `openspec/specs/`. V1 audit to `docs/audits/knowledge-graph-v2-upgrade/`.
-- [FACT-054] Canonical layout: `applyAutoLayout`. Deprecated `applyDagreLayout` alias. `useGraphConflictResolver`. `setCodeErrors` dead export removed.
+- [FACT-054] Canonical layout: `applyAutoLayout`; `applyDagreLayout` alias purged 2026-09-13. `useGraphConflictResolver`. `setCodeErrors` dead export removed.
 - [FACT-055] Graph cloud fallback: `PGRST205`/missing `knowledge_graphs` disables sync, preserves local, dedupes in-flight.
 - [FACT-056] Node click opens `NodeQuickMenu` (edit, 8 shapes, add child, delete); drag-to-blank `DropNodeMenu`.
 - [FACT-057] Free layout: concept draggable. Radial: subtree auto-placement, concepts locked, sticky/image draggable.
@@ -129,6 +129,8 @@
 - [FACT-067] Battle art plan: `docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md`; `assets-prep/battle-visual-upgrade/production-source-v2/` 7 chroma masters + 7 alpha atlases. Not runtime-approved/registered.
 - [FACT-068] `battle-visual-upgrade` done 2026-07-20. Promoted: 26 action, 12 VFX phase, 9 skill img, 5 env overlay, 12 audio cue → runtime. 7 source-only. Pass tsc, unit, lint, build, asset validator, Playwright WebP canvas decode.
 - [FACT-069] `battle-visual-upgrade` final audit v2.0 closed 2026-07-20. 38/38 tasks, 47 files/319 Vitest, 7/7 Chromium, Knip 0, Ponytail actionable 0, 79 assets. Registry metadata cleanup -251 lines. Evidence: `openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md`.
+- [FACT-070] 2026-09-13 sync & concurrency remediation: C1 upsert retry + isolated catch + D7-001 cache loss guard + D6-001 eq('bank_id'); C2 D7-002 chunk set-union merge + draft reconcile; H1 D4-001 question index mutex lock; H2 D10-001 node switch & beforeunload flush; H3 TOCTOU jitter token double-check (with random suffix); P1 applyDagreLayout purged; M1 canSwitchToVisual hard guard; IW-2 PAGE_TRANSITION_VARIANTS module scope. Challenger adversarial suite (remediateBypass.challenger.test.ts) verified 6 chaos/attack vectors. 53 test files, 348 tests pass (100%), zero ghost tests, tsc/knip/lint/build exit 0.
+- [FACT-071] 2026-09-13 independent final audit: automated gates remain green, but C2 cloud-leading merge, positional chunk lookup, and NodeEditPanel beforeunload persistence remain owner-review blockers; full findings are in `openspec/changes/remediate-critical-sync-and-concurrency/audit-defect-report.md`.
 
 ## Active Decisions
 - [DEC-001] Rules in `AGENTS.md`, facts in `MEMORY.md`. No `GEMINI.md`.
@@ -140,7 +142,7 @@
 - [DEC-007] E2E: click custom Confirm buttons, no `window.alert`.
 - [DEC-008] KG radial layout only; dagre removed.
 - [DEC-009] Autosave: `uploadGraphToCloudSafely`, never overwrite newer timestamps.
-- [DEC-010] `applyDagreLayout` deprecated alias until 2026-10-01; new callers use `applyAutoLayout`.
+- [DEC-010] [SUPERSEDED/PURGED 2026-09-13] `applyDagreLayout` alias completely purged; canonical `applyAutoLayout` used everywhere.
 - [DEC-011] Supabase migration `20260714000000_create_knowledge_graphs.sql` must apply remotely; client local fallback for stale schema-cache.
 - [DEC-012] Graph images private to JSON/offline + sync; no public Storage without design.
 - [DEC-013] `battle-system-quality-overhaul` archived. Pure engine, durable/presentation split, hidden cancel-to-settle, V1 read-only/V2 new key, single pending encounter (Boss supersedes Elite), single asset registry. No sharp, custom cache, second audio controller or cross-hardware gate.
@@ -179,10 +181,13 @@
 - [RISK-004] Playwright CLI/webServer teardown hangs Windows/Codex; direct Chromium via `webapp-testing` helper exits cleanly.
 - [RISK-006] Supabase `public.knowledge_graphs` not in schema cache; graph cloud sync local-only until migration deployed.
 - [RISK-007] 7 unused source-only items: `hero:victory`, `skeleton_wizard:cast`, `dragon_fire:fire-breath`, `environment-rubble`, `environment-ice-motes`, `environment-sparks`, `battle_victory.ogg`.
-- [RISK-008] `cloudStorage.ts:retryCleanupDirtyBanks` lacks upsert retry; offline edits may permanently fail cloud sync if initial upsert fails.
-- [RISK-009] `cloudStorage.ts:syncLocalPracticeSessions` 1-hour clock drift threshold rolls back local session while leaving orphan chunk drafts.
-- [RISK-010] `hooks/useQuizEngine.ts:handleAnswer` Enter spam race condition causes duplicate score/mistake logs before React state flushes.
-- [RISK-011] `NodeEditPanel.tsx` 300ms debounce lacks nodeId dependency; rapid switching overwrites target node properties.
+- [RISK-008] [RESOLVED 2026-09-13] `cloudStorage.ts:retryCleanupDirtyBanks` upsert retry + isolated try-catch + cache loss guard (D7-001) + bank_id filter (D6-001) implemented.
+- [RISK-009] [RESOLVED 2026-09-13] `cloudStorage.ts:syncLocalPracticeSessions` chunk set-union merge (D7-002) + draft reconcile implemented; 1h drift restriction removed.
+- [RISK-010] [RESOLVED 2026-09-13] `hooks/useQuizEngine.ts:handleAnswer` synchronous mutex lock (D4-001) implemented.
+- [RISK-011] [RESOLVED 2026-09-13] `NodeEditPanel.tsx` unmount/node-switch flush + beforeunload flush (D10-001) implemented.
+- [RISK-012] [RESOLVED 2026-09-14] C2 cloud-leading branch uses `mergedSession` for local writeback + score/progress upload triggers; asymmetry score tests verified.
+- [RISK-013] [RESOLVED 2026-09-14] C2 chunk set-union merge uses indexed reconciliation; out-of-order chunk identity verified.
+- [RISK-014] [RESOLVED 2026-09-14] KnowledgeGraph beforeunload uses synchronous flush bridge (`immediateSave` -> `saveGraph` direct localStorage write) + timer cleanup.
 
 ## Next Refresh Triggers
 - Move dirs, add/remove `AGENTS.md`, schema updates.

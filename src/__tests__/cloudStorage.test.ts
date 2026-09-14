@@ -52,7 +52,8 @@ describe('saveCloudQuestions', () => {
     const generatedUuid = '223e4567-e89b-12d3-a456-426614174001';
 
     const upsertMock = vi.fn().mockResolvedValue({ error: null });
-    const deleteInMock = vi.fn().mockResolvedValue({ error: null });
+    const deleteEqMock = vi.fn().mockResolvedValue({ error: null });
+    const deleteInMock = vi.fn().mockReturnValue({ eq: deleteEqMock });
     const deleteMock = vi.fn().mockReturnValue({ in: deleteInMock });
     const eqMock = vi.fn().mockResolvedValue({
       data: [
@@ -225,7 +226,8 @@ describe('saveCloudQuestions', () => {
   it('gracefully handles cleanup delete error and records dirty bank', async () => {
     const fixedUuid = '123e4567-e89b-12d3-a456-426614174000';
     const upsertMock = vi.fn().mockResolvedValue({ error: null });
-    const deleteInMock = vi.fn().mockResolvedValue({ error: { message: 'Delete failed' } });
+    const deleteEqMock = vi.fn().mockResolvedValue({ error: { message: 'Delete failed' } });
+    const deleteInMock = vi.fn().mockReturnValue({ eq: deleteEqMock });
     const deleteMock = vi.fn().mockReturnValue({ in: deleteInMock });
     const eqMock = vi.fn().mockResolvedValue({
       data: [{ id: fixedUuid }, { id: 'orphan-1' }],
@@ -258,7 +260,8 @@ describe('saveCloudQuestions', () => {
   it('chunks deletion into batches of 500 when there are many orphans', async () => {
     const fixedUuid = '123e4567-e89b-12d3-a456-426614174000';
     const upsertMock = vi.fn().mockResolvedValue({ error: null });
-    const deleteInMock = vi.fn().mockResolvedValue({ error: null });
+    const deleteEqMock = vi.fn().mockResolvedValue({ error: null });
+    const deleteInMock = vi.fn().mockReturnValue({ eq: deleteEqMock });
     const deleteMock = vi.fn().mockReturnValue({ in: deleteInMock });
 
     // Generate 1005 orphans

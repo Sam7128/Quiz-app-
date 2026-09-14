@@ -22,13 +22,16 @@ export function useGraphCodeMode(
     if (graph.editMode === 'code') setCodeText(graphToMarkdown(graph.nodes, graph.edges));
   }, [graph]);
 
+  const canSwitchToVisual = codeErrors.length === 0;
+
   const handleToggleEditMode = useCallback(() => {
+    if (editMode === 'code' && codeErrors.length > 0) return;
     setEditMode((prev) => {
       const next = prev === 'visual' ? 'code' : 'visual';
       if (next === 'code') setCodeText(graphToMarkdown(fromRFNodes(nodes), fromRFEdges(edges)));
       return next;
     });
-  }, [nodes, edges]);
+  }, [editMode, codeErrors.length, nodes, edges]);
 
   const handleCodeChange = useCallback((text: string) => {
     setCodeText(text);
@@ -98,5 +101,5 @@ export function useGraphCodeMode(
     }
   }, [nodes, edges, notesDict, setNodes, setEdges, setNotesDict]);
 
-  return { editMode, codeText, codeErrors, handleToggleEditMode, handleCodeChange };
+  return { editMode, codeText, codeErrors, canSwitchToVisual, handleToggleEditMode, handleCodeChange };
 }

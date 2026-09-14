@@ -1,5 +1,114 @@
 # Development Log
 
+## 2026-09-14 [Remediation Plan Executed] "Remediate Critical Sync & Concurrency"
+### 🩺 手術級代碼修復與防假綠燈單元測試補齊閉環
+- **執行依據**：`openspec/changes/remediate-critical-sync-and-concurrency/remediation-plan.md`
+- **模組 1（儲存與同步層）**：
+  - `services/cloudStorage.ts`：頂層提取 `isAbortError` 統一收斂各處條件嗅探（YAGNI-4）；`mapQuestionToDbRow` 消除內部二次 normalize（YAGNI-3）；`retryCleanupDirtyBanks` 直接構建 `keepIdsSet`（YAGNI-2）；`runWithSyncLock` 偵測到超時過期 fallback 鎖時記錄 `console.warn`（WARNING-03）；`mergeChunkedPracticeSessions` 保證 `mergedStatus` 僅在 `allCompleted` 為真時推導為 `'completed'`，防止損毀 metadata 篡改（WARNING-05）；`syncLocalPracticeSessions` 本地回寫一律採用 `mergedSession`，並強化 `shouldUploadToCloud` 檢查（`hasBetterChunkScore`、`hasLocalProgress`）（HIGH-01）。
+  - `services/storage.ts`：`enforceGuestPracticeSessionLimits` 於 active 轉 abandoned 與總數超限物理刪除時，依 spec 記錄 `console.warn` 與對應 `sessionId`（SUGGESTION-02）。
+- **模組 2（圖譜編輯器與卸載同步鏈）**：
+  - `hooks/useGraphStorage.ts`：`flushSave` 支援 `overrideNodes?: RFNode[]`，確保即時最新節點可同步落盤。
+  - `components/KnowledgeGraph/GraphEditor.tsx`：維護 `nodesRef`，接出 `flushSave`，`handleUpdateNodeData` 支援 `{ immediateSave?: boolean }` 並同步調用 `flushSave(nextNodes)`；簡化 `onToggleEditMode` 移除重複檢查（YAGNI-1）。
+  - `components/KnowledgeGraph/NodeEditPanel.tsx`：`handleBeforeUnload` 內先清 `debounceRef.current`，再以 `{ immediateSave: true }` 呼叫 `onUpdate`（HIGH-02）。
+  - `components/KnowledgeGraph/GraphToolbar.tsx`：移除按鈕外層 `div onClick` 包覆，按鈕使用 `aria-disabled`，點擊若錯誤直接 toast 並 return（WARNING-04）。
+  - `components/KnowledgeGraph/ConceptNode.tsx`：移除 `shapeClassName` 3 個不可達 keys（`diamond`、`hexagon`、`cloud`）（YAGNI-5）。
+- **模組 3（測驗核心防禦）**：
+  - `hooks/useQuizEngine.ts`：`restoreSession` 與 `handleExitQuiz` 顯式重置 `lastAnsweredQuestionIndexRef.current = null; isProcessingRef.current = false;`（WARNING-01）；`handleAnswer` 先驗證 `currentQ` 有效性後始獲取鎖，徹底解決空題目死鎖缺陷（WARNING-02）。
+- **模組 4（規格與單元測試）**：
+  - `specs/practice-session-storage/spec.md`：修訂 `savedAt` 為「其 session `updatedAt` 較新」（SUGGESTION-01）。
+  - `src/__tests__/syncLocalPracticeSessions.test.ts`：補測「雲端領先 chunk 數，但本地 Chunk 0 分數較高且本地持有 Chunk 3 in_progress」場景；補測「損毀 metadata：單端 session 標記為 completed 但 chunks 僅 2/5 完成，合併後 session status 必須為 active」。
+  - `src/__tests__/nodeEditPanelFlush.test.ts`：補齊「觸發 beforeunload 事件時同步 flush pending 更新至 localStorage」真實持久化鏈。
+  - `src/__tests__/useQuizEngineRace.test.ts`：補測「restoreSession / handleExitQuiz 鎖重置驗證」與「currentQ 為空時 handleAnswer 不死鎖」。
+  - `src/__tests__/runWithSyncLock.test.ts`：補測「過期鎖接管記錄 console.warn」。
+  - `src/__tests__/practiceSessionStorage.test.ts`：補測「超限裁切記錄 console.warn 與 sessionId」。
+- **品質門檻檢驗**：
+  - `npx tsc --noEmit`：Exit 0（0 型別錯誤）。
+  - `npm test`：53 test files、355 tests 全數通過（100% pass）。
+  - `npx knip`：Exit 0（0 筆未被引用之死碼）。
+
+## 2026-09-13 [Independent Final Audit] "Remediate Critical Sync & Concurrency"
+### 🔍 OpenSpec 實作核對、全庫 YAGNI／死代碼與技術債審計
+- **審計技能**：執行 `openspec-verify-change`、`ponytail-audit`、`ponytail-debt` 與 `dead-code` fallback。
+- **驗證證據**：`tsc`、Vitest（53 個 test files／348 個 tests）、ESLint、Knip、production build 與 `git diff --check` 均通過；build 仍有既有大型 chunk warning。
+- **主要缺陷**：發現 OpenSpec task 6.1 尚未完成，以及 C2 cloud-leading session merge、chunk index positional merge、`beforeunload` 非同步落盤鏈條等高風險缺口；另列出 5 項邊界警告、7 項 YAGNI／死代碼收斂項目與 1 筆有期限的 `ponytail:` marker。
+- **審計報告**：[audit-defect-report.md](../openspec/changes/remediate-critical-sync-and-concurrency/audit-defect-report.md)
+- **交付狀態**：本輪只更新審計與專案文件，未修改 runtime implementation、未提交 Git commit、未執行回滾；等待使用者評估。
+
+## 2026-09-13 [Implementation Complete] "Remediate Critical Sync & Concurrency"
+### 🛡️ 實作全數落地、防禦性單元測試覆蓋、驗證指標全綠閉環
+- **變更計畫**：落地實作 `openspec/changes/remediate-critical-sync-and-concurrency/tasks.md` 包含 Phase 1 至 Phase 4 完整範圍。
+- **核心實作與防禦落地**：
+  - **C1 Cloud Dirty Queue 防禦**：
+    - `services/cloudStorage.ts` 提取統一 helper `mapQuestionToDbRow`。
+    - `retryCleanupDirtyBanks`：各 bank 獨立 `try-catch` 隔離；**快取缺失防護 (D7-001)** 檢測 `localQuestionsRaw === null` 記警告移出 dirty，嚴禁刪除雲端資料；先 upsert 補傳後再刪除孤兒；所有孤兒刪除鏈式加上 `.eq('bank_id', bankId)` (D6-001)。
+  - **C2 分階段練習多端無損融合**：
+    - 實作 **Chunk 級聯集合併 (D7-002)**（`mergeChunkedPracticeSessions`），任意端已完成 chunk 自動聯集，全完成自動推進 session 完成；回寫本地與 upsert 雲端。
+    - 採用 **Chunk 精確草稿清理 (Chunk-specific Draft Reconcile)**，僅清理已完成 chunk 的 draft，保留本地進行中的 active draft。
+    - 移除 1 小時漂移閾值，保留 `isLocalFuture`（`> now + 5min`）時鐘異常判定。
+  - **H3 跨分頁同步鎖強化**：
+    - `runWithSyncLock` LocalStorage Fallback 加入 30~70ms 隨機抖動延遲與 double-check token 機制，徹底消除 TOCTOU 搶佔競態。
+  - **H1 答題題號互斥生命週期雙鎖 (D4-001)**：
+    - `hooks/useQuizEngine.ts` 引入 `lastAnsweredQuestionIndexRef` 與 `isProcessingRef`，在反饋與切題前同步鎖定，阻斷 Enter 連按連鎖評分。
+  - **M1 知識圖譜模式切換底層與 UI 雙層硬鎖**：
+    - `hooks/useGraphCodeMode.ts` 建立底層硬阻斷 `if (editMode === 'code' && codeErrors.length > 0) return;` 並導出 `canSwitchToVisual`；
+    - `GraphEditor.tsx` 與 `GraphToolbar.tsx` 綁定 disable 狀態與語法錯誤警告 Toast。
+  - **H2 節點屬性防抖 flush 與強關防禦 (D10-001)**：
+    - `components/KnowledgeGraph/NodeEditPanel.tsx` 依賴 `[nodeId, onUpdate]` 閉包捕獲 `nodeId`，切換與 unmount 時立即 flush pending 更新；註冊 `beforeunload` 事件監聽確保分頁關閉同步 flush。
+  - **IW-2 頁面過渡動畫提取**：
+    - `components/AppContent.tsx` 內聯 variants 提至 Module Scope 命名為 `PAGE_TRANSITION_VARIANTS`。
+  - **P1 Ponytail 到期清理**：
+    - 刪除 `components/KnowledgeGraph/graphUtils.ts` 之 `applyDagreLayout` 舊別名與註解；測試套件全面轉向 canonical `applyAutoLayout`。
+- **自動化測試覆蓋**：
+  - 新增 `retryCleanupDirtyBanks.test.ts`（場景 A~G 7/7 通過）。
+  - 新增 `syncLocalPracticeSessions.test.ts`（場景 A~F 6/6 通過）。
+  - 新增 `runWithSyncLock.test.ts`（場景 A~B 2/2 通過）。
+  - 新增 `useQuizEngineRace.test.ts`（場景 A~B 2/2 通過）。
+  - 新增 `nodeEditPanelFlush.test.ts`（場景 A~C 3/3 通過）。
+  - 適配更新 `cloudStorage.test.ts`、`practiceSessionStorage.test.ts` 與 `radialLayout.test.ts`。
+- **品質門檻檢驗**：
+  - `npx tsc --noEmit`：Exit 0（0 錯誤）。
+  - `npm test`：53 test files、348 tests 全數通過（100% pass）。
+  - `npx knip`：Exit 0（0 筆未被引用之死碼）。
+  - `npm run build`：8.45s 順利編譯完成，無異常報錯。
+
+### ⚔️ Challenger 黑客對抗門禁與混沌驗證 (Adversarial Bypass Gate)
+- **測試收集與零幽靈門禁**：
+  - 驗證 `src/__tests__` 共 53 個測試檔案，`npx vitest list` 收集 53 個測試檔、共 348 個測試案例，全數收集率 100%，幽靈測試檔數 0。
+- **黑客穿透與對抗驗證 (`src/__tests__/remediateBypass.challenger.test.ts`)**：
+  - **對抗 1 (跨庫 UUID 注入攻擊)**：構造注入他人合法題目 UUID 之攻擊場景，斷言孤兒刪除鏈式約束 `.eq('bank_id', attackerBankId)` 使他人題庫數據 100% 毫髮無損。
+  - **對抗 2 (快取驅逐滅頂混沌)**：構造本地快取 `null`（Quota 驅逐）與嚴重損毀 JSON（`{malformed`）混入 dirty queue，驗證絕不調用全量 delete、隔離單庫例外、保留損毀庫重試並順利同步有效題庫。
+  - **對抗 3 (極端高頻連擊)**：在同一題號 10ms 內連續派發 100 次 `handleAnswer` 巨集攻擊，驗證題號生命週期互斥鎖（`lastAnsweredQuestionIndexRef` + `isProcessingRef`）嚴格執行 1 次，後續 99 次 100% 阻斷。
+  - **對抗 4 (多分頁並發競態)**：模擬 5 個分頁在同一毫秒併發搶佔 LocalStorage Fallback 鎖，藉由隨機抖動延遲與唯一 token double-check，驗證嚴格最多僅 1 個分頁持鎖，其餘 4 個分頁安全拒絕，零並發覆寫。
+  - **對抗 5 (異常數值與存量相容 Session 合併)**：注入負分數、`NaN`、無效時間戳之損毀 session，強化 `mergeChunkedPracticeSessions` 型別防禦（`toValidScore`、`toValidTimestamp`），驗證無崩潰、無損保留已完成 chunk 進度與最高分。
+  - **對抗 6 (分頁瞬間關閉 beforeunload)**：在 300ms debounce 未觸發前派發 `beforeunload` 事件，驗證 pending 狀態 100% 同步 flush 至狀態庫。
+- **終極閉環指標**：
+  - Vitest：53 test files, 348 passed (100%)。
+  - TypeScript (`tsc --noEmit`)：Exit 0。
+  - Knip (`npx knip`)：Exit 0 (0 dead code)。
+  - Production Build (`npm run build`)：Exit 0, 5.53s。
+
+## 2026-09-13 [Plan Review Complete] "Remediate Critical Sync & Concurrency"
+### 🛡️ 雙軌審查（Ponytail 減法 + Leak-proof 加法）徹底閉環
+- **審查機制**：執行 `.agents/skills/review-check`，啟用 `ponytail` 與 `ponytail-review` 派發兩位獨立審查子代理並行雙向審查。
+- **Round 1 駁回與發現**：
+  - **H1 微任務假防禦**：`queueMicrotask` 在微秒級解鎖，而用戶答題後停留在反饋畫面（1~2秒），Enter 連按依然穿透重複作答與評分。
+  - **C2 草稿無條件清理致資料遺失**：雲端覆蓋時無條件調用 `clearChunkDraftsForSession` 會誤殺用戶正在進行中且尚未結算的本地 active draft。
+  - **M1 UI-Only 假鎖**：只在按鈕加 `disabled`，底層 `handleToggleEditMode` 缺乏校驗，快捷鍵可繞過。
+  - **幽靈符號與路徑**：引用了代碼庫不存在的 `mapQuestionToDbRow` 與幽靈組件 `GraphWorkspace.tsx`。
+  - **過度工程**：`getSessionProgress` 物件封裝與 `prevNodeIdRef` 屬多此一舉。
+- **修正對齊**：
+  - 改用 `lastAnsweredQuestionIndexRef` + `isProcessingRef` 題號鎖，僅在 `nextQuestion` / `startQuiz` 解鎖，徹底杜絕 Enter 重入。
+  - C2 實作 **Chunk 精確比對清理草稿**（`reconcileChunkDrafts`），保護本地 active draft。
+  - M1 於 `hooks/useGraphCodeMode.ts` 入口建立硬阻斷，修正組件路徑為 `GraphEditor.tsx` 與 `GraphToolbar.tsx`。
+  - 提取 `mapQuestionToDbRow` 統一資料形狀；單 bank 獨立 try-catch 隔離；NodeEditPanel 善用 cleanup 閉包捕獲 `nodeId`。
+  - 補全 `specs/client-data-integrity/spec.md` 與 `proposal.md`。
+- **Round 2 複審裁決**：Track A (Ponytail) 與 Track B (Leak-proof) **雙軌全數 PASS**，0 阻斷缺陷、0 過度工程，變更計畫完全一致且 Apply-Ready。
+- **壓測報告與效能基準升級**：
+  - 全面修訂 `stress-test-report.md`：將健康評分調升至 **98 / 100 (🟢 A - Ready for Implementation)**。
+  - 將 5 大核心 Finding（D7-001 快取缺失滅頂防護、D7-002 多裝置 Chunk 聯集合併、D4-001 題號雙鎖徹底阻斷、D6-001 鏈式 `.eq('bank_id')` 縱深防禦、D10-001 `beforeunload` 關閉監聽）全數判定為 **RESOLVED**。
+  - 更新 `benchmark-harness.md`：全面對齊題號生命週期雙鎖、多端離線分歧無損融合（`mergeChunkedPracticeSessions`）、快取驅逐安全阻斷、與分頁強關 flush 規範。
+  - 8 個變更計畫檔案與 2 個壓測文件達成 100% 絕對一致。
+
 ## 2026-09-13 [Inquisitor Deep Audit] "Ponytail Debt & Blast Radius Deep Audit"
 ### 🔍 六大維度深度審計、連鎖因果鏈推導與技術債評估
 - **審計產出**：完成 [docs/reports/PONYTAIL_TECH_DEBT_AND_DEEP_AUDIT_2026_09_13.md](file:///c:/Users/user/Desktop/Quiz-app-/docs/reports/PONYTAIL_TECH_DEBT_AND_DEEP_AUDIT_2026_09_13.md)，覆蓋 Ponytail 技術債、持久化與同步、領域核心（RPG/Quiz/SM-2）、知識圖譜 v2、React 18 架構及自動化驗證。

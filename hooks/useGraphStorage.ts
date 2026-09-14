@@ -55,15 +55,16 @@ export function useGraphStorage(
     refs.current = { graph, nodes, edges, notesDict, readingMode, editMode, bgOpacity, layoutMode, theme };
   }, [graph, nodes, edges, notesDict, readingMode, editMode, bgOpacity, layoutMode, theme]);
 
-  const flushSave = useCallback(() => {
+  const flushSave = useCallback((overrideNodes?: RFNode[]) => {
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
     }
     const cur = refs.current;
+    const targetNodes = overrideNodes ?? cur.nodes;
     const doc: GraphDocument = {
       ...cur.graph,
-      nodes: fromRFNodes(cur.nodes),
+      nodes: fromRFNodes(targetNodes),
       edges: fromRFEdges(cur.edges),
       notes: cur.notesDict,
       editMode: cur.editMode,
@@ -95,6 +96,7 @@ export function useGraphStorage(
     } else if (result.error) {
       toastRef.current.warning(translateGraphError(result.error));
     }
+    return result;
   }, []);
 
   const flushSaveIfNeeded = useCallback(() => {
@@ -105,7 +107,9 @@ export function useGraphStorage(
 
   const scheduleSave = useCallback(() => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(flushSave, 2000);
+    saveTimerRef.current = setTimeout(() => {
+      flushSave();
+    }, 2000);
   }, [flushSave]);
 
   useEffect(() => {

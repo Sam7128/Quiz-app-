@@ -222,22 +222,20 @@ const ConceptNode: React.FC<NodeProps> = memo(({ data, selected }) => {
     );
   }
 
-  const shapeClassName = {
+  type StandardShapeType = Exclude<NodeShapeType, 'diamond' | 'hexagon' | 'cloud'>;
+  const shapeClassName: Record<StandardShapeType, string> = {
     concept: 'rounded-lg min-w-[120px]',
     square: 'rounded-lg w-36 min-h-32',
     rounded: 'rounded-2xl min-w-[140px]',
     pill: 'rounded-full min-w-[160px] min-h-16',
     circle: 'rounded-full w-40 min-h-40',
-    hexagon: 'min-w-[170px] min-h-28',
-    cloud: 'min-w-[170px] min-h-24',
-    diamond: '',
-  } satisfies Record<NodeShapeType, string>;
+  };
 
   return (
     <div className="relative">
       <NodeQuickMenu selected={selected} shape={shapeType} actions={nodeData.quickActions} />
       <div
-      className={`relative flex flex-col justify-center px-4 py-2 border-2 shadow-sm transition-shadow ${shapeClassName[shapeType]} ${
+      className={`relative flex flex-col justify-center px-4 py-2 border-2 shadow-sm transition-shadow ${shapeClassName[shapeType as StandardShapeType]} ${
         readingMode === 'expand-all' ? 'max-w-[320px]' : 'max-w-[200px]'
       } ${selected ? 'ring-2 ring-blue-400 shadow-lg' : ''} ${
         isSolid ? '' : 'bg-slate-50/90 dark:bg-slate-900/90'

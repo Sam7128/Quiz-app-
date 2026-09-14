@@ -3,6 +3,25 @@
 此文件用於追蹤專案開發進度、待辦事項與已完成項目。
 
 ## 🟡 進行中 (In Progress)
+- [x] **[Remediation Plan Apply]** `remediate-critical-sync-and-concurrency` 手術級代碼修復與對應測試全數通過（HIGH-01/02, WARNING-01~05, SUGGESTION-01/02, YAGNI-1~5）
+    - [x] 模組 1（儲存與同步）：`services/cloudStorage.ts` 與 `services/storage.ts`
+    - [x] 模組 2（圖譜編輯器與卸載同步鏈）：`useGraphStorage.ts`, `GraphEditor.tsx`, `NodeEditPanel.tsx`, `GraphToolbar.tsx`, `ConceptNode.tsx`
+    - [x] 模組 3（測驗核心防禦）：`useQuizEngine.ts` 雙鎖重置與防死鎖
+    - [x] 模組 4（規格與單元測試）：`spec.md` 修訂與 7 項防假綠燈單元測試補齊
+    - [x] 全門禁通過：`npx tsc --noEmit`、`npm test`（355 測試全部通過）、`npx knip` 零死碼
+- [x] **[Independent Final Audit]** `remediate-critical-sync-and-concurrency` 最終獨立審計與缺陷報告
+    - [x] 執行 `openspec-verify-change`，核對 artifacts、runtime 實作、測試與未完成任務
+    - [x] 執行 `ponytail-audit`、`ponytail-debt` 與 dead-code fallback，完成全庫 YAGNI／死代碼／技術債盤點
+    - [x] 產出 `openspec/changes/remediate-critical-sync-and-concurrency/audit-defect-report.md`
+    - [x] 依使用者指示停止 runtime 修復、提交與回滾，等待使用者評估
+- [x] **[Plan Review]** `remediate-critical-sync-and-concurrency` 雙軌審查與防禦完整性閉環（Ponytail + Leak-proof）
+    - [x] 依 `review-check` 派發兩位獨立審查子代理執行 Track A（Ponytail 減法）與 Track B（Leak-proof 加法）審查
+    - [x] Round 1 揭露 5 項嚴重缺陷（微任務解鎖假防禦、無條件清草稿誤殺、UI-Only 假鎖、幽靈路徑、虛構抽象）並行 REJECT 裁決
+    - [x] 修訂全套 8 個 artifacts（proposal、design、tasks、5 個 specs），實現雙重題號鎖、精確草稿清理、Hook 底層守衛、路徑修正與映射共用
+    - [x] Round 2 複審雙軌 100% 通過（Track A: PASS，Track B: PASS），無殘留 blocker 與過度工程
+    - [x] 全面升級 `stress-test-report.md`（健康評分調升至 98 / 100 Grade A，標記 D4-001/D7-001/D7-002/D6-001/D10-001 為 RESOLVED）
+    - [x] 全面對齊 `benchmark-harness.md` 效能基準（題號生命週期雙鎖、多端 Chunk 聯集合併、快取缺失防護與 beforeunload 關閉監聽）
+    - [x] 計畫文件與壓測規格一致性檢查完畢，達到實作就緒（Apply-Ready）狀態
 - [x] **[Plan Review]** `battle-visual-upgrade` 開發計畫迭代審查與 YAGNI 簡化
     - [x] 打包 proposal／delta specs／design／tasks／stress-test-report／benchmark-harness 與程式現況證據
     - [x] 依 `review-check` 派發兩位獨立審查員並彙總 canonical issues
@@ -51,6 +70,12 @@
 - [x] Legacy leaf/dead export 最終清理與 OpenSpec verify 結案；`AUDIT_REPORT.md` v2 判定通過
 
 ## 🟢 已完成 (Done)
+- [x] **[Remediation Implementation]** `remediate-critical-sync-and-concurrency` 落地實作與防禦性單元測試驗證全數完成
+    - [x] Phase 1: Storage / Service 層防禦修復 (C1, C2, H3) 與 3 組單元測試
+    - [x] Phase 2: Domain Hook 防禦修復 (H1, M1) 與 Race 單元測試
+    - [x] Phase 3: Component 防禦修復 (H2, IW-2) 與 Flush 單元測試
+    - [x] Phase 4: Ponytail 到期清理 (P1)
+    - [x] Phase 5: 零錯誤驗證閉環（53 test files, 348 tests, tsc 0, knip 0, vite build 0）
 - [x] **[Knowledge Graph Progressive Branch Exploration]** 實作逐支線階層展開：先顯示主節點與二級節點，點擊二級節點後才顯示其三級子節點
     - [x] 定義節點可見性與分支展開狀態
     - [x] 實作逐步探索的子樹顯示與收合互動

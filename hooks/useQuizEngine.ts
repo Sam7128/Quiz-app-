@@ -60,6 +60,8 @@ export const useQuizEngine = ({
   const [showResumePrompt, setShowResumePrompt] = useState(false);
   const [pendingSession, setPendingSession] = useState<SavedQuizProgress | null>(null);
   const lastChunkCompletionRef = useRef<string | null>(null);
+  const lastAnsweredQuestionIndexRef = useRef<number | null>(null);
+  const isProcessingRef = useRef(false);
 
   useEffect(() => {
     if (quizState.mode === 'chunked') {
@@ -128,6 +130,8 @@ export const useQuizEngine = ({
           mode: 'random',
           wrongQuestionIds: session.wrongQuestionIds
         });
+        lastAnsweredQuestionIndexRef.current = null;
+        isProcessingRef.current = false;
         onViewChange('quiz');
       }
     } catch (e) {
@@ -215,6 +219,8 @@ export const useQuizEngine = ({
       chunkMeta,
     });
     lastChunkCompletionRef.current = null;
+    lastAnsweredQuestionIndexRef.current = null;
+    isProcessingRef.current = false;
     setSessionStartTime(Date.now());
     setCurrentSessionMistakes([]);
 
@@ -243,6 +249,8 @@ export const useQuizEngine = ({
       mode: 'mistake',
       wrongQuestionIds: []
     });
+    lastAnsweredQuestionIndexRef.current = null;
+    isProcessingRef.current = false;
     setSessionStartTime(Date.now());
     setCurrentSessionMistakes([]);
     onViewChange('quiz');
@@ -259,6 +267,8 @@ export const useQuizEngine = ({
       repository.addRecentMistakeSession(session);
     }
     setSessionStartTime(null);
+    lastAnsweredQuestionIndexRef.current = null;
+    isProcessingRef.current = false;
     onViewChange('dashboard');
     setCurrentSessionMistakes([]);
   }, [banks, currentSessionMistakes, onViewChange, repository, sessionBankIds]);
@@ -286,13 +296,22 @@ export const useQuizEngine = ({
       wrongQuestionIds: [],
       challengeId: challengeId
     });
+    lastAnsweredQuestionIndexRef.current = null;
+    isProcessingRef.current = false;
     setSessionStartTime(Date.now());
     onViewChange('quiz');
   }, [onChallengeStart, onViewChange, repository, toast]);
 
   const handleAnswer = useCallback((isCorrect: boolean, selectedAnswer: string | string[]) => {
+    if (isProcessingRef.current || lastAnsweredQuestionIndexRef.current === quizState.currentQuestionIndex) {
+      return;
+    }
+
     const currentQ = quizState.activeQuestions[quizState.currentQuestionIndex];
     if (!currentQ) return;
+
+    isProcessingRef.current = true;
+    lastAnsweredQuestionIndexRef.current = quizState.currentQuestionIndex;
 
     const questionId = String(currentQ.id);
     let srItem = repository.getSpacedRepetitionItem(questionId);
@@ -329,6 +348,7 @@ export const useQuizEngine = ({
   }, [quizState, repository, setMistakeLog]);
 
   const nextQuestion = useCallback(() => {
+    isProcessingRef.current = false;
     if (quizState.currentQuestionIndex < quizState.totalQuestions - 1) {
       setQuizState(prev => ({ ...prev, currentQuestionIndex: prev.currentQuestionIndex + 1 }));
     } else {

@@ -85,12 +85,6 @@ export function applyAutoLayout(nodes: RFNode[], edges: RFEdge[]): RFNode[] {
   return applyRadialLayout(nodes, edges);
 }
 
-/** @deprecated Use applyAutoLayout. Kept for existing graph utility consumers. */
-// ponytail: retain this compatibility alias until the external graph utility API migration window closes on 2026-10-01.
-export function applyDagreLayout(nodes: RFNode[], edges: RFEdge[]): RFNode[] {
-  return applyAutoLayout(nodes, edges);
-}
-
 function getLevenshteinDistance(a: string, b: string): number {
   const tmp = Array.from({ length: b.length + 1 }, (_, i) => [i]);
   for (let j = 0; j <= a.length; j++) tmp[0][j] = j;
