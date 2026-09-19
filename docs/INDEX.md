@@ -1,6 +1,6 @@
 # Docs Index
 
-- Updated: `2026-07-20 17:11`
+- Updated: `2026-09-14 10:57`
 - Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs.
 
 ## archive
@@ -24,7 +24,7 @@
 - `reports/DEEP_AUDIT_REMEDIATION_IMPLEMENTATION.md` - 深度稽核修復實作報告 (2026-02-16)
 - `reports/DEEP_CODE_AUDIT_REPORT_2026-02-15.md` - MindSpark Quiz App 深度檢查報告
 - `reports/LOGIC_AND_ARCH_AUDIT_REPORT_2026_06_08.md` - 邏輯與架構審查報告 (Logic & Architecture Audit Report)
-- `reports/PONYTAIL_TECH_DEBT_AND_DEEP_AUDIT_2026_09_13.md` - 🔍 MindSpark 全庫深度審計與技術債清理評估報告 (2026-09-13)
+- `reports/PONYTAIL_TECH_DEBT_AND_DEEP_AUDIT_2026_09_13.md` - 🔍 MindSpark (`Quiz-app-`) 全庫深度審計與技術債清理評估報告
 - `reports/RISK_REVIEW_REPORT_2026_05_21.md` - MindSpark 程式風險與競態審查報告
 - `reports/security-and-sync-hardening-verification.md` - Verification Report: security-and-sync-hardening
 - `reports/security_audit_investigation.md` - 安全審計報告調查結果 (2026-06-08)

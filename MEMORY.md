@@ -27,45 +27,56 @@
 
 <!-- BEGIN AUTO-GENERATED: MEMORY MAP -->
 ## Auto-Generated Memory Map
-- Refreshed: `2026-07-20 17:11`
+- Refreshed: `2026-09-14 10:57`
 - Project root: `C:\Users\user\Desktop\Quiz-app-`
 
 ### Key Files
-- [PATH-001] `AGENTS.md` | [PATH-002] `MEMORY.md` | [PATH-003] `README.md`
-- [PATH-004] `CHECKLIST.md` | [PATH-005] `package.json` | [PATH-006] `tsconfig.json`
-- [PATH-007] `docs/INDEX.md` | [PATH-008] `App.tsx` | [PATH-009] `dashboard.png` | [PATH-010] `eslint.config.js`
+- [PATH-001] `AGENTS.md`
+- [PATH-002] `MEMORY.md`
+- [PATH-003] `README.md`
+- [PATH-004] `CHECKLIST.md`
+- [PATH-005] `package.json`
+- [PATH-006] `tsconfig.json`
+- [PATH-007] `docs/INDEX.md`
+- [PATH-008] `App.tsx`
+- [PATH-009] `dashboard.png`
+- [PATH-010] `eslint.config.js`
 
 ### Module Index
 | ID | Path | Local AGENTS | Purpose | Tags |
 |---|---|---|---|---|
-| MOD-001 | `assets-prep/` | no | project module | assets-prep |
+| MOD-001 | `assets-prep/` | no | important project module | assets-prep |
 | MOD-002 | `components/` | yes | ui components | components |
-| MOD-003 | `constants/` | yes | static definitions + domain data | constants |
-| MOD-004 | `contexts/` | yes | shared context + state boundaries | contexts |
+| MOD-003 | `constants/` | yes | static definitions and domain data | constants |
+| MOD-004 | `contexts/` | yes | shared context and state boundaries | contexts |
 | MOD-005 | `docs/` | no | project documentation | docs |
 | MOD-006 | `e2e/` | yes | end-to-end tests | e2e |
-| MOD-007 | `hooks/` | yes | feature hooks + orchestration | hooks |
-| MOD-008 | `openspec/` | yes | change planning + specs | openspec |
+| MOD-007 | `hooks/` | yes | feature hooks and orchestration | hooks |
+| MOD-008 | `openspec/` | yes | change planning and specs | openspec |
 | MOD-009 | `public/` | no | static assets | public |
-| MOD-010 | `Quiz-app-/` | no | project module | quiz-app- |
-| MOD-011 | `reducers/` | no | project module | reducers |
+| MOD-010 | `Quiz-app-/` | no | important project module | quiz-app- |
+| MOD-011 | `reducers/` | no | important project module | reducers |
 | MOD-012 | `scripts/` | no | automation scripts | scripts |
 
 ### OpenSpec Snapshot
 - Main specs: `openspec/specs/`
-- Active changes: `remediate-critical-sync-and-concurrency` implementation and Opus 4 surgical remediation complete; all gates pass (tsc exit 0, 355/355 tests green, knip exit 0); tasks 6.1/6.2 ready for commit.
-- Archived: 25
-- [OS-ARC-001] `2026-07-16-battle-system-quality-overhaul/` (proposal, design, tasks, specs:4)
-- [OS-ARC-002] `2026-07-20-battle-visual-upgrade/` (proposal, design, tasks, specs:7)
-- [OS-ARC-003] `enhance-quiz-experience/` (proposal, design, tasks, specs:2)
-- [OS-ARC-004] `quiz-ux-enhancement/` (proposal, tasks)
-- [OS-ARC-005] `supabase-cloud-sync/` (proposal, tasks)
+- Active changes: none detected.
+- Archived changes: `26`
+- [OS-ARC-001] `openspec/changes/archive/2026-07-20-battle-visual-upgrade/` (proposal, design, tasks, specs:7)
+- [OS-ARC-002] `openspec/changes/archive/2026-09-14-remediate-critical-sync-and-concurrency/` (proposal, design, tasks, specs:5)
+- [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2)
+- [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks)
+- [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)
 
 ### Nested AGENTS
-- [AG-001] `components/AGENTS.md` | [AG-002] `constants/AGENTS.md`
-- [AG-003] `contexts/AGENTS.md` | [AG-004] `e2e/AGENTS.md`
-- [AG-005] `hooks/AGENTS.md` | [AG-006] `openspec/AGENTS.md`
-- [AG-007] `services/AGENTS.md` | [AG-008] `src/__tests__/AGENTS.md`
+- [AG-001] `components/AGENTS.md`
+- [AG-002] `constants/AGENTS.md`
+- [AG-003] `contexts/AGENTS.md`
+- [AG-004] `e2e/AGENTS.md`
+- [AG-005] `hooks/AGENTS.md`
+- [AG-006] `openspec/AGENTS.md`
+- [AG-007] `services/AGENTS.md`
+- [AG-008] `src/__tests__/AGENTS.md`
 <!-- END AUTO-GENERATED: MEMORY MAP -->
 
 ## Stable Facts
