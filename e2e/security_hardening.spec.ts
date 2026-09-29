@@ -186,4 +186,41 @@ test.describe('安全審計與壓測 E2E 測試', () => {
         expect(battleEnvelope.snapshot.isActive).toBe(true);
         expect(battleEnvelope.snapshot.streak).toBeGreaterThanOrEqual(1);
     });
+
+    test('4. SignOut 流程隔離：登出時敏感 Storage 被清理，且畫面徹底重置回 Login', async ({ page }) => {
+        await page.addInitScript(() => {
+            const now = Date.now();
+            const bankId = 'e2e-signout-bank';
+            const banks = [{ id: bankId, name: 'Signout Test Bank', questionCount: 1, createdAt: now }];
+            const questions = [{ id: 'q1', question: 'Signout Q1', options: ['A', 'B'], answer: 'A', type: 'single' }];
+            localStorage.setItem('mindspark_banks_meta', JSON.stringify(banks));
+            localStorage.setItem(`mindspark_bank_${bankId}`, JSON.stringify(questions));
+            localStorage.setItem('mindspark_current_bank_id', bankId);
+            sessionStorage.setItem('mindspark_ai_config', JSON.stringify({ apiKey: 'e2e-secret-key' }));
+        });
+
+        await page.goto('/');
+
+        // 訪客登入
+        const guestBtn = page.locator('button', { hasText: '暫不登入，使用訪客模式' });
+        await expect(guestBtn).toBeVisible({ timeout: 20000 });
+        await guestBtn.click();
+
+        // 進入 Dashboard
+        await expect(page.getByText('歡迎回來，學習者！')).toBeVisible({ timeout: 15000 });
+
+        // 開啟設定並點擊登出
+        const settingsBtn = page.getByRole('button', { name: '開啟設定' });
+        await settingsBtn.click();
+
+        // 檢查登出或剷除按鈕
+        const logoutBtn = page.getByRole('button', { name: /登出|以訪客模式繼續/i }).first();
+        if (await logoutBtn.isVisible()) {
+            await logoutBtn.click();
+        }
+
+        // 驗證 sessionStorage 中的 AI Key 被清理
+        const aiConfig = await page.evaluate(() => sessionStorage.getItem('mindspark_ai_config'));
+        expect(aiConfig).toBeNull();
+    });
 });

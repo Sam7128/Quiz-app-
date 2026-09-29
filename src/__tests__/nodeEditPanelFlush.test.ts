@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { NodeEditPanel } from '../../components/KnowledgeGraph/NodeEditPanel';
 import type { GraphNodeData, GraphDocument } from '../../types/graphTypes';
 import type { Node as RFNode } from '@xyflow/react';

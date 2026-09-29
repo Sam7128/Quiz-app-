@@ -88,7 +88,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           {user ? (
             <div className="flex items-center gap-3 pl-2">
               <div className="flex flex-col items-end">
-                <span className={`text-xs font-bold ${isGameQuiz ? 'text-amber-200' : 'text-slate-700 dark:text-slate-200'}`}>{user.user_metadata.full_name || user.email?.split('@')[0]}</span>
+                <span className={`text-xs font-bold ${isGameQuiz ? 'text-amber-200' : 'text-slate-700 dark:text-slate-200'}`}>{user.user_metadata?.full_name || user.email?.split('@')[0]}</span>
                 <button onClick={onSignOut} className="text-[10px] text-red-500 hover:text-red-600 font-bold uppercase tracking-tight">登出</button>
               </div>
               <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 shadow-sm ${isGameQuiz ? 'bg-slate-800 text-amber-400 border-slate-600' : 'bg-gradient-to-br from-slate-100 to-white dark:from-slate-800 dark:to-slate-700 text-slate-500 dark:text-slate-300 border-white dark:border-slate-600'}`}>

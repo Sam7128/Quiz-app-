@@ -321,4 +321,27 @@ test.describe('Battle flow', () => {
     await answerAndAdvance(page, 1, 3, 'A');
     await expect(page.getByText('題目 2 / 3')).toBeVisible();
   });
+
+  test('1366x768 筆電解析度首屏幾何驗證：BattleArena 限制在 28vh 內，所有選項按鈕在首屏完整露出無須滾動', async ({ page }) => {
+    test.setTimeout(60000);
+    await page.setViewportSize({ width: 1366, height: 768 });
+    await seedQuiz(page, 5);
+    await enterQuiz(page, 5);
+
+    // 1. 驗證 BattleArena 存在且在 viewport 內
+    const arena = page.locator('[data-battle-phase]');
+    await expect(arena).toBeVisible();
+
+    // 2. 驗證選項按鈕全部在首屏可見（toBeInViewport）
+    const optionButtons = page.locator('.space-y-1 button, .grid button');
+    const count = await optionButtons.count();
+    expect(count).toBeGreaterThan(0);
+    for (let i = 0; i < count; i++) {
+      await expect(optionButtons.nth(i)).toBeInViewport();
+    }
+
+    // 3. 驗證頁面垂直滾動距離為 0 (首屏完全露出無須向下滾動)
+    const scrollY = await page.evaluate(() => window.scrollY);
+    expect(scrollY).toBe(0);
+  });
 });

@@ -30,6 +30,7 @@ interface DashboardProps {
   onMoveBank: (bankId: string, folderId: string | undefined) => void;
   onBatchDelete: () => void;
   onSelectAll?: (selected: boolean) => void;
+  onStartSpacedReview: () => void;
   chunkedPractice?: {
     activeSessions: ChunkedPracticeSession[];
     chunkSizeOptions: readonly number[];
@@ -55,6 +56,7 @@ const DashboardBase: React.FC<DashboardProps> = ({
   onBatchDelete,
   onSelectAll,
   onPracticeMistakes, // Add this
+  onStartSpacedReview,
   chunkedPractice
 }) => {
   const confirmDialog = useConfirm();
@@ -76,12 +78,26 @@ const DashboardBase: React.FC<DashboardProps> = ({
 
   // Load spaced repetition data on mount
   useEffect(() => {
+    let isMounted = true;
     const loadDueCount = async () => {
       try {
         const data = await repository.getSpacedRepetition();
         const allItems = Array.isArray(data) ? data : Object.values(data);
         const dueItems = getDueQuestions(allItems);
-        setDueCount(dueItems.length);
+
+        if (dueItems.length === 0) {
+          if (isMounted) setDueCount(0);
+          return;
+        }
+
+        const currentBanks = await repository.getBanks();
+        const questionArrays = await Promise.all(currentBanks.map(b => repository.getQuestions(b.id)));
+        const existingQuestionIds = new Set(questionArrays.flat().map(q => String(q.id)));
+        const activeDueItems = dueItems.filter(item => existingQuestionIds.has(item.questionId));
+
+        if (isMounted) {
+          setDueCount(activeDueItems.length);
+        }
       } catch (error) {
         if (isAbortError(error)) return;
         console.error('Error loading spaced repetition data:', error);
@@ -89,7 +105,10 @@ const DashboardBase: React.FC<DashboardProps> = ({
     };
 
     void loadDueCount();
-  }, [repository]);
+    return () => {
+      isMounted = false;
+    };
+  }, [banks, repository]);
 
   const totalQuestions = selectedBankIds.reduce((sum, id) => {
     const bank = banks.find(b => b.id === id);
@@ -170,12 +189,17 @@ const DashboardBase: React.FC<DashboardProps> = ({
             已選擇 {selectedBankIds.length} 個題庫，共 <strong className="text-brand-600 dark:text-brand-400">{totalQuestions}</strong> 題。
           </p>
           {dueCount > 0 && (
-            <div className="mt-4 flex items-center gap-2 text-amber-600 dark:text-amber-300 bg-amber-50/80 dark:bg-amber-900/20 px-4 py-2 rounded-xl border border-amber-200/50 dark:border-amber-800/50 backdrop-blur-sm shadow-sm inline-flex">
+            <button
+              onClick={onStartSpacedReview}
+              className="mt-4 flex items-center gap-2 text-amber-600 dark:text-amber-300 bg-amber-50/80 dark:bg-amber-900/20 px-4 py-2 rounded-xl border border-amber-200/50 dark:border-amber-800/50 backdrop-blur-sm shadow-sm hover:scale-105 active:scale-95 transition-all cursor-pointer inline-flex"
+              aria-label="複習到期題目"
+              title="點擊開始複習到期題目"
+            >
               <Calendar size={16} />
               <span className="text-sm font-bold">
                 有 {dueCount} 題需要複習
               </span>
-            </div>
+            </button>
           )}
         </div>
         <div className="mt-6 md:mt-0 flex flex-wrap gap-4 items-center relative z-10">

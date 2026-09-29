@@ -26,6 +26,11 @@ export const useKeyboardShortcuts = ({ onSelectOption, onSubmitOrNext, onToggleH
       // When the user is typing in an input (e.g., AI helper), do not hijack keystrokes.
       if (isEditableTarget) return;
 
+      // Modifier key guard — do not interfere with browser/OS shortcuts
+      if (event.ctrlKey || event.altKey || event.metaKey) return;
+      // IME composition guard — do not interfere with CJK input
+      if (event.isComposing || event.keyCode === 229) return;
+
       // Prevent default for our shortcuts to avoid conflicts
       if (['1', '2', '3', '4', 'Enter', 'h', 'H', 'Escape'].includes(event.key)) {
         event.preventDefault();

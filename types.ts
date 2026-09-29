@@ -74,13 +74,15 @@ export type AppAction =
   | { type: 'set_selected_bank_ids'; bankIds: string[] }
   | { type: 'set_game_mode'; gameMode: boolean };
 
+export type QuizMode = 'random' | 'mistake' | 'retry_session' | 'challenge' | 'chunked' | 'spaced_due';
+
 export interface QuizState {
   currentQuestionIndex: number;
   score: number;
   totalQuestions: number;
   isFinished: boolean;
   activeQuestions: Question[];
-  mode: 'random' | 'mistake' | 'retry_session' | 'challenge' | 'chunked';
+  mode: QuizMode;
   wrongQuestionIds: string[];
   challengeId?: string;
   chunkMeta?: ChunkMeta;

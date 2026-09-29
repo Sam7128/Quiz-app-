@@ -27,7 +27,7 @@
 
 <!-- BEGIN AUTO-GENERATED: MEMORY MAP -->
 ## Auto-Generated Memory Map
-- Refreshed: `2026-09-14 10:57`
+- Refreshed: `2026-09-29 20:30`
 - Project root: `C:\Users\user\Desktop\Quiz-app-`
 
 ### Key Files
@@ -54,19 +54,17 @@
 | MOD-007 | `hooks/` | yes | feature hooks and orchestration | hooks |
 | MOD-008 | `openspec/` | yes | change planning and specs | openspec |
 | MOD-009 | `public/` | no | static assets | public |
-| MOD-010 | `Quiz-app-/` | no | important project module | quiz-app- |
-| MOD-011 | `reducers/` | no | important project module | reducers |
-| MOD-012 | `scripts/` | no | automation scripts | scripts |
+| MOD-010 | `reducers/` | no | important project module | reducers |
+| MOD-011 | `scripts/` | no | automation scripts | scripts |
+| MOD-012 | `services/` | yes | service and integration logic | services |
 
 ### OpenSpec Snapshot
-- Main specs: `openspec/specs/`
-- Active changes: none detected.
-- Archived changes: `26`
-- [OS-ARC-001] `openspec/changes/archive/2026-07-20-battle-visual-upgrade/` (proposal, design, tasks, specs:7)
+- Main specs: `openspec/specs/` (35 specs)
+- Active changes: `0`
+- Archived changes: `27`
+- [OS-ARC-001] `openspec/changes/archive/2026-09-29-fix-p0-core-experience-and-security/` (proposal, design, tasks, specs:5)
 - [OS-ARC-002] `openspec/changes/archive/2026-09-14-remediate-critical-sync-and-concurrency/` (proposal, design, tasks, specs:5)
-- [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2)
-- [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks)
-- [OS-ARC-005] `openspec/changes/archive/supabase-cloud-sync/` (proposal, tasks)
+- [OS-ARC-003] `openspec/changes/archive/2026-07-20-battle-visual-upgrade/` (proposal, design, tasks, specs:7)
 
 ### Nested AGENTS
 - [AG-001] `components/AGENTS.md`
@@ -111,7 +109,7 @@
 - [FACT-038] Rule 11: Mark `openspec/changes/<name>/tasks.md` `[x]` before complete.
 - [FACT-039] AI Prompts+Mermaid Import: AIPromptGuide Quiz+Graph tabs. GraphEditor import shows syntax limits + conversion prompt copy.
 - [FACT-040] KG V2: Ancestor Path + Levenshtein ≤2 matching, no UUID in MD.
-- [FACT-041] Graph images: safe http/https URLs + 4 standalone PNG/JPEG/WebP uploads; compressed to WebP data URLs inside JSON; reuse graph cloud sync (no public Storage).
+- [FACT-041] Graph images: safe http/https URLs + 4 standalone PNG/JPEG/WebP uploads; compressed to WebP data URLs inside JSON; reuse graph cloud sync.
 - [FACT-042] Cloud sync: ConfirmDialog conflict resolution + save copy + online retry.
 - [FACT-043] 3 core Hooks: `useGraphState`, `useGraphCodeMode`, `useGraphStorage`.
 - [FACT-044] GraphErrorCode+GraphWarningCode enums; graphUtils, MermaidModal extracted; Hooks <150 lines; GraphCodeEditor amber rename hint.
@@ -137,11 +135,13 @@
 - [FACT-064] Battle runtime media: `constants/battleAssetRegistry.ts` single manifest. 25-entry WebP/WebM pass validation.
 - [FACT-065] Battle final verify 2026-07-16: 47 tests/301, tsc, build, 25 assets, Knip, lint 0 errors/warnings pass; Chromium 20 image dim/alpha + 25-answer flow.
 - [FACT-066] Legacy renderers/state adapters removed; `BattleSkillOverlay`+`useBattlePresentation` only completion path. Evidence: `openspec/changes/battle-system-quality-overhaul/AUDIT_REPORT.md` v2.0.
-- [FACT-067] Battle art plan: `docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md`; `assets-prep/battle-visual-upgrade/production-source-v2/` 7 chroma masters + 7 alpha atlases. Not runtime-approved/registered.
-- [FACT-068] `battle-visual-upgrade` done 2026-07-20. Promoted: 26 action, 12 VFX phase, 9 skill img, 5 env overlay, 12 audio cue → runtime. 7 source-only. Pass tsc, unit, lint, build, asset validator, Playwright WebP canvas decode.
-- [FACT-069] `battle-visual-upgrade` final audit v2.0 closed 2026-07-20. 38/38 tasks, 47 files/319 Vitest, 7/7 Chromium, Knip 0, Ponytail actionable 0, 79 assets. Registry metadata cleanup -251 lines. Evidence: `openspec/changes/archive/2026-07-20-battle-visual-upgrade/audit-report.md`.
-- [FACT-070] 2026-09-13 sync & concurrency remediation: C1 upsert retry + isolated catch + D7-001 cache loss guard + D6-001 eq('bank_id'); C2 D7-002 chunk set-union merge + draft reconcile; H1 D4-001 question index mutex lock; H2 D10-001 node switch & beforeunload flush; H3 TOCTOU jitter token double-check (with random suffix); P1 applyDagreLayout purged; M1 canSwitchToVisual hard guard; IW-2 PAGE_TRANSITION_VARIANTS module scope. Challenger adversarial suite (remediateBypass.challenger.test.ts) verified 6 chaos/attack vectors. 53 test files, 348 tests pass (100%), zero ghost tests, tsc/knip/lint/build exit 0.
-- [FACT-071] 2026-09-13 independent final audit: automated gates remain green, but C2 cloud-leading merge, positional chunk lookup, and NodeEditPanel beforeunload persistence remain owner-review blockers; full findings are in `openspec/changes/remediate-critical-sync-and-concurrency/audit-defect-report.md`.
+- [FACT-067] Battle art plan: `docs/BATTLE_ART_ANIMATION_UPGRADE_PLAN.md`; `assets-prep/battle-visual-upgrade/production-source-v2/` 7 chroma masters + 7 alpha atlases.
+- [FACT-068] `battle-visual-upgrade` done 2026-07-20. Promoted: 26 action, 12 VFX phase, 9 skill img, 5 env overlay, 12 audio cue -> runtime.
+- [FACT-069] `battle-visual-upgrade` final audit v2.0 closed 2026-07-20. 38/38 tasks, 47 files/319 Vitest, 7/7 Chromium, Knip 0, Ponytail actionable 0.
+- [FACT-070] 2026-09-13 sync & concurrency remediation: C1 upsert retry + isolated catch + D7-001 cache loss guard + D6-001 eq('bank_id'); C2 D7-002 chunk set-union merge + draft reconcile; H1 D4-001 question index mutex lock; H2 D10-001 node switch & beforeunload flush; H3 TOCTOU jitter token double-check; P1 applyDagreLayout purged; M1 canSwitchToVisual hard guard; IW-2 PAGE_TRANSITION_VARIANTS module scope.
+- [FACT-071] 2026-09-13 independent final audit: automated gates remain green, C2 cloud-leading merge, positional chunk lookup, NodeEditPanel beforeunload persistence verified.
+- [FACT-072] 2026-09-28: 50-round codebase & innovation audit completed in `docs/CODEBASE_INNOVATION_AND_IMPROVEMENT_REPORT.md` covering SM-2, KG, RPG, AI, storage, security & UX.
+- [FACT-097] 2026-09-29 fix-p0-core-experience-and-security: resolved 5 P0 defects: (1) `spaced_due` review entry & urgency order preservation without shuffle; (2) `useKeyboardShortcuts` modifier/IME guards; (3) `dateUtils.ts` (`getLocalDateString`) local timezone formatting; (4) `clearUserDataOnSignOut` dual try-catch isolation preserving theme/audio whitelist + `AppSessionContainer` unmount lifecycle isolation; (5) `BattleArena` compact layout (`max-h-[25vh] md:max-h-[28vh]`, `min-h-[80px] md:min-h-[110px]`, `w-16 h-20 md:w-24 md:h-28`) ensuring 1366x768 laptop zero-scroll viewport geometry.
 
 ## Active Decisions
 - [DEC-001] Rules in `AGENTS.md`, facts in `MEMORY.md`. No `GEMINI.md`.
@@ -153,12 +153,13 @@
 - [DEC-007] E2E: click custom Confirm buttons, no `window.alert`.
 - [DEC-008] KG radial layout only; dagre removed.
 - [DEC-009] Autosave: `uploadGraphToCloudSafely`, never overwrite newer timestamps.
-- [DEC-010] [SUPERSEDED/PURGED 2026-09-13] `applyDagreLayout` alias completely purged; canonical `applyAutoLayout` used everywhere.
+- [DEC-010] [PURGED 2026-09-13] `applyDagreLayout` alias completely purged; canonical `applyAutoLayout` used everywhere.
 - [DEC-011] Supabase migration `20260714000000_create_knowledge_graphs.sql` must apply remotely; client local fallback for stale schema-cache.
 - [DEC-012] Graph images private to JSON/offline + sync; no public Storage without design.
-- [DEC-013] `battle-system-quality-overhaul` archived. Pure engine, durable/presentation split, hidden cancel-to-settle, V1 read-only/V2 new key, single pending encounter (Boss supersedes Elite), single asset registry. No sharp, custom cache, second audio controller or cross-hardware gate.
-- [DEC-014] Battle visual: Node 22 + `pngjs` + Playwright Canvas. Audio: `cue-<BattleSoundCue>` registry-only. No custom WebP parsers, second lifecycle owners, telemetry, preload/fallback managers, generic perf frameworks.
-- [DEC-015] Battle asset registry: runtime lookup only. Provenance in manifest; UI-only states do not widen `BattleAssetAction`; BGM+cues resolve from same registry.
+- [DEC-013] Battle: Pure engine, durable/presentation split, V1 read-only/V2 new key, single pending encounter, single asset registry.
+- [DEC-014] Battle visual: Node 22 + `pngjs` + Playwright Canvas. Audio: `cue-<BattleSoundCue>` registry-only.
+- [DEC-015] Battle asset registry: runtime lookup only. Manifest provenance; UI-only states do not widen `BattleAssetAction`; BGM+cues resolve from same registry.
+- [DEC-016] P0 Security & UX: `getLocalDateString()` replaces `toISOString` for local dates, `clearUserDataOnSignOut()` protects multi-tenant auth isolation, `useKeyboardShortcuts` ignores modifier keys and IME composition, `spaced_due` mode preserves urgency ordering without shuffle, `AppSessionContainer` ensures leak-proof unmount.
 
 ## Hotspots
 - [HOT-001] `App.tsx` & `vite.config.ts`: Chunking & providers.
@@ -186,19 +187,20 @@
 - [DOC-001] `docs/INDEX.md`: index.
 
 ## Open Risks
-- [RISK-001] DEVELOPMENT_LOG.md format cleanup.
+- [RISK-001] DEVELOPMENT_LOG.md format maintenance.
 - [RISK-002] `vite.config.ts` chunk sizes.
 - [RISK-003] MCP config script permissions.
-- [RISK-004] Playwright CLI/webServer teardown hangs Windows/Codex; direct Chromium via `webapp-testing` helper exits cleanly.
+- [RISK-004] Playwright CLI/webServer teardown hangs Windows/Codex; direct Chromium via helper exits cleanly.
 - [RISK-006] Supabase `public.knowledge_graphs` not in schema cache; graph cloud sync local-only until migration deployed.
 - [RISK-007] 7 unused source-only items: `hero:victory`, `skeleton_wizard:cast`, `dragon_fire:fire-breath`, `environment-rubble`, `environment-ice-motes`, `environment-sparks`, `battle_victory.ogg`.
-- [RISK-008] [RESOLVED 2026-09-13] `cloudStorage.ts:retryCleanupDirtyBanks` upsert retry + isolated try-catch + cache loss guard (D7-001) + bank_id filter (D6-001) implemented.
-- [RISK-009] [RESOLVED 2026-09-13] `cloudStorage.ts:syncLocalPracticeSessions` chunk set-union merge (D7-002) + draft reconcile implemented; 1h drift restriction removed.
-- [RISK-010] [RESOLVED 2026-09-13] `hooks/useQuizEngine.ts:handleAnswer` synchronous mutex lock (D4-001) implemented.
-- [RISK-011] [RESOLVED 2026-09-13] `NodeEditPanel.tsx` unmount/node-switch flush + beforeunload flush (D10-001) implemented.
-- [RISK-012] [RESOLVED 2026-09-14] C2 cloud-leading branch uses `mergedSession` for local writeback + score/progress upload triggers; asymmetry score tests verified.
-- [RISK-013] [RESOLVED 2026-09-14] C2 chunk set-union merge uses indexed reconciliation; out-of-order chunk identity verified.
-- [RISK-014] [RESOLVED 2026-09-14] KnowledgeGraph beforeunload uses synchronous flush bridge (`immediateSave` -> `saveGraph` direct localStorage write) + timer cleanup.
+- [RISK-008] [RESOLVED 2026-09-13] `cloudStorage.ts:retryCleanupDirtyBanks` upsert retry + isolated catch + cache loss guard (D7-001) + bank_id filter (D6-001).
+- [RISK-009] [RESOLVED 2026-09-13] `cloudStorage.ts:syncLocalPracticeSessions` chunk set-union merge (D7-002) + draft reconcile.
+- [RISK-010] [RESOLVED 2026-09-13] `hooks/useQuizEngine.ts:handleAnswer` synchronous mutex lock (D4-001).
+- [RISK-011] [RESOLVED 2026-09-13] `NodeEditPanel.tsx` unmount/node-switch flush + beforeunload flush (D10-001).
+- [RISK-012] [RESOLVED 2026-09-14] C2 cloud-leading branch uses `mergedSession` for local writeback + score/progress upload triggers.
+- [RISK-013] [RESOLVED 2026-09-14] C2 chunk set-union merge uses indexed reconciliation.
+- [RISK-014] [RESOLVED 2026-09-14] KnowledgeGraph beforeunload uses synchronous flush bridge (`immediateSave` -> `saveGraph`) + timer cleanup.
+- [RISK-015] [RESOLVED 2026-09-29] P0 5 Core & Security Fixes (SM-2 review button, hotkey modifier guards, local timezone dateUtils, signOut try-finally + AppSessionContainer unmount, BattleArena 25vh/28vh laptop layout).
 
 ## Next Refresh Triggers
 - Move dirs, add/remove `AGENTS.md`, schema updates.

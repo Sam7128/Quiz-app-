@@ -337,4 +337,33 @@ describe('BattleArena', () => {
     expect(speedLines).not.toBeNull();
     expect(speedLines?.style.opacity).not.toBe('0');
   });
+
+  it('enforces 1366x768 laptop viewport geometry constraints (max-h-[25vh], min-h-[80px], compact sprite size, overflow-hidden)', () => {
+    const { container } = render(
+      <BattleArena
+        battleState={createState()}
+        activeEvent={null}
+        onPresentationComplete={vi.fn()}
+      />
+    );
+
+    // 1. Stage container max-h and overflow-hidden constraints
+    const stageContainer = container.querySelector('.max-h-\\[25vh\\]');
+    expect(stageContainer).not.toBeNull();
+    expect(stageContainer?.className).toContain('overflow-hidden');
+    expect(stageContainer?.className).toContain('md:max-h-[28vh]');
+
+    // 2. Character section min-h constraint
+    const characterSection = container.querySelector('.min-h-\\[80px\\]');
+    expect(characterSection).not.toBeNull();
+    expect(characterSection?.className).toContain('md:min-h-[110px]');
+
+    // 3. Character sprite container compact geometry for narrow/laptop viewports
+    const heroImg = screen.getByAltText('勇者');
+    const heroWrapper = heroImg.closest('.w-16');
+    expect(heroWrapper).not.toBeNull();
+    expect(heroWrapper?.className).toContain('h-20');
+    expect(heroWrapper?.className).toContain('md:w-24');
+    expect(heroWrapper?.className).toContain('md:h-28');
+  });
 });

@@ -3,7 +3,48 @@
 此文件用於追蹤專案開發進度、待辦事項與已完成項目。
 
 ## 🟡 進行中 (In Progress)
+- [x] **[P0 Core Experience & Security Fixes]** `fix-p0-core-experience-and-security` 5 大核心體驗與安全缺陷修復與全門禁自檢完畢
+    - [x] Task 1: 極簡原生 `utils/dateUtils.ts` (`getLocalDateString`) + `storage.ts` 登出白名單隔離 `clearUserDataOnSignOut()`
+    - [x] Task 2: `analytics.ts` 與 `streak.ts` 替換為本地時區字串，修復 UTC+8 凌晨打卡倒流
+    - [x] Task 3: `useKeyboardShortcuts.ts` 修飾鍵 (Ctrl/Alt/Meta) 與 IME 選字 (`isComposing`/`keyCode 229`) 防劫持守衛
+    - [x] Task 4: `AuthContext.tsx` signOut `try...finally` 容錯與 `SIGNED_OUT` 防守底線
+    - [x] Task 5: `useQuizEngine.ts` `spaced_due` 跨題庫到期題載入、急迫度排序保護與豁免洗牌 + `Dashboard.tsx` 複習按鈕打通
+    - [x] Task 6: `BattleArena.tsx` 筆電螢幕垂直高度 `max-h-[25vh] md:max-h-[28vh]` 與精靈緊湊化
+    - [x] Task 7: 57 測試檔案 392 單元測試通過、`tsc --noEmit` 通過、`npm run build` 通過、`npm run lint` 0 警告 0 錯誤、11 項核心 E2E 全通
+- [x] **[Codebase Innovation & Improvement Audit]** `/goal` 全域代碼庫深度掃描與持續改進報告（第 1 至 30 輪完成，沉澱於 `docs/CODEBASE_INNOVATION_AND_IMPROVEMENT_REPORT.md`）
+    - [x] Round 1: 全域盤點與理念落差分析（SM-2 斷鏈、錯題對比缺失、無用強制休息彈窗）
+    - [x] Round 2: 知識圖譜孤島、分階段練習集合聯集合併、LocalStorage 5MB 空間危機
+    - [x] Round 3: RPG 戰鬥純函式狀態機優勢、全螢幕大招遮擋題幹、瀕死「靈魂復仇」機制
+    - [x] Round 4: AI 生成管線 Few-shot 與去重機制、社交挑戰系統使用率低裁決、免登入 URL 題庫分享
+    - [x] Round 5: P0/P1/P2 優先級演進路線圖、全庫冗餘割除清單 (Elimination Backlog)
+    - [x] Round 6: 學習時長漏計 (Analytics Leakage) 漏洞（非 onHome 退出題數與時長遺失、番茄鐘孤島）
+    - [x] Round 7: SQL 遷移腳本治理分裂（18 個 SQL 腳本分散）與外鍵約束不一致隱患
+    - [x] Round 8: 實機瀏覽器試玩評測（Playwright 截圖存證：戰鬥舞台垂直溢出、Dashboard 複習偽按鈕、訪客刷新被踢回登入）
+    - [x] Round 9: 無障礙 (a11y)、鍵盤心流與熱鍵衝突深度審計（Ctrl+1~4/Ctrl+H 原生劫持、IME 選字衝突、ARIA 語意缺失）
+    - [x] Round 10: 狀態併發控制、離線數據耐久度與大數據渲染極限（SM-2 逐題序列化瓶頸、跨標籤頁舊狀態抹除、LWW 時鐘偏差、千題 DOM 節點爆炸）
+    - [x] Round 11: AI 生成管線韌性、提示詞工程與認知階層深度審計（Gemini 原生 responseSchema 缺失、Bloom 認知維度缺位、選項長度對稱律、雙軌音效引擎衝突）
+    - [x] Round 12: 激勵機制假象、幽靈成就欺騙與選項洗牌不穩定性（80% 宣告成就未實作解鎖、夜貓子早鳥逆向心理引導、QuizCard Fisher-Yates 洗牌抖動）
+    - [x] Round 13: 離線優先基建缺位、首屏白閃 (FOUC) 與資源阻塞（零 PWA / Service Worker 快取、ThemeContext 依賴客戶端 hook 導致閃白、Google Fonts 外鏈阻塞）
+    - [x] Round 14: 社群系統過度工程、快照儲存膨脹與輕量化破局（shared_banks 題庫全量快照重複拷貝、好友鏈高摩擦門檻、LZ-String URL 即時分享方案）
+    - [x] Round 15: 核心反序列化型別盲區與執行期損毀防禦（storage.ts 核心反序列化缺乏型別守衛、utils/typeGuards.ts 覆蓋率過窄、Schema 演進版本號缺位）
+    - [x] Round 16: 測試體系結構性盲區、偽綠燈與核心元件測試缺位（QuizCard.tsx 零單元測試、useKeyboardShortcuts.test.tsx 缺乏修飾鍵否定性測試、測試假綠燈掩蓋真實缺陷）
+    - [x] Round 17: 客戶端金鑰儲存防禦、混淆與真實加密界限（AES-GCM 前端同源假安全、API Key 暴露威脅模型、後端 Proxy 代理邊界）
+    - [x] Round 18: 數據主權落空、生態互通性缺位與學習進度遺失（BankManager 匯出遺漏 SM-2 學習數據、Anki/Markdown 格式孤島、Data URI 記憶體膨脹）
+    - [x] Round 19: 多模態與富文本支援盲區（QuizCard 純文字排斥 STEM 與代碼題目、LaTeX 原始字串輸出、條列式解析折疊）
+    - [x] Round 20: 生產打包反模式與巨石 Chunk 膨脹（vite.config.ts manualChunks 暴力打包 TipTap 與 Recharts 致首頁核心 1.3MB 臃腫）
+    - [x] Round 21: 知識圖譜物理引擎極限與海量節點渲染瓶頸（BFS 生成樹剪枝撕裂網狀關聯、密集扇區無碰撞鬆弛引發重疊、SVG/DOM 300+ 節點幀率崩塌）
+    - [x] Round 22: 多租戶數據污染、登出殘留與本機隱私洩漏（AuthContext 登出未清快取、跨帳號 syncLocalToCloud 自動污染、命名空間隔離缺失）
+    - [x] Round 23: 音訊架構雙軌分裂、全域單例常駐洩漏與急停爆音（useSoundEffects 模組全域單例無 unload 洩漏、急停無 cross-fade 引發 DAC 爆音）
+    - [x] Round 24: 自適應測驗（CAT）缺位、純隨機抽題與最近發展區（ZPD）失衡（粗暴隨機洗牌抽題、IRT/Elo 能力適配缺位、新手受挫與老手無聊）
+    - [x] Round 25: 智慧手勢與行動端觸控交互盲區（QuizCard 純點擊交互、單手持握大拇指盲區、卡片堆疊物理動能與滑動評判手勢缺位）
+    - [x] Round 26: 知識圖譜向題庫雙向逆向生成管線缺位（NodeQuickMenu 幾何操作孤島、AI 節點反向出題管線缺位、錯題弱點熱力投影斷裂）
+    - [x] Round 27: 測驗中斷恢復顆粒度缺陷、模式遺失與時長洩漏（SavedQuizProgress 模型粗糙、多選題勾選草稿中斷遺失、答題累計時長重置）
+    - [x] Round 28: 題庫匯入容錯度脆弱性、Windows UTF-8 BOM 崩潰（JSON.parse 裸奔、\uFEFF 前導字元報錯無效、CRLF 換行殘留）
+    - [x] Round 29: 瀏覽器分頁失焦休眠導致計時漂移與防作弊防禦破防（FocusTimer setInterval 累減節流、番茄鐘凍結、作弊與時長嚴重失真）
+    - [x] Round 30: 色彩無障礙性（WCAG 2.1 AA）缺位與紅綠色盲友善度盲區（紅綠色相對錯反饋障礙、缺乏藍橙安全色板與高對比模式）
+
 - [x] **[Remediation Plan Apply]** `remediate-critical-sync-and-concurrency` 手術級代碼修復與對應測試全數通過（HIGH-01/02, WARNING-01~05, SUGGESTION-01/02, YAGNI-1~5）
+
     - [x] 模組 1（儲存與同步）：`services/cloudStorage.ts` 與 `services/storage.ts`
     - [x] 模組 2（圖譜編輯器與卸載同步鏈）：`useGraphStorage.ts`, `GraphEditor.tsx`, `NodeEditPanel.tsx`, `GraphToolbar.tsx`, `ConceptNode.tsx`
     - [x] 模組 3（測驗核心防禦）：`useQuizEngine.ts` 雙鎖重置與防死鎖
@@ -70,6 +111,14 @@
 - [x] Legacy leaf/dead export 最終清理與 OpenSpec verify 結案；`AUDIT_REPORT.md` v2 判定通過
 
 ## 🟢 已完成 (Done)
+- [x] **[P0 Security & Core Experience Fixes]** 修復 5 大 P0 級核心體驗與安全缺陷 `fix-p0-core-experience-and-security`
+    - [x] Phase 1: 基礎工具函式 `utils/dateUtils.ts` (本地時區格式化) + `services/storage.ts` (登出資料清理) 與單元測試
+    - [x] Phase 2: UTC 時區修復（`analytics.ts` 與 `streak.ts` 替換為 `getLocalDateString()`）
+    - [x] Phase 3: 快捷鍵修飾鍵與 IME 守衛（`useKeyboardShortcuts.ts` 阻斷 Ctrl/Alt/Meta 與 isComposing/229 劫持）
+    - [x] Phase 4: 登出資料隔離與容錯（`AuthContext.tsx` `try...finally` + `SIGNED_OUT` 防守底線）
+    - [x] Phase 5: SM-2 到期題入口打通、全題庫載入、`nextReviewDate` 遞增排序與 `shuffleArray` 豁免
+    - [x] Phase 6: 戰鬥舞台筆電解析度佈局優化（`BattleArena.tsx` `max-h-[25vh] md:max-h-[28vh]`、`min-h-[80px] md:min-h-[110px]`、精靈尺寸收縮）
+    - [x] Phase 7: 10 大黑客對抗穿透測試全部通過、全量測試 392/392 通過、`npx tsc --noEmit` 與 `npm run build` 通過
 - [x] **[Remediation Implementation]** `remediate-critical-sync-and-concurrency` 落地實作與防禦性單元測試驗證全數完成
     - [x] Phase 1: Storage / Service 層防禦修復 (C1, C2, H3) 與 3 組單元測試
     - [x] Phase 2: Domain Hook 防禦修復 (H1, M1) 與 Race 單元測試
@@ -267,6 +316,52 @@
 - [x] 分派實作子代理完成已確認修復，並通過聚焦與完整自動化驗證
 - [x] 重跑兩項 Ponytail 審計至可修範圍 0 問題
 - [x] 更新 OpenSpec 審計報告、`docs/DEVELOPMENT_LOG.md` 與必要專案記憶
+
+## 🟢 全景代碼審計、產品哲學辨析與人機工程掃描 (Comprehensive Codebase Audit 2026-09-28)
+- [x] Round 1–7: SM-2 斷鏈偽按鈕、錯題對比缺失、強制休息彈窗、知識圖譜孤島、5MB 儲存上限、瀕死靈魂復仇、P0-P2 路線圖
+- [x] Round 8: 實機瀏覽器試玩評測（12 張截圖存證：戰鬥舞台垂直溢出 360px、提示擠壓、下一題沉底、訪客刷新被踢）
+- [x] Round 9: 鍵盤 a11y 與熱鍵衝突（Ctrl+1~4 劫持、IME 選字交卷、ARIA radio/checkbox 缺位、Modal Esc 穿透）
+- [x] Round 10: 狀態併發控制、離線耐久與 DOM 爆炸（SM-2 逐題序列化、跨標籤抹除、時鐘偏差、無虛擬滾動萬級節點）
+- [x] Round 11: AI 出題管線與雙軌音效衝突（Gemini 結構化輸出模式缺失、認知階層缺位、干擾項長度作弊、雙軌音效衝突）
+- [x] Round 12: 幽靈成就系統與洗牌抖動（20+ 宣告僅 4 個追蹤、夜貓子/早鳥反向心理、QuizCard 洗牌父層重渲染抖動）
+- [x] Round 13: 離線優先基建缺位與首屏 FOUC（零 PWA / Service Worker、暗黑模式首屏白閃、外部字型阻塞）
+- [x] Round 14: 社交系統過度工程與輕量化破局（題庫快照等比膨脹過期、強制註冊加好友門檻高、URL Fragment 免登入分享）
+- [x] Round 15: 核心反序列化型別盲區（storage.ts 盲目 JSON.parse 缺 Runtime Type Guard、白屏風險）
+- [x] Round 16: 測試體系結構性盲區與偽綠燈（QuizCard.tsx 核心做題元件零單元測試、熱鍵測試缺少修飾鍵與 IME 否定測試）
+- [x] Round 17: 金鑰儲存防禦與同源假安全（AES-GCM 客戶端同源假安全、毫秒級解密、Session-Only 與 Edge Proxy 邊界）
+- [x] Round 18: 數據主權落空與生態互通性缺位（題庫匯出遺漏 SM-2 間隔重複參數、Anki TSV/APKG 互通缺失、Data URI 限制）
+- [x] Round 19: 多模態與富文本支援盲區（QuizCard.tsx 純文字渲染排斥代碼塊與 STEM LaTeX 數理公式）
+- [x] Round 20: 生產打包反模式與 1.3MB 巨石 Chunk（manualChunks 暴力打包 TipTap/Recharts 導致首頁膨脹至 1,295KB）
+- [x] Round 21: 知識圖譜物理引擎極限與海量節點渲染瓶頸（radialLayout.ts BFS 強行剪枝撕裂網狀關聯、密集子扇區無二次鬆弛重疊）
+- [x] Round 22: 多租戶數據污染、登出殘留與本機隱私洩漏（AuthContext.tsx 登出未清理本地快取，下個用戶登入 syncLocalToCloud 污染新帳號 - P0）
+- [x] Round 23: 音訊架構雙軌分裂、全域單例常駐洩漏與急停爆音（useSoundEffects.ts Howl 單例記憶體洩漏、stopBgm 缺乏 cross-fade 引發 DAC 爆音）
+- [x] Round 24: 自適應測驗缺位、純隨機抽題與最近發展區失衡（useQuizEngine.ts 隨機洗牌截取，缺少 Elo / 1PL-IRT 難度適配打破學習心流）
+- [x] Round 25: 智慧手勢與行動端觸控交互盲區（QuizCard.tsx 純按鈕點擊，單手大拇指覆蓋盲區，缺少滑動評判與卡片堆疊物理動能）
+- [x] Round 26: 知識圖譜向題庫雙向逆向生成管線缺位（NodeQuickMenu.tsx 缺乏節點 AI 一鍵逆向出題，畫布缺少錯題熱力投影孤島化）
+- [x] Round 27: 測驗中斷恢復顆粒度缺陷、模式遺失與時長洩漏（SavedQuizProgress 未持久化多選題勾選草稿，中斷恢復累計秒數重置歸零）
+- [x] Round 28: 題庫匯入容錯度脆弱性、Windows UTF-8 BOM 崩潰（BankManager.tsx 裸奔 JSON.parse 未處理 \uFEFF，記事本保存檔案必崩潰）
+- [x] Round 29: 瀏覽器分頁失焦休眠導致計時漂移與防作弊防禦破防（FocusTimer.tsx setInterval 背景降頻，25 分鐘實走 3 分鐘，凍結作弊破口）
+- [x] Round 30: 色彩無障礙性缺位與紅綠色盲友善度盲區（QuizCard.tsx 單一依賴紅綠色相反饋違背 WCAG 2.1 準則 1.4.1，缺少藍橙安全色板）
+- [x] Round 31: 題庫管理檢索盲區、零搜尋過濾與千題滾動人機工程災難（BankManager.tsx 題目清單無搜尋欄無篩選，千題維護純肉眼滾動）
+- [x] Round 32: 錯題本死記硬背陷阱、表層過擬合與 AI 變形靶向練習缺位（RecentMistakesCard.tsx 錯題重練直接原題重測產生虛假掌握感，缺乏 AI 變形題）
+- [x] Round 33: 離線數據衝突解決策略與雲端盲目覆蓋複製陷阱（cloudStorage.ts syncLocalToCloud 每次同步無腦 createCloudBank 幽靈題庫爆炸，缺乏題目級三方合併）
+- [x] Round 34: 程式碼可維護性危機、上帝元件巨石坍塌與圈複雜度超標（BankManager.tsx 921 行與 QuizCard.tsx 580+ 行職責過載，圈複雜度破表重渲染雪崩）
+- [x] Round 35: 學習分析時區偏移陷阱、晨讀打卡中斷與時間序列圖表失真（analytics.ts UTC toISOString 扣算前一天致晨讀斷連勝，7 日圖表缺少缺考日補零時間扭曲）
+- [x] Round 36: 音訊生命週期孤島、靜音設定脫節與行動端 Web Audio 實例耗盡（QuizCard.tsx use-sound 本地狀態與全域設定割裂，刷題卸載未清理引發音訊執行緒超標）
+- [x] Round 37: 題庫標籤維度缺失、多層資料夾樹缺位與跨領域檢索孤島（types.ts 宣告 Question.tags 零 UI 入口、扁平 Folder 缺乏多叉樹拓撲難承載百庫）
+- [x] Round 38: 錯題無期徒刑陷阱、掌握度衰減演算法缺位與陳舊錯題干擾（storage.ts logMistake 單調累加無連續答對消除與時間半衰期衰減）
+- [x] Round 39: 多選題二值極化判定、全對全錯挫敗陷阱與部分得分缺位（QuizCard.tsx 少選一項判全錯清空間隔重複，缺乏 Partial Credit 得分階梯）
+- [x] Round 40: 專注番茄鐘閉環斷裂、完成回調幽靈拋棄與做題跳轉銷毀中斷（Dashboard.tsx FocusTimer 丟失 onSessionComplete 學習時長歸零，切換做題頁面被銷毀掐斷）
+- [x] Round 41: 題庫版本歷史缺位、不可逆誤刪/覆蓋災難與軟刪除機制缺失（storage.ts deleteBank 物理硬刪除與覆蓋零快照零垃圾桶，誤觸一鍵心血全毀）
+- [x] Round 42: 記憶曲線密集刷題膨脹失真、集中學習假象與提前衝刺複習缺位（spacedRepetition.ts 同日內突擊答對間隔無效膨脹，缺乏日間冷卻鎖與提前衝刺過濾）
+- [x] Round 43: 雙向鏈結筆記與知識圖譜超連結缺位（GraphNode 與 Question 零關聯引用，解析缺少 [[Wikilinks]] 互相跳轉聚焦機制）
+- [x] Round 44: 連續受挫心流崩潰、死亡灰屏懲罰與情緒自適應鷹架缺位（battleEngine.ts 連錯怪物猛擊致主角死亡灰屏，缺少情緒安撫與自適應提示降階鷹架）
+- [x] Round 45: 前端安全性與 XSS/Markdown 注入防禦邊界（DOMPurify 消毒與 React 純文字渲染語義錯位、TipTap 筆記匯入零消毒、AI 出題提示詞注入盲區）
+- [x] Round 46: 多語系架構、RTL 支援與全域 i18n 完整度（AGENTS.md 約束幽靈 useTranslation 形成規格虛無、UI 硬編碼繁中與英文出題割裂、全站缺少 RTL 邏輯屬性）
+- [x] Round 47: 第二輪實機瀏覽器試玩評測（Playwright 實機捕獲戰鬥舞台 360px 垂直霸屏擠掉選項、提示展開內容截斷、題庫匯入狀態滯留與設定彈窗遮蔽）
+- [x] Round 48: 伺服器端請求偽造 SSRF 與第三方 AI 端點防禦邊界（services/ai.ts 自訂 baseUrl 缺乏私有保留網段過濾，瀏覽器直連帶來內網探測威脅）
+- [x] Round 49: 離線 IndexedDB 漸進式儲存遷移與 5MB LocalStorage 熔斷治理（圖譜 Base64 圖片巨石擠爆 5MB 上限引發全域儲存死鎖，亟需非同步 IndexedDB 轉接層）
+- [x] Round 50: 首頁資訊架構與認知負載極簡化（勾選題庫與開始測驗按鈕空間割裂 400px 視線分離，三主按鈕並列決策癱瘓，初次進入視覺荒漠）
 
 ## 📝 備註 (Notes)
 - 已完成 App 组件的徹底瘦身，後續新增視圖請優先於 `AppContent.tsx` 進行註冊。

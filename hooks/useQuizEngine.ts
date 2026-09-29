@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
-import { AppView, BankMetadata, MistakeLog, Question, QuizState } from '../types';
-import { createSpacedRepetitionItem, updateSpacedRepetition } from '../services/spacedRepetition';
+import { AppView, BankMetadata, MistakeLog, Question, QuizMode, QuizState } from '../types';
+import { createSpacedRepetitionItem, getDueQuestions, updateSpacedRepetition } from '../services/spacedRepetition';
 import { clearQuizSession, getQuizSession, saveQuizSession, STORAGE_KEYS } from '../services/storage';
 import { IStorageRepository } from '../services/repository';
 import { ChunkMeta, MistakeDetail, RecentMistakeSession, SavedQuizProgress } from '../types/battleTypes';
@@ -74,7 +74,8 @@ export const useQuizEngine = ({
         currentIndex: quizState.currentQuestionIndex,
         score: quizState.score,
         wrongQuestionIds: quizState.wrongQuestionIds,
-        savedAt: Date.now()
+        savedAt: Date.now(),
+        mode: quizState.mode,
       });
     } else if (quizState.isFinished) {
       clearQuizSession();
@@ -127,7 +128,7 @@ export const useQuizEngine = ({
           totalQuestions: restoredQuestions.length,
           isFinished: false,
           activeQuestions: restoredQuestions,
-          mode: 'random',
+          mode: session.mode ?? 'random',
           wrongQuestionIds: session.wrongQuestionIds
         });
         lastAnsweredQuestionIndexRef.current = null;
@@ -159,8 +160,8 @@ export const useQuizEngine = ({
   }, []);
 
   const startQuiz = useCallback(async (
-    count: number,
-    mode: 'random' | 'mistake' | 'retry_session' | 'chunked' = 'random',
+    count?: number,
+    mode: QuizMode = 'random',
     specificIds?: string[],
     overrideBankIds?: string[],
     chunkMeta?: ChunkMeta,
@@ -172,35 +173,62 @@ export const useQuizEngine = ({
 
     let pool: Question[] = [];
 
-    const effectiveBankIds = overrideBankIds && overrideBankIds.length > 0
-      ? overrideBankIds
-      : selectedQuizBankIds;
+    if (mode === 'spaced_due') {
+      const allBanks = await repository.getBanks();
+      const allBankIds = allBanks.map(b => b.id);
+      setSessionBankIds(allBankIds);
 
-    setSessionBankIds(effectiveBankIds);
-    const questionPromises = effectiveBankIds.map(id => repository.getQuestions(id));
-    const questionArrays = await Promise.all(questionPromises);
-    const allSelectedQuestions = questionArrays.flat();
+      const questionPromises = allBankIds.map(id => repository.getQuestions(id));
+      const questionArrays = await Promise.all(questionPromises);
+      const allSelectedQuestions = questionArrays.flat();
 
-    if (mode === 'mistake') {
-      const log = repository.getMistakeLog();
-      const mistakeIds = Object.keys(log);
-      pool = allSelectedQuestions.filter(q => mistakeIds.includes(String(q.id)));
-    } else if ((mode === 'retry_session' || mode === 'chunked') && specificIds) {
+      const srData = await repository.getSpacedRepetition();
+      const allSrItems = Array.isArray(srData) ? srData : Object.values(srData);
+      const dueItems = getDueQuestions(allSrItems);
+
+      // Urgency sort: ascending nextReviewDate (longest overdue first)
+      dueItems.sort((a, b) => a.nextReviewDate - b.nextReviewDate);
+
       const questionMap = new Map(allSelectedQuestions.map((question) => [String(question.id), question]));
-      pool = specificIds
-        .map((id) => questionMap.get(id))
+      pool = dueItems
+        .map((item) => questionMap.get(item.questionId))
         .filter((question): question is Question => Boolean(question));
+
+      if (pool.length === 0) {
+        toast.warning('目前沒有到期的複習題目！');
+        return;
+      }
     } else {
-      pool = allSelectedQuestions;
+      const effectiveBankIds = overrideBankIds && overrideBankIds.length > 0
+        ? overrideBankIds
+        : selectedQuizBankIds;
+
+      setSessionBankIds(effectiveBankIds);
+      const questionPromises = effectiveBankIds.map(id => repository.getQuestions(id));
+      const questionArrays = await Promise.all(questionPromises);
+      const allSelectedQuestions = questionArrays.flat();
+
+      if (mode === 'mistake') {
+        const log = repository.getMistakeLog();
+        const mistakeIds = Object.keys(log);
+        pool = allSelectedQuestions.filter(q => mistakeIds.includes(String(q.id)));
+      } else if ((mode === 'retry_session' || mode === 'chunked') && specificIds) {
+        const questionMap = new Map(allSelectedQuestions.map((question) => [String(question.id), question]));
+        pool = specificIds
+          .map((id) => questionMap.get(id))
+          .filter((question): question is Question => Boolean(question));
+      } else {
+        pool = allSelectedQuestions;
+      }
+
+      if (pool.length === 0) {
+        toast.warning("目前選擇的範圍沒有題目！");
+        return;
+      }
     }
 
-    if (pool.length === 0) {
-      toast.warning("目前選擇的範圍沒有題目！");
-      return;
-    }
-
-    const finalQuestions = mode === 'retry_session' || mode === 'chunked'
-      ? pool
+    const finalQuestions = (mode === 'retry_session' || mode === 'chunked' || mode === 'spaced_due')
+      ? (count ? pool.slice(0, count) : pool)
       : shuffleArray(pool).slice(0, count);
 
     const initialIndex = draftState?.currentQuestionIndex ?? 0;

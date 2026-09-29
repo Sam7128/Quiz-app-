@@ -32,6 +32,13 @@ export const STORAGE_KEYS = {
   THEME: 'mindspark_theme',
 };
 
+// ponytail: [Sunset: v2.0 - 待系統全面遷移至 user-scoped IndexedDB 後，localStorage 暫存機制將正式退役]
+export const SIGNOUT_WHITELIST = new Set<string>([
+  STORAGE_KEYS.THEME,
+  STORAGE_KEYS.BGM_ENABLED,
+  STORAGE_KEYS.SFX_ENABLED,
+]);
+
 import {
   SavedQuizProgress,
   UserSettings,
@@ -707,4 +714,54 @@ export const nukeAllBanks = () => {
   }
 
   keysToRemove.forEach(key => localStorage.removeItem(key));
+};
+
+/**
+ * Clear all user-specific data from localStorage and sessionStorage on logout,
+ * while preserving whitelisted non-sensitive user preferences (theme, audio).
+ */
+export const clearUserDataOnSignOut = (): void => {
+  // 1. Clear non-whitelisted mindspark_* keys from localStorage
+  try {
+    if (typeof localStorage !== 'undefined') {
+      const localKeysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(STORAGE_KEYS.PREFIX) && !SIGNOUT_WHITELIST.has(key)) {
+          localKeysToRemove.push(key);
+        }
+      }
+      localKeysToRemove.forEach((key) => {
+        try {
+          localStorage.removeItem(key);
+        } catch (e) {
+          console.warn(`Failed to remove localStorage key: ${key}`, e);
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Failed to clear localStorage on sign out:', error);
+  }
+
+  // 2. Clear all mindspark_* keys from sessionStorage (including AI API keys)
+  try {
+    if (typeof sessionStorage !== 'undefined') {
+      const sessionKeysToRemove: string[] = [];
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key && key.startsWith(STORAGE_KEYS.PREFIX)) {
+          sessionKeysToRemove.push(key);
+        }
+      }
+      sessionKeysToRemove.forEach((key) => {
+        try {
+          sessionStorage.removeItem(key);
+        } catch (e) {
+          console.warn(`Failed to remove sessionStorage key: ${key}`, e);
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Failed to clear sessionStorage on sign out:', error);
+  }
 };

@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 import { STORAGE_KEYS } from './storage';
 import { isAbortError } from '../utils/isAbortError';
+import { getLocalDateString } from '../utils/dateUtils';
 
 export interface StreakData {
   currentStreak: number;
@@ -79,7 +80,7 @@ export const getLocalStreak = (): StreakData => {
  * Update local streak (call after study session)
  */
 export const updateLocalStreak = (): void => {
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalDateString();
   const streak = getLocalStreak();
 
   // If already studied today, do nothing
@@ -90,17 +91,18 @@ export const updateLocalStreak = (): void => {
   // Calculate yesterday's date
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayStr = yesterday.toISOString().split('T')[0];
+  const yesterdayStr = getLocalDateString(yesterday);
 
   // Check if streak continues
   if (streak.lastStudyDate === yesterdayStr) {
     streak.currentStreak += 1;
-    if (streak.currentStreak > streak.longestStreak) {
-      streak.longestStreak = streak.currentStreak;
-    }
   } else {
     // Streak broken, reset to 1
     streak.currentStreak = 1;
+  }
+
+  if (streak.currentStreak > streak.longestStreak) {
+    streak.longestStreak = streak.currentStreak;
   }
 
   streak.lastStudyDate = today;

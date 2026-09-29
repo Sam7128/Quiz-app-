@@ -269,7 +269,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
   };
 
   const getOptionClass = (option: string) => {
-    const baseClass = "w-full p-4 mb-3 text-left rounded-xl transition-all duration-200 flex items-center justify-between group relative overflow-hidden";
+    const baseClass = "w-full p-3 md:p-3.5 mb-2 text-left rounded-xl transition-all duration-200 flex items-center justify-between group relative overflow-hidden";
     const isSelected = selectedOptions.includes(option);
     const isCorrect = correctAnswers.includes(option);
 
@@ -420,8 +420,8 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
             }`}
         >
           {/* Header Area */}
-          <div className="p-8 pb-4">
-            <div className="flex justify-between items-start mb-4">
+          <div className="p-4 md:p-6 pb-2">
+            <div className="flex justify-between items-start mb-2 md:mb-3">
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400">
                   Q-{currentIndex + 1}
@@ -474,7 +474,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
           </div>
 
           {/* Options Area */}
-          <div className="px-8 pb-8">
+          <div className="px-4 md:px-6 pb-4 md:pb-6">
             <div className="space-y-1">
               {currentOptions.map((option, idx) => (
                 <button

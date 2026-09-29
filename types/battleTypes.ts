@@ -3,7 +3,7 @@
  * Quiz Battle Gamification System
  */
 
-// ==================== 技能系統 ====================
+import type { QuizMode } from '../types';
 
 /** 技能等級 */
 export type SkillTier = 'basic' | 'intermediate' | 'advanced' | 'ultimate' | 'epic' | 'legendary';
@@ -367,6 +367,7 @@ export interface SavedQuizProgress {
   score: number;
   wrongQuestionIds: string[];
   savedAt: number;
+  mode?: QuizMode;
 }
 
 type PracticeChunkStatus = 'pending' | 'in_progress' | 'completed';

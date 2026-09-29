@@ -27,7 +27,10 @@ import {
   runWithSyncLock,
   mergeChunkedPracticeSessions,
 } from '../../services/cloudStorage';
+import { clearUserDataOnSignOut } from '../../services/storage';
+import { getLocalDateString } from '../../utils/dateUtils';
 import { useQuizEngine } from '../../hooks/useQuizEngine';
+import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import { NodeEditPanel } from '../../components/KnowledgeGraph/NodeEditPanel';
 
 const createRepository = (questions: Question[]) => {
@@ -498,6 +501,143 @@ describe('Adversarial Bypass & Chaos Engineering Gate (Challenger)', () => {
         expect.objectContaining({ title: 'Critical Unsaved Note' }),
         { immediateSave: true }
       );
+    });
+  });
+
+  // =========================================================================
+  // 對抗 7: 登出金鑰防洩與極端網路中斷 (Storage Nuke Offline Signout Bypass)
+  // =========================================================================
+  describe('Adversarial 7: Storage Nuke Offline Signout Bypass', () => {
+    it('completely clears sensitive sessionStorage keys and non-whitelist localStorage while keeping theme and audio', () => {
+      localStorage.setItem(STORAGE_KEYS.THEME, 'emerald');
+      localStorage.setItem(STORAGE_KEYS.BGM_ENABLED, 'true');
+      localStorage.setItem(STORAGE_KEYS.SFX_ENABLED, 'true');
+      localStorage.setItem(STORAGE_KEYS.MISTAKES, JSON.stringify({ 'q-victim': 1 }));
+      localStorage.setItem('mindspark_bank_secret-123', JSON.stringify([{ id: 1 }]));
+      sessionStorage.setItem(STORAGE_KEYS.AI_CONFIG, JSON.stringify({ apiKey: 'sk-adversarial-secret-leak' }));
+
+      clearUserDataOnSignOut();
+
+      expect(localStorage.getItem(STORAGE_KEYS.THEME)).toBe('emerald');
+      expect(localStorage.getItem(STORAGE_KEYS.BGM_ENABLED)).toBe('true');
+      expect(localStorage.getItem(STORAGE_KEYS.SFX_ENABLED)).toBe('true');
+      expect(localStorage.getItem(STORAGE_KEYS.MISTAKES)).toBeNull();
+      expect(localStorage.getItem('mindspark_bank_secret-123')).toBeNull();
+      expect(sessionStorage.getItem(STORAGE_KEYS.AI_CONFIG)).toBeNull();
+    });
+  });
+
+  // =========================================================================
+  // 對抗 8: SM-2 到期題急迫度排序防洗牌穿透 (Spaced Due Urgency Order Preservation)
+  // =========================================================================
+  describe('Adversarial 8: Spaced Due Urgency Order Preservation', () => {
+    it('repeatedly maintains strict ascending nextReviewDate order across 10 invocations without random shuffle disruption', async () => {
+      const now = Date.now();
+      const banks: BankMetadata[] = [
+        { id: 'b-1', name: 'Bank 1', createdAt: 0, questionCount: 4 },
+      ];
+      const questions: Question[] = [
+        { id: 'q-a', question: 'A', options: ['1'], answer: '1', type: 'single' },
+        { id: 'q-b', question: 'B', options: ['1'], answer: '1', type: 'single' },
+        { id: 'q-c', question: 'C', options: ['1'], answer: '1', type: 'single' },
+        { id: 'q-d', question: 'D', options: ['1'], answer: '1', type: 'single' },
+      ];
+
+      const spacedRepetition = {
+        'q-a': { questionId: 'q-a', repetitions: 1, interval: 1, easinessFactor: 2.5, nextReviewDate: now - 1000 },
+        'q-b': { questionId: 'q-b', repetitions: 1, interval: 1, easinessFactor: 2.5, nextReviewDate: now - 4000 }, // Most overdue
+        'q-c': { questionId: 'q-c', repetitions: 1, interval: 1, easinessFactor: 2.5, nextReviewDate: now - 2000 },
+        'q-d': { questionId: 'q-d', repetitions: 1, interval: 1, easinessFactor: 2.5, nextReviewDate: now - 3000 },
+      };
+
+      const expectedOrder = ['q-b', 'q-d', 'q-c', 'q-a'];
+
+      for (let run = 0; run < 10; run++) {
+        const repo: IStorageRepository = {
+          ...createRepository(questions).repo,
+          getBanks: async () => banks,
+          getQuestions: async () => questions,
+          getSpacedRepetition: async () => spacedRepetition,
+        };
+
+        const { result } = renderHook(() =>
+          useQuizEngine({
+            banks,
+            selectedQuizBankIds: ['b-1'],
+            repository: repo,
+            setMistakeLog: vi.fn(),
+            onViewChange: vi.fn(),
+            loading: false,
+            toast: { warning: vi.fn() },
+          })
+        );
+
+        await act(async () => {
+          await result.current.startQuiz(undefined, 'spaced_due');
+        });
+
+        const actualOrder = result.current.quizState.activeQuestions.map((q) => q.id);
+        expect(actualOrder).toEqual(expectedOrder);
+      }
+    });
+  });
+
+  // =========================================================================
+  // 對抗 9: 快捷鍵修飾鍵與 IME 複合按鍵防劫持 (Modifier & IME Shortcut Bypass)
+  // =========================================================================
+  describe('Adversarial 9: Modifier & IME Shortcut Bypass', () => {
+    it('blocks all combinations of Ctrl, Alt, Meta, isComposing, and keyCode 229 from hijacking hotkeys', () => {
+      const onSelectOption = vi.fn();
+      const onSubmitOrNext = vi.fn();
+      const onToggleHint = vi.fn();
+      const onExit = vi.fn();
+
+      renderHook(() => useKeyboardShortcuts({
+        onSelectOption,
+        onSubmitOrNext,
+        onToggleHint,
+        onExit
+      }));
+
+      // Ctrl + 1
+      act(() => {
+        document.body.dispatchEvent(new KeyboardEvent('keydown', { key: '1', ctrlKey: true, bubbles: true }));
+      });
+      // Alt + Enter
+      act(() => {
+        document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', altKey: true, bubbles: true }));
+      });
+      // Meta + Escape
+      act(() => {
+        document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', metaKey: true, bubbles: true }));
+      });
+      // IME composition (isComposing = true)
+      act(() => {
+        document.body.dispatchEvent(new KeyboardEvent('keydown', { key: '1', isComposing: true, bubbles: true }));
+      });
+      // IME keyCode 229
+      const imeEvent = new KeyboardEvent('keydown', { key: '1', bubbles: true });
+      Object.defineProperty(imeEvent, 'keyCode', { value: 229 });
+      act(() => {
+        document.body.dispatchEvent(imeEvent);
+      });
+
+      expect(onSelectOption).not.toHaveBeenCalled();
+      expect(onSubmitOrNext).not.toHaveBeenCalled();
+      expect(onToggleHint).not.toHaveBeenCalled();
+      expect(onExit).not.toHaveBeenCalled();
+    });
+  });
+
+  // =========================================================================
+  // 對抗 10: 無效日期與邊界容錯 (Invalid Date Fallback)
+  // =========================================================================
+  describe('Adversarial 10: Invalid Date Fallback', () => {
+    it('recovers gracefully from NaN and invalid dates without throwing RangeError', () => {
+      expect(() => getLocalDateString(new Date(NaN))).not.toThrow();
+      const todayFallback = new Date().toLocaleDateString('sv-SE');
+      expect(getLocalDateString(new Date(NaN))).toBe(todayFallback);
+      expect(getLocalDateString(new Date('invalid-date'))).toBe(todayFallback);
     });
   });
 });

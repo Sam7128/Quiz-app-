@@ -275,7 +275,7 @@ const CharacterSprite: React.FC<{
       animate={animate}
       transition={{ duration: 0.4, ease: 'easeOut' }}
     >
-      <div className="w-24 h-32 md:w-32 md:h-40 relative">
+      <div className="w-16 h-20 md:w-24 md:h-28 relative">
         {shadowAsset && (
           <img
             src={shadowAsset.src}
@@ -535,10 +535,10 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
   const backgroundStyle = backgroundAsset ? { backgroundImage: `url(${backgroundAsset.src})` } : undefined;
 
   return (
-    <div className="relative w-full mb-6" data-battle-phase={currentEvent?.phase ?? 'idle'}>
+    <div className="relative w-full mb-3 md:mb-4" data-battle-phase={currentEvent?.phase ?? 'idle'}>
       <div
         ref={arenaRef}
-        className="relative rounded-2xl p-4 md:p-6 overflow-hidden shadow-2xl border-4 border-slate-700 bg-gradient-to-b from-slate-950 via-purple-950 to-black bg-cover bg-center"
+        className="relative rounded-2xl p-3 md:p-4 overflow-hidden shadow-2xl border-4 border-slate-700 bg-gradient-to-b from-slate-950 via-purple-950 to-black bg-cover bg-center max-h-[25vh] md:max-h-[28vh]"
         style={backgroundStyle}
         onClick={playBgm}
       >
@@ -595,12 +595,12 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
           />
         )}
 
-        <div className="relative flex justify-between items-start mb-4">
+        <div className="relative flex justify-between items-start mb-2">
           <DefeatCounter count={monstersDefeated} />
           <StreakCounter streak={streak} maxStreak={maxStreak} />
         </div>
 
-        <div className="relative flex justify-between items-end min-h-[160px] md:min-h-[200px]">
+        <div className="relative flex justify-between items-end min-h-[80px] md:min-h-[110px]">
           <div className="flex flex-col items-center gap-2">
             <AnimatePresence>
               {currentDialogue?.speaker === 'hero' && (

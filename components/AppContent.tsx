@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AppAction, AppView, BankMetadata, Folder, MistakeLog, Question, QuizState } from '../types';
+import { AppAction, AppView, BankMetadata, Folder, MistakeLog, Question, QuizMode, QuizState } from '../types';
 import { ChunkMeta, ChunkedPracticeSession, MistakeDetail, SavedQuizProgress } from '../types/battleTypes';
 import { QuizResult } from './QuizResult';
 import { Dashboard } from './Dashboard';
@@ -69,8 +69,8 @@ interface AppContentProps {
         restoreSession: (session: SavedQuizProgress) => Promise<void>;
         dismissResumePrompt: () => void;
         startQuiz: (
-          count: number,
-          mode?: 'random' | 'mistake' | 'retry_session' | 'chunked',
+          count?: number,
+          mode?: QuizMode,
           questionIds?: string[],
           overrideBankIds?: string[],
           chunkMeta?: ChunkMeta,
@@ -149,8 +149,18 @@ export const AppContent: React.FC<AppContentProps> = ({
                             score={quizEngine.quizState.score}
                             totalQuestions={quizEngine.quizState.totalQuestions}
                             wrongQuestions={quizEngine.quizState.activeQuestions.filter((q) => quizEngine.quizState.wrongQuestionIds.includes(String(q.id)))}
-                            onRetry={() => quizEngine.startQuiz(quizEngine.quizState.wrongQuestionIds.length, 'retry_session', quizEngine.quizState.wrongQuestionIds)}
-                            onRestart={() => quizEngine.startQuiz(quizEngine.quizState.totalQuestions, 'random')}
+                            onRetry={() => quizEngine.startQuiz(
+                                quizEngine.quizState.wrongQuestionIds.length,
+                                'retry_session',
+                                quizEngine.quizState.wrongQuestionIds,
+                                quizEngine.sessionBankIds
+                            )}
+                            onRestart={() => quizEngine.startQuiz(
+                                quizEngine.quizState.totalQuestions,
+                                'random',
+                                undefined,
+                                quizEngine.sessionBankIds
+                            )}
                             onHome={() => {
                                 if (quizEngine.sessionStartTime) {
                                     const durationSeconds = Math.floor((Date.now() - quizEngine.sessionStartTime) / 1000);
@@ -167,7 +177,7 @@ export const AppContent: React.FC<AppContentProps> = ({
                 );
             }
             return (
-                <div className="py-4">
+                <div className="py-2">
                     <ErrorBoundary fallbackTitle="測驗元件發生錯誤">
                         <QuizCard
                             question={quizEngine.quizState.activeQuestions[quizEngine.quizState.currentQuestionIndex]}
@@ -202,6 +212,7 @@ export const AppContent: React.FC<AppContentProps> = ({
                     onDeleteFolder={actions.handleDeleteFolder}
                     onMoveBank={actions.handleMoveBank}
                     onBatchDelete={actions.handleBatchDelete}
+                    onStartSpacedReview={() => void quizEngine.startQuiz(undefined, 'spaced_due')}
                     chunkedPractice={{
                       activeSessions: chunkedPractice.activeSessions,
                       chunkSizeOptions: chunkedPractice.chunkSizeOptions,
@@ -293,7 +304,7 @@ export const AppContent: React.FC<AppContentProps> = ({
                 onSignOut={actions.signOut}
                 onLoginRedirect={() => actions.dispatch({ type: 'set_guest_mode', guestMode: false })}
             />
-            <main className={`flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 pt-24 md:pt-28 pb-24 md:pb-12 relative z-10 ${view === 'quiz' && gameMode ? 'backdrop-blur-sm bg-black/30 md:rounded-b-2xl' : ''}`}>
+            <main className={`flex-1 max-w-7xl w-full mx-auto ${view === 'quiz' ? 'p-3 md:p-6 pt-16 md:pt-16 pb-12' : 'p-4 md:p-8 pt-24 md:pt-28 pb-24 md:pb-12'} relative z-10 ${view === 'quiz' && gameMode ? 'backdrop-blur-sm bg-black/30 md:rounded-b-2xl' : ''}`}>
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={view}

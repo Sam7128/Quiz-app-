@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 import { STORAGE_KEYS } from './storage';
 import { isAbortError } from '../utils/isAbortError';
+import { getLocalDateString } from '../utils/dateUtils';
 
 
 export interface StudyStats {
@@ -22,7 +23,7 @@ export const recordStudySession = async (
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return false;
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalDateString();
 
   // Check if session exists for today
   const { data: sessions, error: fetchError } = await supabase
@@ -135,7 +136,7 @@ export const getDailyStats = async (): Promise<{ date: string; questions: number
     .from('study_sessions')
     .select('session_date, questions_answered, correct_count')
     .eq('user_id', user.id)
-    .gte('session_date', sevenDaysAgo.toISOString().split('T')[0])
+    .gte('session_date', getLocalDateString(sevenDaysAgo))
     .order('session_date', { ascending: true });
 
   if (error) {
@@ -165,7 +166,7 @@ export const recordLocalStudySession = (
   correctCount: number,
   durationSeconds: number
 ): void => {
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalDateString();
   const sessions = getLocalStudySessions();
 
   const existingIndex = sessions.findIndex(s => s.sessionDate === today);

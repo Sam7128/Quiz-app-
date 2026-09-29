@@ -1,6 +1,6 @@
 # Docs Index
 
-- Updated: `2026-09-14 10:57`
+- Updated: `2026-09-29 19:06`
 - Purpose: quick archive routing for reports, checkpoints, handoffs, and other non-source docs.
 
 ## archive
@@ -34,8 +34,11 @@
 - `reports/安全警告.md` - 安全警告
 
 ## root
+- `AI deep_analysis.md` - 📌 總結速覽（Executive Summary）
 - `battle-state-diagram.md` - Battle System State Diagram
 - `BATTLE_ART_ANIMATION_UPGRADE_PLAN.md` - 戰鬥美術、動畫、特效與音效全面升級計畫
+- `CODEBASE_INNOVATION_AND_IMPROVEMENT_REPORT.md` - MindSpark 程式碼庫全景改善、功能擴展與效益價值評估報告
+- `CODEBASE_REPORT_REVIEW.md` - MindSpark 代碼庫改善報告 — 獨立第三方深度審查報告
 - `DEVELOPMENT_LOG.md` - Development Log
 - `goal_audit_prompt.md` - MindSpark 全方位架構與安全性窮盡審計 `/goal` 提示詞模板
 - `knowledge-graph-exploration-notes-2026-03-08.md` - 知識圖 / 視覺化筆記功能探索整理
