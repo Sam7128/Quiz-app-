@@ -3,7 +3,6 @@ import { render, screen, act, fireEvent } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
 import { FocusTimer } from '../../components/FocusTimer';
 import { getLocalStudyStats, recordLocalStudySession } from '../../services/analytics';
-import { STORAGE_KEYS } from '../../services/storage';
 
 describe('FocusTimer Stats & Zero-Question Guard', () => {
   beforeEach(() => {

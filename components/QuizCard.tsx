@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import useSound from 'use-sound';
 import { Question } from '../types';
 import {
   getUserSettings
@@ -9,6 +8,7 @@ import { Lightbulb, CheckCircle, XCircle, ArrowRight, CheckSquare, Square, Volum
 import { AIHelper } from './AIHelper';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useBattleSystem } from '../hooks/useBattleSystem';
+import { useSoundEffects } from '../hooks/useSoundEffects';
 import { BattleArena } from './BattleArena';
 import { MiniTimer } from './MiniTimer';
 import { RestBreakModal } from './RestBreakModal';
@@ -60,7 +60,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
   const [isAnswered, setIsAnswered] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   const [feedback, setFeedback] = useState<'none' | 'correct' | 'incorrect'>('none');
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const { playQuizFeedback, isSfxEnabled, toggleSfx } = useSoundEffects();
 
   // Timer & Rest State
   const [timerActive, setTimerActive] = useState(false);
@@ -159,10 +159,6 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
       startBattle();
     }
   }, [battleState.isActive, chunkBoundaryKey, endBattle, gameMode, hasChunkMeta, isInitialized, resetForNewChunk, startBattle]);
-
-  // Placeholder sound paths - users should put actual files in public/sounds/
-  const [playCorrect] = useSound('/sounds/correct.mp3', { volume: 0.5, soundEnabled });
-  const [playWrong] = useSound('/sounds/wrong.mp3', { volume: 0.3, soundEnabled });
 
   // Detect if question is multiple choice
   const isMultiple = useMemo(() => {
@@ -291,11 +287,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
       setIsAnswered(true);
       setFeedback(isCorrect ? 'correct' : 'incorrect');
 
-      if (isCorrect) {
-        playCorrect();
-      } else {
-        playWrong();
-      }
+      playQuizFeedback(isCorrect ? 'correct' : 'wrong');
 
       // 觸發戰鬥動畫
       if (gameMode) {
@@ -516,10 +508,11 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
                   </span>
                 )}
                 <button
-                  onClick={() => setSoundEnabled(!soundEnabled)}
+                  onClick={toggleSfx}
                   className="p-1 text-slate-400 hover:text-brand-500 transition-colors"
+                  aria-label={isSfxEnabled ? '關閉音效' : '開啟音效'}
                 >
-                  {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+                  {isSfxEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
                 </button>
                 <div className="h-4 w-px bg-slate-200 mx-1"></div>
                 <AIHelper question={question} userAnswer={selectedOptions} />

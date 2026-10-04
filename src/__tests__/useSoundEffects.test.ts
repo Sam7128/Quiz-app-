@@ -88,13 +88,19 @@ describe('useSoundEffects Hook', () => {
     vi.clearAllMocks();
   });
 
-  it('initializes Howl instances for all 12 registered cues and handles loaderror/playerror without throwing', () => {
+  it('initializes Howl instances for BGM, 12 registered cues, and 2 quiz feedback cues, handling loaderror/playerror without throwing', () => {
     const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     renderHook(() => useSoundEffects());
-    // 1 BGM + 12 cues = 13 Howl instances
-    expect(howlConstructorMock).toHaveBeenCalledTimes(13);
+    // 1 BGM + 12 battle cues + 2 quiz feedback cues = 15 Howl instances
+    expect(howlConstructorMock).toHaveBeenCalledTimes(15);
     expect(howlConstructorMock).toHaveBeenCalledWith(expect.objectContaining({
       src: ['/sounds/bgm_dungeon.mp3'],
+    }));
+    expect(howlConstructorMock).toHaveBeenCalledWith(expect.objectContaining({
+      src: ['/sounds/correct.mp3'],
+    }));
+    expect(howlConstructorMock).toHaveBeenCalledWith(expect.objectContaining({
+      src: ['/sounds/wrong.mp3'],
     }));
 
     const options = howlConstructorMock.mock.calls.find(call => {

@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useQuizEngine } from '../../hooks/useQuizEngine';
 import { IStorageRepository } from '../../services/repository';
-import { BankMetadata, MistakeLog, Question, SpacedRepetitionItem } from '../../types';
+import { MistakeLog, Question, SpacedRepetitionItem } from '../../types';
 
 const mockQuestions: Question[] = [
   {
@@ -172,7 +172,6 @@ describe('useQuizEngine - userAnswerMap State Tracking', () => {
       await result.current.startQuiz(1, 'random');
     });
 
-    const q1 = result.current.quizState.activeQuestions[0];
     act(() => {
       result.current.handleAnswer(false, 'B');
     });

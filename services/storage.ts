@@ -1,4 +1,5 @@
 import { Question, MistakeLog, BankMetadata, Folder, SpacedRepetitionItem } from '../types';
+import { parseQuestions } from '../utils/typeGuards';
 
 export const STORAGE_KEYS = {
   PREFIX: 'mindspark_',
@@ -69,7 +70,11 @@ export const getUserSettings = (): UserSettings => {
 };
 
 export const saveUserSettings = (settings: UserSettings) => {
-  localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+  try {
+    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+  } catch (e) {
+    console.warn('[Storage] Failed to save user settings:', e);
+  }
 };
 
 export const getQuizSession = (): SavedQuizProgress | null => {
@@ -82,11 +87,19 @@ export const getQuizSession = (): SavedQuizProgress | null => {
 };
 
 export const saveQuizSession = (session: SavedQuizProgress) => {
-  localStorage.setItem(STORAGE_KEYS.QUIZ_SESSION, JSON.stringify(session));
+  try {
+    localStorage.setItem(STORAGE_KEYS.QUIZ_SESSION, JSON.stringify(session));
+  } catch (e) {
+    console.warn('[Storage] Failed to save quiz session:', e);
+  }
 };
 
 export const clearQuizSession = () => {
-  localStorage.removeItem(STORAGE_KEYS.QUIZ_SESSION);
+  try {
+    localStorage.removeItem(STORAGE_KEYS.QUIZ_SESSION);
+  } catch (e) {
+    console.warn('[Storage] Failed to clear quiz session:', e);
+  }
 };
 
 const PRACTICE_ACTIVE_LIMIT = 5;
@@ -390,7 +403,11 @@ export const getGameMode = (): boolean => {
 };
 
 export const saveGameMode = (enabled: boolean) => {
-  localStorage.setItem(STORAGE_KEYS.GAME_MODE, JSON.stringify(enabled));
+  try {
+    localStorage.setItem(STORAGE_KEYS.GAME_MODE, JSON.stringify(enabled));
+  } catch (e) {
+    console.warn('[Storage] Failed to save game mode:', e);
+  }
 };
 
 // --- Folder Management ---
@@ -405,7 +422,11 @@ export const getBankFolderMap = (): Record<string, string | null> => {
 };
 
 const saveBankFolderMap = (map: Record<string, string | null>) => {
-  localStorage.setItem(STORAGE_KEYS.FOLDER_MAP, JSON.stringify(map));
+  try {
+    localStorage.setItem(STORAGE_KEYS.FOLDER_MAP, JSON.stringify(map));
+  } catch (e) {
+    console.warn('[Storage] Failed to save bank folder map:', e);
+  }
 };
 
 export const updateBankFolder = (bankId: string, folderId: string | undefined) => {
@@ -432,7 +453,11 @@ export const getFolders = (): Folder[] => {
 };
 
 const saveFolders = (folders: Folder[]) => {
-  localStorage.setItem(STORAGE_KEYS.FOLDERS, JSON.stringify(folders));
+  try {
+    localStorage.setItem(STORAGE_KEYS.FOLDERS, JSON.stringify(folders));
+  } catch (e) {
+    console.warn('[Storage] Failed to save folders:', e);
+  }
 };
 
 export const createFolder = (name: string): Folder => {
@@ -481,27 +506,58 @@ export const getBanksMeta = (): BankMetadata[] => {
       // Migration check: if legacy data exists but no meta
       const legacy = localStorage.getItem(STORAGE_KEYS.LEGACY_BANK);
       if (legacy) {
+        let legacyQuestions: Question[] = [];
+        try {
+          const parsedLegacy: unknown = JSON.parse(legacy);
+          legacyQuestions = parseQuestions(parsedLegacy, 'storage.getBanksMeta.legacyMigration');
+        } catch {
+          legacyQuestions = [];
+        }
+
         const defaultBank: BankMetadata = {
           id: 'default',
           name: '預設題庫',
           createdAt: Date.now(),
-          questionCount: JSON.parse(legacy).length
+          questionCount: legacyQuestions.length,
         };
         localStorage.setItem(STORAGE_KEYS.BANKS_META, JSON.stringify([defaultBank]));
-        localStorage.setItem(STORAGE_KEYS.BANK_PREFIX + 'default', legacy);
+        localStorage.setItem(STORAGE_KEYS.BANK_PREFIX + 'default', JSON.stringify(legacyQuestions));
         localStorage.removeItem(STORAGE_KEYS.LEGACY_BANK);
         return [defaultBank];
       }
       return [];
     }
-    return JSON.parse(data);
+    const parsed: unknown = JSON.parse(data);
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+    return parsed
+      .filter((item): item is BankMetadata => {
+        return (
+          typeof item === 'object' &&
+          item !== null &&
+          typeof (item as BankMetadata).id === 'string' &&
+          typeof (item as BankMetadata).name === 'string'
+        );
+      })
+      .map((b) => ({
+        ...b,
+        questionCount:
+          typeof b.questionCount === 'number' && Number.isFinite(b.questionCount) && b.questionCount >= 0
+            ? b.questionCount
+            : 0,
+      }));
   } catch {
     return [];
   }
 };
 
 export const saveBanksMeta = (banks: BankMetadata[]) => {
-  localStorage.setItem(STORAGE_KEYS.BANKS_META, JSON.stringify(banks));
+  try {
+    localStorage.setItem(STORAGE_KEYS.BANKS_META, JSON.stringify(banks));
+  } catch (e) {
+    console.warn('[Storage] Failed to save banks meta:', e);
+  }
 };
 
 export const createBank = (name: string, folderId?: string): BankMetadata => {
@@ -521,7 +577,11 @@ export const createBank = (name: string, folderId?: string): BankMetadata => {
 export const deleteBank = (bankId: string) => {
   const banks = getBanksMeta().filter(b => b.id !== bankId);
   saveBanksMeta(banks);
-  localStorage.removeItem(STORAGE_KEYS.BANK_PREFIX + bankId);
+  try {
+    localStorage.removeItem(STORAGE_KEYS.BANK_PREFIX + bankId);
+  } catch (e) {
+    console.warn(`[Storage] Failed to remove bank storage for ${bankId}:`, e);
+  }
 };
 
 const moveBankToFolder = (bankId: string, folderId: string | undefined) => {
@@ -543,11 +603,19 @@ const moveBankToFolder = (bankId: string, folderId: string | undefined) => {
 // --- Current Active Bank ---
 
 export const getCurrentBankId = (): string | null => {
-  return localStorage.getItem(STORAGE_KEYS.CURRENT_BANK_ID);
+  try {
+    return localStorage.getItem(STORAGE_KEYS.CURRENT_BANK_ID);
+  } catch {
+    return null;
+  }
 };
 
 export const setCurrentBankId = (id: string) => {
-  localStorage.setItem(STORAGE_KEYS.CURRENT_BANK_ID, id);
+  try {
+    localStorage.setItem(STORAGE_KEYS.CURRENT_BANK_ID, id);
+  } catch (e) {
+    console.warn('[Storage] Failed to set current bank ID:', e);
+  }
 };
 
 // --- Question Data Management ---
@@ -555,21 +623,33 @@ export const setCurrentBankId = (id: string) => {
 export const getQuestions = (bankId: string): Question[] => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.BANK_PREFIX + bankId);
-    return data ? JSON.parse(data) : [];
-  } catch {
+    if (!data) return [];
+    const parsed: unknown = JSON.parse(data);
+    return parseQuestions(parsed, 'storage.getQuestions');
+  } catch (e) {
+    console.warn(`[Storage] Failed to read questions for bank "${bankId}":`, e);
     return [];
   }
 };
 
 export const saveQuestions = (bankId: string, questions: Question[]) => {
   try {
-    localStorage.setItem(STORAGE_KEYS.BANK_PREFIX + bankId, JSON.stringify(questions));
+    const incomingCount = Array.isArray(questions) ? questions.length : (questions ? 1 : 0);
+    const validQuestions = parseQuestions(questions, 'storage.saveQuestions');
+    if (incomingCount > 0 && validQuestions.length === 0) {
+      console.warn(
+        `[Storage] saveQuestions rejected overwrite for bank "${bankId}": incoming payload has ${incomingCount} item(s) but all were invalid.`
+      );
+      return;
+    }
+
+    localStorage.setItem(STORAGE_KEYS.BANK_PREFIX + bankId, JSON.stringify(validQuestions));
 
     // Update count in metadata
     const banks = getBanksMeta();
     const bankIndex = banks.findIndex(b => b.id === bankId);
     if (bankIndex !== -1) {
-      banks[bankIndex].questionCount = questions.length;
+      banks[bankIndex].questionCount = validQuestions.length;
       saveBanksMeta(banks);
     }
   } catch (e) {
@@ -589,31 +669,43 @@ export const getMistakeLog = (): MistakeLog => {
 };
 
 export const logMistake = (questionId: string | number, wrongAnswer: string) => {
-  const log = getMistakeLog();
-  const idStr = String(questionId);
+  try {
+    const log = getMistakeLog();
+    const idStr = String(questionId);
 
-  const entry = log[idStr] || { count: 0, lastWrongAnswer: '', timestamp: 0 };
+    const entry = log[idStr] || { count: 0, lastWrongAnswer: '', timestamp: 0 };
 
-  log[idStr] = {
-    count: entry.count + 1,
-    lastWrongAnswer: wrongAnswer,
-    timestamp: Date.now(),
-  };
+    log[idStr] = {
+      count: entry.count + 1,
+      lastWrongAnswer: wrongAnswer,
+      timestamp: Date.now(),
+    };
 
-  localStorage.setItem(STORAGE_KEYS.MISTAKES, JSON.stringify(log));
+    localStorage.setItem(STORAGE_KEYS.MISTAKES, JSON.stringify(log));
+  } catch (e) {
+    console.warn('[Storage] Failed to log mistake:', e);
+  }
 };
 
 export const removeMistake = (questionId: string | number) => {
-  const log = getMistakeLog();
-  const idStr = String(questionId);
-  if (log[idStr]) {
-    delete log[idStr];
-    localStorage.setItem(STORAGE_KEYS.MISTAKES, JSON.stringify(log));
+  try {
+    const log = getMistakeLog();
+    const idStr = String(questionId);
+    if (log[idStr]) {
+      delete log[idStr];
+      localStorage.setItem(STORAGE_KEYS.MISTAKES, JSON.stringify(log));
+    }
+  } catch (e) {
+    console.warn('[Storage] Failed to remove mistake:', e);
   }
 };
 
 export const clearMistakes = () => {
-  localStorage.removeItem(STORAGE_KEYS.MISTAKES);
+  try {
+    localStorage.removeItem(STORAGE_KEYS.MISTAKES);
+  } catch (e) {
+    console.warn('[Storage] Failed to clear mistakes:', e);
+  }
 };
 
 // --- Recent Mistake Sessions (FIFO 5) ---

@@ -5,10 +5,6 @@ import { QuizCard } from '../../components/QuizCard';
 import { Question } from '../../types';
 import * as storageModule from '../../services/storage';
 
-vi.mock('use-sound', () => ({
-  default: () => [vi.fn()],
-}));
-
 vi.mock('../../hooks/useAchievements', () => ({
   useAchievements: () => ({
     unlockedIds: [],

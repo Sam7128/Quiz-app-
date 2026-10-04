@@ -47,6 +47,27 @@
     rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <title>MindSpark - AI 學習助手</title>
+
+  <!-- Dark mode FOUC bootstrap -->
+  <script>
+    (function () {
+      try {
+        var theme = localStorage.getItem('mindspark_theme');
+        var support = theme === 'light' || theme === 'dark' || theme === 'system';
+        var selected = support ? theme : 'light';
+        var isDark =
+          selected === 'dark' ||
+          (selected === 'system' &&
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {
+        // fail-open to light mode, do not block page load
+      }
+    })();
+  </script>
 </head>
 
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 font-sans antialiased">

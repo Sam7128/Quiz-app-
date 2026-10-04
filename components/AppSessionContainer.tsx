@@ -25,8 +25,7 @@ interface AppSessionContainerProps {
 export const AppSessionContainer: React.FC<AppSessionContainerProps> = ({
   user,
   guestMode,
-  onSignOut,
-  onExitGuestMode
+  onSignOut
 }) => {
   const repository = useRepository();
   const toast = useToast();

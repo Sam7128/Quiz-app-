@@ -1,5 +1,7 @@
 import type { ChunkMeta } from './types/battleTypes';
 
+export type QuizFeedbackKind = 'correct' | 'wrong';
+
 export interface Question {
   id: string | number;
   original_question_id?: string | number;

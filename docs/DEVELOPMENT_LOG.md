@@ -1,5 +1,64 @@
 # Development Log
 
+## 2026-10-04 [Audit Closure V8Q3] "p1-data-integrity-and-runtime-hardening" (Surgical Defect Closure & E2E Evidence)
+### 🩺 V8Q3 審計缺陷手術級閉環 — type×answer 交叉校驗、雲端邊界 Guard 防禦、Toast 計數對齊與 E2E 證據補齊
+- **執行依據**：`openspec/changes/p1-data-integrity-and-runtime-hardening/audit_reports/audit_final_V8Q3.md` (W-01, W-02, W-03, S-01, P-01 完整解決)
+- **修復成果摘要**：
+  1. **W-01: `type` × `answer` 形態交叉驗證 (`utils/typeGuards.ts`, `src/__tests__/typeGuards.test.ts`)**：
+     - `isQuestion` 增加顯式題型與答案形態交叉驗證：`type === 'single'` 嚴格要求字串答案，`type === 'multiple'` 嚴格要求字串陣列答案，同時容許 `type === undefined` 時向下相容歷史題型。
+     - 補齊 2 個形態錯位負向單元測試與 2 個向下相容測試。
+  2. **W-02: 雲端儲存庫雙向邊界 Guard 防禦與 `forceDeleteAll` 安全合約 (`services/cloudStorage.ts`, `src/__tests__/cloudStorageDataIntegrity.test.ts`)**：
+     - `getCloudQuestions`：回傳前經 `parseQuestions(rawQuestions, 'cloud.getQuestions')` 過濾，阻斷資料庫髒資料（如 `options: null`、死鎖題、形態錯位）流入下游與 quiz engine。
+     - `saveCloudQuestions`：寫入入口引入 `parseQuestions`；若傳入非空但全為無效之題目陣列時拒絕寫入並即時清除 dirty 標記，嚴禁穿透至 `keepIds.length === 0` 誤刪雲端題庫或拋出錯誤。
+     - `retryCleanupDirtyBanks`：重試上傳前加入 `parseQuestions` 過濾。
+     - 新增 `src/__tests__/cloudStorageDataIntegrity.test.ts` 覆蓋 7 項雲端防禦與 `forceDeleteAll` 安全測試。
+  3. **W-03: 匯入 Toast 題數精準對齊與測試去偽 (`components/BankManager.tsx`, `src/__tests__/bankManagerImportExport.test.tsx`)**：
+     - `processJson` 中將成功匯入提示由 `mergedQuestions.length` 修正為實際匯入筆數 `data.length`，徹底消除 append 模式下虛增既有題庫長度之問題。
+     - 修正 `bankManagerImportExport.test.tsx` 中固化錯誤長度的 3 處測試斷言。
+  4. **S-01: BankManager 匯出定時器生命週期清理 (`components/BankManager.tsx`, `src/__tests__/bankManagerImportExport.test.tsx`)**：
+     - 引入 `exportTimersRef` 並在 `useEffect` cleanup 於元件卸載時清除未完成的 `setTimeout`，防止卸載後更新狀態；補齊 unmount cleanup 單元測試。
+  5. **P-01: 補齊 Playwright E2E Smoke 雙 Viewport 實質證據鏈 (`e2e/p1-hardening-smoke.spec.ts`, `playwright.config.ts`)**：
+     - 新增專屬端對端測試：覆蓋 BOM JSON 匯入與自製確認視窗、Blob URL 匯出下載觸發、Dark Mode 首屏 Pre-paint Bootstrap 無白閃、音效開關與測驗作答流程。
+     - 在 `playwright.config.ts` 中配置 `chromium` (Desktop) 與 `mobile-chromium` (Pixel 5) 專案。
+     - 執行 `npx playwright test e2e/p1-hardening-smoke.spec.ts` 取得 **8/8 雙環境綠燈實質證據 (12.3s)**。
+- **品質閘門檢驗**：
+  - `npx tsc --noEmit`：0 errors
+  - `npm test -- --run`：522 passed / 0 failed (72 test files)
+  - `npm run lint`：0 warnings, 0 errors
+  - `npm run build`：Build Success
+  - `npx knip --reporter compact`：0 issues
+  - `npx playwright test e2e/p1-hardening-smoke.spec.ts`：**8/8 passed (4 desktop + 4 mobile, 12.3s)**
+  - `Select-String 'use-sound|\.skip\(|\.only\('`：0 matches
+
+## 2026-10-04 [Implementation Complete] "p1-data-integrity-and-runtime-hardening" (Tasks 0.1 - 7.2 Full Delivery)
+### 🛡️ 資料完整性、儲存雙向防禦、Howler 音效常駐單例、BOM 匯入清洗與首屏防閃白硬化
+- **執行依據**：`openspec/changes/p1-data-integrity-and-runtime-hardening/tasks.md` (Task 0.1 ~ 7.2 全數完成)
+- **實作成果摘要**：
+  1. **型別契約與 TypeGuards 防禦擴充 (Phase 1)**：
+     - `types.ts` 新增 `QuizFeedbackKind = 'correct' | 'wrong'`，統一答題音效反饋型別契約。
+     - `utils/typeGuards.ts` 擴充 `isQuestion` 與 `parseQuestions`；嚴格驗證 id（字串或有限數值，含 `id: 0`）、question、options、answer（答案必須存在於選項內，排除死鎖題目）；`isRecord` 採模組私有內聯以精簡公開 API；無效項目以警告隔離並設 5 則上限後聚合輸出，杜絕日誌洪泛。
+  2. **Storage 反序列化防護與寫入閉環 (Phase 2)**：
+     - `services/storage.ts` 之 `getQuestions` 實施 parse-as-unknown → `parseQuestions` 防護；`saveQuestions` 寫入入口加入防禦門禁，只持久化有效題目，更新 metadata 時 `questionCount` 精準對齊有效題目數，傳入全為無效資料時拒絕寫入；legacy migration 題數依合法題計數。
+  3. **BankManager BOM 清洗、嚴格匯入與 Blob URL 匯出 (Phase 3)**：
+     - `components/BankManager.tsx` 之 `processJson` 先行 `^\uFEFF+` 清洗 Windows BOM，全無效時阻斷確認彈窗與儲存；部分有效時 Toast 提示：「成功匯入 X 題，已自動略過 Y 題格式不符題目」。
+     - `handleExport` 全面改用 `Blob({ type: 'application/json;charset=utf-8' })` 與 `URL.createObjectURL`，透過 1000ms 延遲釋放 (`setTimeout(() => URL.revokeObjectURL(url), 1000)`) 兼顧非同步下載啟動相容性，匯出加入 1000ms 連點防抖，徹底移除 Data URI。
+  4. **Howler 答題音效常駐單例與 `use-sound` 徹底移除 (Phase 4)**：
+     - `hooks/useSoundEffects.ts` 新增 `playQuizFeedback(QuizFeedbackKind)`，採用 Howler 模組級常駐單例（Lazy Singleton），cleanup 僅調用 `stop()` 停止當前播放而不釋放音訊解碼緩衝區 (`unload()`)，消除切題延遲與重複解碼開銷。
+     - `components/QuizCard.tsx` 接入全域 Howler SFX，移除 `use-sound` import、`soundEnabled` 本地狀態與 local player。
+     - 從 `package.json`、`package-lock.json` 與所有測試 mock 中徹底清除 `use-sound` 依賴。
+  5. **首屏防閃白 Theme Inline Bootstrap (Phase 5)**：
+     - `index.html` 的 `<head>` 於 module script 前加入防禦型 inline theme bootstrap script，支援 light/dark/system 與 `matchMedia`，所有 storage/DOM/media 例外安全 fail-open 至 light 模式，消除 Dark Mode FOUC 白閃。
+  6. **整合與對抗穿透測試驗證 (Phase 6 & 7)**：
+     - 新增測試套件：`typeGuards.test.ts`、`questionDataIntegrity.test.ts`、`bankManagerImportExport.test.tsx`、`quizAudio.test.tsx`、`themeBootstrap.test.ts`。
+     - 對抗測試覆蓋：壞死資料注入、答案不在選項之死鎖題攔截、`id: 0` 邊界、BOM 清洗、Object URL 延遲釋放與連點防抖、Howler 常駐緩衝、Theme Inline Bootstrap 容錯等。
+- **品質閘門檢驗**：
+  - `npx tsc --noEmit`：0 errors
+  - `npm test -- --run`：512 passed / 0 failed (71 test files)
+  - `npm run lint`：0 warnings, 0 errors
+  - `npm run build`：Build Success
+  - `npx knip --reporter compact`：0 issues
+  - `Select-String 'use-sound'`：0 matches
+
 ## 2026-10-04 [Architectural Refinement] QuizResult.onHome await & Async Handler Alignment
 ### 🩺 QuizResult 異步按鈕事件契約對齊 — 杜絕 handleExitQuiz 浮動未等待
 - **執行依據**：第二位 AI 覆核員架構建議，消弭 `QuizResult.onHome` 中 `void quizEngine.handleExitQuiz();` 之浮動 Promise。

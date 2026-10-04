@@ -7,6 +7,25 @@ import type { ChunkedPracticeSession, PracticeChunk, RecentMistakeSession } from
 import type { GraphNodeData } from '../../types/graphTypes';
 import type { IStorageRepository } from '../../services/repository';
 
+const howlConstructorMock = vi.fn();
+const howlPlayMock = vi.fn(() => 101);
+const howlStopMock = vi.fn();
+
+vi.mock('howler', () => {
+  return {
+    Howl: class {
+      options: Record<string, unknown>;
+      constructor(options: Record<string, unknown>) {
+        this.options = options;
+        howlConstructorMock(options);
+      }
+      play = howlPlayMock;
+      stop = howlStopMock;
+      playing = vi.fn(() => false);
+    },
+  };
+});
+
 const supabaseMocks = vi.hoisted(() => ({
   from: vi.fn(),
   getUser: vi.fn(),
@@ -19,10 +38,6 @@ vi.mock('../../services/supabase', () => ({
       getUser: supabaseMocks.getUser,
     },
   },
-}));
-
-vi.mock('use-sound', () => ({
-  default: () => [vi.fn()],
 }));
 
 vi.mock('../../hooks/useAchievements', () => ({
@@ -40,14 +55,22 @@ import {
   runWithSyncLock,
   mergeChunkedPracticeSessions,
 } from '../../services/cloudStorage';
-import { clearUserDataOnSignOut, getUserSettings, saveUserSettings } from '../../services/storage';
+import {
+  clearUserDataOnSignOut,
+  getUserSettings,
+  saveQuestions,
+  getQuestions,
+  saveQuizSession,
+} from '../../services/storage';
 import { getLocalDateString } from '../../utils/dateUtils';
 import { useQuizEngine } from '../../hooks/useQuizEngine';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
+import { useSoundEffects } from '../../hooks/useSoundEffects';
 import { NodeEditPanel } from '../../components/KnowledgeGraph/NodeEditPanel';
-import { recordLocalStudySession, recordStudySession, getLocalStudyStats } from '../../services/analytics';
-import { DEFAULT_SETTINGS } from '../../types/battleTypes';
+import { recordLocalStudySession, getLocalStudyStats } from '../../services/analytics';
+import { DEFAULT_SETTINGS, BattlePresentationEvent } from '../../types/battleTypes';
 import { QuizCard } from '../../components/QuizCard';
+import { isQuestion, parseQuestions } from '../../utils/typeGuards';
 
 const createRepository = (questions: Question[]) => {
   const mistakeLog: MistakeLog = {};
@@ -770,5 +793,182 @@ describe('Adversarial Bypass & Chaos Engineering Gate (Challenger)', () => {
       expect(onAnswer).toHaveBeenCalledWith(true, 'Taipei');
     });
   });
-});
 
+  // =========================================================================
+  // 對抗 15: 原型鏈污染與損毀 UTF-8 / 多重 BOM 防禦 (Prototype Pollution & Corrupt UTF-8)
+  // =========================================================================
+  describe('Adversarial 15: Prototype Pollution & Corrupt UTF-8 / Multi-BOM Parsing', () => {
+    it('blocks prototype pollution payloads and sanitizes multi-BOM / corrupted strings without polluting Object.prototype', () => {
+      const maliciousPayload = JSON.parse(
+        '{"__proto__": {"isAdmin": true, "polluted": "yes"}, "id": "q-proto", "question": "Pollution test?", "options": ["A", "B"], "answer": "A"}'
+      );
+
+      // Verify Object.prototype is NOT polluted
+      expect((({} as Record<string, unknown>)).isAdmin).toBeUndefined();
+      expect((({} as Record<string, unknown>)).polluted).toBeUndefined();
+
+      // parseQuestions must process safe fields without polluting prototype
+      const result = parseQuestions([maliciousPayload], 'adversarial.proto');
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('q-proto');
+      expect((({} as Record<string, unknown>)).isAdmin).toBeUndefined();
+
+      // Corrupted UTF-8 & Multi-BOM string handling
+      const multiBomString = '\uFEFF\uFEFF\uFEFF[{"id":"q-bom","question":"BOM test","options":["A","B"],"answer":"A"}]';
+      // Strip BOM and parse
+      const stripped = multiBomString.replace(/^\uFEFF+/, '');
+      const parsedBom = parseQuestions(JSON.parse(stripped), 'adversarial.bom');
+      expect(parsedBom).toHaveLength(1);
+      expect(parsedBom[0].id).toBe('q-bom');
+
+      // Malformed non-array / corrupted binary garbage
+      const corruptedGarbage = '\x00\x01\xFF\xFE\xFD';
+      expect(parseQuestions(corruptedGarbage, 'adversarial.garbage')).toEqual([]);
+      expect(parseQuestions(null, 'adversarial.null')).toEqual([]);
+      expect(parseQuestions(undefined, 'adversarial.undefined')).toEqual([]);
+      expect(parseQuestions(12345, 'adversarial.number')).toEqual([]);
+    });
+  });
+
+  // =========================================================================
+  // 對抗 16: 非法題庫載荷與死鎖防禦 (Invalid Question Payload & Boundary Penetration)
+  // =========================================================================
+  describe('Adversarial 16: Invalid Question Payload & Boundary Penetration (NaN, id: 0, subnormal floats, option mismatch)', () => {
+    it('strictly validates question schema, preserving valid id: 0 / finite floats while rejecting NaN, Infinity, empty IDs, and answer mismatches', () => {
+      // 1. NaN and Infinity IDs
+      expect(isQuestion({ id: NaN, question: 'Valid text', options: ['A', 'B'], answer: 'A' })).toBe(false);
+      expect(isQuestion({ id: Infinity, question: 'Valid text', options: ['A', 'B'], answer: 'A' })).toBe(false);
+      expect(isQuestion({ id: -Infinity, question: 'Valid text', options: ['A', 'B'], answer: 'A' })).toBe(false);
+
+      // 2. id: 0 (valid numeric ID) vs empty string / whitespace
+      expect(isQuestion({ id: 0, question: 'Valid text', options: ['A', 'B'], answer: 'A' })).toBe(true);
+      expect(isQuestion({ id: '', question: 'Valid text', options: ['A', 'B'], answer: 'A' })).toBe(false);
+      expect(isQuestion({ id: '   ', question: 'Valid text', options: ['A', 'B'], answer: 'A' })).toBe(false);
+      expect(isQuestion({ id: null, question: 'Valid text', options: ['A', 'B'], answer: 'A' })).toBe(false);
+
+      // 3. Sub-normal float IDs (e.g. Number.MIN_VALUE = 5e-324)
+      expect(isQuestion({ id: Number.MIN_VALUE, question: 'Valid text', options: ['A', 'B'], answer: 'A' })).toBe(true);
+
+      // 4. Answer not in options (Deadlock prevention)
+      expect(isQuestion({ id: 'q-mismatch-1', question: 'Valid text', options: ['A', 'B'], answer: 'C' })).toBe(false);
+      expect(isQuestion({ id: 'q-mismatch-2', question: 'Valid text', options: ['A', 'B'], answer: ['A', 'C'], type: 'multiple' })).toBe(false);
+      expect(isQuestion({ id: 'q-mismatch-3', question: 'Valid text', options: ['A', 'B'], answer: [] })).toBe(false);
+
+      // 5. Empty options or options with empty strings
+      expect(isQuestion({ id: 'q-opt-empty', question: 'Valid text', options: [], answer: 'A' })).toBe(false);
+      expect(isQuestion({ id: 'q-opt-blank', question: 'Valid text', options: ['A', '   '], answer: 'A' })).toBe(false);
+
+      // 6. Blank question text
+      expect(isQuestion({ id: 'q-blank-text', question: '   ', options: ['A', 'B'], answer: 'A' })).toBe(false);
+
+      // 7. saveQuestions filtering integrity
+      const mixedQuestions = [
+        { id: 'q-valid-1', question: 'Valid 1', options: ['A', 'B'], answer: 'A' } as Question,
+        { id: NaN as unknown as string, question: 'Invalid NaN', options: ['A'], answer: 'A' } as Question,
+        { id: 'q-bad-ans', question: 'Bad Answer', options: ['A', 'B'], answer: 'Z' } as Question,
+        { id: 0, question: 'Valid Zero ID', options: ['A', 'B'], answer: 'B' } as unknown as Question,
+      ];
+
+      saveQuestions('adversarial-bank', mixedQuestions);
+      const saved = getQuestions('adversarial-bank');
+      expect(saved).toHaveLength(2);
+      expect(saved[0].id).toBe('q-valid-1');
+      expect(saved[1].id).toBe(0);
+    });
+  });
+
+  // =========================================================================
+  // 對抗 17: 音效系統高頻連擊、資源缺失與拋錯防禦 (Audio Extreme Rapid-Fire & Error Resilience)
+  // =========================================================================
+  describe('Adversarial 17: Audio Extreme Rapid-Fire & Howler Error Resilience', () => {
+    it('handles 100 rapid battle cue and feedback calls without throwing or crashing when Howler fails', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const { result } = renderHook(() => useSoundEffects());
+
+      const sampleBattleEvent: BattlePresentationEvent = {
+        eventId: 'evt-adv-1',
+        correlationId: 'corr-adv',
+        sequence: 1,
+        kind: 'hero_attack',
+        actorId: 'hero',
+        targetId: 'monster',
+        phase: 'impact',
+        durationProfile: {
+          anticipationMs: 50,
+          travelMs: 50,
+          impactMs: 50,
+          settleMs: 50,
+          safetyDeadlineMs: 500,
+          reducedMotionMs: 0,
+        },
+        payload: { damage: 20, baseDamage: 20, isCrit: true, multiplier: 1, shieldAbsorbed: 0 },
+      };
+
+      // 1. Simulate Howler play throwing WebAudio suspension error
+      howlPlayMock.mockImplementationOnce(() => {
+        throw new Error('WebAudio AudioContext suspended or audio decode error');
+      });
+
+      // Must not throw unhandled exception
+      expect(() => {
+        act(() => {
+          result.current.playBattleCue(sampleBattleEvent);
+        });
+      }).not.toThrow();
+
+      // 2. Rapid spamming 50 feedback calls & 50 battle cues
+      expect(() => {
+        act(() => {
+          for (let i = 0; i < 50; i++) {
+            result.current.playQuizFeedback(i % 2 === 0 ? 'correct' : 'wrong');
+            result.current.playBattleCue({
+              ...sampleBattleEvent,
+              eventId: `evt-adv-${i}`,
+            });
+          }
+        });
+      }).not.toThrow();
+
+      warnSpy.mockRestore();
+    });
+  });
+
+  // =========================================================================
+  // 對抗 18: 儲存配額耗盡與無痕模式安全邊界防禦 (Storage Quota & Security Exception Boundary)
+  // =========================================================================
+  describe('Adversarial 18: Storage Quota & Private Browsing Exception Boundary Resilience', () => {
+    it('gracefully degrades without throwing uncaught errors when localStorage.setItem throws QuotaExceededError or SecurityError', () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+      const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new DOMException('QuotaExceededError: storage limit reached', 'QuotaExceededError');
+      });
+
+      expect(() => {
+        saveQuizSession({
+          bankIds: ['b-1'],
+          questionIds: ['q-1'],
+          currentIndex: 0,
+          score: 1,
+          wrongQuestionIds: [],
+          mode: 'random',
+          savedAt: Date.now(),
+        });
+      }).not.toThrow();
+
+      expect(() => {
+        recordLocalStudySession(10, 8, 300, 'quiz');
+      }).not.toThrow();
+
+      setItemSpy.mockImplementation(() => {
+        throw new DOMException('SecurityError: The operation is insecure.', 'SecurityError');
+      });
+
+      expect(() => {
+        getUserSettings();
+      }).not.toThrow();
+
+      setItemSpy.mockRestore();
+      warnSpy.mockRestore();
+    });
+  });
+});

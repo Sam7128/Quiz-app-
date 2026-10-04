@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { Question, BankMetadata } from '../types';
 import { Upload, Download, Trash2, AlertCircle, Plus, FileJson, FileText, Check, FolderOpen, Loader2, Sparkles, FileType, PencilLine, Save, X } from 'lucide-react';
 import { useRepository } from '../contexts/RepositoryContext';
@@ -14,6 +14,7 @@ import {
   planQuestionImport,
   type ImportMode
 } from '../utils/questionIdentity';
+import { parseQuestions } from '../utils/typeGuards';
 
 interface BankManagerProps {
   currentQuestions: Question[];
@@ -197,8 +198,17 @@ const BankManagerComponent: React.FC<BankManagerProps> = ({
   const [newBankName, setNewBankName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
   const [questionDraft, setQuestionDraft] = useState<QuestionEditorDraft | null>(null);
+  const exportTimersRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    return () => {
+      exportTimersRef.current.forEach((timerId) => clearTimeout(timerId));
+      exportTimersRef.current = [];
+    };
+  }, []);
 
   const sanitizeString = (value: unknown): string | undefined => {
     if (typeof value !== 'string') return undefined;
@@ -326,8 +336,30 @@ const BankManagerComponent: React.FC<BankManagerProps> = ({
 
   const processJson = async (jsonString: string) => {
     try {
-      const parsed: unknown = JSON.parse(jsonString);
-      const data = normalizeImportedQuestions(parsed);
+      const sanitizedJson = jsonString.replace(/^\uFEFF+/, '');
+      const parsed: unknown = JSON.parse(sanitizedJson);
+
+      if (!Array.isArray(parsed)) {
+        const message = '資料必須是 JSON 陣列 (Array)';
+        setError(message);
+        toast.error(message);
+        setLoading(false);
+        return;
+      }
+
+      const rawCount = parsed.length;
+      const validQuestions = parseQuestions(parsed, 'BankManager.import');
+
+      if (validQuestions.length === 0) {
+        const message = '無有效題目可供匯入';
+        setError(message);
+        toast.error(message);
+        setLoading(false);
+        return;
+      }
+
+      const skippedCount = rawCount - validQuestions.length;
+      const data = normalizeImportedQuestions(validQuestions);
 
       if (currentBankId) {
         const mergedQuestions = await confirmImportSummary(data);
@@ -344,12 +376,21 @@ const BankManagerComponent: React.FC<BankManagerProps> = ({
         onRefreshBanks(); // Sync parent
         setError(null);
         setLoading(false);
-        toast.success(`成功匯入 ${mergedQuestions.length} 題！`);
+
+        if (skippedCount > 0) {
+          toast.success(`成功匯入 ${data.length} 題！（已自動略過 ${skippedCount} 題格式不符題目）`);
+        } else {
+          toast.success(`成功匯入 ${data.length} 題！`);
+        }
       } else {
-        setError("請先選擇或建立一個題庫");
+        const message = '請先選擇或建立一個題庫';
+        setError(message);
+        toast.error(message);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "無效的 JSON 格式");
+      const message = err instanceof Error ? err.message : '無效的 JSON 格式';
+      setError(message);
+      toast.error(message);
       setLoading(false);
     }
   };
@@ -367,13 +408,34 @@ const BankManagerComponent: React.FC<BankManagerProps> = ({
   };
 
   const handleExport = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentQuestions, null, 2));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", `mindspark_bank_${currentBankId || 'export'}.json`);
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
+    if (isExporting) return;
+    setIsExporting(true);
+
+    try {
+      const jsonContent = JSON.stringify(currentQuestions, null, 2);
+      const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute('href', url);
+      downloadAnchorNode.setAttribute('download', `mindspark_bank_${currentBankId || 'export'}.json`);
+      document.body.appendChild(downloadAnchorNode);
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+
+      const revokeTimer = window.setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 1000);
+      exportTimersRef.current.push(revokeTimer);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '匯出題庫失敗';
+      setError(message);
+      toast.error(message);
+    } finally {
+      const resetTimer = window.setTimeout(() => {
+        setIsExporting(false);
+      }, 1000);
+      exportTimersRef.current.push(resetTimer);
+    }
   };
 
   const confirmImportSummary = async (importedQuestions: Question[]): Promise<Question[] | null> => {
@@ -731,7 +793,11 @@ const BankManagerComponent: React.FC<BankManagerProps> = ({
               <div className="bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-white/20 dark:border-white/5 flex flex-col items-center text-center">
                 <h4 className="font-bold text-slate-800 dark:text-white mb-2">匯出此題庫</h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">備份或分享目前選中的題庫</p>
-                <button onClick={handleExport} className="flex items-center gap-2 text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm">
+                <button
+                  onClick={handleExport}
+                  disabled={isExporting}
+                  className="flex items-center gap-2 text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 disabled:opacity-50 disabled:cursor-not-allowed px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm"
+                >
                   <Download size={16} /> 下載 .JSON
                 </button>
               </div>

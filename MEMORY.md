@@ -27,7 +27,7 @@
 
 <!-- BEGIN AUTO-GENERATED: MEMORY MAP -->
 ## Auto-Generated Memory Map
-- Refreshed: `2026-10-04 11:12`
+- Refreshed: `2026-10-04 17:18`
 - Project root: `C:\Users\user\Desktop\Quiz-app-`
 
 ### Key Files
@@ -61,8 +61,8 @@
 ### OpenSpec Snapshot
 - Main specs: `openspec/specs/`
 - Active changes: none detected.
-- Archived changes: `28`
-- [OS-ARC-001] `openspec/changes/archive/2026-09-29-fix-p0-core-experience-and-security/` (proposal, design, tasks, specs:5)
+- Archived changes: `29`
+- [OS-ARC-001] `openspec/changes/archive/2026-10-04-p1-data-integrity-and-runtime-hardening/` (proposal, design, tasks, specs:3)
 - [OS-ARC-002] `openspec/changes/archive/2026-10-04-p1-learning-experience-and-stats/` (proposal, design, tasks, specs:6)
 - [OS-ARC-003] `openspec/changes/archive/enhance-quiz-experience/` (proposal, design, tasks, specs:2)
 - [OS-ARC-004] `openspec/changes/archive/quiz-ux-enhancement/` (proposal, tasks)
@@ -89,10 +89,10 @@
 - [FACT-016] Import dialog requires user confirm before apply.
 - [FACT-017] Import modes: `append` (default), `merge`, `replace`.
 - [FACT-018] Chunk draft: `mindspark_chunk_draft:<sessionId>:<chunkIndex>`.
-- [FACT-019] Chunk sync: LWW strategy. Offline dirty fallback queue.
+- [FACT-019] Chunk sync: LWW strategy. Offline dirty queue.
 - [FACT-020] App + QuizEngine callbacks wrap in `useCallback` prevent race.
 - [FACT-021] Cloud save purges practice cache (`removePracticeSessionCache`).
-- [FACT-022] Git ignore `node_modules` & reserved filenames (`nul`).
+- [FACT-022] Git ignore `node_modules` & reserved names (`nul`).
 - [FACT-023] Validate AI config via localStorage schema guard.
 - [FACT-024] Cloud empty check blocks overwriting local non-empty data.
 - [FACT-025] Dynamic HMAC-SHA256 integrity, no hardcoded salt.
@@ -166,6 +166,8 @@
 - [DEC-018] P1 Audit Remediation (OPUS_X7R2): `settleCurrentSession` marks settled only upon storage success; chunk multi-point settlement defense (`onChunkComplete` + summary CTA retry); `handleExitQuiz` async await eliminates race; dynamic ARIA label `正確答案: ${opt}`; timers cleared on transition; dead code purged.
 - [DEC-019] P1 Settlement Resilience Final Closure: `settleCurrentSession` returns `Promise<boolean>`; `handleExitQuiz` retains `sessionStartTime` upon failure with toast warning; `onChunkComplete` blocks advancement on failure with completion id reset; `AppHeader` & `MobileNav` intercept mid-quiz exits via `handleHeaderNavigate` (W-04).
 - [DEC-020] QuizResult Props Async Alignment: `onRetry`, `onRestart`, `onHome` support `() => void | Promise<void>`; `AppContent` awaits `quizEngine.handleExitQuiz()`.
+- [DEC-021] P1 Data Integrity & Runtime Hardening: `isQuestion`/`parseQuestions` unknown guards with 5-warn aggregation; storage read/write two-way closed defense; BOM `^\uFEFF+` sanitization & Blob URL 1000ms delay revoke; Howler lazy singleton audio cue (`stop()` without `unload()`); `use-sound` purged; inline `<head>` theme bootstrap fail-open to light.
+- [DEC-022] P1 V8Q3 Audit Hardening: `isQuestion` validates explicit `type` × `answer` shape; cloud storage enforces `parseQuestions` on read/write/retry & protects `forceDeleteAll`; BankManager Toast reflects `data.length`; export timers cleaned on unmount; Playwright E2E smoke tests verified on desktop + mobile viewports.
 
 ## Hotspots
 - [HOT-001] `App.tsx` & `vite.config.ts`: Chunking & providers.
@@ -210,6 +212,8 @@
 - [RISK-015] [RESOLVED 2026-09-29] P0 5 Core & Security Fixes (SM-2 review, hotkeys, local timezone, sign-out isolation, compact battle arena).
 - [RISK-016] [RESOLVED 2026-09-29] P1 Learning Experience & Stats (Wrong answer comparison, auto-advance, achievement pruning, settlement CAS gate, FocusTimer stats, E2E suite).
 - [RISK-017] [RESOLVED 2026-10-04] P1 Audit Remediation & Final Surgical Closure (C-01, C-02, W-01, W-02, W-03, W-04, W-05, W-06, P-01, P-02).
+- [RISK-018] [RESOLVED 2026-10-04] P1 Data Integrity & Runtime Hardening (TypeGuards, Storage read/write defense, BOM sanitization, Blob export, Howler audio singleton, use-sound removal, Theme FOUC bootstrap).
+- [RISK-019] [RESOLVED 2026-10-04] P1 V8Q3 Cross-Validation Audit Defect Closure (W-01 type×answer cross-validation, W-02 cloud read/write guards & forceDeleteAll safety, W-03 Toast import count accuracy, S-01 export unmount cleanup, P-01 Playwright E2E smoke suite 8/8 passed on desktop + mobile).
 
 ## Next Refresh Triggers
 - Directory moves, add/remove `AGENTS.md`, schema migrations.

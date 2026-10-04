@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Howl } from 'howler';
 import type { BattlePresentationEvent, BattleSoundCue } from '../types/battleTypes';
+import type { QuizFeedbackKind } from '../types';
 import { getBattleAsset } from '../constants/battleAssetRegistry';
 import { STORAGE_KEYS } from '../services/storage';
 
@@ -19,11 +20,17 @@ const ALL_BATTLE_CUES: readonly BattleSoundCue[] = [
   'skill_lightning_impact',
 ];
 
+const QUIZ_FEEDBACK_CONFIG: Record<QuizFeedbackKind, { src: string; volume: number }> = {
+  correct: { src: '/sounds/correct.mp3', volume: 0.5 },
+  wrong: { src: '/sounds/wrong.mp3', volume: 0.3 },
+};
+
 interface UseSoundEffectsReturn {
   playBgm: () => void;
   stopBgm: () => void;
   playBattleCue: (event: BattlePresentationEvent) => void;
   stopBattleCue: () => void;
+  playQuizFeedback: (result: QuizFeedbackKind) => void;
   isBgmEnabled: boolean;
   isSfxEnabled: boolean;
   toggleBgm: () => void;
@@ -32,6 +39,7 @@ interface UseSoundEffectsReturn {
 
 let bgmInstance: Howl | null = null;
 const sfxInstances = new Map<BattleSoundCue, Howl>();
+const quizFeedbackInstances = new Map<QuizFeedbackKind, Howl>();
 
 export function mapEventToCue(event: BattlePresentationEvent): BattleSoundCue | null {
   const { kind, phase, payload } = event;
@@ -122,6 +130,27 @@ const initSounds = (): void => {
       }
     }
   }
+
+  for (const [kind, config] of Object.entries(QUIZ_FEEDBACK_CONFIG) as [QuizFeedbackKind, { src: string; volume: number }][]) {
+    if (!quizFeedbackInstances.has(kind)) {
+      try {
+        const howl = new Howl({
+          src: [config.src],
+          volume: config.volume,
+          preload: true,
+          onloaderror: (_id, error) => {
+            console.warn(`[SoundEffects] Quiz feedback ${kind} load error; continuing silently.`, error);
+          },
+          onplayerror: (_id, error) => {
+            console.warn(`[SoundEffects] Quiz feedback ${kind} play error; continuing silently.`, error);
+          },
+        });
+        quizFeedbackInstances.set(kind, howl);
+      } catch (error) {
+        console.warn(`[SoundEffects] Quiz feedback initialization failed for ${kind}; continuing silently.`, error);
+      }
+    }
+  }
 };
 
 export function useSoundEffects(): UseSoundEffectsReturn {
@@ -133,6 +162,7 @@ export function useSoundEffects(): UseSoundEffectsReturn {
   ));
   const playedEventCuesRef = useRef<Set<string>>(new Set());
   const activeShortCueRef = useRef<{ howl: Howl; soundId: number } | null>(null);
+  const activeFeedbackCueRef = useRef<{ howl: Howl; soundId: number } | null>(null);
 
   useEffect(() => {
     initSounds();
@@ -180,11 +210,23 @@ export function useSoundEffects(): UseSoundEffectsReturn {
     }
   }, []);
 
+  const stopQuizFeedback = useCallback(() => {
+    if (activeFeedbackCueRef.current) {
+      try {
+        activeFeedbackCueRef.current.howl.stop(activeFeedbackCueRef.current.soundId);
+      } catch (error) {
+        console.warn('[SoundEffects] Quiz feedback stop failed; continuing silently.', error);
+      }
+      activeFeedbackCueRef.current = null;
+    }
+  }, []);
+
   useEffect(() => {
     return () => {
       stopBattleCue();
+      stopQuizFeedback();
     };
-  }, [stopBattleCue]);
+  }, [stopBattleCue, stopQuizFeedback]);
 
   const playBattleCue = useCallback((event: BattlePresentationEvent): void => {
     if (!isSfxEnabled) return;
@@ -216,6 +258,24 @@ export function useSoundEffects(): UseSoundEffectsReturn {
     }
   }, [isSfxEnabled, stopBattleCue]);
 
+  const playQuizFeedback = useCallback((result: QuizFeedbackKind): void => {
+    if (!isSfxEnabled) return;
+    initSounds();
+    const instance = quizFeedbackInstances.get(result);
+    if (!instance) return;
+
+    stopQuizFeedback();
+
+    try {
+      const soundId = instance.play();
+      if (typeof soundId === 'number') {
+        activeFeedbackCueRef.current = { howl: instance, soundId };
+      }
+    } catch (error) {
+      console.warn(`[SoundEffects] Quiz feedback ${result} play failed; continuing silently.`, error);
+    }
+  }, [isSfxEnabled, stopQuizFeedback]);
+
   const toggleBgm = useCallback(() => setIsBgmEnabled(previous => !previous), []);
   const toggleSfx = useCallback(() => setIsSfxEnabled(previous => !previous), []);
 
@@ -224,6 +284,7 @@ export function useSoundEffects(): UseSoundEffectsReturn {
     stopBgm,
     playBattleCue,
     stopBattleCue,
+    playQuizFeedback,
     isBgmEnabled,
     isSfxEnabled,
     toggleBgm,

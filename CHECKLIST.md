@@ -3,6 +3,15 @@
 此文件用於追蹤專案開發進度、待辦事項與已完成項目。
 
 ## 🟡 進行中 (In Progress)
+- [x] **[P1 Data Integrity & Runtime Hardening]** `p1-data-integrity-and-runtime-hardening` 7 大階段 15 項任務、單元測試、防禦門禁、V8Q3 審計缺陷閉環 (W-01~03, S-01, P-01) 與全量品質閘門全數完成
+    - [x] Phase 0: 基線與安全邊界 (資料隔離、測試鎖定)
+    - [x] Phase 1: 型別與共用 Runtime Contract (`QuizFeedbackKind = 'correct' | 'wrong'`, `utils/typeGuards.ts` 擴充 `isQuestion`/`parseQuestions`、`type`×`answer` 形態交叉驗證、答案存在於 options 驗證、id:0 支援、5 則警告聚合)
+    - [x] Phase 2: Storage 反序列化與寫入閉環 (`getQuestions`/`getCloudQuestions` 防護反序列化、`saveQuestions`/`saveCloudQuestions` 嚴格過濾與無效資料拒收防全刪誤觸、legacy migration 依有效題數計數)
+    - [x] Phase 3: BankManager 匯入與匯出 (Windows BOM `^\uFEFF+` 清洗、UI 實際匯入/略過題數回饋、Blob URL 1000ms 延遲釋放與連點防抖、定時器 unmount cleanup、移除 Data URI)
+    - [x] Phase 4: Howler 音效統一與依賴清理 (`useSoundEffects.playQuizFeedback` Lazy Singleton 常駐緩衝、`QuizCard` 接入、徹底移除 `use-sound` 與孤兒 mock)
+    - [x] Phase 5: Dark mode FOUC (`index.html` `<head>` 防禦型 inline theme bootstrap script，支援 light/dark/system，fail-open 至 light)
+    - [x] Phase 6: 端到端與整合測試矩陣 (`typeGuards.test.ts`, `questionDataIntegrity.test.ts`, `cloudStorageDataIntegrity.test.ts`, `bankManagerImportExport.test.tsx`, `quizAudio.test.tsx`, `themeBootstrap.test.ts`, `e2e/p1-hardening-smoke.spec.ts`)
+    - [x] Phase 7: 全量品質閘門與文件收斂 (`tsc` 0 錯、72 檔 522 單元測試全綠、Playwright 4/4 E2E 通過、`lint` 0 警、`build` 成功、`knip` 0 警、OpenSpec tasks 100% 勾選)
 - [x] **[P1 Learning Experience & Stats Overhaul]** `p1-learning-experience-and-stats` 8 大階段 35 項任務、單元測試、E2E、防禦門禁與最終審計閉環全數完成
     - [x] Phase 1: 型別定義與儲存基礎設施 (`UserSettings.autoAdvanceOnCorrect`, `QuizState.userAnswerMap`, `IMPLEMENTED_ACHIEVEMENT_IDS`, `TRACKED_ACHIEVEMENT_IDS`)
     - [x] Phase 2: 錯題選項對比與無障礙反饋 (單選三態、多選四態集合運算、文字標籤、ARIA 標籤、`userAnswerMap` 降級)

@@ -208,7 +208,11 @@ export const recordLocalStudySession = (
     new Date(s.sessionDate) >= thirtyDaysAgo
   );
 
-  localStorage.setItem(STORAGE_KEYS.STUDY_SESSIONS, JSON.stringify(filteredSessions));
+  try {
+    localStorage.setItem(STORAGE_KEYS.STUDY_SESSIONS, JSON.stringify(filteredSessions));
+  } catch (e) {
+    console.warn('[Analytics] Failed to save local study sessions:', e);
+  }
 };
 
 /**

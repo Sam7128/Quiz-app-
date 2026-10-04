@@ -10,6 +10,7 @@ import {
   saveBanksMeta
 } from './storage';
 import { ensureStableQuestionId, normalizeQuestionForPersistence } from '../utils/questionIdentity';
+import { parseQuestions } from '../utils/typeGuards';
 import { ChunkedPracticeSession, PracticeChunk } from '../types/battleTypes';
 
 // Circuit breaker for practice_sessions table missing (graceful degradation)
@@ -196,7 +197,7 @@ export const getCloudQuestions = async (bankId: string): Promise<Question[]> => 
     return [];
   }
 
-  return data.map(q => ({
+  const rawQuestions = data.map(q => ({
     id: q.id,
     original_question_id: q.original_question_id ?? undefined,
     sourceQuestionKey: q.source_question_key ?? undefined,
@@ -208,6 +209,8 @@ export const getCloudQuestions = async (bankId: string): Promise<Question[]> => 
     hint: q.hint,
     explanation: q.explanation
   }));
+
+  return parseQuestions(rawQuestions, 'cloud.getQuestions');
 };
 
 const addDirtyBank = (bankId: string) => {
@@ -292,10 +295,17 @@ export const retryCleanupDirtyBanks = async (): Promise<void> => {
           continue;
         }
 
-        if (localQuestions.length > 0) {
+        const validQuestions = parseQuestions(localQuestions, 'cloud.retryCleanupDirtyBanks');
+        if (localQuestions.length > 0 && validQuestions.length === 0) {
+          console.warn(`[CloudStorage] Corrupt local questions payload for dirty bank ${bankId}: all items invalid. Skipping upload.`);
+          remaining.push(bankId);
+          continue;
+        }
+
+        if (validQuestions.length > 0) {
           // 先補傳 upsert
           const dedupedById = new Map<string, Question>();
-          localQuestions
+          validQuestions
             .map((q) => normalizeQuestionForPersistence(ensureStableQuestionId(q)))
             .forEach((q) => {
               dedupedById.set(normalizeToUuid(q.id), q);
@@ -381,9 +391,19 @@ export const retryCleanupDirtyBanks = async (): Promise<void> => {
 export const saveCloudQuestions = async (bankId: string, questions: Question[], forceDeleteAll: boolean = false) => {
   addDirtyBank(bankId);
 
+  const incomingCount = Array.isArray(questions) ? questions.length : (questions ? 1 : 0);
+  const validQuestions = parseQuestions(questions, 'cloud.saveQuestions');
+  if (incomingCount > 0 && validQuestions.length === 0) {
+    console.warn(
+      `[CloudStorage] saveCloudQuestions rejected overwrite for bank "${bankId}": incoming payload has ${incomingCount} item(s) but all were invalid.`
+    );
+    removeDirtyBank(bankId);
+    return;
+  }
+
   const dedupedById = new Map<string, Question>();
 
-  questions
+  validQuestions
     .map((question) => normalizeQuestionForPersistence(ensureStableQuestionId(question)))
     .forEach((question) => {
       dedupedById.set(normalizeToUuid(question.id), question);
