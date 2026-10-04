@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Key, ExternalLink, Info, Server, Cpu, Sun, Moon, Monitor, Swords, AlertTriangle, Trash2, Coffee } from 'lucide-react';
+import { X, Save, Key, ExternalLink, Info, Server, Cpu, Sun, Moon, Monitor, Swords, AlertTriangle, Trash2, Coffee, Zap } from 'lucide-react';
 import { getAIConfig, saveAIConfig } from '../services/ai';
 import { AIConfig } from '../types';
 import { useSoundEffects } from '../hooks/useSoundEffects';
@@ -135,6 +135,29 @@ const SettingsComponent: React.FC<SettingsProps> = ({ isOpen, onClose, gameMode,
                 className={`w-12 h-7 rounded-full transition-colors relative ${gameMode ? 'bg-white/90' : 'bg-black/20'}`}
               >
                 <div className={`absolute top-1 w-5 h-5 rounded-full shadow-sm transition-all duration-300 ${gameMode ? 'left-6 bg-purple-600' : 'left-1 bg-white/80'}`} />
+              </button>
+            </div>
+          </section>
+
+          {/* Auto Advance on Correct Toggle */}
+          <section className="space-y-3">
+            <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-2xl">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 rounded-lg">
+                  <Zap size={20} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-slate-800 dark:text-slate-200">答對自動切題</h3>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400">答對時自動前進下一題，保持流暢專注體驗（答錯停留解析）</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setUserSettings((prev) => ({ ...prev, autoAdvanceOnCorrect: !prev.autoAdvanceOnCorrect }))}
+                aria-label={userSettings.autoAdvanceOnCorrect ? "關閉答對自動切題" : "開啟答對自動切題"}
+                className={`w-12 h-7 rounded-full transition-colors relative ${userSettings.autoAdvanceOnCorrect ? 'bg-brand-600' : 'bg-slate-300 dark:bg-slate-600'}`}
+              >
+                <div className={`absolute top-1 w-5 h-5 rounded-full shadow-sm transition-all duration-300 ${userSettings.autoAdvanceOnCorrect ? 'left-6 bg-white' : 'left-1 bg-white/90'}`} />
               </button>
             </div>
           </section>

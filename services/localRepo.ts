@@ -96,8 +96,8 @@ export class LocalStorageRepository implements IStorageRepository {
     clearSpacedRepetition();
   }
 
-  async recordStudySession(questionsAnswered: number, correctCount: number, durationSeconds: number): Promise<void> {
-    recordLocalStudySession(questionsAnswered, correctCount, durationSeconds);
+  async recordStudySession(questionsAnswered: number, correctCount: number, durationSeconds: number, sessionType?: 'quiz' | 'focus'): Promise<void> {
+    recordLocalStudySession(questionsAnswered, correctCount, durationSeconds, sessionType);
   }
 
   async getStudyStats(): Promise<StudyStats> {

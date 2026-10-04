@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Award, CheckCircle2, Lock } from 'lucide-react';
-import { ACHIEVEMENTS } from '../constants/achievements';
+import { ACHIEVEMENTS, IMPLEMENTED_ACHIEVEMENT_IDS } from '../constants/achievements';
 
 interface AchievementsModalProps {
     isOpen: boolean;
@@ -10,18 +10,28 @@ interface AchievementsModalProps {
 }
 
 export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, onClose, unlockedIds }) => {
+    const visibleAchievements = useMemo(() => {
+        return ACHIEVEMENTS.filter((a) => IMPLEMENTED_ACHIEVEMENT_IDS.has(a.id));
+    }, []);
+
+    const validUnlockedIds = useMemo(() => {
+        return unlockedIds.filter((id) => IMPLEMENTED_ACHIEVEMENT_IDS.has(id));
+    }, [unlockedIds]);
+
     const sortedAchievements = useMemo(() => {
-        return [...ACHIEVEMENTS].sort((a, b) => {
-            const aUnlocked = unlockedIds.includes(a.id);
-            const bUnlocked = unlockedIds.includes(b.id);
+        return [...visibleAchievements].sort((a, b) => {
+            const aUnlocked = validUnlockedIds.includes(a.id);
+            const bUnlocked = validUnlockedIds.includes(b.id);
             // 解鎖的排前面
             if (aUnlocked && !bUnlocked) return -1;
             if (!aUnlocked && bUnlocked) return 1;
             return 0;
         });
-    }, [unlockedIds]);
+    }, [visibleAchievements, validUnlockedIds]);
 
-    const progress = Math.round((unlockedIds.length / ACHIEVEMENTS.length) * 100);
+    const progress = visibleAchievements.length > 0
+        ? Math.round((validUnlockedIds.length / visibleAchievements.length) * 100)
+        : 0;
 
     return (
         <AnimatePresence>
@@ -60,7 +70,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                                 <div>
                                     <h2 className="text-2xl font-bold text-slate-800 dark:text-white">成就一覽</h2>
                                     <p className="text-sm text-slate-500 dark:text-slate-400">
-                                        已解鎖 {unlockedIds.length} / {ACHIEVEMENTS.length}
+                                        已解鎖 {validUnlockedIds.length} / {visibleAchievements.length}
                                     </p>
                                 </div>
                             </div>
@@ -79,7 +89,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({ isOpen, on
                         {/* List */}
                         <div className="p-6 overflow-y-auto custom-scrollbar grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {sortedAchievements.map((achievement, index) => {
-                                const isUnlocked = unlockedIds.includes(achievement.id);
+                                const isUnlocked = validUnlockedIds.includes(achievement.id);
                                 return (
                                     <motion.div
                                         key={achievement.id}

@@ -71,6 +71,10 @@ const DashboardBase: React.FC<DashboardProps> = ({
   const repository = useRepository();
   const { startQuizByBank } = useQuiz();
 
+  const handleFocusComplete = React.useCallback((durationSeconds: number) => {
+    void repository.recordStudySession(0, 0, durationSeconds, 'focus');
+  }, [repository]);
+
   // Drag State
   const [draggedBankId, setDraggedBankId] = useState<string | null>(null);
   const [dragOverFolderId, setDragOverFolderId] = useState<string | null>(null);
@@ -526,7 +530,7 @@ const DashboardBase: React.FC<DashboardProps> = ({
           <StudyStatsCard />
           <RecentMistakesCard onPracticeSession={onPracticeMistakes} />
           <AchievementsCard />
-          <FocusTimer />
+          <FocusTimer onSessionComplete={handleFocusComplete} />
         </div>
       </div>
     </div>

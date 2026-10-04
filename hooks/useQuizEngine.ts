@@ -29,6 +29,7 @@ interface UseQuizEngineOptions {
     score: number;
     wrongQuestionIds: string[];
   }) => void;
+  trackQuizCompletion?: (data: { score: number; totalQuestions: number }) => Promise<void>;
 }
 
 export const useQuizEngine = ({
@@ -41,7 +42,8 @@ export const useQuizEngine = ({
   toast,
   onChallengeStart,
   onChunkComplete,
-  onChunkDraftUpdate
+  onChunkDraftUpdate,
+  trackQuizCompletion
 }: UseQuizEngineOptions) => {
   const [quizState, setQuizState] = useState<QuizState>({
     currentQuestionIndex: 0,
@@ -50,7 +52,8 @@ export const useQuizEngine = ({
     isFinished: false,
     activeQuestions: [],
     mode: 'random',
-    wrongQuestionIds: []
+    wrongQuestionIds: [],
+    userAnswerMap: {}
   });
   // Bank IDs actually used by the current active quiz session.
   // This must stay consistent even when dashboard selection changes.
@@ -62,6 +65,47 @@ export const useQuizEngine = ({
   const lastChunkCompletionRef = useRef<string | null>(null);
   const lastAnsweredQuestionIndexRef = useRef<number | null>(null);
   const isProcessingRef = useRef(false);
+  const isSettlingRef = useRef(false);
+  const isSettledRef = useRef(false);
+
+  const settleCurrentSession = useCallback(async (reason: string = 'finish'): Promise<boolean> => {
+    if (!sessionStartTime) return false;
+    if (isSettlingRef.current) return false;
+    if (isSettledRef.current) return true;
+
+    isSettlingRef.current = true;
+    try {
+      const durationSeconds = Math.max(1, Math.round((Date.now() - sessionStartTime) / 1000));
+      const answeredCount = quizState.isFinished
+        ? quizState.totalQuestions
+        : (quizState.score + quizState.wrongQuestionIds.length);
+      const correctCount = quizState.score;
+
+      // Quiz touch filter: If 0 questions answered and duration < 5 seconds, skip recording safely
+      if (answeredCount === 0 && durationSeconds < 5) {
+        isSettledRef.current = true;
+        return true;
+      }
+
+      // Record study session and track quiz completion with fault isolation
+      try {
+        await repository.recordStudySession(answeredCount, correctCount, durationSeconds, 'quiz');
+        if (answeredCount > 0 && trackQuizCompletion) {
+          await trackQuizCompletion({ score: correctCount, totalQuestions: answeredCount });
+        }
+        // ✅ C-01: 僅在持久化真正成功後標記為已結算
+        isSettledRef.current = true;
+        return true;
+      } catch (storageErr) {
+        console.warn(`[QuizEngine] settleCurrentSession (${reason}) storage error (fault-isolated):`, storageErr);
+        // ✅ C-01: 失敗時保持 isSettledRef.current = false，保留重試能力
+        isSettledRef.current = false;
+        return false;
+      }
+    } finally {
+      isSettlingRef.current = false;
+    }
+  }, [quizState.isFinished, quizState.score, quizState.totalQuestions, quizState.wrongQuestionIds.length, repository, sessionStartTime, trackQuizCompletion]);
 
   useEffect(() => {
     if (quizState.mode === 'chunked') {
@@ -103,12 +147,23 @@ export const useQuizEngine = ({
     const completionId = `${quizState.chunkMeta.sessionId}:${quizState.chunkMeta.chunkIndex}`;
     if (lastChunkCompletionRef.current === completionId) return;
     lastChunkCompletionRef.current = completionId;
-    void onChunkComplete({
-      chunkMeta: quizState.chunkMeta,
-      score: quizState.score,
-      wrongQuestionIds: quizState.wrongQuestionIds,
-    });
-  }, [onChunkComplete, quizState]);
+
+    const chunkMeta = quizState.chunkMeta;
+    void (async () => {
+      // ✅ C-02: Chunk 答完單一擁有點，先結算學習統計，再觸發 Chunk 完成狀態更新
+      const settled = await settleCurrentSession('chunk_complete');
+      if (!settled) {
+        toast?.warning?.('分階段學習統計儲存失敗，請重試結算');
+        lastChunkCompletionRef.current = null; // 允許重試
+        return;
+      }
+      await onChunkComplete({
+        chunkMeta,
+        score: quizState.score,
+        wrongQuestionIds: quizState.wrongQuestionIds,
+      });
+    })();
+  }, [onChunkComplete, quizState, settleCurrentSession, toast]);
 
   const restoreSession = useCallback(async (session: SavedQuizProgress) => {
     try {
@@ -129,10 +184,14 @@ export const useQuizEngine = ({
           isFinished: false,
           activeQuestions: restoredQuestions,
           mode: session.mode ?? 'random',
-          wrongQuestionIds: session.wrongQuestionIds
+          wrongQuestionIds: session.wrongQuestionIds,
+          userAnswerMap: {}
         });
         lastAnsweredQuestionIndexRef.current = null;
         isProcessingRef.current = false;
+        isSettlingRef.current = false;
+        isSettledRef.current = false;
+        setSessionStartTime(Date.now());
         onViewChange('quiz');
       }
     } catch (e) {
@@ -245,10 +304,13 @@ export const useQuizEngine = ({
       mode: mode,
       wrongQuestionIds: initialWrong,
       chunkMeta,
+      userAnswerMap: {},
     });
     lastChunkCompletionRef.current = null;
     lastAnsweredQuestionIndexRef.current = null;
     isProcessingRef.current = false;
+    isSettlingRef.current = false;
+    isSettledRef.current = false;
     setSessionStartTime(Date.now());
     setCurrentSessionMistakes([]);
 
@@ -275,16 +337,19 @@ export const useQuizEngine = ({
       isFinished: false,
       activeQuestions: questions,
       mode: 'mistake',
-      wrongQuestionIds: []
+      wrongQuestionIds: [],
+      userAnswerMap: {}
     });
     lastAnsweredQuestionIndexRef.current = null;
     isProcessingRef.current = false;
+    isSettlingRef.current = false;
+    isSettledRef.current = false;
     setSessionStartTime(Date.now());
     setCurrentSessionMistakes([]);
     onViewChange('quiz');
   }, [onViewChange]);
 
-  const handleExitQuiz = useCallback(() => {
+  const handleExitQuiz = useCallback(async (): Promise<boolean> => {
     if (currentSessionMistakes.length > 0) {
       const session: RecentMistakeSession = {
         sessionId: crypto.randomUUID(),
@@ -294,12 +359,20 @@ export const useQuizEngine = ({
       };
       repository.addRecentMistakeSession(session);
     }
-    setSessionStartTime(null);
+
+    const settled = await settleCurrentSession('exit');
+    if (settled) {
+      setSessionStartTime(null);
+    } else {
+      toast?.warning?.('學習統計儲存失敗，請檢查儲存空間或稍後重試');
+    }
+
     lastAnsweredQuestionIndexRef.current = null;
     isProcessingRef.current = false;
     onViewChange('dashboard');
     setCurrentSessionMistakes([]);
-  }, [banks, currentSessionMistakes, onViewChange, repository, sessionBankIds]);
+    return settled;
+  }, [banks, currentSessionMistakes, onViewChange, repository, sessionBankIds, settleCurrentSession, toast]);
 
   const startChallengeQuiz = useCallback(async (challengeId: string, bankId: string) => {
     const questions = await repository.getQuestions(bankId);
@@ -322,10 +395,13 @@ export const useQuizEngine = ({
       activeQuestions: shuffled,
       mode: 'challenge',
       wrongQuestionIds: [],
-      challengeId: challengeId
+      challengeId: challengeId,
+      userAnswerMap: {}
     });
     lastAnsweredQuestionIndexRef.current = null;
     isProcessingRef.current = false;
+    isSettlingRef.current = false;
+    isSettledRef.current = false;
     setSessionStartTime(Date.now());
     onViewChange('quiz');
   }, [onChallengeStart, onViewChange, repository, toast]);
@@ -354,13 +430,21 @@ export const useQuizEngine = ({
     void repository.saveSpacedRepetitionItem(updatedSrItem);
 
     if (isCorrect) {
-      setQuizState(prev => ({ ...prev, score: prev.score + 1 }));
+      setQuizState(prev => ({
+        ...prev,
+        score: prev.score + 1,
+        userAnswerMap: { ...prev.userAnswerMap, [questionId]: selectedAnswer }
+      }));
       if (quizState.mode === 'mistake') {
         repository.removeMistake(currentQ.id);
         setMistakeLog(repository.getMistakeLog());
       }
     } else {
-      setQuizState(prev => ({ ...prev, wrongQuestionIds: [...prev.wrongQuestionIds, String(currentQ.id)] }));
+      setQuizState(prev => ({
+        ...prev,
+        wrongQuestionIds: [...prev.wrongQuestionIds, String(currentQ.id)],
+        userAnswerMap: { ...prev.userAnswerMap, [questionId]: selectedAnswer }
+      }));
       repository.logMistake(currentQ.id, Array.isArray(selectedAnswer) ? selectedAnswer.join(', ') : selectedAnswer);
       setMistakeLog(repository.getMistakeLog());
 
@@ -398,6 +482,7 @@ export const useQuizEngine = ({
     handleExitQuiz,
     startChallengeQuiz,
     handleAnswer,
-    nextQuestion
+    nextQuestion,
+    settleCurrentSession
   };
 };

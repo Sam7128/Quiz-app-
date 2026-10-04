@@ -418,13 +418,15 @@ export interface ChunkDraftState {
 
 export interface UserSettings {
   restBreakInterval: number; // 0 = 關閉, 任意正整數 = 間隔
+  autoAdvanceOnCorrect?: boolean;
   betaFeatures?: {
     knowledgeGraph: boolean;
   };
 }
 
 export const DEFAULT_SETTINGS: UserSettings = {
-  restBreakInterval: 20
+  restBreakInterval: 20,
+  autoAdvanceOnCorrect: false
 };
 
 // ==================== 錯題回顧 ====================

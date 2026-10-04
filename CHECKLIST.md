@@ -3,6 +3,15 @@
 此文件用於追蹤專案開發進度、待辦事項與已完成項目。
 
 ## 🟡 進行中 (In Progress)
+- [x] **[P1 Learning Experience & Stats Overhaul]** `p1-learning-experience-and-stats` 8 大階段 35 項任務、單元測試、E2E、防禦門禁與最終審計閉環全數完成
+    - [x] Phase 1: 型別定義與儲存基礎設施 (`UserSettings.autoAdvanceOnCorrect`, `QuizState.userAnswerMap`, `IMPLEMENTED_ACHIEVEMENT_IDS`, `TRACKED_ACHIEVEMENT_IDS`)
+    - [x] Phase 2: 錯題選項對比與無障礙反饋 (單選三態、多選四態集合運算、文字標籤、ARIA 標籤、`userAnswerMap` 降級)
+    - [x] Phase 3: 答對自動切題 (800ms 普通 / 戰鬥演出 + 400ms、2000ms safety deadline 兜底、手動 Enter/點擊防雙跳、最後一題轉結算)
+    - [x] Phase 4: 成就系統純淨化 (白名單過濾、進度分母 4、歷史未知舊 ID 隔離、雙向 Set 等價對齊測試)
+    - [x] Phase 5: 統計結算全路徑閉環 (兩階段 CAS 門戶、`Math.max(1, duration)` 時長下限、0 題 <5s 誤觸過濾、Retry/Restart/Home/ESC/Modal 退出全覆蓋、C-01/W-06 失敗保留重試、C-02 Chunk 阻斷重試、W-04 Header 導航結算攔截)
+    - [x] Phase 6: FocusTimer 統計接入 (倒數歸零回呼去重、0 題純專注時長累計、統計勝率防稀釋守衛)
+    - [x] Phase 7: Playwright E2E 測試 (`e2e/p1-learning-experience.spec.ts` 4 大核心情境覆蓋)
+    - [x] Phase 8: 品質閘門與閉環審計 (`npx tsc --noEmit` 0 錯、`npm test` 66 檔 440 測全綠、`npx knip` 0 警、`npm run build` 打包通過)
 - [x] **[P0 Core Experience & Security Fixes]** `fix-p0-core-experience-and-security` 5 大核心體驗與安全缺陷修復與全門禁自檢完畢
     - [x] Task 1: 極簡原生 `utils/dateUtils.ts` (`getLocalDateString`) + `storage.ts` 登出白名單隔離 `clearUserDataOnSignOut()`
     - [x] Task 2: `analytics.ts` 與 `streak.ts` 替換為本地時區字串，修復 UTC+8 凌晨打卡倒流

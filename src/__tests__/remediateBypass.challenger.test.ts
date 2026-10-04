@@ -21,17 +21,33 @@ vi.mock('../../services/supabase', () => ({
   },
 }));
 
+vi.mock('use-sound', () => ({
+  default: () => [vi.fn()],
+}));
+
+vi.mock('../../hooks/useAchievements', () => ({
+  useAchievements: () => ({
+    unlockedIds: [],
+    loading: false,
+    unlockAchievement: vi.fn(),
+    refresh: vi.fn(),
+  }),
+}));
+
 import {
   saveCloudQuestions,
   retryCleanupDirtyBanks,
   runWithSyncLock,
   mergeChunkedPracticeSessions,
 } from '../../services/cloudStorage';
-import { clearUserDataOnSignOut } from '../../services/storage';
+import { clearUserDataOnSignOut, getUserSettings, saveUserSettings } from '../../services/storage';
 import { getLocalDateString } from '../../utils/dateUtils';
 import { useQuizEngine } from '../../hooks/useQuizEngine';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import { NodeEditPanel } from '../../components/KnowledgeGraph/NodeEditPanel';
+import { recordLocalStudySession, recordStudySession, getLocalStudyStats } from '../../services/analytics';
+import { DEFAULT_SETTINGS } from '../../types/battleTypes';
+import { QuizCard } from '../../components/QuizCard';
 
 const createRepository = (questions: Question[]) => {
   const mistakeLog: MistakeLog = {};
@@ -640,4 +656,119 @@ describe('Adversarial Bypass & Chaos Engineering Gate (Challenger)', () => {
       expect(getLocalDateString(new Date('invalid-date'))).toBe(todayFallback);
     });
   });
+
+  // =========================================================================
+  // 對抗 11: 負數、NaN/Infinity 異常持續時間與分數防禦 (Adversarial Duration & Score Boundary)
+  // =========================================================================
+  describe('Adversarial 11: Negative duration, NaN/Infinity in duration and score', () => {
+    it('sanitizes NaN, Infinity, negative duration and score without throwing or corrupting stats', () => {
+      recordLocalStudySession(NaN as unknown as number, -5, -300, 'quiz');
+      recordLocalStudySession(Infinity as unknown as number, Infinity as unknown as number, Infinity as unknown as number, 'focus');
+      recordLocalStudySession(5, 5, 120, 'quiz');
+
+      const stats = getLocalStudyStats();
+      expect(stats.totalQuestions).toBe(5);
+      expect(stats.totalCorrect).toBe(5);
+      expect(stats.totalDurationSeconds).toBe(120);
+      expect(stats.accuracyRate).toBe(100);
+      expect(Number.isFinite(stats.accuracyRate)).toBe(true);
+      expect(Number.isFinite(stats.totalDurationSeconds)).toBe(true);
+    });
+  });
+
+  // =========================================================================
+  // 對抗 12: 0 題 Session 與 FocusTimer vs Quiz 誤判防禦 (0 Questions FocusTimer vs Quiz Misidentification)
+  // =========================================================================
+  describe('Adversarial 12: 0 Questions Session with FocusTimer vs Quiz Misidentification', () => {
+    it('ignores 0-question short quiz abandons (<5s) but strictly preserves 0-question focus timer sessions', () => {
+      // Short 0-question quiz session (<5s) should be ignored as accidental open/close
+      recordLocalStudySession(0, 0, 2, 'quiz');
+      let stats = getLocalStudyStats();
+      expect(stats.totalDurationSeconds).toBe(0);
+      expect(stats.studyDays).toBe(0);
+
+      // 0-question focus timer session (1500s) must be recorded and never misidentified as quiz abandon
+      recordLocalStudySession(0, 0, 1500, 'focus');
+      stats = getLocalStudyStats();
+      expect(stats.totalDurationSeconds).toBe(1500);
+      expect(stats.studyDays).toBe(1);
+      expect(stats.totalQuestions).toBe(0);
+      expect(stats.accuracyRate).toBe(0);
+    });
+  });
+
+  // =========================================================================
+  // 對抗 13: 損毀、空白或惡意注入的 mindspark_settings (Corrupt / Empty Settings)
+  // =========================================================================
+  describe('Adversarial 13: Corrupt / Empty mindspark_settings in localStorage', () => {
+    it('gracefully falls back to DEFAULT_SETTINGS when settings are malformed, null, number, or NaN', () => {
+      // Empty string
+      localStorage.setItem(STORAGE_KEYS.SETTINGS, '');
+      expect(getUserSettings()).toEqual(DEFAULT_SETTINGS);
+
+      // Malformed JSON
+      localStorage.setItem(STORAGE_KEYS.SETTINGS, '{not valid json:');
+      expect(getUserSettings()).toEqual(DEFAULT_SETTINGS);
+
+      // String "null"
+      localStorage.setItem(STORAGE_KEYS.SETTINGS, 'null');
+      expect(getUserSettings()).toEqual(DEFAULT_SETTINGS);
+
+      // Number primitive
+      localStorage.setItem(STORAGE_KEYS.SETTINGS, '12345');
+      expect(getUserSettings()).toEqual(DEFAULT_SETTINGS);
+
+      // Negative or NaN restBreakInterval
+      localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify({ restBreakInterval: -100, autoAdvanceOnCorrect: 'invalid' }));
+      const fallbackSettings = getUserSettings();
+      expect(fallbackSettings.restBreakInterval).toBe(DEFAULT_SETTINGS.restBreakInterval);
+      expect(fallbackSettings.autoAdvanceOnCorrect).toBe(false);
+    });
+  });
+
+  // =========================================================================
+  // 對抗 14: QuizCard 高速連擊與防二次提交 (Fast multi-click on QuizCard options and submit)
+  // =========================================================================
+  describe('Adversarial 14: Fast Multi-Click on QuizCard options and submit button', () => {
+    it('blocks rapid double-clicks on options and triggers onAnswer exactly once', () => {
+      const onAnswer = vi.fn();
+      const onNext = vi.fn();
+      const onExit = vi.fn();
+
+      const sampleQuestion: Question = {
+        id: 'q-single-click',
+        question: 'What is the capital of Taiwan?',
+        options: ['Taipei', 'Tokyo', 'Seoul', 'Beijing'],
+        answer: 'Taipei',
+        type: 'single',
+      };
+
+      const { getByText } = render(
+        React.createElement(QuizCard, {
+          question: sampleQuestion,
+          currentIndex: 0,
+          totalQuestions: 1,
+          onAnswer,
+          onNext,
+          isLastQuestion: true,
+          onExit,
+          gameMode: false,
+        })
+      );
+
+      const optionButton = getByText('Taipei').closest('button') || getByText('Taipei');
+
+      // Rapidly click the option 10 times consecutively
+      act(() => {
+        for (let i = 0; i < 10; i++) {
+          fireEvent.click(optionButton);
+        }
+      });
+
+      // onAnswer must be called exactly once
+      expect(onAnswer).toHaveBeenCalledTimes(1);
+      expect(onAnswer).toHaveBeenCalledWith(true, 'Taipei');
+    });
+  });
 });
+

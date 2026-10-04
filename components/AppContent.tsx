@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useCallback } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AppAction, AppView, BankMetadata, Folder, MistakeLog, Question, QuizMode, QuizState } from '../types';
@@ -18,6 +18,7 @@ import { SkeletonLoader } from './SkeletonLoader';
 import { QuizProvider } from '../contexts/QuizContext';
 import { IStorageRepository } from '../services/repository';
 import { ChunkCompleteSummary } from './ChunkCompleteSummary';
+import { useToast } from '../contexts/ToastContext';
 
 
 
@@ -76,12 +77,13 @@ interface AppContentProps {
           chunkMeta?: ChunkMeta,
           draftState?: { currentQuestionIndex: number; score: number; wrongQuestionIds: string[] }
         ) => Promise<void>;
-        handleExitQuiz: () => void;
+        handleExitQuiz: () => Promise<boolean> | void;
         startChallengeQuiz: (challengeId: string, bankId: string) => Promise<void>;
         handleAnswer: (isCorrect: boolean, answer: string | string[]) => void;
         nextQuestion: () => void;
         trackQuizCompletion: (data: { score: number, totalQuestions: number }) => Promise<void>;
         startQuizByBank: (bankId: string, mode?: 'challenge' | 'normal') => Promise<void>;
+        settleCurrentSession: (reason?: string) => Promise<boolean>;
     };
     chunkedPractice: {
       activeSessions: ChunkedPracticeSession[];
@@ -122,6 +124,14 @@ export const AppContent: React.FC<AppContentProps> = ({
     repository
 }) => {
     const { view, gameMode } = state;
+    const toast = useToast();
+
+    const handleHeaderNavigate = useCallback(async (nextView: AppView) => {
+        if (view === 'quiz' || view === 'mistakes') {
+            await quizEngine.handleExitQuiz();
+        }
+        actions.handleViewChange(nextView);
+    }, [actions, quizEngine, view]);
 
     if (loading) {
         return (
@@ -149,28 +159,28 @@ export const AppContent: React.FC<AppContentProps> = ({
                             score={quizEngine.quizState.score}
                             totalQuestions={quizEngine.quizState.totalQuestions}
                             wrongQuestions={quizEngine.quizState.activeQuestions.filter((q) => quizEngine.quizState.wrongQuestionIds.includes(String(q.id)))}
-                            onRetry={() => quizEngine.startQuiz(
-                                quizEngine.quizState.wrongQuestionIds.length,
-                                'retry_session',
-                                quizEngine.quizState.wrongQuestionIds,
-                                quizEngine.sessionBankIds
-                            )}
-                            onRestart={() => quizEngine.startQuiz(
-                                quizEngine.quizState.totalQuestions,
-                                'random',
-                                undefined,
-                                quizEngine.sessionBankIds
-                            )}
-                            onHome={() => {
-                                if (quizEngine.sessionStartTime) {
-                                    const durationSeconds = Math.floor((Date.now() - quizEngine.sessionStartTime) / 1000);
-                                    const correctCount = quizEngine.quizState.score;
-                                    const totalQuestions = quizEngine.quizState.totalQuestions;
-
-                                    void repository.recordStudySession(totalQuestions, correctCount, durationSeconds);
-                                    void quizEngine.trackQuizCompletion({ score: correctCount, totalQuestions });
-                                }
-                                quizEngine.handleExitQuiz();
+                            userAnswerMap={quizEngine.quizState.userAnswerMap}
+                            onRetry={async () => {
+                                await quizEngine.settleCurrentSession('retry');
+                                void quizEngine.startQuiz(
+                                    quizEngine.quizState.wrongQuestionIds.length,
+                                    'retry_session',
+                                    quizEngine.quizState.wrongQuestionIds,
+                                    quizEngine.sessionBankIds
+                                );
+                            }}
+                            onRestart={async () => {
+                                await quizEngine.settleCurrentSession('restart');
+                                void quizEngine.startQuiz(
+                                    quizEngine.quizState.totalQuestions,
+                                    'random',
+                                    undefined,
+                                    quizEngine.sessionBankIds
+                                );
+                            }}
+                            onHome={async () => {
+                                await quizEngine.settleCurrentSession('home');
+                                await quizEngine.handleExitQuiz();
                             }}
                         />
                     </ErrorBoundary>
@@ -275,14 +285,25 @@ export const AppContent: React.FC<AppContentProps> = ({
                 totalQuestions={chunkedPractice.summary?.totalQuestions ?? 0}
                 hasNextChunk={chunkedPractice.summary?.hasNextChunk ?? false}
                 wrongQuestionIds={chunkedPractice.summary?.wrongQuestionIds ?? []}
-                onContinueNext={() => {
+                onContinueNext={async () => {
+                  // ✅ C-02 重試保險：若 chunk_complete 瞬態失敗，此處再次嘗試結算
+                  const settled = await quizEngine.settleCurrentSession('chunk_continue');
+                  if (!settled) {
+                    toast.warning('學習統計儲存失敗，請重試結算');
+                    return;
+                  }
                   void chunkedPractice.continueFromSummary();
                 }}
-                onRest={() => {
+                onRest={async () => {
                   chunkedPractice.dismissSummary();
-                  quizEngine.handleExitQuiz();
+                  await quizEngine.handleExitQuiz();
                 }}
-                onReviewMistakes={(wrongIds) => {
+                onReviewMistakes={async (wrongIds) => {
+                  const settled = await quizEngine.settleCurrentSession('chunk_review');
+                  if (!settled) {
+                    toast.warning('學習統計儲存失敗，請重試結算');
+                    return;
+                  }
                   chunkedPractice.dismissSummary();
                   void quizEngine.startQuiz(
                     wrongIds.length,
@@ -299,7 +320,7 @@ export const AppContent: React.FC<AppContentProps> = ({
                 banks={state.banks}
                 editingBankId={state.editingBankId}
                 selectedQuizBankIds={state.selectedQuizBankIds}
-                onNavigate={actions.handleViewChange}
+                onNavigate={handleHeaderNavigate}
                 onOpenSettings={() => actions.dispatch({ type: 'set_settings_open', isSettingsOpen: true })}
                 onSignOut={actions.signOut}
                 onLoginRedirect={() => actions.dispatch({ type: 'set_guest_mode', guestMode: false })}
@@ -324,7 +345,7 @@ export const AppContent: React.FC<AppContentProps> = ({
             </main>
             <MobileNav
                 view={view}
-                onNavigate={actions.handleViewChange}
+                onNavigate={handleHeaderNavigate}
                 onOpenSettings={() => actions.dispatch({ type: 'set_settings_open', isSettingsOpen: true })}
             />
         </div>

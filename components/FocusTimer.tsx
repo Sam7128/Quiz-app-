@@ -17,6 +17,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({ onSessionComplete }) => 
   const audioTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const activeAudioContextsRef = useRef<AudioContext[]>([]);
 
+  const lastCompletedTimestampRef = useRef<number>(0);
+
   // Cleanup audio timers and contexts on unmount
   useEffect(() => {
     return () => {
@@ -45,12 +47,16 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({ onSessionComplete }) => 
     } else if (isActive && timeLeft === 0) {
       // Timer completed
       if (isFocusMode) {
-        setCompletedSessions((prev) => prev + 1);
-        if (onSessionComplete) {
-          onSessionComplete(focusTime * 60);
-        }
-        if (soundEnabled) {
-          playNotificationSound();
+        const now = Date.now();
+        if (now - lastCompletedTimestampRef.current >= 1000) {
+          lastCompletedTimestampRef.current = now;
+          setCompletedSessions((prev) => prev + 1);
+          if (onSessionComplete) {
+            onSessionComplete(focusTime * 60);
+          }
+          if (soundEnabled) {
+            playNotificationSound();
+          }
         }
       }
       

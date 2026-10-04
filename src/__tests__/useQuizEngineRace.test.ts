@@ -171,8 +171,8 @@ describe('useQuizEngine Race Condition Protection (H1)', () => {
     expect(result.current.quizState.score).toBe(1);
 
     // 退出測驗（重置鎖 Ref）
-    act(() => {
-      result.current.handleExitQuiz();
+    await act(async () => {
+      await result.current.handleExitQuiz();
     });
 
     // 恢復 session 至第 0 題

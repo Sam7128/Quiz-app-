@@ -10,6 +10,13 @@ interface UseAchievementTrackerReturn {
   trackQuizCompletion: (stats: QuizCompletionStats) => Promise<void>;
 }
 
+export const TRACKED_ACHIEVEMENT_IDS = new Set<string>([
+  'perfect_score',
+  'first_question',
+  'night_owl',
+  'early_bird'
+]);
+
 export const useAchievementTracker = (): UseAchievementTrackerReturn => {
   const repository = useRepository();
 

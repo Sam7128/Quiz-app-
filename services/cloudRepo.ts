@@ -116,8 +116,8 @@ export class CloudStorageRepository implements IStorageRepository {
     clearSpacedRepetition();
   }
 
-  async recordStudySession(questionsAnswered: number, correctCount: number, durationSeconds: number): Promise<void> {
-    await recordStudySession(questionsAnswered, correctCount, durationSeconds);
+  async recordStudySession(questionsAnswered: number, correctCount: number, durationSeconds: number, sessionType?: 'quiz' | 'focus'): Promise<void> {
+    await recordStudySession(questionsAnswered, correctCount, durationSeconds, sessionType);
   }
 
   async getStudyStats(): Promise<StudyStats> {

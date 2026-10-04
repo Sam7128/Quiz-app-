@@ -86,6 +86,7 @@ export interface QuizState {
   wrongQuestionIds: string[];
   challengeId?: string;
   chunkMeta?: ChunkMeta;
+  userAnswerMap?: Record<string, string | string[]>;
 }
 
 export interface AIConfig {

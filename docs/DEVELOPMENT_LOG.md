@@ -1,5 +1,113 @@
 # Development Log
 
+## 2026-10-04 [Architectural Refinement] QuizResult.onHome await & Async Handler Alignment
+### 🩺 QuizResult 異步按鈕事件契約對齊 — 杜絕 handleExitQuiz 浮動未等待
+- **執行依據**：第二位 AI 覆核員架構建議，消弭 `QuizResult.onHome` 中 `void quizEngine.handleExitQuiz();` 之浮動 Promise。
+- **修復成果摘要**：
+  1. **`components/AppContent.tsx`**：
+     - 在 `<QuizResult onHome={...}>` 中，將 `void quizEngine.handleExitQuiz();` 改為 `await quizEngine.handleExitQuiz();`，確保結算與清理流程確實 await 完畢。
+  2. **`components/QuizResult.tsx`**：
+     - 升級 `QuizResultProps` 中 `onRetry`, `onRestart`, `onHome` 宣告型別為 `() => void | Promise<void>`，完整相容異步回呼與同步回呼。
+- **品質閘門檢驗**：
+  - `npx tsc --noEmit`：0 errors
+  - `npm test -- --run`：440 passed / 0 failed (66 test files)
+  - `npx knip`：0 issues
+  - `npm run build`：Build Success
+
+## 2026-10-04 [Surgical Closure] "p1-learning-experience-and-stats" (Final Audit Closure C-01/W-06, C-02, W-04)
+### 🩺 學習統計結算全路徑閉環 — 失敗保留重試、Chunk 失敗阻斷與導航攔截手術
+- **執行依據**：C-01/W-06 退出失敗重試、C-02 Chunk 失敗阻斷、W-04 Header 導航結算攔截。
+- **修復成果摘要**：
+  1. **C-01 / W-06: `settleCurrentSession` 回傳成敗狀態 + `handleExitQuiz` 失敗保留狀態 (`hooks/useQuizEngine.ts`, `components/AppContent.tsx`)**：
+     - `settleCurrentSession(reason: string = 'finish'): Promise<boolean>` 簽名升級，成功時標記 `isSettledRef.current = true` 並回傳 `true`；異常時維持 `isSettledRef.current = false` 並回傳 `false`。
+     - `handleExitQuiz(): Promise<boolean>` 執行 `const settled = await settleCurrentSession('exit')`；僅在 `settled === true` 時清空 `sessionStartTime(null)`；若失敗則保留 `sessionStartTime` 並呼叫 `toast.warning`，導航照常進行。
+     - 更新 `AppContentProps.quizEngine` 的 `settleCurrentSession` 與 `handleExitQuiz` 簽名。
+  2. **C-02: Chunk 答完結算失敗阻斷與重試 (`hooks/useQuizEngine.ts`, `components/AppContent.tsx`)**：
+     - `onChunkComplete` 的 `useEffect` 中，若 `settleCurrentSession('chunk_complete')` 回傳 `false`，重置 `lastChunkCompletionRef.current = null` 並中斷流程，防止未持久化推進。
+     - `<ChunkCompleteSummary>` 的 `onContinueNext` 與 `onReviewMistakes` 中若結算失敗，中斷推進並發出 warning toast，杜絕資料被覆蓋。
+  3. **W-04: Header 與行動導航中途退出結算閉環 (`components/AppContent.tsx`)**：
+     - 定義 `handleHeaderNavigate`：當前視圖為 `quiz` 或 `mistakes` 時，先 `await quizEngine.handleExitQuiz()` 觸發結算，再執行切頁導航。
+     - 傳入 `<AppHeader onNavigate={handleHeaderNavigate} />` 與 `<MobileNav onNavigate={handleHeaderNavigate} />`。
+  4. **單元測試全數覆蓋與綠燈防偽**：
+     - `src/__tests__/studySessionSettlement.test.ts`：新增 `handleExitQuiz: 首次儲存失敗時保留 sessionStartTime，第二次呼叫 handleExitQuiz 重試成功並清空 sessionStartTime` 與 `Header 導航離開：測驗中途透過 handleHeaderNavigate 切換視圖時觸發 handleExitQuiz 結算`。
+     - `src/__tests__/useQuizEngine.chunked.test.ts`：新增 `Chunk 完成結算失敗時阻斷 onChunkComplete，直到結算成功始能推進`。
+- **品質閘門檢驗**：
+  - `npx tsc --noEmit`：0 errors
+  - `npm test -- --run`：440 passed / 0 failed (66 test files)
+  - `npx knip`：0 issues
+  - `npm run build`：Build Success
+
+## 2026-10-04 [Surgical Remediation Complete] "p1-learning-experience-and-stats" (OPUS_X7R2 Audit Remediation)
+### 🩺 學習體驗與統計模組 — 手術式精準修復與防偽綠燈驗證
+- **執行依據**：`openspec/changes/p1-learning-experience-and-stats/repair_plan.md`（基準審計報告：`audit_OPUS_X7R2.md`）
+- **修復成果摘要**：
+  1. **C-01 & W-06: 結算重試契約修復與退出競態消除 (`hooks/useQuizEngine.ts`)**：
+     - `settleCurrentSession` 將 `isSettledRef.current = true` 移入 `repository.recordStudySession` 真正成功之後；`catch (storageErr)` 保持 `isSettledRef.current = false`，保留失敗後重試能力。
+     - `handleExitQuiz` 改為 `async () => Promise<void>`，以 `await settleCurrentSession('exit')` 等待結算完成，並在 `finally` 中清空狀態，徹底消除狀態清理與持久化的競態條件。
+     - 補齊單元測試 `src/__tests__/studySessionSettlement.test.ts`：「首次 storage 失敗後，第二次 retry 調用 settleCurrentSession 成功持久化」。
+  2. **C-02: Chunked Practice 主路徑結算閉環 (`hooks/useQuizEngine.ts`, `components/AppContent.tsx`)**：
+     - `onChunkComplete` 的 `useEffect` 觸發前加入 `await settleCurrentSession('chunk_complete')`，題數與時長即時固化至 `study_sessions`。
+     - `<ChunkCompleteSummary>` 3 個出口（`onContinueNext`, `onRest`, `onReviewMistakes`）加入防禦性 `settleCurrentSession` 與 `handleExitQuiz` 調用，具備冪等重試防禦。
+     - 補齊單元測試 `src/__tests__/useQuizEngine.chunked.test.ts`：Chunk 答完自動觸發、跨 Chunk 獨立計時結算不重複、最後 Chunk 正確寫入。
+  3. **W-01: 正確答案 ARIA label 動態文字契約 (`components/QuizResult.tsx`)**：
+     - 單選模式與 Fallback 模式均對齊動態格式 `aria-label={`正確答案: ${opt}`}`。
+     - 更新 `src/__tests__/wrongAnswerComparison.test.tsx` 斷言契約。
+  4. **W-02: 戰鬥模式演出切題與兜底計時器協同 (`components/QuizCard.tsx`, `src/__tests__/autoAdvance.test.tsx`)**：
+     - 補齊單元測試驗證戰鬥模式演出事件結束（`activePresentationEvent` 非 null -> null）後 400ms 準時切題，且 2000ms 兜底計時器被成功取消。
+  5. **W-05: 切題生命週期定時器防護 (`components/QuizCard.tsx`)**：
+     - `useEffect(..., [question])` 換題與 `handleNext` 手動切題時同步清除 `explanationTimerRef` 與 `restModalTimerRef`，杜絕跨題幽靈解析與干擾彈窗。
+  6. **W-03: 測試生命週期與 `act()` 邊界對齊**：
+     - 修正 `studySessionSettlement.test.ts` 與 `useQuizEngineRace.test.ts` 中的 `act` 邊界，消除 overlapping act() 警告。
+  7. **P-01 & P-02: YAGNI 代碼清理**：
+     - `components/AppContent.tsx` 刪除未使用的 fallback `settleCurrentSession` 及相關冗餘 refs。
+     - `hooks/useQuizEngine.ts` 刪除只寫不讀的裝飾性 `activeSessionTokenRef`。
+- **品質閘門檢驗**：
+  - `npx tsc --noEmit`：0 errors
+  - `npm test -- --run`：437 passed / 0 failed (66 test files)
+  - `npx knip`：0 issues
+  - `npm run build`：Build Success
+
+## 2026-09-29 [Implementation Complete] "p1-learning-experience-and-stats" (Phases 1-8 Full Delivery)
+### 🚀 學習體驗升級、錯題選項對比、自動切題、成就白名單與統計結算全路徑閉環
+- **執行依據**：`openspec/changes/p1-learning-experience-and-stats/tasks.md` (全 8 階段 100% 完成)
+- **實作成果摘要**：
+  1. **型別定義與儲存基礎設施 (Phase 1)**：
+     - `types/battleTypes.ts` 新增 `autoAdvanceOnCorrect?: boolean`，`DEFAULT_SETTINGS` 設為 `false`。
+     - `services/storage.ts` 加入 schema normalize 預設值兜底守衛。
+     - `types.ts` 新增 `QuizState.userAnswerMap: Record<string, string | string[]>`。
+     - `constants/achievements.ts` 導出 `IMPLEMENTED_ACHIEVEMENT_IDS` (4 個成就白名單)，保持 22 個定義向下相容。
+     - `hooks/useAchievementTracker.ts` 顯式導出 `TRACKED_ACHIEVEMENT_IDS`。
+  2. **錯題選項對比與 WCAG 無障礙反饋 (Phase 2)**：
+     - `hooks/useQuizEngine.ts` 在作答時記錄 `userAnswerMap`。
+     - `components/QuizCard.tsx` 即時套用選項三態樣式反饋與 `break-words` 超長文字防護。
+     - `components/QuizResult.tsx` 擴充 `userAnswerMap`，支援單選三態（`❌ 你的選擇: ` + `aria-invalid="true"`、`✅ 正確答案: ` + `aria-label="正確答案"`、中立）與多選四態集合運算（`[已選/正確]`、`[❌ 你的選擇/錯誤]`、`[✅ 正確答案/漏選]`、中立），具備缺省降級。
+     - 單元測試：`src/__tests__/wrongAnswerComparison.test.tsx`, `src/__tests__/useQuizEngine.userAnswerMap.test.ts`。
+  3. **答對自動切題與邊界防護 (Phase 3)**：
+     - `components/Settings.tsx` 新增「答對自動切題」(`autoAdvanceOnCorrect`) 開關。
+     - `components/QuizCard.tsx` 答對啟動計時切題（標準 800ms / 戰鬥演出後 400ms，2000ms safety deadline 兜底）；最後一題自動進入結算；手動點擊/Enter 立即 `clearTimeout` 防雙跳；答錯停留解析；`useEffect` cleanup 銷毀計時器。
+     - 單元測試：`src/__tests__/autoAdvance.test.tsx`。
+  4. **成就系統純淨化與強型別雙向對齊 (Phase 4)**：
+     - `components/AchievementsCard.tsx` 與 `components/AchievementsModal.tsx` 基於 `IMPLEMENTED_ACHIEVEMENT_IDS` 過濾，總數與進度分母對齊 4 個成就，過濾歷史未知 ID。
+     - 單元測試：`src/__tests__/achievementPruning.test.tsx`, `src/__tests__/achievementTrackerAlignment.test.ts` (100% Set 等價對齊)。
+  5. **統計結算全路徑閉環與兩階段 CAS 門戶 (Phase 5)**：
+     - `hooks/useQuizEngine.ts` 與 `components/AppContent.tsx` 引入 `isSettlingRef`、`isSettledRef`、`activeSessionTokenRef` 雙重 CAS 門戶，杜絕非同步重入與連擊重覆記錄。
+     - 統一 `settleCurrentSession(reason)`，支援 `Math.max(1, duration)` 時長下限防禦，以及測驗專用 0 題小於 5 秒誤觸過濾。
+     - 全退出路徑閉環：`onRetry`、`onRestart`、`onHome`、`handleExitQuiz`（含 ESC、RestBreakModal 暫停退出、ChunkedPractice 休息退出），全部具備 Fault-Isolated 導航異常隔離。
+     - 單元測試：`src/__tests__/studySessionSettlement.test.ts`。
+  6. **FocusTimer 統計接入與零題勝率防稀釋守衛 (Phase 6)**：
+     - `components/FocusTimer.tsx` 加入 `lastCompletedTimestampRef` 進行 1 秒去重，僅在專注倒數歸零時觸發 `onSessionComplete(focusTime * 60)`；休息模式、手動重置與 unmount 嚴格禁止觸發。
+     - `components/Dashboard.tsx` 綁定 `handleFocusComplete`，調用 `repository.recordStudySession(0, 0, duration, 'focus')` 寫入純專注時長。
+     - `services/analytics.ts`、`services/repository.ts`、`services/localRepo.ts`、`services/cloudRepo.ts` 擴充 `sessionType?: 'quiz' | 'focus'`；`getStudyStats` / `getLocalStudyStats` 勝率計算排除 0 題純專注時段，總時長正常累計。
+     - 單元測試：`src/__tests__/focusTimerStats.test.tsx`。
+  7. **Playwright 端到端流程測試 (Phase 7)**：
+     - 新增 `e2e/p1-learning-experience.spec.ts` 涵蓋 E2E-1 (自動切題)、E2E-2 (錯題對比與 ARIA)、E2E-3 (成就白名單過濾)、E2E-4 (中途 ESC 退出結算)。
+  8. **品質閘門與閉環審計 (Phase 8)**：
+     - `npx tsc --noEmit` 0 錯誤通過。
+     - `npm test` 66 個測試檔案、432 項測試 100% 全數通過。
+     - `npx knip` 0 警告通過。
+     - `npm run build` Vite 生產打包順利產出 `dist/` (5.41s)。
+     - Reviewer (APPROVED) 與 Challenger (PASS) 審計門禁全綠燈通過。
+
 ## 2026-09-29 [Audit Remediation] "fix-p0-core-experience-and-security" (Sentinel Z8P4 Remediation)
 ### 🩺 審計缺陷精準修復與 React 跨帳號記憶體生命週期隔離
 - **審計依據**：`openspec/changes/fix-p0-core-experience-and-security/audit_reports/audit_sentinel_Z8P4.md`

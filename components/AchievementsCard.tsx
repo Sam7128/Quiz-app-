@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Award, Lock, ExternalLink } from 'lucide-react';
-import { ACHIEVEMENTS } from '../constants/achievements';
+import { ACHIEVEMENTS, IMPLEMENTED_ACHIEVEMENT_IDS } from '../constants/achievements';
 import { useAchievements } from '../hooks/useAchievements';
 import { motion } from 'framer-motion';
 import { AchievementsModal } from './AchievementsModal';
@@ -8,9 +8,12 @@ import { AchievementsModal } from './AchievementsModal';
 export const AchievementsCard: React.FC = () => {
   const { unlockedIds } = useAchievements();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const totalAchievements = ACHIEVEMENTS.length;
-  const unlockedCount = unlockedIds.length;
-  const progress = Math.round((unlockedCount / totalAchievements) * 100);
+
+  const visibleAchievements = ACHIEVEMENTS.filter((a) => IMPLEMENTED_ACHIEVEMENT_IDS.has(a.id));
+  const validUnlockedIds = unlockedIds.filter((id) => IMPLEMENTED_ACHIEVEMENT_IDS.has(id));
+  const totalAchievements = visibleAchievements.length;
+  const unlockedCount = validUnlockedIds.length;
+  const progress = totalAchievements > 0 ? Math.round((unlockedCount / totalAchievements) * 100) : 0;
 
   return (
     <>
@@ -40,8 +43,8 @@ export const AchievementsCard: React.FC = () => {
 
         {/* Achievements Grid */}
         <div className="grid grid-cols-2 gap-3 max-h-48 overflow-y-auto custom-scrollbar">
-          {ACHIEVEMENTS.slice(0, 6).map((achievement) => {
-            const isUnlocked = unlockedIds.includes(achievement.id);
+          {visibleAchievements.map((achievement) => {
+            const isUnlocked = validUnlockedIds.includes(achievement.id);
             return (
               <div
                 key={achievement.id}
@@ -69,9 +72,9 @@ export const AchievementsCard: React.FC = () => {
           })}
         </div>
 
-        {ACHIEVEMENTS.length > 6 && (
+        {totalAchievements > 6 && (
           <p className="text-xs text-slate-400 dark:text-slate-500 text-center mt-3 group-hover:text-brand-500 transition-colors">
-            查看全部 {ACHIEVEMENTS.length} 個成就
+            查看全部 {totalAchievements} 個成就
           </p>
         )}
       </div>
@@ -79,7 +82,7 @@ export const AchievementsCard: React.FC = () => {
       <AchievementsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        unlockedIds={unlockedIds}
+        unlockedIds={validUnlockedIds}
       />
     </>
   );

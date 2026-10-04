@@ -6,6 +6,13 @@ export interface Achievement {
   condition: string;
 }
 
+export const IMPLEMENTED_ACHIEVEMENT_IDS = new Set<string>([
+  'perfect_score',
+  'first_question',
+  'night_owl',
+  'early_bird'
+]);
+
 export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'first_question',

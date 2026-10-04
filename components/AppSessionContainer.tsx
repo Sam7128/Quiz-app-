@@ -93,7 +93,8 @@ export const AppSessionContainer: React.FC<AppSessionContainerProps> = ({
     loading: false,
     toast,
     onChunkComplete: handleChunkComplete,
-    onChunkDraftUpdate: handleChunkDraftUpdate
+    onChunkDraftUpdate: handleChunkDraftUpdate,
+    trackQuizCompletion
   });
 
   const chunkedPractice = useChunkedPractice({

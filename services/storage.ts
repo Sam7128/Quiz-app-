@@ -51,7 +51,18 @@ import {
 export const getUserSettings = (): UserSettings => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-    return data ? JSON.parse(data) : DEFAULT_SETTINGS;
+    if (!data) return DEFAULT_SETTINGS;
+    const stored = JSON.parse(data) as Partial<UserSettings> | null;
+    if (!stored || typeof stored !== 'object') return DEFAULT_SETTINGS;
+    const restBreak = typeof stored.restBreakInterval === 'number' && Number.isFinite(stored.restBreakInterval) && stored.restBreakInterval >= 0
+      ? stored.restBreakInterval
+      : DEFAULT_SETTINGS.restBreakInterval;
+    return {
+      ...DEFAULT_SETTINGS,
+      ...stored,
+      autoAdvanceOnCorrect: typeof stored.autoAdvanceOnCorrect === 'boolean' ? stored.autoAdvanceOnCorrect : false,
+      restBreakInterval: restBreak,
+    };
   } catch {
     return DEFAULT_SETTINGS;
   }

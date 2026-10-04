@@ -47,7 +47,7 @@ export interface IStorageRepository {
   clearSpacedRepetition(): void;
 
   // Analytics
-  recordStudySession(questionsAnswered: number, correctCount: number, durationSeconds: number): Promise<void>;
+  recordStudySession(questionsAnswered: number, correctCount: number, durationSeconds: number, sessionType?: 'quiz' | 'focus'): Promise<void>;
   getStudyStats(): Promise<StudyStats>;
   getDailyStats(): Promise<DailyStudyStats[]>;
 

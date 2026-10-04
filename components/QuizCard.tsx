@@ -71,7 +71,11 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
   const [showAchievements, setShowAchievements] = useState(false);
   const restModalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const explanationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isWaitingForBattlePresentationRef = useRef(false);
+  const hasSeenPresentationEventRef = useRef(false);
   const isSubmittingRef = useRef(false);
+  const isAnsweredRef = useRef(false);
   const lastChunkBoundaryRef = useRef<string | null>(null);
   const lastGameModeRef = useRef<boolean | null>(null);
 
@@ -92,6 +96,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
 
   useEffect(() => {
     return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
       if (restModalTimerRef.current) clearTimeout(restModalTimerRef.current);
       if (explanationTimerRef.current) clearTimeout(explanationTimerRef.current);
     };
@@ -108,6 +113,23 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
     activePresentationEvent,
     completePresentationEvent,
   } = useBattleSystem();
+
+  // 戰鬥模式演出監聽與自動切題協調
+  useEffect(() => {
+    if (!gameMode || !isWaitingForBattlePresentationRef.current) return;
+
+    if (activePresentationEvent !== null) {
+      hasSeenPresentationEventRef.current = true;
+    } else if (hasSeenPresentationEventRef.current) {
+      isWaitingForBattlePresentationRef.current = false;
+      hasSeenPresentationEventRef.current = false;
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        timerRef.current = null;
+        onNext();
+      }, 400);
+    }
+  }, [activePresentationEvent, gameMode, onNext]);
 
   const chunkBoundaryKey = chunkMeta
     ? `${chunkMeta.sessionId}:${chunkMeta.chunkIndex}`
@@ -164,13 +186,48 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
   }, [question.options]);
 
   useEffect(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    // ✅ W-05: 換題時重置解析與休息計時器
+    if (explanationTimerRef.current) {
+      clearTimeout(explanationTimerRef.current);
+      explanationTimerRef.current = null;
+    }
+    if (restModalTimerRef.current) {
+      clearTimeout(restModalTimerRef.current);
+      restModalTimerRef.current = null;
+    }
+    isWaitingForBattlePresentationRef.current = false;
+    hasSeenPresentationEventRef.current = false;
     setSelectedOptions([]);
     setShowHint(false);
     setIsAnswered(false);
+    isAnsweredRef.current = false;
     isSubmittingRef.current = false;
     setShowExplanation(false);
     setFeedback('none');
   }, [question]);
+
+  const handleNext = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    // ✅ W-05: 手動切題時立即清除
+    if (explanationTimerRef.current) {
+      clearTimeout(explanationTimerRef.current);
+      explanationTimerRef.current = null;
+    }
+    if (restModalTimerRef.current) {
+      clearTimeout(restModalTimerRef.current);
+      restModalTimerRef.current = null;
+    }
+    isWaitingForBattlePresentationRef.current = false;
+    hasSeenPresentationEventRef.current = false;
+    onNext();
+  };
 
   // Keyboard shortcuts
   useKeyboardShortcuts({
@@ -180,7 +237,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
       }
     },
     onSubmitOrNext: () => {
-      if (!isAnswered) {
+      if (!isAnswered && !isAnsweredRef.current) {
         if (isMultiple) {
           if (selectedOptions.length > 0) {
             submitAnswer(selectedOptions);
@@ -191,7 +248,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
           }
         }
       } else {
-        onNext();
+        handleNext();
       }
     },
     onToggleHint: () => setShowHint(!showHint),
@@ -199,7 +256,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
   });
 
   const handleOptionClick = (option: string) => {
-    if (isAnswered) return;
+    if (isAnswered || isAnsweredRef.current) return;
 
     if (isMultiple) {
       setSelectedOptions(prev => {
@@ -207,19 +264,23 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
         return [...prev, option];
       });
     } else {
+      setSelectedOptions([option]);
       submitAnswer([option]);
     }
   };
 
   const submitAnswer = (selection: string[]) => {
     // 同步鎖防止快速雙擊／重複提交答案。
-    if (isSubmittingRef.current || isAnswered) return;
+    if (isSubmittingRef.current || isAnswered || isAnsweredRef.current) return;
     isSubmittingRef.current = true;
+    isAnsweredRef.current = true;
+    setSelectedOptions(selection);
 
     try {
       // 防護：如果沒有選擇任何選項，不提交答案
       if (selection.length === 0) {
         console.warn('[QuizCard] submitAnswer called with empty selection, ignoring.');
+        isAnsweredRef.current = false;
         isSubmittingRef.current = false;
         return;
       }
@@ -257,9 +318,32 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
       }
 
       explanationTimerRef.current = setTimeout(() => setShowExplanation(true), 400);
+
+      // 答對自動切題邏輯
+      if (isCorrect && settings.autoAdvanceOnCorrect) {
+        if (timerRef.current) clearTimeout(timerRef.current);
+
+        if (gameMode) {
+          isWaitingForBattlePresentationRef.current = true;
+          hasSeenPresentationEventRef.current = false;
+          // 2000ms safety deadline 兜底
+          timerRef.current = setTimeout(() => {
+            isWaitingForBattlePresentationRef.current = false;
+            timerRef.current = null;
+            onNext();
+          }, 2000);
+        } else {
+          // 標準模式：延遲 800ms
+          timerRef.current = setTimeout(() => {
+            timerRef.current = null;
+            onNext();
+          }, 800);
+        }
+      }
     } catch (error) {
       console.error('[QuizCard] submitAnswer caught runtime exception, releasing lock and allowing retry:', error);
       // 出錯時將狀態恢復，允許用戶重新作答/點擊
+      isAnsweredRef.current = false;
       setIsAnswered(false);
       setFeedback('none');
     } finally {
@@ -269,7 +353,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
   };
 
   const getOptionClass = (option: string) => {
-    const baseClass = "w-full p-3 md:p-3.5 mb-2 text-left rounded-xl transition-all duration-200 flex items-center justify-between group relative overflow-hidden";
+    const baseClass = "w-full p-3 md:p-3.5 mb-2 text-left rounded-xl transition-all duration-200 flex items-center justify-between group relative overflow-hidden break-words";
     const isSelected = selectedOptions.includes(option);
     const isCorrect = correctAnswers.includes(option);
 
@@ -453,7 +537,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
               )}
             </div>
 
-            <h2 className={`text-xl md:text-2xl font-bold leading-relaxed mb-2 ${gameMode ? 'text-amber-100 drop-shadow-md' : 'text-slate-800 dark:text-slate-100'}`}>
+            <h2 className={`text-xl md:text-2xl font-bold leading-relaxed mb-2 break-words ${gameMode ? 'text-amber-100 drop-shadow-md' : 'text-slate-800 dark:text-slate-100'}`}>
               {question.question}
             </h2>
 
@@ -465,7 +549,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 p-4 rounded-xl text-sm italic mb-4">
+                  <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 p-4 rounded-xl text-sm italic mb-4 break-words">
                     💡 提示: {question.hint}
                   </div>
                 </motion.div>
@@ -483,11 +567,11 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
                   disabled={isAnswered}
                   className={getOptionClass(option)}
                 >
-                  <span className="font-semibold pr-4 z-10 flex items-center gap-2">
-                    <span className="inline-flex w-5 h-5 items-center justify-center rounded border border-slate-400/50 text-[10px] bg-slate-100/50 dark:bg-slate-800/50 text-slate-500 font-mono">
+                  <span className="font-semibold pr-4 z-10 flex items-center gap-2 break-words">
+                    <span className="inline-flex w-5 h-5 items-center justify-center rounded border border-slate-400/50 text-[10px] bg-slate-100/50 dark:bg-slate-800/50 text-slate-500 font-mono shrink-0">
                       {idx + 1}
                     </span>
-                    {option}
+                    <span className="break-words">{option}</span>
                   </span>
                   <div className="shrink-0 z-10">
                     {renderOptionIcon(option)}
@@ -548,7 +632,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
                       }`}>
                       {feedback === 'correct' ? '🎉 太棒了！回答正確' : '❌ 再接再厲！解析如下'}
                     </h3>
-                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-7 font-medium">
+                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-7 font-medium break-words">
                       {question.explanation || "此題暫無解析。"}
                     </p>
                   </div>
@@ -558,7 +642,7 @@ const QuizCardComponent: React.FC<QuizCardProps> = ({
                       <span className="font-bold">Enter</span> {isLastQuestion ? '查看結果' : '下一題'}
                     </div>
                     <button
-                      onClick={onNext}
+                      onClick={handleNext}
                       className={`flex items-center gap-2 text-white font-bold py-4 px-10 rounded-2xl shadow-xl transition-all transform hover:-translate-y-1 active:scale-95 ${feedback === 'correct' ? 'bg-green-600 hover:bg-green-500' : 'bg-slate-800 hover:bg-slate-700'
                         }`}
                     >
